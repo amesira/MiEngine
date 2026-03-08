@@ -143,27 +143,27 @@ bool Direct3D_Initialize(HWND hWnd)
     blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
     blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    {
+        // ブレンド無効
+        blendDesc.RenderTarget[0].BlendEnable = FALSE;
+        g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_NONE]);
 
-    // ブレンド無効
-    blendDesc.RenderTarget[0].BlendEnable = FALSE;
-    g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_NONE]);
+        // αブレンド
+        blendDesc.RenderTarget[0].BlendEnable = TRUE;
+        g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_ALFA]);
 
-    // αブレンド
-    blendDesc.RenderTarget[0].BlendEnable = TRUE;
-    g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_ALFA]);
+        // 加算合成
+        blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+        blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_ADD]);
 
-    // 加算合成
-    blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_ADD]);
-
-    // 減算合成
-    blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_SUBTRACT;
-    g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_SUB]);
-
+        // 減算合成
+        blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+        blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_SUBTRACT;
+        g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_SUB]);
+    }
     SetBlendState(BLENDSTATE_ALFA); // デフォルト設定（アルファ）
 
     //----------------------------------------------------
@@ -171,24 +171,24 @@ bool Direct3D_Initialize(HWND hWnd)
 	//----------------------------------------------------
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
     ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-    
-    // 深度有効ステート
-    depthStencilDesc.DepthEnable = TRUE;
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-    depthStencilDesc.StencilEnable = FALSE;
-    g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_ENABLE]);
+    {
+        // 深度有効ステート
+        depthStencilDesc.DepthEnable = TRUE;
+        depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+        depthStencilDesc.StencilEnable = FALSE;
+        g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_ENABLE]);
 
-    // 深度無効ステート
-    depthStencilDesc.DepthEnable = FALSE;
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_DISABLE]);
+        // 深度無効ステート
+        depthStencilDesc.DepthEnable = FALSE;
+        depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+        g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_DISABLE]);
 
-    // 深度書き込み無効ステート
-    depthStencilDesc.DepthEnable = TRUE;
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_NOWRITE]);
-
+        // 深度書き込み無効ステート
+        depthStencilDesc.DepthEnable = TRUE;
+        depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+        g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_NOWRITE]);
+    }
     g_pDeviceContext->OMSetDepthStencilState(g_pDepthState[DEPTHSTATE_ENABLE], NULL);
 
     return true;
@@ -223,9 +223,7 @@ static float g_clearColor[4] = { 0.2f,0.4f,0.8f,1.0f };
 void Direct3D_BeginScene(float r, float g, float b)
 {
     // シーンバッファのクリア
-    g_clearColor[0] = r;
-    g_clearColor[1] = g;
-    g_clearColor[2] = b;
+    
 
     //float clear_color[4] = { 0.1f,0.7f,1.0f,1.0f }; // クリア色設定
     g_pDeviceContext->ClearRenderTargetView(g_pSceneRtv, g_clearColor);

@@ -12,13 +12,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="debug_renderer.cpp" />
-    <ClCompile Include="factory.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="manager.cpp" />
-    <ClCompile Include="processor_manager.cpp" />
     <ClCompile Include="ball_behavior.cpp">
-      <Filter>Sources\Engine\Framework\Behavior</Filter>
+      <Filter>Sources\Game\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="camera_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
@@ -80,20 +75,29 @@
     <ClCompile Include="sprite.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="debug_ostream.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="mi_fps.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
+    <ClCompile Include="debug_ostream.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_renderer.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="factory.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="manager.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="processor_manager.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="debug_renderer.h" />
-    <ClInclude Include="factory.h" />
-    <ClInclude Include="mi_math.h" />
-    <ClInclude Include="processor_manager.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="manager.h" />
     <ClInclude Include="cubemesh_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
@@ -128,7 +132,7 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="ball_behavior.h">
-      <Filter>Sources\Engine\Framework\Behavior</Filter>
+      <Filter>Sources\Game\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="camera_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
@@ -202,9 +206,6 @@
     <ClInclude Include="processor.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="debug_ostream.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="scene_interface.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
@@ -213,6 +214,30 @@
     </ClInclude>
     <ClInclude Include="mi_fps.h">
       <Filter>Sources\Engine\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_ostream.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_renderer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="mi_math.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="factory.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="processor_manager.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="manager.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="behavior_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -246,14 +271,23 @@
     <Filter Include="Sources\Engine\Framework\Component">
       <UniqueIdentifier>{f09bfbe5-a506-46c6-954f-74b472eaa868}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Behavior">
-      <UniqueIdentifier>{9b63bf25-6746-489e-babd-6ad31aaaabed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Engine\Framework\Processor">
       <UniqueIdentifier>{3b2576a6-f35b-4295-9189-a7d8474a1f91}</UniqueIdentifier>
     </Filter>
     <Filter Include="External">
       <UniqueIdentifier>{d992fbca-5d28-49dc-9338-ff32f50ee42a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{a86b2725-45c8-4534-8419-2a78493f52a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Behavior">
+      <UniqueIdentifier>{9b63bf25-6746-489e-babd-6ad31aaaabed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\PhysicsProcessor">
+      <UniqueIdentifier>{5580ffc3-dbe0-4e15-a3b8-46264c0cccb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\RenderProcessor">
+      <UniqueIdentifier>{96d52185-a6d6-4ee5-9db7-8fe35edb0773}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

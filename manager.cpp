@@ -16,7 +16,7 @@ static IScene* g_SceneInstance[SCENE::SCENE_MAX];
 static SCENE g_Scene = SCENE::SCENE_NONE;
 
 //===================================================
-// スコア初期化処理
+// マネージャー初期化処理
 //===================================================
 void Manager_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -30,7 +30,7 @@ void Manager_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 //===================================================
-// スコア終了処理
+// マネージャー終了処理
 //===================================================
 void Manager_Finalize()
 {
@@ -38,7 +38,7 @@ void Manager_Finalize()
 }
 
 //===================================================
-// スコア更新処理
+// マネージャー更新処理
 //===================================================
 void Manager_Update()
 {
@@ -46,23 +46,14 @@ void Manager_Update()
 }
 
 //===================================================
-// スコア描画処理
+// マネージャー描画処理
 //===================================================
 void Manager_Draw()
 {
     g_SceneInstance[g_Scene]->Draw();
 }
 
-void Manager_SetGameLevel(int level)
-{
-   
-}
-
-void Manager_SendScore(int score)
-{
-   
-}
-
+// シーンセット関数
 void SetScene(SCENE scene)
 {
     // 現在のシーンの終了処理

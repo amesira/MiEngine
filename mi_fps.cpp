@@ -59,10 +59,10 @@ bool FPS_Update()
         g_dwExecLastTime = g_dwCurrentTime; // 現在のタイマー値を保存
 
         // ウィンドウキャプションへ現在のFPSを表示
-        wsprintf(g_DebugStr, "DX21 Project");
-        wsprintf(&g_DebugStr[strlen(g_DebugStr)],
-            "FPS : %d", g_CountFPS);
-        SetWindowText(hWnd, g_DebugStr);
+        // Unicodeで統一しているため、wchar_t型の文字列を使用する
+        wchar_t g_DebugStr[256];
+        swprintf_s(g_DebugStr, L"MiEngine だよ FPS : %d", g_CountFPS);
+        SetWindowTextW(hWnd, g_DebugStr);
         
         return true;
     }
