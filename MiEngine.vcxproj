@@ -143,6 +143,7 @@
     <ClCompile Include="debug_renderer.cpp" />
     <ClCompile Include="direct3d.cpp" />
     <ClCompile Include="dynamics_processor.cpp" />
+    <ClCompile Include="engine.cpp" />
     <ClCompile Include="factory.cpp" />
     <ClCompile Include="mi_fps.cpp" />
     <ClCompile Include="game.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="cubemesh_component.h" />
     <ClInclude Include="debug_renderer.h" />
     <ClInclude Include="dynamics_processor.h" />
+    <ClInclude Include="engine.h" />
     <ClInclude Include="factory.h" />
     <ClInclude Include="mi_fps.h" />
     <ClInclude Include="image_component.h" />

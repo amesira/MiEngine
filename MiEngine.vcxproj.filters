@@ -2,13 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <FxCompile Include="shader_pixel.hlsl">
-      <Filter>Sources\Shaders</Filter>
+      <Filter>Sources\Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader_pixel_font.hlsl">
-      <Filter>Sources\Shaders</Filter>
+      <Filter>Sources\Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader_vertex.hlsl">
-      <Filter>Sources\Shaders</Filter>
+      <Filter>Sources\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +94,9 @@
       <Filter>Sources\Engine</Filter>
     </ClCompile>
     <ClCompile Include="processor_manager.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -239,6 +242,9 @@
     <ClInclude Include="behavior_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="engine.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -252,9 +258,6 @@
     </Filter>
     <Filter Include="Sources\Engine\Core">
       <UniqueIdentifier>{40208926-d93f-4eaf-ba2d-82f254e1a361}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Shaders">
-      <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Engine\Framework">
       <UniqueIdentifier>{a4147d6a-f5d4-46b1-80ca-6253be70fd37}</UniqueIdentifier>
@@ -283,11 +286,8 @@
     <Filter Include="Sources\Game\Behavior">
       <UniqueIdentifier>{9b63bf25-6746-489e-babd-6ad31aaaabed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\PhysicsProcessor">
-      <UniqueIdentifier>{5580ffc3-dbe0-4e15-a3b8-46264c0cccb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\RenderProcessor">
-      <UniqueIdentifier>{96d52185-a6d6-4ee5-9db7-8fe35edb0773}</UniqueIdentifier>
+    <Filter Include="Sources\Shader">
+      <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -79,6 +79,9 @@ void ProcessorM_Initialize()
         g_CameraProcessor->Initialize();
         g_LightProcessor->Initialize();
     }
+
+    // ★ 現行設計ではInstanceスロットの初期化が何故かされていないため、ここで初期化しておく
+    EndDrawInstance();
 }
 
 void ProcessorM_Finalize()
@@ -199,10 +202,6 @@ void ProcessorM_Draw(IScene* pScene)
 
     // デバッグ描画用バッファリセット
     DebugRenderer_ResetBuffer();
-
-    //DrawSprite({ 1.0f,1.0f,1.0f,1.0f }, { 0.0f,0.0f,1.0f,1.0f }, { 0.0f,0.0f,-1.0f });
-
-    EndDrawInstance();
 
     Direct3D_Present();
 }
