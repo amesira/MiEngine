@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Sources\Core">
+      <UniqueIdentifier>{fd0b61da-4ee6-46f1-82ba-29fe7ea0168d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts">
+      <UniqueIdentifier>{adecfd47-b789-43aa-b1f3-358ebebae0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts\Component">
+      <UniqueIdentifier>{aba6d152-c5ac-4d6f-b81d-6a4f8deeffc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts\Processor">
+      <UniqueIdentifier>{f8e2f42d-4087-4883-9740-d78dc828d179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts\Behavior">
+      <UniqueIdentifier>{16b221ec-3abb-4fce-83ab-543bf12c9798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\System">
+      <UniqueIdentifier>{f10c7e38-6a60-4d3a-94d4-3796eb553087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\System\Device">
+      <UniqueIdentifier>{d4d93932-e359-4aaf-968a-1e9e716d9902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\System\Graphic">
+      <UniqueIdentifier>{6dcfa6b8-52e4-42e8-9489-d50e80c2644e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Manager">
+      <UniqueIdentifier>{165ee71e-206a-40f2-a8f0-1d3e631e084d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts\Processor\PhysicsProcessors">
+      <UniqueIdentifier>{84427433-fdec-4808-a2ba-d6e60cfd904d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts\Component\UiComponents">
+      <UniqueIdentifier>{580f4b91-91e0-4f9e-9896-2ed512c2b8df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GameParts\Processor\UiProcessors">
+      <UniqueIdentifier>{09d96c4e-c0f4-4c6c-882a-b196d1f47580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{924b9c01-9732-4e85-bab6-314bd96aef50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Content">
+      <UniqueIdentifier>{77ae1cda-7aba-464b-8c8c-19c8db9353c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene">
+      <UniqueIdentifier>{676e5e28-0d84-468f-a5c4-2f19893eb81f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_ostream.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard.cpp">
+      <Filter>Sources\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.cpp">
+      <Filter>Sources\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="manager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Sources\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="game_object.h">
+      <Filter>Sources\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_3dcube_processor.cpp">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="factory.cpp">
+      <Filter>Sources\GameParts</Filter>
+    </ClCompile>
+    <ClCompile Include="processor_manager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="player_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Sources\System\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite.cpp">
+      <Filter>Sources\System\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="direct3d.cpp">
+      <Filter>Sources\System</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="title.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="physics_processor.cpp">
+      <Filter>Sources\GameParts\Processor\PhysicsProcessors</Filter>
+    </ClCompile>
+    <ClCompile Include="collision_processor.cpp">
+      <Filter>Sources\GameParts\Processor\PhysicsProcessors</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamics_processor.cpp">
+      <Filter>Sources\GameParts\Processor\PhysicsProcessors</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_image_processor.cpp">
+      <Filter>Sources\GameParts\Processor\UiProcessors</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_font_processor.cpp">
+      <Filter>Sources\GameParts\Processor\UiProcessors</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_implementation.cpp">
+      <Filter>リソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="mi_fps.cpp">
+      <Filter>Sources\System</Filter>
+    </ClCompile>
+    <ClCompile Include="fade.cpp">
+      <Filter>Sources\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_renderer.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Sources\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_3dmodel_processor.cpp">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_processor.cpp">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="tps_camera_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="switch_sprite_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="light_processor.cpp">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="level_manager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="particle_manager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ball_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="woodbox_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="train_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="liftup_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_slider_processor.cpp">
+      <Filter>Sources\GameParts\Processor\UiProcessors</Filter>
+    </ClCompile>
+    <ClCompile Include="pointer_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="field_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="button_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="result.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="golf_behavior.cpp">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="debug_ostream.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard.h">
+      <Filter>Sources\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="mouse.h">
+      <Filter>Sources\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="manager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Sources\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="component.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="processor.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="behavior.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_3dcube_processor.h">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="transform_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="cubemesh_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="factory.h">
+      <Filter>Sources\GameParts</Filter>
+    </ClInclude>
+    <ClInclude Include="processor_manager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="player_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Sources\System\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="sprite.h">
+      <Filter>Sources\System\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="direct3d.h">
+      <Filter>Sources\System</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="title.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="collider_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="physics_processor.h">
+      <Filter>Sources\GameParts\Processor\PhysicsProcessors</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_processor.h">
+      <Filter>Sources\GameParts\Processor\PhysicsProcessors</Filter>
+    </ClInclude>
+    <ClInclude Include="dynamics_processor.h">
+      <Filter>Sources\GameParts\Processor\PhysicsProcessors</Filter>
+    </ClInclude>
+    <ClInclude Include="rigidbody_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="rect_transform_component.h">
+      <Filter>Sources\GameParts\Component\UiComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="image_component.h">
+      <Filter>Sources\GameParts\Component\UiComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="text_component.h">
+      <Filter>Sources\GameParts\Component\UiComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_image_processor.h">
+      <Filter>Sources\GameParts\Processor\UiProcessors</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_font_processor.h">
+      <Filter>Sources\GameParts\Processor\UiProcessors</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_truetype.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="mi_fps.h">
+      <Filter>Sources\System</Filter>
+    </ClInclude>
+    <ClInclude Include="component_pool.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_interface.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="fade.h">
+      <Filter>Sources\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_base.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="component_pool_interface.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="type_id.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="mi_math.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_renderer.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_3dmodel_processor.h">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="model_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Sources\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="camera_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="camera_processor.h">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="tps_camera_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="switch_sprite_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="light_component.h">
+      <Filter>Sources\GameParts\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="light_processor.h">
+      <Filter>Sources\GameParts\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="level_manager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_manager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ball_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="woodbox_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="train_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="liftup_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="slider_component.h">
+      <Filter>Sources\GameParts\Component\UiComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_slider_processor.h">
+      <Filter>Sources\GameParts\Processor\UiProcessors</Filter>
+    </ClInclude>
+    <ClInclude Include="pointer_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="field_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="button_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="result.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="golf_behavior.h">
+      <Filter>Sources\GameParts\Behavior</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader_pixel_font.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shader_pixel.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shader_vertex.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="shader_pixel.hlsl">
+      <Filter>Sources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shader_pixel_font.hlsl">
+      <Filter>Sources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shader_vertex.hlsl">
+      <Filter>Sources\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="debug_renderer.cpp" />
+    <ClCompile Include="factory.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="manager.cpp" />
+    <ClCompile Include="processor_manager.cpp" />
+    <ClCompile Include="ball_behavior.cpp">
+      <Filter>Sources\Engine\Framework\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="collision_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamics_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="light_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="physics_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_3dcube_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_3dmodel_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_font_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_image_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_slider_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="direct3d.cpp">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard.cpp">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.cpp">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="game_object.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_implementation.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite.cpp">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_ostream.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="mi_fps.cpp">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="debug_renderer.h" />
+    <ClInclude Include="factory.h" />
+    <ClInclude Include="mi_math.h" />
+    <ClInclude Include="processor_manager.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="manager.h" />
+    <ClInclude Include="cubemesh_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="image_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="light_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="model_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="rect_transform_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="rigidbody_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="slider_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="text_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="transform_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="collider_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="camera_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ball_behavior.h">
+      <Filter>Sources\Engine\Framework\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="camera_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="dynamics_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="light_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="physics_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_3dcube_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_3dmodel_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_font_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_image_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_slider_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="component_pool_interface.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="behavior.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="component.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="component_pool.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="direct3d.h">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard.h">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="type_id.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="mouse.h">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_truetype.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="sprite.h">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="processor.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_ostream.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_interface.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_base.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="mi_fps.h">
+      <Filter>Sources\Engine\System\Device</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{7912de8a-6d16-4a0f-8245-683ea4f92ff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine">
+      <UniqueIdentifier>{bc580b8e-25e9-49cb-8ae3-a7a0995eb6d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game">
+      <UniqueIdentifier>{ba1d4d1e-566c-4042-934b-3a274f8c0aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Core">
+      <UniqueIdentifier>{40208926-d93f-4eaf-ba2d-82f254e1a361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Shaders">
+      <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework">
+      <UniqueIdentifier>{a4147d6a-f5d4-46b1-80ca-6253be70fd37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\System">
+      <UniqueIdentifier>{1b10de83-559d-43ac-9818-ecdb91b65e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\System\Device">
+      <UniqueIdentifier>{4ddefe8c-9f05-4979-9f85-a5c40b8dafe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\System\Graphics">
+      <UniqueIdentifier>{41afa458-92b2-4d1c-af5f-b684f0b7d6cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Component">
+      <UniqueIdentifier>{f09bfbe5-a506-46c6-954f-74b472eaa868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Behavior">
+      <UniqueIdentifier>{9b63bf25-6746-489e-babd-6ad31aaaabed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor">
+      <UniqueIdentifier>{3b2576a6-f35b-4295-9189-a7d8474a1f91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{d992fbca-5d28-49dc-9338-ff32f50ee42a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
