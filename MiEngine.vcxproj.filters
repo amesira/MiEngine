@@ -99,6 +99,12 @@
     <ClCompile Include="engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="game_world.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="scene_manager.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cubemesh_component.h">
@@ -243,6 +249,12 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="engine.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="game_world.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
   </ItemGroup>

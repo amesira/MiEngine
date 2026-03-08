@@ -14,16 +14,10 @@
 #include "mi_fps.h"
 #include "model.h"
 
+// MiEngineの初期化処理
 bool MiEngine::Initialize(HWND hWnd)
 {
     m_isRunning = true;
-
-    // m_pAssetManager = new AssetManager();
-    // m_pRenderer = new Renderer();
-    // m_pInputSystem = new InputSystem();
-    // m_pAudioSystem = new AudioSystem();
-    // m_pGameWorld = new GameWorld();
-    // m_pDebugWorld = new DebugWorld();
 
     Direct3D_Initialize(hWnd);
 
@@ -32,54 +26,34 @@ bool MiEngine::Initialize(HWND hWnd)
 
     Shader_Initialize(pDevice, pContext);
     InitializeSprite();
-
     InitAudio();
-
     Model_Initialize();
-
     Manager_Initialize(pDevice, pContext);
-
     FPS_Initialize(hWnd);
 
     return true;
 }
 
+// MiEngineの終了処理
 void MiEngine::Finalize()
 {
-    // delete m_pAssetManager;
-    // delete m_pRenderer;
-    // delete m_pInputSystem;
-    // delete m_pAudioSystem;
-    // delete m_pGameWorld;
-    // delete m_pDebugWorld;
-
     Manager_Finalize();
-
     UninitAudio();
-
     Model_Finalize();
-
     FinalizeSprite();
     Shader_Finalize();
-
     Direct3D_Finalize();
 }
 
+// MiEngineの1フレーム分の処理
 bool MiEngine::RunOneFrame()
 {
-    m_isRunning = true;
+    if (!m_isRunning) return false;
 
     if (FPS_Update()) {
-
-        // 更新処理
-        Manager_Update();
-
-        // 描画処理
-        Manager_Draw();
-
-        // 処理回数更新
-        FPS_UpdateFrameCount();
-
+        Update();
+        Render();
+        FPS_UpdateFrameCount(); // フレームカウントを更新
         return true;
     }
 
@@ -90,11 +64,11 @@ bool MiEngine::RunOneFrame()
 // MiEngineの更新処理
 void MiEngine::Update()
 {
-
+    Manager_Update();
 }
 
 // MiEngineの描画処理
 void MiEngine::Render()
 {
-
+    Manager_Draw();
 }

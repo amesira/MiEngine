@@ -9,6 +9,15 @@
 #include <windows.h>
 
 class MiEngine {
+public:
+    bool Initialize(HWND hWnd);
+    void Finalize();
+    bool RunOneFrame();
+
+private:
+    void Update();
+    void Render();
+
 private:
     bool m_isRunning;
 
@@ -20,14 +29,6 @@ private:
     // GameWorld* m_pGameWorld;
     // DebugWorld* m_pDebugWorld;
 
-public:
-    bool Initialize(HWND hWnd);
-    void Finalize();
-    bool RunOneFrame();
-
-private:
-    void Update();
-    void Render();
 };
 
 #endif // MI_ENGINE_H

@@ -145,6 +145,7 @@
     <ClCompile Include="dynamics_processor.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="factory.cpp" />
+    <ClCompile Include="game_world.cpp" />
     <ClCompile Include="mi_fps.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game_object.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="renderer_font_processor.cpp" />
     <ClCompile Include="renderer_image_processor.cpp" />
     <ClCompile Include="renderer_slider_processor.cpp" />
+    <ClCompile Include="scene_manager.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="stb_implementation.cpp" />
@@ -179,6 +181,7 @@
     <ClInclude Include="dynamics_processor.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="factory.h" />
+    <ClInclude Include="game_world.h" />
     <ClInclude Include="mi_fps.h" />
     <ClInclude Include="image_component.h" />
     <ClInclude Include="light_component.h" />
@@ -207,6 +210,7 @@
     <ClInclude Include="rigidbody_component.h" />
     <ClInclude Include="scene_base.h" />
     <ClInclude Include="scene_interface.h" />
+    <ClInclude Include="scene_manager.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="slider_component.h" />
     <ClInclude Include="sprite.h" />
