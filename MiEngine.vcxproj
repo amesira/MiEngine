@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="behavior_processor.cpp" />
     <ClCompile Include="camera_processor.cpp" />
     <ClCompile Include="collision_processor.cpp" />
     <ClCompile Include="debug_ostream.cpp" />
@@ -168,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="behavior_component.h" />
+    <ClInclude Include="behavior_processor.h" />
     <ClInclude Include="camera_component.h" />
     <ClInclude Include="camera_processor.h" />
     <ClInclude Include="collider_component.h" />
@@ -193,7 +195,6 @@
     <ClInclude Include="rect_transform_component.h" />
     <ClInclude Include="renderer_3dcube_processor.h" />
     <ClInclude Include="Audio.h" />
-    <ClInclude Include="behavior.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="debug_ostream.h" />
     <ClInclude Include="direct3d.h" />
@@ -215,7 +216,7 @@
     <ClInclude Include="stb_truetype.h" />
     <ClInclude Include="text_component.h" />
     <ClInclude Include="transform_component.h" />
-    <ClInclude Include="type_id.h" />
+    <ClInclude Include="component_type_id.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader_pixel.hlsl">

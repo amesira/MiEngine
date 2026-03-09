@@ -102,6 +102,9 @@
     <ClCompile Include="player_behavior.cpp">
       <Filter>Sources\Game\Behavior</Filter>
     </ClCompile>
+    <ClCompile Include="behavior_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cubemesh_component.h">
@@ -170,9 +173,6 @@
     <ClInclude Include="component_pool_interface.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="behavior.h">
-      <Filter>Sources\Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="component.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
@@ -188,7 +188,7 @@
     <ClInclude Include="Audio.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="type_id.h">
+    <ClInclude Include="component_type_id.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="model.h">
@@ -250,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="player_behavior.h">
       <Filter>Sources\Game\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="behavior_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

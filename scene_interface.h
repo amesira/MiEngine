@@ -14,7 +14,7 @@
 #include <vector>
 #include <string>
 #include "component_pool.h"
-#include "type_id.h"
+#include "component_type_id.h"
 
 class GameObject;
 
@@ -38,9 +38,9 @@ public:
         auto& m_componentPools = ComponentPools();
         for (auto& p : m_componentPools) {
             auto* pool = p.get();
-            if(pool->GetTypeID() == ComponentTypeID::getTypeID<T>()) {
-                return static_cast<ComponentPool<T>*>(pool);
-            }
+            if(pool->GetTypeID() != ComponentTypeID::getTypeID<T>()) continue;
+
+            return static_cast<ComponentPool<T>*>(pool);
         }
         return nullptr;
     }
@@ -58,8 +58,27 @@ public:
         return static_cast<ComponentPool<T>*>(m_componentPools.back().get());
     }
 
+    // 型TのComponentをすべて取得
+    template<class T>
+    std::vector<T*> GetComponentsByBaseType() {
+        std::vector<T*> components;
+        auto& m_componentPools = ComponentPools();
+        for (auto& p : m_componentPools) {
+            auto* pool = p.get();
+            if (pool->GetBaseTypeID() != ComponentTypeID::getTypeID<T>()) continue;
+
+            // ベースとなる型が一致するComponentPoolのComponentをすべて取得
+            pool->Foreach([&components](Component* c) {
+                components.push_back(static_cast<T*>(c));
+            });
+        }
+        return components;
+    }
+
+    // GameObjectの取得
     virtual GameObject* GetGameObjectByID(unsigned int id) = 0;
     virtual GameObject* GetGameObjectByName(const std::string& name) = 0;
+
 };
 
 #endif

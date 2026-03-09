@@ -93,5 +93,5 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
     modelComp->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
 
     // behavior生成・登録
-    player->AddBehavior<PlayerBehavior>();
+    player->AddComponent<PlayerBehavior>();
 }

@@ -12,7 +12,7 @@
 #include <vector>
 #include <assert.h>
 
-#include "type_id.h"
+#include "component_type_id.h"
 #include "component_pool_interface.h"
 
 class GameObject;
@@ -33,7 +33,7 @@ private:
     std::vector<size_t>         m_freeIndices = {};
 
 public:
-    ComponentPool() : IComponentPool(ComponentTypeID::getTypeID<T>()) {
+    ComponentPool() : IComponentPool(ComponentTypeID::getTypeID<T>(), ComponentTypeID::getBaseTypeID<T>()) {
         m_components.reserve(COMPONENTS_MAX);
         m_gameObjectIDs.reserve(COMPONENTS_MAX);
         m_freeIndices.clear();
@@ -45,8 +45,7 @@ public:
         assert(m_components.size() < COMPONENTS_MAX && "ComponentPool has reached its maximum capacity.");
         
         // 空きスロットがあればそこを利用
-        // memo: Componentのメンバ変数に参照型やポインタがある場合、
-        //          T()でエラーが出る可能性があるため注意
+        // ・Componentのメンバ変数に参照型やポインタがある場合、T()でエラーが出る可能性があるため注意
         if (!m_freeIndices.empty()) {
             size_t index = m_freeIndices.back();
             m_freeIndices.pop_back();
@@ -94,6 +93,14 @@ public:
 
     // ComponentPool内のComponentリストを取得
     std::vector<T>&     GetList() { return m_components; }
+
+    // ComponentPool内のComponentに対してfuncを呼び出す
+    void    Foreach(std::function<void(Component* c)> func) override {
+        for (int i = 0; i < m_components.size(); i++) {
+            func(&m_components[i]);
+        }
+    }
+
 };
 
 #endif

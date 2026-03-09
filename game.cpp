@@ -54,11 +54,6 @@ void GameScene::Finalize()
 // ゲームシーン更新処理
 void GameScene::Update()
 {
-    std::vector<GameObject>& gameObjects = this->GetGameObjects();
-    for (GameObject& obj : gameObjects) {
-        obj.Update();
-    }
-
     // 破棄予約されたGameObjectの収集
     this->CollectDestroyedGameObjects();
 }

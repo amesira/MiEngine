@@ -24,6 +24,8 @@
 #include "light_processor.h"
 #include "renderer_slider_processor.h"
 
+#include "behavior_processor.h"
+
 #include "game_object.h"
 #include "image_component.h"
 
@@ -40,6 +42,8 @@ static RendererSliderProcessor* g_RendererSliderProcessor = nullptr;
 
 static CameraProcessor* g_CameraProcessor = nullptr;
 static LightProcessor* g_LightProcessor = nullptr;
+
+static BehaviorProcessor* g_BehaviorProcessor = nullptr;
 
 void ProcessorM_Initialize()
 {
@@ -60,6 +64,8 @@ void ProcessorM_Initialize()
     g_CameraProcessor = new CameraProcessor();
     g_LightProcessor = new LightProcessor();
 
+    g_BehaviorProcessor = new BehaviorProcessor();
+
     // Processor初期化
     {   // 3D描画系プロセッサー初期化
         g_Renderer3DCubeProcessor->Initialize();
@@ -79,6 +85,7 @@ void ProcessorM_Initialize()
         g_CameraProcessor->Initialize();
         g_LightProcessor->Initialize();
     }
+    g_BehaviorProcessor->Initialize();
 
     // ★ 現行設計ではInstanceスロットの初期化が何故かされていないため、ここで初期化しておく
     EndDrawInstance();
@@ -131,7 +138,9 @@ void ProcessorM_Finalize()
         delete g_LightProcessor;
         g_LightProcessor = nullptr;
     }
-
+    g_BehaviorProcessor->Finalize();
+    delete g_BehaviorProcessor;
+    g_BehaviorProcessor = nullptr;
 }
 
 void ProcessorM_Update(IScene* pScene)
@@ -141,6 +150,8 @@ void ProcessorM_Update(IScene* pScene)
     g_CollisionProcessor->Process(pScene);
     g_DynamicsProcessor->Process(pScene);
 
+    // BehaviorProcessor処理
+    g_BehaviorProcessor->Process(pScene);
 }
 
 void ProcessorM_Draw(IScene* pScene)

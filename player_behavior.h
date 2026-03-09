@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef PLAYER_BEHAVIOR_H
 #define PLAYER_BEHAVIOR_H
-#include "behavior.h"
+#include "behavior_component.h"
 
 #include "direct3d.h"
 #include <DirectXMath.h>
@@ -15,17 +15,18 @@ using namespace DirectX;
 class TransformComponent;
 class RigidbodyComponent;
 
-class PlayerBehavior : public Behavior {
+class PlayerBehavior : public BehaviorComponent {
 private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
     XMFLOAT3 m_moveDirection = { 0.0f,0.0f,0.0f };
 
 public:
-    PlayerBehavior(GameObject* owner);
-    ~PlayerBehavior();
+    PlayerBehavior() {}
+    ~PlayerBehavior() {}
 
-    void    Update(IScene* pScene) override;
+    void    Start() override;
+    void    Update() override;
 
 };
 

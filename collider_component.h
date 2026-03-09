@@ -56,12 +56,12 @@ public:
     static const int MAX_COLLISION_DATA = 8;
 
 protected:
-    Shape m_shape;
+    Shape m_shape = Shape::Box;
     DirectX::XMFLOAT3 m_center = { 0.0f,0.0f,0.0f };
 
 private:
     Layer m_layer = Layer::Default;
-    CollisionData m_collisionData[MAX_COLLISION_DATA];
+    CollisionData m_collisionData[MAX_COLLISION_DATA] = {};
     
 public:
     ~ColliderComponent() = default;

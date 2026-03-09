@@ -17,8 +17,6 @@
 #include "component.h"
 #include "component_pool.h"
 
-#include "behavior.h"
-
 #include "scene_interface.h"
 
 class GameObject {
@@ -30,20 +28,6 @@ private:
     bool            m_active = true;    // アクティブフラグ
     bool            m_isDestroy = false;// 破棄予約フラグ
     
-    // Behaviorリスト
-    std::vector<std::unique_ptr<Behavior>>  m_pBehaviors = {};
-
-public:
-    // GameObjectの更新処理
-    // ・更新毎、Behavior.Update()を呼び出す。
-    void    Update() {
-        if (!m_active || m_isDestroy)return;
-        for (auto& be : m_pBehaviors) {
-            if (!be.get()->GetEnable())continue;
-            be.get()->Update(m_pScene);
-        }
-    }
-
 private:
     // SceneBaseからSetScene, SetIDを呼び出せるようにする。
     friend class SceneBase;
@@ -57,8 +41,6 @@ private:
         m_name = "None";
         m_active = false;
         m_isDestroy = false;
-
-        m_pBehaviors.clear();
     }
 
 public:
@@ -102,27 +84,9 @@ public:
         if (compPool) {
             return compPool->GetByGameObjectID(m_id);
         }
-        return nullptr;
-    }
-
-    // Behaviorの追加
-    template<class T>
-    T*  AddBehavior() {
-        // 引数ownerはGameObjectのポインタを渡す。
-        m_pBehaviors.push_back(std::make_unique<T>(this));
-        auto* pBe = static_cast<T*>(m_pBehaviors.back().get());
-        pBe->SetOwner(this);
-        return pBe;
-    }
-
-    // Behaviorの取得
-    template<class T>
-    T* GetBehavior() {
-        for (int i = 0; i < m_pBehaviors.size(); i++) {
-            Behavior* pBe = m_pBehaviors[i].get();
-            if (pBe->GetType() == BehaviorTypeID::getTypeID<T>()) {
-                return static_cast<T*>(pBe);
-            }
+        else {
+            // GetComponentsByBaseTypeから取得する
+            // 未実装
         }
         return nullptr;
     }

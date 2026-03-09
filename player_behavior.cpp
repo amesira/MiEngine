@@ -7,7 +7,6 @@
 #include "player_behavior.h"
 #include "scene_interface.h"
 #include "game_object.h"
-#include "type_id.h"
 
 #include "mi_math.h"
 #include "keyboard.h"
@@ -15,18 +14,16 @@
 #include "transform_component.h"
 #include "rigidbody_component.h"
 
-PlayerBehavior::PlayerBehavior(GameObject* owner)
-    : Behavior(BehaviorTypeID::getTypeID<PlayerBehavior>())
+void PlayerBehavior::Start()
 {
+    GameObject* owner = this->GetOwner();
+    if (!owner) return;
+    
     m_transform = owner->GetComponent<TransformComponent>();
     m_rigidbody = owner->GetComponent<RigidbodyComponent>();
 }
 
-PlayerBehavior::~PlayerBehavior()
-{
-}
-
-void PlayerBehavior::Update(IScene* pScene)
+void PlayerBehavior::Update()
 {
     if (Keyboard_IsKeyDown(KK_W)) {
         m_moveDirection.z = 1.0f;
