@@ -90,9 +90,6 @@
     <ClCompile Include="game.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
-    <ClCompile Include="manager.cpp">
-      <Filter>Sources\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="processor_manager.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
@@ -240,9 +237,6 @@
       <Filter>Sources\Game</Filter>
     </ClInclude>
     <ClInclude Include="processor_manager.h">
-      <Filter>Sources\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
     <ClInclude Include="behavior_component.h">

@@ -17,15 +17,12 @@
 #include "rect_transform_component.h"
 
 #include "mi_fps.h"
+#include "scene_manager.h"
 
-//===================================================
 // ゲームシーン初期化処理
-//===================================================
 void GameScene::Initialize()
 {
     this->Reset();
-
-    ProcessorM_Initialize();
 
     // camera
     GameObject* camera = this->CreateGameObject();
@@ -39,31 +36,20 @@ void GameScene::Initialize()
     Factory::CreateLight(light, { 0.5f,-1.0f,0.5f,0.0f }, { 0.1f,0.1f,0.1f,1.0f }, { 0.7f,0.7f,0.7f,1.0f });
 
     // ui
-   /* GameObject* image = this->CreateGameObject();
-    ImageComponent* imageComp = image->AddComponent<ImageComponent>();
-    imageComp->Load(L"asset/Texture/white.bmp");
-    RectTransformComponent* rectTrans = image->AddComponent<RectTransformComponent>();
-    rectTrans->SetPosition({ 0.0f, 0.0f, 0.0f });
-    rectTrans->SetScaling({ 1280.0f, 720.0f, 1.0f });*/
+
 
 }
 
-//===================================================
 // ゲームシーン終了処理
-//===================================================
 void GameScene::Finalize()
 {
-    ProcessorM_Finalize();
     std::vector<GameObject>& gameObjects = this->GetGameObjects();
     for (GameObject& obj : gameObjects) {
         obj.Destroy();
     }
-
 }
 
-//===================================================
 // ゲームシーン更新処理
-//===================================================
 void GameScene::Update()
 {
     std::vector<GameObject>& gameObjects = this->GetGameObjects();
@@ -71,17 +57,12 @@ void GameScene::Update()
         obj.Update();
     }
 
-    ProcessorM_Update(this);
-
-
     // 破棄予約されたGameObjectの収集
     this->CollectDestroyedGameObjects();
 }
 
-//===================================================
 // ゲームシーン描画処理
-//===================================================
 void GameScene::Draw()
 {
-    ProcessorM_Draw(this);
+    
 }

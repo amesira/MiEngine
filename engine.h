@@ -8,6 +8,8 @@
 #define MI_ENGINE_H
 #include <windows.h>
 
+class GameWorld;
+
 class MiEngine {
 public:
     bool Initialize(HWND hWnd);
@@ -26,7 +28,7 @@ private:
     // InputSystem* m_pInputSystem;
     // AudioSystem* m_pAudioSystem;
 
-    // GameWorld* m_pGameWorld;
+    GameWorld* m_pGameWorld;
     // DebugWorld* m_pDebugWorld;
 
 };

@@ -152,7 +152,6 @@
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="light_processor.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="manager.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="physics_processor.cpp" />
@@ -200,7 +199,6 @@
     <ClInclude Include="direct3d.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="keyboard.h" />
-    <ClInclude Include="manager.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="processor.h" />
     <ClInclude Include="renderer_3dmodel_processor.h" />

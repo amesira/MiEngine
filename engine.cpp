@@ -10,9 +10,10 @@
 #include "shader.h"
 #include "sprite.h"
 #include "Audio.h"
-#include "manager.h"
 #include "mi_fps.h"
 #include "model.h"
+
+#include "game_world.h"
 
 // MiEngineの初期化処理
 bool MiEngine::Initialize(HWND hWnd)
@@ -28,8 +29,11 @@ bool MiEngine::Initialize(HWND hWnd)
     InitializeSprite();
     InitAudio();
     Model_Initialize();
-    Manager_Initialize(pDevice, pContext);
     FPS_Initialize(hWnd);
+
+    // GameWorldの初期化
+    m_pGameWorld = new GameWorld();
+    m_pGameWorld->Initialize();
 
     return true;
 }
@@ -37,7 +41,11 @@ bool MiEngine::Initialize(HWND hWnd)
 // MiEngineの終了処理
 void MiEngine::Finalize()
 {
-    Manager_Finalize();
+    // GameWorldの終了処理
+    m_pGameWorld->Finalize();
+    delete m_pGameWorld;
+    m_pGameWorld = nullptr;
+
     UninitAudio();
     Model_Finalize();
     FinalizeSprite();
@@ -64,11 +72,11 @@ bool MiEngine::RunOneFrame()
 // MiEngineの更新処理
 void MiEngine::Update()
 {
-    Manager_Update();
+    m_pGameWorld->Update();
 }
 
 // MiEngineの描画処理
 void MiEngine::Render()
 {
-    Manager_Draw();
+    m_pGameWorld->Render();
 }
