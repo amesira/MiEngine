@@ -20,7 +20,7 @@
 #include "slider_component.h"
 
 // behavior
-#include "ball_behavior.h"
+#include "player_behavior.h"
 
 void Factory::CreateCamera(GameObject* obj, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 atPosition)
 {
@@ -69,7 +69,29 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
         });
     modelComp->LoadModel("asset\\Model\\cube.fbx");
     modelComp->SetColor(color);
+}
+
+void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
+{
+    // component生成・登録
+    TransformComponent* transform = player->AddComponent<TransformComponent>();
+    BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
+    ModelComponent* modelComp = player->AddComponent<ModelComponent>();
+    RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
+
+    // component設定
+    transform->SetPosition(position);
+
+    XMFLOAT3 scaling = { 1.0f, 1.0f, 1.0f };
+    transform->SetScaling(scaling);
+    collider->SetScale({
+        scaling.x * 2.0f,
+        scaling.y * 2.0f,
+        scaling.z * 2.0f
+        });
+    modelComp->LoadModel("asset\\Model\\cube.fbx");
+    modelComp->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
 
     // behavior生成・登録
-    
+    player->AddBehavior<PlayerBehavior>();
 }

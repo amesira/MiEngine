@@ -136,7 +136,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="ball_behavior.cpp" />
     <ClCompile Include="camera_processor.cpp" />
     <ClCompile Include="collision_processor.cpp" />
     <ClCompile Include="debug_ostream.cpp" />
@@ -155,6 +154,7 @@
     <ClCompile Include="model.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="physics_processor.cpp" />
+    <ClCompile Include="player_behavior.cpp" />
     <ClCompile Include="processor_manager.cpp" />
     <ClCompile Include="renderer_3dcube_processor.cpp" />
     <ClCompile Include="renderer_3dmodel_processor.cpp" />
@@ -167,7 +167,6 @@
     <ClCompile Include="stb_implementation.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ball_behavior.h" />
     <ClInclude Include="behavior_component.h" />
     <ClInclude Include="camera_component.h" />
     <ClInclude Include="camera_processor.h" />
@@ -189,6 +188,7 @@
     <ClInclude Include="model.h" />
     <ClInclude Include="model_component.h" />
     <ClInclude Include="physics_processor.h" />
+    <ClInclude Include="player_behavior.h" />
     <ClInclude Include="processor_manager.h" />
     <ClInclude Include="rect_transform_component.h" />
     <ClInclude Include="renderer_3dcube_processor.h" />

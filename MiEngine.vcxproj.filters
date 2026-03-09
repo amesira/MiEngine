@@ -12,9 +12,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ball_behavior.cpp">
-      <Filter>Sources\Game\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="camera_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
@@ -102,6 +99,9 @@
     <ClCompile Include="scene_manager.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="player_behavior.cpp">
+      <Filter>Sources\Game\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cubemesh_component.h">
@@ -136,9 +136,6 @@
     </ClInclude>
     <ClInclude Include="camera_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ball_behavior.h">
-      <Filter>Sources\Game\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="camera_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
@@ -250,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="scene_manager.h">
       <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="player_behavior.h">
+      <Filter>Sources\Game\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
