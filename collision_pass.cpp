@@ -1,10 +1,10 @@
 //===================================================
-// collision_processor.cpp [当たり判定プロセッサー]
+// collision_pass.cpp [当たり判定プロセッサー]
 // 
 // Author：Miu Kitamura
 // Date  ：2025/10/28
 //===================================================
-#include "collision_processor.h"
+#include "collision_pass.h"
 
 #include "game_object.h"
 #include "scene_interface.h"
@@ -29,17 +29,17 @@ constexpr bool COLLISION_MATRIX[(int)ColliderComponent::Layer::MAX][(int)Collide
 
 };
 
-void CollisionProcessor::Initialize()
+void CollisionPass::Initialize()
 {
     
 }
 
-void CollisionProcessor::Finalize()
+void CollisionPass::Finalize()
 {
 
 }
 
-void CollisionProcessor::Process(IScene* pScene)
+void CollisionPass::Process(IScene* pScene)
 {
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
@@ -178,7 +178,7 @@ void CollisionProcessor::Process(IScene* pScene)
 }
 
 // デバッグ用コライダー描画
-void CollisionProcessor::DrawDebugCollider(IScene* pScene)
+void CollisionPass::DrawDebugCollider(IScene* pScene)
 {
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
@@ -295,7 +295,7 @@ void CollisionProcessor::DrawDebugCollider(IScene* pScene)
 #pragma region aabb bounds calculation
 
 // BoxColliderのAABB境界情報計算
-CollisionProcessor::Bounds CollisionProcessor::ConvertToBounds(
+CollisionPass::Bounds CollisionPass::ConvertToBounds(
     TransformComponent* t, BoxColliderComponent* c)
 {
     Bounds bounds = {};
@@ -333,7 +333,7 @@ CollisionProcessor::Bounds CollisionProcessor::ConvertToBounds(
 }
 
 // SphereColliderのAABB境界情報計算
-CollisionProcessor::Bounds CollisionProcessor::ConvertToBounds(TransformComponent* t, SphereColliderComponent* c)
+CollisionPass::Bounds CollisionPass::ConvertToBounds(TransformComponent* t, SphereColliderComponent* c)
 {
     Bounds bounds = {};
 
@@ -358,7 +358,7 @@ CollisionProcessor::Bounds CollisionProcessor::ConvertToBounds(TransformComponen
 #pragma endregion
 
 // AABB同士の衝突判定
-CollisionProcessor::CollisionResult CollisionProcessor::CheckAABB(Bounds a, Bounds b)
+CollisionPass::CollisionResult CollisionPass::CheckAABB(Bounds a, Bounds b)
 {
     CollisionResult result = {};
 
@@ -398,7 +398,7 @@ CollisionProcessor::CollisionResult CollisionProcessor::CheckAABB(Bounds a, Boun
 #pragma region collision functions
 
 // Box同士の衝突判定
-CollisionProcessor::CollisionResult CollisionProcessor::CheckBoxToBox(TransformComponent* tA, BoxColliderComponent* cA, TransformComponent* tB, BoxColliderComponent* cB)
+CollisionPass::CollisionResult CollisionPass::CheckBoxToBox(TransformComponent* tA, BoxColliderComponent* cA, TransformComponent* tB, BoxColliderComponent* cB)
 {
     CollisionResult result = {};
     result.isCollision = false;
@@ -517,7 +517,7 @@ CollisionProcessor::CollisionResult CollisionProcessor::CheckBoxToBox(TransformC
 }
 
 // BoxとSphereの衝突判定
-CollisionProcessor::CollisionResult CollisionProcessor::CheckBoxToSphere(TransformComponent* tA, BoxColliderComponent* cA, TransformComponent* tB, SphereColliderComponent* cB)
+CollisionPass::CollisionResult CollisionPass::CheckBoxToSphere(TransformComponent* tA, BoxColliderComponent* cA, TransformComponent* tB, SphereColliderComponent* cB)
 {
     CollisionResult result = { false,{0.0f,0.0f,0.0f} };
 
@@ -599,7 +599,7 @@ CollisionProcessor::CollisionResult CollisionProcessor::CheckBoxToSphere(Transfo
 }
 
 // Sphere同士の衝突判定
-CollisionProcessor::CollisionResult CollisionProcessor::CheckSphereToSphere(TransformComponent* tA, SphereColliderComponent* cA, TransformComponent* tB, SphereColliderComponent* cB)
+CollisionPass::CollisionResult CollisionPass::CheckSphereToSphere(TransformComponent* tA, SphereColliderComponent* cA, TransformComponent* tB, SphereColliderComponent* cB)
 {
     CollisionResult result = { false,{0.0f,0.0f,0.0f} };
 

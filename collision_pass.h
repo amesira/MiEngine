@@ -1,5 +1,5 @@
 //----------------------------------------------------
-// collision_processor.h [当たり判定プロセッサー]
+// collision_pass.h [当たり判定パス]
 // 
 // ・当たり判定を取る。
 // ・物理処理群の２番目。
@@ -7,22 +7,19 @@
 // Author：Miu Kitamura
 // Date  ：2025/10/28
 //----------------------------------------------------
-#ifndef COLLISION_PROCESSOR_H
-#define COLLISION_PROCESSOR_H
-
-#include <vector>
-#include "processor.h"
+#ifndef COLLISION_PASS_H
+#define COLLISION_PASS_H
+#include "pass.h"
 
 #include "direct3d.h"
 #include <DirectXMath.h>
 
 class TransformComponent;
 class ColliderComponent;
-
 class BoxColliderComponent;
 class SphereColliderComponent;
 
-class CollisionProcessor : public Processor {
+class CollisionPass : public Pass {
 public:
     void    Initialize()override;
     void    Finalize()override;

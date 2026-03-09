@@ -15,12 +15,6 @@
     <ClCompile Include="camera_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="collision_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
-    <ClCompile Include="dynamics_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
     <ClCompile Include="light_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
@@ -105,6 +99,15 @@
     <ClCompile Include="behavior_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
+    <ClCompile Include="collision_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="resolve_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="integrate_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cubemesh_component.h">
@@ -141,12 +144,6 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="camera_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="collision_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="dynamics_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
     <ClInclude Include="light_processor.h">
@@ -254,6 +251,18 @@
     <ClInclude Include="behavior_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
+    <ClInclude Include="pass.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="resolve_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="integrate_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -297,6 +306,9 @@
     </Filter>
     <Filter Include="Sources\Shader">
       <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\Pass">
+      <UniqueIdentifier>{8c156ce7-68ff-44c0-9a18-c53107a44ed5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

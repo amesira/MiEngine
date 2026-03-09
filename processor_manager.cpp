@@ -16,8 +16,6 @@
 #include "renderer_3dcube_processor.h"
 #include "renderer_3dmodel_processor.h"
 #include "physics_processor.h"
-#include "collision_processor.h"
-#include "dynamics_processor.h"
 #include "renderer_font_processor.h"
 #include "renderer_image_processor.h"
 #include "camera_processor.h"
@@ -33,8 +31,6 @@ static Renderer3DCubeProcessor* g_Renderer3DCubeProcessor = nullptr;
 static Renderer3DModelProcessor* g_Renderer3DModelProcessor = nullptr;
 
 static PhysicsProcessor* g_PhysicsProcessor = nullptr;
-static CollisionProcessor* g_CollisionProcessor = nullptr;
-static DynamicsProcessor* g_DynamicsProcessor = nullptr;
 
 static RendererFontProcessor* g_RendererFontProcessor = nullptr;
 static RendererImageProcessor* g_RendererImageProcessor = nullptr;
@@ -54,8 +50,6 @@ void ProcessorM_Initialize()
     g_Renderer3DModelProcessor = new Renderer3DModelProcessor();
 
     g_PhysicsProcessor = new PhysicsProcessor();
-    g_CollisionProcessor = new CollisionProcessor();
-    g_DynamicsProcessor = new DynamicsProcessor();
 
     g_RendererFontProcessor = new RendererFontProcessor();
     g_RendererImageProcessor = new RendererImageProcessor();
@@ -73,8 +67,6 @@ void ProcessorM_Initialize()
     }
     {   // 物理演算系プロセッサー初期化
         g_PhysicsProcessor->Initialize();
-        g_CollisionProcessor->Initialize();
-        g_DynamicsProcessor->Initialize();
     }
     {   // 2D描画系プロセッサー初期化
         g_RendererFontProcessor->Initialize();
@@ -107,15 +99,9 @@ void ProcessorM_Finalize()
     }
     {
         g_PhysicsProcessor->Finalize();
-        g_CollisionProcessor->Finalize();
-        g_DynamicsProcessor->Finalize();
 
         delete g_PhysicsProcessor;
         g_PhysicsProcessor = nullptr;
-        delete g_CollisionProcessor;
-        g_CollisionProcessor = nullptr;
-        delete g_DynamicsProcessor;
-        g_DynamicsProcessor = nullptr;
     }
     {
         g_RendererFontProcessor->Finalize();
@@ -147,8 +133,6 @@ void ProcessorM_Update(IScene* pScene)
 {
     // 物理演算制御プロセッサー処理
     g_PhysicsProcessor->Process(pScene);
-    g_CollisionProcessor->Process(pScene);
-    g_DynamicsProcessor->Process(pScene);
 
     // BehaviorProcessor処理
     g_BehaviorProcessor->Process(pScene);

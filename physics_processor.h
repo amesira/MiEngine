@@ -9,15 +9,17 @@
 //----------------------------------------------------
 #ifndef PHYSICS_PROCESSOR_H
 #define PHYSICS_PROCESSOR_H
-
-#include <vector>
 #include "processor.h"
 
-class TransformComponent;
-class RigidbodyComponent;
+#include "integrate_pass.h"
+#include "collision_pass.h"
+#include "resolve_pass.h"
 
 class PhysicsProcessor : public Processor {
 private:
+    IntegratePass  m_integratePass;
+    CollisionPass  m_collisionPass;
+    ResolvePass    m_resolvePass;
 
 public:
     void    Initialize()override;

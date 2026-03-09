@@ -1,10 +1,10 @@
 //===================================================
-// dynamics_processor.cpp [物理演算補正プロセッサー]
+// resolve_pass.cpp [物理演算補正プロセッサー]
 // 
 // Author：Miu Kitamura
 // Date  ：2025/10/28
 //===================================================
-#include "dynamics_processor.h"
+#include "resolve_pass.h"
 
 #include "game_object.h"
 #include "scene_interface.h"
@@ -23,17 +23,17 @@
 // 速度変化の最大値
 #define REV_VELOCITY_MAX (400.0f)
 
-void DynamicsProcessor::Initialize()
+void ResolvePass::Initialize()
 {
 
 }
 
-void DynamicsProcessor::Finalize()
+void ResolvePass::Finalize()
 {
 
 }
 
-void DynamicsProcessor::Process(IScene* pScene)
+void ResolvePass::Process(IScene* pScene)
 {
     float deltaTime = FPS_GetDeltaTime();
 
@@ -56,7 +56,7 @@ void DynamicsProcessor::Process(IScene* pScene)
             if (!transform->GetEnable() || !collider->GetEnable() || !rigidbody->GetEnable())continue;
 
             // 物理演算補正適用
-            ApplyDynamics(transform, collider, rigidbody, deltaTime);
+            ApplyResolve(transform, collider, rigidbody, deltaTime);
         }
     }
 
@@ -73,12 +73,12 @@ void DynamicsProcessor::Process(IScene* pScene)
             if (!transform->GetEnable() || !collider->GetEnable() || !rigidbody->GetEnable())continue;
 
             // 物理演算補正適用
-            ApplyDynamics(transform, collider, rigidbody, deltaTime);
+            ApplyResolve(transform, collider, rigidbody, deltaTime);
         }
     }
 }
 
-void DynamicsProcessor::ApplyDynamics(TransformComponent* transform, ColliderComponent* collider, RigidbodyComponent* rigidbody, float deltaTime)
+void ResolvePass::ApplyResolve(TransformComponent* transform, ColliderComponent* collider, RigidbodyComponent* rigidbody, float deltaTime)
 {
     bool isGrounded = false;
 

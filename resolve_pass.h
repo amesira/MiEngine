@@ -1,27 +1,22 @@
 //----------------------------------------------------
-// dynamics_processor.h [物理演算補正プロセッサー]
+// resolve_pass.h [物理演算補正パス]
 // 
 // ・衝突情報から位置補正を行う。
-// ・PhysicsProcessor → CollisionProcessor の後に行う。
 // ・３番目。
 // ・物体の動き、衝突判定、補正 ←ここに当たる。
 // 
 // Author：Miu Kitamura
 // Date  ：2025/10/28
 //----------------------------------------------------
-#ifndef DYNAMICS_PROCESSOR_H
-#define DYNAMICS_PROCESSOR_H
-
-#include <vector>
-#include "processor.h"
+#ifndef RESOLVE_PASS_H
+#define RESOLVE_PASS_H
+#include "pass.h"
 
 class TransformComponent;
 class ColliderComponent;
 class RigidbodyComponent;
 
-class DynamicsProcessor : public Processor {
-private:
-
+class ResolvePass : public Pass {
 public:
     void    Initialize()override;
     void    Finalize()override;
@@ -29,7 +24,8 @@ public:
     void    Process(IScene* pScene)override;
 
 private:
-    void    ApplyDynamics(
+    // 衝突情報から位置補正を行う
+    void    ApplyResolve(
         TransformComponent* transform,
         ColliderComponent* collider,
         RigidbodyComponent* rigidbody,
