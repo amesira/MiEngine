@@ -143,6 +143,7 @@
     <ClCompile Include="debug_renderer.cpp" />
     <ClCompile Include="direct3d.cpp" />
     <ClCompile Include="integrate_pass.cpp" />
+    <ClCompile Include="render_processor.cpp" />
     <ClCompile Include="resolve_pass.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="factory.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="cubemesh_component.h" />
     <ClInclude Include="debug_renderer.h" />
     <ClInclude Include="integrate_pass.h" />
+    <ClInclude Include="render_processor.h" />
     <ClInclude Include="resolve_pass.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="factory.h" />

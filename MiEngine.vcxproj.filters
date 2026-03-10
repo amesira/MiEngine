@@ -2,13 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <FxCompile Include="shader_pixel.hlsl">
-      <Filter>Sources\Shader</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader_pixel_font.hlsl">
-      <Filter>Sources\Shader</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader_vertex.hlsl">
-      <Filter>Sources\Shader</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -19,21 +19,6 @@
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
     <ClCompile Include="physics_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer_3dcube_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer_3dmodel_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer_font_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer_image_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer_slider_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
     <ClCompile Include="direct3d.cpp">
@@ -100,13 +85,31 @@
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
     <ClCompile Include="collision_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
-    </ClCompile>
-    <ClCompile Include="resolve_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
     <ClCompile Include="integrate_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    </ClCompile>
+    <ClCompile Include="resolve_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    </ClCompile>
+    <ClCompile Include="render_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_3dcube_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_3dmodel_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_font_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_image_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_slider_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,21 +153,6 @@
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
     <ClInclude Include="physics_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer_3dcube_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer_3dmodel_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer_font_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer_image_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer_slider_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
     <ClInclude Include="component_pool_interface.h">
@@ -254,14 +242,32 @@
     <ClInclude Include="pass.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="collision_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
-    </ClInclude>
     <ClInclude Include="resolve_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
     <ClInclude Include="integrate_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass</Filter>
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    </ClInclude>
+    <ClInclude Include="render_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_3dcube_processor.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_3dmodel_processor.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_font_processor.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_image_processor.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer_slider_processor.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -304,11 +310,17 @@
     <Filter Include="Sources\Game\Behavior">
       <UniqueIdentifier>{9b63bf25-6746-489e-babd-6ad31aaaabed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Shader">
-      <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Engine\Framework\Processor\Pass">
       <UniqueIdentifier>{8c156ce7-68ff-44c0-9a18-c53107a44ed5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\Pass\PhysicsPass">
+      <UniqueIdentifier>{0fc833eb-3f42-4125-a453-4ef9d1e5fd78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass">
+      <UniqueIdentifier>{2bb638b9-bea5-45ad-88a1-172ab79e3d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
