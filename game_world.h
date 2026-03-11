@@ -34,6 +34,9 @@ private:
     std::vector<RenderView> m_renderViews;
     CameraProcessor    m_cameraProcessor;
     RenderProcessor    m_renderProcessor;
+
+public:
+    const std::vector<RenderView>& GetRenderViews() const { return m_renderViews; }
 };
 
 #endif // GAME_WORLD_H

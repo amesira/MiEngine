@@ -35,6 +35,11 @@ struct RenderView {
     ComPtr<ID3D11RenderTargetView>      postEffectRTV;
     ComPtr<ID3D11ShaderResourceView>    postEffectSRV;
 
+    // スナップショット用のフラグ・SRV
+    // bool afterPostEffectSnapshotRequested;
+    // ・どのタイミングでスナップショットを取るか？のトリガーなどを作っておくと良いのかも
+    // ・enumでも良い気もするが
+
     RenderView() :
         viewMatrix(XMMatrixIdentity()),
         projectionMatrix(XMMatrixIdentity()),

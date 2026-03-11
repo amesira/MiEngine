@@ -108,6 +108,33 @@
     <ClCompile Include="collector_font.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_dx11.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_win32.cpp">
+      <Filter>External\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="mi_imgui_manager.cpp">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="scene_view_window.cpp">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -266,6 +293,39 @@
     <ClInclude Include="collector_font.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_dx11.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_win32.h">
+      <Filter>External\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_window_interface.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="mi_imgui_manager.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_view_window.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -322,5 +382,16 @@
     <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass\Context">
       <UniqueIdentifier>{27fbcdb5-aeda-4b7e-b721-cba25d0149e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External\imgui">
+      <UniqueIdentifier>{c5e60a0b-c8e6-4014-94b3-2025821f7137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\ImguiWindow">
+      <UniqueIdentifier>{f6eed08c-fb73-4a55-89a8-f4c273ea1ea2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.ini">
+      <Filter>External\imgui</Filter>
+    </None>
   </ItemGroup>
 </Project>

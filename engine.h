@@ -8,10 +8,16 @@
 #define MI_ENGINE_H
 #include <windows.h>
 
-class GameWorld;
+#include "game_world.h"
+#include "mi_imgui_manager.h"
 
 class MiEngine {
 public:
+    static MiEngine& GetInstance() {
+        static MiEngine instance;
+        return instance;
+    }
+
     bool Initialize(HWND hWnd);
     void Finalize();
     bool RunOneFrame();
@@ -23,13 +29,17 @@ private:
 private:
     bool m_isRunning;
 
+    MiImguiManager m_imguiManager;
     // AssetManager* m_pAssetManager;
     // Renderer* m_pRenderer;
     // InputSystem* m_pInputSystem;
     // AudioSystem* m_pAudioSystem;
 
-    GameWorld* m_pGameWorld;
+    GameWorld m_gameWorld;
     // DebugWorld* m_pDebugWorld;
+
+public:
+    const GameWorld& GetGameWorld() const { return m_gameWorld; }
 
 };
 

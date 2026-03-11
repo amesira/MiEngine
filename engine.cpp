@@ -13,7 +13,7 @@
 #include "mi_fps.h"
 #include "model.h"
 
-#include "game_world.h"
+#include "scene_view_window.h"
 
 // MiEngineの初期化処理
 bool MiEngine::Initialize(HWND hWnd)
@@ -31,9 +31,15 @@ bool MiEngine::Initialize(HWND hWnd)
     Model_Initialize();
     FPS_Initialize(hWnd);
 
+    // ImGuiの初期化
+    m_imguiManager.Initialize(hWnd);
+
+    SceneViewWindow sceneViewWindow;
+    sceneViewWindow.Initialize(0);
+    m_imguiManager.AddWindow(std::make_unique<SceneViewWindow>(sceneViewWindow));
+
     // GameWorldの初期化
-    m_pGameWorld = new GameWorld();
-    m_pGameWorld->Initialize();
+    m_gameWorld.Initialize();
 
     return true;
 }
@@ -42,9 +48,7 @@ bool MiEngine::Initialize(HWND hWnd)
 void MiEngine::Finalize()
 {
     // GameWorldの終了処理
-    m_pGameWorld->Finalize();
-    delete m_pGameWorld;
-    m_pGameWorld = nullptr;
+    m_gameWorld.Finalize();
 
     UninitAudio();
     Model_Finalize();
@@ -72,11 +76,16 @@ bool MiEngine::RunOneFrame()
 // MiEngineの更新処理
 void MiEngine::Update()
 {
-    m_pGameWorld->Update();
+    m_gameWorld.Update();
 }
 
 // MiEngineの描画処理
 void MiEngine::Render()
 {
-    m_pGameWorld->Render();
+    m_gameWorld.Render();
+
+    // ImGuiの描画
+    m_imguiManager.RenderProcess();
+
+    Direct3D_Present();
 }

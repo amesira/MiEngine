@@ -142,7 +142,15 @@
     <ClCompile Include="debug_ostream.cpp" />
     <ClCompile Include="debug_renderer.cpp" />
     <ClCompile Include="direct3d.cpp" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_dx11.cpp" />
+    <ClCompile Include="imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui_tables.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="integrate_pass.cpp" />
+    <ClCompile Include="mi_imgui_manager.cpp" />
     <ClCompile Include="opaque_render_pass.cpp" />
     <ClCompile Include="render_processor.cpp" />
     <ClCompile Include="resolve_pass.cpp" />
@@ -163,6 +171,7 @@
     <ClCompile Include="collector_image.cpp" />
     <ClCompile Include="collector_slider.cpp" />
     <ClCompile Include="scene_manager.cpp" />
+    <ClCompile Include="scene_view_window.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="stb_implementation.cpp" />
@@ -179,7 +188,17 @@
     <ClInclude Include="component_pool_interface.h" />
     <ClInclude Include="debug_renderer.h" />
     <ClInclude Include="draw_command.h" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_impl_dx11.h" />
+    <ClInclude Include="imgui_impl_win32.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="integrate_pass.h" />
+    <ClInclude Include="mi_imgui_manager.h" />
+    <ClInclude Include="imgui_window_interface.h" />
     <ClInclude Include="opaque_render_pass.h" />
     <ClInclude Include="render_processor.h" />
     <ClInclude Include="render_view.h" />
@@ -213,6 +232,7 @@
     <ClInclude Include="scene_base.h" />
     <ClInclude Include="scene_interface.h" />
     <ClInclude Include="scene_manager.h" />
+    <ClInclude Include="scene_view_window.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="slider_component.h" />
     <ClInclude Include="sprite.h" />
@@ -249,6 +269,9 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

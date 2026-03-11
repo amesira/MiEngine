@@ -74,5 +74,4 @@ void GameWorld::Render()
     SetTexture(m_renderViews[0].colorBufferSRV.Get());
     DrawSpriteScreen({1280.0f / 2.0f, 720.0f / 2.0f}, {1280.0f, 720.0f}, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
     
-    Direct3D_Present();
 }
