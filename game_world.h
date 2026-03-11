@@ -6,13 +6,12 @@
 //---------------------------------------------------
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
+#include "scene_manager.h"
 
-class SceneManager;
-
-class PhysicsProcessor;
-class CameraProcessor;
-class LightProcessor;
-class RenderProcessor;
+#include "physics_processor.h"
+#include "behavior_processor.h"
+#include "camera_processor.h"
+#include "render_processor.h"
 
 class GameWorld {
 public:
@@ -23,14 +22,14 @@ public:
 
 private:
     // Scene管理
-    SceneManager*   m_pSceneManager;
+    SceneManager    m_sceneManager;
 
     // Processor群
-    PhysicsProcessor*   m_pPhysicsProcessor;
-    CameraProcessor*    m_pCameraProcessor;
-    LightProcessor*     m_pLightProcessor;
-    RenderProcessor*    m_pRenderProcessor;
+    PhysicsProcessor   m_physicsProcessor;
+    BehaviorProcessor  m_behaviorProcessor;
 
+    CameraProcessor    m_cameraProcessor;
+    RenderProcessor    m_renderProcessor;
 };
 
 #endif // GAME_WORLD_H

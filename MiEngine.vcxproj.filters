@@ -63,9 +63,6 @@
     <ClCompile Include="game.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
-    <ClCompile Include="processor_manager.cpp">
-      <Filter>Sources\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
@@ -211,9 +208,6 @@
     </ClInclude>
     <ClInclude Include="game.h">
       <Filter>Sources\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="processor_manager.h">
-      <Filter>Sources\Engine</Filter>
     </ClInclude>
     <ClInclude Include="behavior_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>

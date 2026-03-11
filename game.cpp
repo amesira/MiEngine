@@ -6,8 +6,6 @@
 //===================================================
 #include "game.h"
 
-#include "processor_manager.h"
-
 #include "factory.h"
 #include "keyboard.h"
 #include "text_component.h"

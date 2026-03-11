@@ -5,51 +5,66 @@
 // Date  ：2026/03/09
 //===================================================
 #include "game_world.h"
-
-#include "scene_manager.h"
-#include "processor_manager.h"
+#include "debug_renderer.h"
 
 // GameWorldの初期化
 void GameWorld::Initialize()
 {
     // Scene管理の初期化
-    m_pSceneManager = new SceneManager();
-    m_pSceneManager->Initialize();
+    m_sceneManager.Initialize();
 
-    //// Processor群の初期化
-    ProcessorM_Initialize();
+    // Processor群の初期化
+    m_physicsProcessor.Initialize();
+    m_behaviorProcessor.Initialize();
+    m_cameraProcessor.Initialize();
+    m_renderProcessor.Initialize();
 }
 
 // GameWorldの終了処理
 void GameWorld::Finalize()
 {
     // Processor群の終了処理
-    ProcessorM_Finalize();
+    m_physicsProcessor.Finalize();
+    m_behaviorProcessor.Finalize();
+    m_cameraProcessor.Finalize();
+    m_renderProcessor.Finalize();
 
     // Scene管理の終了処理
-    m_pSceneManager->Finalize();
-    delete m_pSceneManager;
-    m_pSceneManager = nullptr;
+    m_sceneManager.Finalize();
 }
 
 // GameWorldの更新処理
 void GameWorld::Update()
 {
+    DebugRenderer_ResetBuffer();
+
     // Scene管理の更新
-    m_pSceneManager->Update();
-    IScene* scene = m_pSceneManager->GetCurrentScene();
+    m_sceneManager.Update();
+    IScene* scene = m_sceneManager.GetCurrentScene();
 
     // Processor群の更新
-    ProcessorM_Update(scene);
+    m_physicsProcessor.Process(scene);  // 物理演算制御プロセッサー処理
+    m_behaviorProcessor.Process(scene); // Behavior制御プロセッサー処理
 }
 
 // GameWorldの描画処理
 void GameWorld::Render()
 {
-    IScene* scene = m_pSceneManager->GetCurrentScene();
+    IScene* scene = m_sceneManager.GetCurrentScene();
 
-    // Processor群の描画処理
-    ProcessorM_Draw(scene);
+    // カメラ設定・描画情報の取得
+    m_cameraProcessor.Process(scene);
+    auto renderViews = m_cameraProcessor.GetRenderViews();
+    
+    Direct3D_Clear();
+    
+    // 描画制御プロセッサー処理
+    for (const RenderView& view : renderViews) {
+        m_renderProcessor.BindRenderView(view);
+        m_renderProcessor.Process(scene);
+    }
+
+    Direct3D_Present();
 }
 
 // GameWorldの観測

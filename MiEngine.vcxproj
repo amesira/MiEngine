@@ -159,7 +159,6 @@
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="physics_processor.cpp" />
     <ClCompile Include="player_behavior.cpp" />
-    <ClCompile Include="processor_manager.cpp" />
     <ClCompile Include="collector_font.cpp" />
     <ClCompile Include="collector_image.cpp" />
     <ClCompile Include="collector_slider.cpp" />
@@ -198,7 +197,6 @@
     <ClInclude Include="pass.h" />
     <ClInclude Include="physics_processor.h" />
     <ClInclude Include="player_behavior.h" />
-    <ClInclude Include="processor_manager.h" />
     <ClInclude Include="rect_transform_component.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="component.h" />
