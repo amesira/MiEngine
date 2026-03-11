@@ -21,6 +21,10 @@ namespace Factory {
     
     void CreateBox          (GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color);
     void CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position);
+
+    void CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const wchar_t* texturePath);
+    void CreateUiText(GameObject* uiText, XMFLOAT2 position, XMFLOAT2 size, const std::u8string text);
+    void CreateUiSlider(GameObject* uiSlider, XMFLOAT2 position, XMFLOAT2 size, float value);
 }
 
 #endif

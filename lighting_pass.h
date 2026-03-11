@@ -1,22 +1,24 @@
 //---------------------------------------------------
-// light_processor.h
+// lighting_pass.h
 // 
 // Author：Miu Kitamura
 // Date  ：2026/01/05
 //---------------------------------------------------
-#ifndef LIGHT_PROCESSOR_H
-#define LIGHT_PROCESSOR_H
+#ifndef LIGHTING_PASS_H
+#define LIGHTING_PASS_H
+#include "pass.h"
 
-#include "processor.h"
+class LightingPass : public Pass {
+private:
+    int m_lightCount;
 
-class LightProcessor : public Processor {
 public:
     void Initialize() override;
     void Finalize() override;
     void Process(IScene* pScene) override;
 
-public:
-    void SetUiLight();
+    void SetLightEnable(bool enable);
+
 };
 
 #endif // LIGHT_PROCESSOR_H

@@ -248,6 +248,9 @@ void Shader_Begin(ShaderBeginMode mode)
 		g_pContext->IASetInputLayout(g_pInputLayout);
 
 		g_pContext->VSSetConstantBuffers(0, 1, &g_pMtxCB);
+		g_pContext->VSSetConstantBuffers(1, 1, &g_pWorldCB);
+		g_pContext->VSSetConstantBuffers(2, 1, &g_pLightCB);
+		g_pContext->PSSetConstantBuffers(0, 1, &g_pOptionCB);
 		break;
 	}
 	default: break;

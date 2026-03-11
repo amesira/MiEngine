@@ -1,12 +1,11 @@
 //----------------------------------------------------
-// renderer_font_processor.h
+// collector_font.h
 // 
 // Author：Miu Kitamura (from Ushi)
 // Date  ：2025/11/18
 //----------------------------------------------------
 #ifndef RENDERER_FONT_PROCESSOR_H
 #define RENDERER_FONT_PROCESSOR_H
-
 #include <string>
 #include <vector>
 #include <map>
@@ -18,18 +17,12 @@
 using Microsoft::WRL::ComPtr;
 
 #include "text_component.h"
+#include "draw_command.h"
 
-#include "processor.h"
+class IScene;
 
-class RectTransformComponent;
-
-class RendererFontProcessor : public Processor {
+class CollectorFont {
 private:
-	const char* fontPath = "asset/Font/PixelMplus12-Regular.ttf";
-
-	ID3D11Device* g_pDevice = nullptr;
-	ID3D11DeviceContext* g_pContext = nullptr;
-
 	// 1文字の描画情報 (変更なし)
 	struct GlyphInfo {
 		float x_off, y_off;
@@ -40,9 +33,9 @@ private:
 
 	// stb_truetype関連 (変更なし)
 	static constexpr float BASE_FONT_SIZE = 64.0f;
-	std::vector<unsigned char> m_fontBuffer;
+	std::vector<unsigned char> m_fontBuffer[(int)TextComponent::Font::MAX];
 	stbtt_fontinfo m_fontInfo[(int)TextComponent::Font::MAX];
-	std::map<int, GlyphInfo> m_glyphCache;
+	std::map<int, GlyphInfo> m_glyphCache[(int)TextComponent::Font::MAX];
 	int m_atlasWidth = 1024;
 	int m_atlasHeight = 1024;
 	int m_atlasCursorX = 0;
@@ -55,10 +48,10 @@ private:
 	ComPtr<ID3D11Buffer> m_pVertexBuffer;
 
 public:
-    void    Initialize()override;
-    void    Finalize()override;
+    void    Initialize();
+    void    Finalize();
 
-    void    Process(IScene* pScene)override;
+	void CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches);
 
 private:
 	int DecodeUtf8(const char8_t** text_ptr);

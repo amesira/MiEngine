@@ -15,7 +15,6 @@ using namespace DirectX;
 //----------------------------------------------------
 // スプライト 初期化・終了処理
 //----------------------------------------------------
-
 /// @brief スプライトを初期化する
 void InitializeSprite();
 
@@ -27,7 +26,18 @@ void FinalizeSprite();
 /// @brief スプライト描画
 void DrawSprite(XMFLOAT4 color,XMFLOAT4 uvRect,XMFLOAT3 normal = XMFLOAT3(0.0f,0.0f,1.0f));
 
+/// @brief テクスチャセット
+void SetTexture(ID3D11ShaderResourceView* texture);
+
+/// @brief インスタンシング描画準備
 void    PrepareDrawInstance();
+/// @brief インスタンシングデータ追加
+/// @param world ワールド座標
+/// @param color 色
+/// @param uvRect UV座標
 void    AddInstanceData(const XMMATRIX& world, const XMFLOAT4& color, const XMFLOAT4& uvRect);
+/// @brief インスタンシング描画命令
 void    DrawInstance();
-void    EndDrawInstance();
+
+/// @brief インスタンシングデータクリア
+void    ClearInstanceData();

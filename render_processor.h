@@ -10,23 +10,45 @@
 #define RENDER_PROCESSOR_H
 #include "processor.h"
 
+#include "render_view.h"
+
+#include "lighting_pass.h"
+#include "opaque_render_pass.h"
+#include "ui_render_pass.h"
+
 class RenderProcessor : public Processor {
 private:
-    // SceneRenderPass
+    RenderView m_renderView;
+
+    // LightingPass
+    LightingPass m_lightingPass;
+    // ShadowMapPass
     // 
     // SkyboxPass
-    // OpaquePass
+    // OpaqueRenderPass
+    OpaqueRenderPass m_opaqueRenderPass;
     // TransparentPass
+    // 
+    // ←Snapshot !
     // 
     // PostEffectPass
     // 
+    // ←Snapshot !
     // 
     // UIRenderPass
+    UIRenderPass m_uiRenderPass;
+    // 
+    // ←Snapshot !
 
 public:
     void    Initialize()override;
     void    Finalize()override;
     void    Process(IScene* pScene)override;
+
+    // 描画に必要な情報をまとめる構造体RenderViewのバインド
+    void    BindRenderView(const RenderView& view) {
+        m_renderView = view;
+    }
 
 };
 

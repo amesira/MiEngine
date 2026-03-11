@@ -1,5 +1,5 @@
 //===================================================
-// renderer_font_processor.h
+// collector_font.cpp
 // 
 // ・TrueTypeフォントをレンダリングするプロセッサー
 // 
@@ -7,8 +7,7 @@
 // Date  ：2025/11/18
 //===================================================
 #define NOMINMAX
-#include "renderer_font_processor.h"
-
+#include "collector_font.h"
 #include "debug_ostream.h"
 
 #include <algorithm>
@@ -22,25 +21,32 @@
 #include "game_object.h"
 #include "rect_transform_component.h"
 
-void RendererFontProcessor::Initialize()
+static ID3D11Device* g_pDevice = nullptr;
+static ID3D11DeviceContext* g_pContext = nullptr;
+
+static const char* fontPath[(int)TextComponent::Font::MAX] = {
+	"asset/Font/PixelMplus12-Regular.ttf",
+};
+
+void CollectorFont::Initialize()
 {
-    g_pDevice = Direct3D_GetDevice();
-    g_pContext = Direct3D_GetDeviceContext();
+	g_pDevice = Direct3D_GetDevice();
+	g_pContext = Direct3D_GetDeviceContext();
 
 	//----------------------------------------------------
-    // フォントデータの読み込みとテクスチャアトラス作成
+	// フォントデータの読み込みとテクスチャアトラス作成
 	//----------------------------------------------------
 	for (int i = 0; i < (int)TextComponent::Font::MAX; i++) {
 		// ファイルパスから読み込み
-		std::ifstream file(fontPath, std::ios::binary);
+		std::ifstream file(fontPath[i], std::ios::binary);
 		if (!file)return;
 		file.seekg(0, std::ios::end);
 		std::streamsize size = file.tellg();
 		file.seekg(0, std::ios::beg);
-		m_fontBuffer.resize(size);
-		file.read((char*)m_fontBuffer.data(), size);
+		m_fontBuffer[i].resize(size);
+		file.read((char*)m_fontBuffer[i].data(), size);
 
-		if (!stbtt_InitFont(&m_fontInfo[i], m_fontBuffer.data(), 0)) {
+		if (!stbtt_InitFont(&m_fontInfo[i], m_fontBuffer[i].data(), 0)) {
 			return;
 		}
 
@@ -64,103 +70,70 @@ void RendererFontProcessor::Initialize()
 		srvDesc.Texture2D.MipLevels = 1;
 		g_pDevice->CreateShaderResourceView(m_pFontTexture[i].Get(), &srvDesc, m_pFontSRV[i].GetAddressOf());
 	}
-
-	// 頂点バッファ生成
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof(Vertex) * 4;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	g_pDevice->CreateBuffer(&bd, NULL, m_pVertexBuffer.GetAddressOf());
 }
 
-void RendererFontProcessor::Finalize()
+void CollectorFont::Finalize()
 {
-	// ComPtrが自動で解放してくれる
-	// なんて便利
+	
 }
 
-void RendererFontProcessor::Process(IScene* pScene)
+// シーンからTextComponentを収集して描画バッチを生成
+void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches)
 {
 	auto* textPool = pScene->GetComponentPool<TextComponent>();
 	auto* rectTransformPool = pScene->GetComponentPool<RectTransformComponent>();
     if (textPool == nullptr || rectTransformPool == nullptr)return;
 
-	Shader_Begin(ShaderBeginMode::TrueTypeFont);
-
-    const float screenWidth = (float)Direct3D_GetBackBufferWidth();
-    const float screenHeight = (float)Direct3D_GetBackBufferHeight();
-
-	// 頂点シェーダーに変換行列を設定
-	Shader_SetMatrix(XMMatrixOrthographicOffCenterLH(
-		0.0f,
-		screenWidth,
-		screenHeight,
-		0.0f,
-		0.0f,
-		1.0f));
-
     auto& textList = textPool->GetList();
 
 	for(TextComponent& t : textList) {
-		RectTransformComponent* pRect = rectTransformPool->GetByGameObjectID(t.GetOwner()->GetID());
-		TextComponent* pText = &t;
+		TextComponent* text = &t;
+		RectTransformComponent* rect = rectTransformPool->GetByGameObjectID(text->GetOwner()->GetID());
 
         // コンポーネントが無効ならスキップ
-        if (!pRect || !pText) continue;
-        if (!pRect->GetEnable() || !pText->GetEnable()) continue;
-        if (t.GetOwner()->GetActive() == false) continue;
+        if (!rect) continue;
+		if (!rect->GetOwner()->GetActive()) continue;
+		if (!rect->GetEnable()) continue;
 
-        int fontType = (int)pText->GetFontType();
-
+        int fontType = (int)text->GetFontType();
         if (!m_pFontSRV[fontType]) continue;
 
-		//----------------------------------------------------
-        // 描画情報取得
-		//----------------------------------------------------
-		
-		// 頂点バッファを描画パイプラインに設定
-		UINT stride = sizeof(Vertex);
-		UINT offset = 0;
-		g_pContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-		// プリミティブトポロジ設定
-		g_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-		// 3. シェーダーリソース（テクスチャ）設定
-		g_pContext->PSSetShaderResources(0, 1, m_pFontSRV[fontType].GetAddressOf());
-
 		// 描画スケール計算
-		float render_scale = (float)pText->GetFontSize() / BASE_FONT_SIZE;
+		float render_scale = (float)text->GetFontSize() / BASE_FONT_SIZE;
+        const char8_t* current_char = text->GetText().c_str();
 
-        const char8_t* current_char = pText->GetText().c_str();
+        
+		// 描画コマンドに追加
+		DrawBatch2D batch;
+		batch.orderInLayer = rect->GetPosition().z;
+		batch.texture = m_pFontSRV[fontType].Get();
+        batch.shaderType = DrawBatch2D::ShaderType::Font;
 
-		//----------------------------------------------------
-        // Textを中央揃えにする場合、開始位置を調整
-		//----------------------------------------------------
-		float xOffset = 0.0f;
-		if (pText->IsCenter()) {
-			// 文字列全体の幅を計算 (センター表示用)
-			while (*current_char != '\0')
-			{
-				int codepoint = DecodeUtf8(&current_char);
-				if (codepoint == 0) break;
+		DrawCommand2DInstance instance;
+		instance.angleZ = rect->GetRotation().z;
+		instance.color = text->GetColor();
 
-				const GlyphInfo* glyph = GetGlyph(fontType, codepoint);
-				if (!glyph) continue;
+		// 各文字の出力
+		XMFLOAT3 rectPos = rect->GetPosition();
+		{
+			// Textを中央揃えにする場合、開始位置を調整
+			float xOffset = 0.0f;
+			if (text->IsCenter()) {
+				while (*current_char != '\0')
+				{
+					int codepoint = DecodeUtf8(&current_char);
+					if (codepoint == 0) break;
 
-				xOffset += (glyph->x_advance * render_scale) * 0.5f;
+					const GlyphInfo* glyph = GetGlyph(fontType, codepoint);
+					if (!glyph) continue;
+
+					xOffset += (glyph->x_advance * render_scale) * 0.5f;
+				}
 			}
+			rectPos.x -= xOffset;
 		}
 
-		//----------------------------------------------------
-		// 各文字の出力
-		//----------------------------------------------------
-        DirectX::XMFLOAT3 rectPos = pRect->GetPosition();
-        const DirectX::XMFLOAT4 color = pText->GetColor();
-		rectPos.x -= xOffset;
-
-		current_char = pText->GetText().c_str();
+		current_char = text->GetText().c_str();
 		while (*current_char != '\0') {
 			int codepoint = DecodeUtf8(&current_char);
 			if (codepoint == 0) break;
@@ -174,39 +147,34 @@ void RendererFontProcessor::Process(IScene* pScene)
 			float x1 = x0 + (glyph->width * render_scale);
 			float y1 = y0 + (glyph->height * render_scale); // ★Y方向を反転
 
-			// --- ★変更: 動的頂点バッファをMap/Unmapで更新 ---
-			D3D11_MAPPED_SUBRESOURCE mappedResource;
-			g_pContext->Map(m_pVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-
-			Vertex* v = (Vertex*)mappedResource.pData;
-
-			v[0].position = { x0, y0, rectPos.z };
-			v[1].position = { x1, y0, rectPos.z };
-			v[2].position = { x0, y1, rectPos.z };
-			v[3].position = { x1, y1, rectPos.z };
-
-			v[0].color = color;
-			v[1].color = color;
-			v[2].color = color;
-			v[3].color = color;
-
-			v[0].texCoord = { glyph->u0, glyph->v0 };
-			v[1].texCoord = { glyph->u1, glyph->v0 };
-			v[2].texCoord = { glyph->u0, glyph->v1 };
-			v[3].texCoord = { glyph->u1, glyph->v1 };
-
-			g_pContext->Unmap(m_pVertexBuffer.Get(), 0);
-
-			// 描画
-			g_pContext->Draw(4, 0);
+			// インスタンス更新
+			instance.position = {
+				(x0 + x1) / 2.0f,
+				(y0 + y1) / 2.0f
+			};
+			instance.size = {
+				x1 - x0,
+				y1 - y0
+            };
+			instance.uvRect = {
+				glyph->u0, glyph->v0, glyph->u1 - glyph->u0, glyph->v1 - glyph->v0
+			};
 
 			// 文字送り (変更なし)
 			rectPos.x += (glyph->x_advance * render_scale);
+
+			// インスタンス追加
+			batch.instances.push_back(instance);
 		}
+
+		// バッチ追加
+		outBatches.push_back(batch);
     }
 }
 
-int RendererFontProcessor::DecodeUtf8(const char8_t** text_ptr) {
+// UTF-8デコード関数
+int CollectorFont::DecodeUtf8(const char8_t** text_ptr) 
+{
 	const unsigned char* s = (const unsigned char*)*text_ptr;
 	unsigned int c = *s;
 	unsigned int c2, c3, c4;
@@ -248,10 +216,11 @@ int RendererFontProcessor::DecodeUtf8(const char8_t** text_ptr) {
 	return 0xFFFD; // Replacement Character
 }
 
-const RendererFontProcessor::GlyphInfo* RendererFontProcessor::GetGlyph(int fontType, int codepoint)
+// グリフ情報を取得する関数
+const CollectorFont::GlyphInfo* CollectorFont::GetGlyph(int fontType, int codepoint)
 {
-	auto it = m_glyphCache.find(codepoint);
-	if (it != m_glyphCache.end()) {
+	auto it = m_glyphCache[fontType].find(codepoint);
+	if (it != m_glyphCache[fontType].end()) {
 		return &it->second;
 	}
 
@@ -334,6 +303,6 @@ const RendererFontProcessor::GlyphInfo* RendererFontProcessor::GetGlyph(int font
 	m_currentLineHeight = std::max(m_currentLineHeight, glyphHeight + 1);
 
 	// 作成したグリフをキャッシュして、その参照を返す
-	auto [inserted_it, success] = m_glyphCache.emplace(codepoint, newGlyph);
+	auto [inserted_it, success] = m_glyphCache[fontType].emplace(codepoint, newGlyph);
 	return &inserted_it->second;
 }
