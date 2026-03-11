@@ -135,6 +135,18 @@
     <ClCompile Include="scene_view_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
+    <ClCompile Include="inspector_view_window.cpp">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="tool_bar_window.cpp">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="hierarchy_view_window.cpp">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_view_window.cpp">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -324,6 +336,21 @@
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
     <ClInclude Include="scene_view_window.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="editor_context.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="inspector_view_window.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="tool_bar_window.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="hierarchy_view_window.h">
+      <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
   </ItemGroup>

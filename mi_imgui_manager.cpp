@@ -19,6 +19,8 @@ void MiImguiManager::Initialize(HWND hwnd)
     // 2. IO設定など（省略可）
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+    SetupEditorImguiStyle();
+
     // 3. プラットフォーム用初期化（Win32）
     ImGui_ImplWin32_Init(hwnd);
 
@@ -26,7 +28,6 @@ void MiImguiManager::Initialize(HWND hwnd)
     ImGui_ImplDX11_Init(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
 
     // 5. スタイル設定など
-    ImGui::StyleColorsDark(); // 任意
 
     // 6. ウィンドウリストの初期化（必要に応じて）
     m_imguiWindowList.clear();
@@ -61,4 +62,23 @@ void MiImguiManager::RenderProcess()
 
     // レンダリング（ImGui描画実行）
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void MiImguiManager::SetupEditorImguiStyle()
+{
+    ImGui::StyleColorsDark();
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowPadding = ImVec2(5, 5);
+    style.FramePadding = ImVec2(10, 10);
+    style.ItemSpacing = ImVec2(8, 6);
+    style.ItemInnerSpacing = ImVec2(6, 4);
+
+    ImVec4* colors = style.Colors;
+    colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.12f, 0.16f, 1.00f);
+    colors[ImGuiCol_Border] = ImVec4(0.22f, 0.24f, 0.29f, 1.00f);
+
+    colors[ImGuiCol_TitleBg] = ImVec4(0.50f, 0.12f, 0.26f, 1.00f);
+    colors[ImGuiCol_TitleBgActive] = ImVec4(0.16f, 0.22f, 0.35f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.08f, 0.10f, 0.13f, 1.00f);
 }

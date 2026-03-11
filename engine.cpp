@@ -14,6 +14,10 @@
 #include "model.h"
 
 #include "scene_view_window.h"
+#include "inspector_view_window.h"
+#include "hierarchy_view_window.h"
+#include "tool_bar_window.h"
+#include "debug_view_window.h"
 
 // MiEngineの初期化処理
 bool MiEngine::Initialize(HWND hWnd)
@@ -31,15 +35,25 @@ bool MiEngine::Initialize(HWND hWnd)
     Model_Initialize();
     FPS_Initialize(hWnd);
 
-    // ImGuiの初期化
-    m_imguiManager.Initialize(hWnd);
-
-    SceneViewWindow sceneViewWindow;
-    sceneViewWindow.Initialize(0);
-    m_imguiManager.AddWindow(std::make_unique<SceneViewWindow>(sceneViewWindow));
-
     // GameWorldの初期化
     m_gameWorld.Initialize();
+
+    // ImGuiの初期化
+    m_imguiManager.Initialize(hWnd);
+    {
+        m_editorContext.sceneRenderView = &m_gameWorld.GetRenderViews()[0];
+
+        SceneViewWindow sceneViewWindow(&m_editorContext);
+        m_imguiManager.AddWindow(std::make_unique<SceneViewWindow>(sceneViewWindow));
+        InspectorViewWindow inspectorViewWindow(&m_editorContext);
+        m_imguiManager.AddWindow(std::make_unique<InspectorViewWindow>(inspectorViewWindow));
+        HierarchyViewWindow hierarchyViewWindow(&m_editorContext);
+        m_imguiManager.AddWindow(std::make_unique<HierarchyViewWindow>(hierarchyViewWindow));
+        DebugViewWindow debugViewWindow(&m_editorContext);
+        m_imguiManager.AddWindow(std::make_unique<DebugViewWindow>(debugViewWindow));
+        ToolBarWindow toolBarWindow(&m_editorContext);
+        m_imguiManager.AddWindow(std::make_unique<ToolBarWindow>(toolBarWindow));
+    }
 
     return true;
 }
@@ -85,6 +99,9 @@ void MiEngine::Render()
     m_gameWorld.Render();
 
     // ImGuiの描画
+    m_editorContext.displayX = static_cast<float>(Direct3D_GetBackBufferWidth());
+    m_editorContext.displayY = static_cast<float>(Direct3D_GetBackBufferHeight());
+
     m_imguiManager.RenderProcess();
 
     Direct3D_Present();

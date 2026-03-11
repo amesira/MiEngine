@@ -72,6 +72,8 @@ void GameWorld::Render()
     Shader_Begin();
     SetBlendState(BLENDSTATE_ALFA);
     SetTexture(m_renderViews[0].colorBufferSRV.Get());
-    DrawSpriteScreen({1280.0f / 2.0f, 720.0f / 2.0f}, {1280.0f, 720.0f}, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
-    
+
+    float SCREEN_WIDTH = static_cast<float>(Direct3D_GetBackBufferWidth());
+    float SCREEN_HEIGHT = static_cast<float>(Direct3D_GetBackBufferHeight());
+    DrawSpriteScreen({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f}, {SCREEN_WIDTH, SCREEN_HEIGHT}, {1,1,1,1}, {0,0,1,1});
 }

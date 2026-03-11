@@ -23,6 +23,10 @@ public:
     void AddWindow(std::unique_ptr<IImguiWindow> window) {
         m_imguiWindowList.push_back(std::move(window));
     }
+
+private:
+    void SetupEditorImguiStyle();
+
 };
 
 #endif

@@ -16,6 +16,7 @@
 
 class IImguiWindow {
 public:
+    IImguiWindow() = default;
     virtual ~IImguiWindow() = default;
     virtual void Draw() = 0;
 };
