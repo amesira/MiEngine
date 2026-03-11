@@ -6,6 +6,8 @@
 //===================================================
 #include "game_world.h"
 #include "debug_renderer.h"
+#include "sprite.h"
+#include "shader.h"
 
 // GameWorldの初期化
 void GameWorld::Initialize()
@@ -18,6 +20,9 @@ void GameWorld::Initialize()
     m_behaviorProcessor.Initialize();
     m_cameraProcessor.Initialize();
     m_renderProcessor.Initialize();
+
+    // RenderViewの初期化
+    m_renderViews.resize(8);
 }
 
 // GameWorldの終了処理
@@ -54,18 +59,20 @@ void GameWorld::Render()
 
     // カメラ設定・描画情報の取得
     m_cameraProcessor.Process(scene);
-    auto renderViews = m_cameraProcessor.GetRenderViews();
-    
-    Direct3D_Clear();
+    m_cameraProcessor.GetRenderViews(m_renderViews);
     
     // 描画制御プロセッサー処理
-    for (const RenderView& view : renderViews) {
-        m_renderProcessor.BindRenderView(view);
+    for (RenderView& view : m_renderViews) {
+        m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
     }
 
+    Direct3D_Clear();
+
+    Shader_Begin();
+    SetBlendState(BLENDSTATE_ALFA);
+    SetTexture(m_renderViews[0].colorBufferSRV.Get());
+    DrawSpriteScreen({1280.0f / 2.0f, 720.0f / 2.0f}, {1280.0f, 720.0f}, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+    
     Direct3D_Present();
 }
-
-// GameWorldの観測
-// void GameWorld::Observe(Camera camera)

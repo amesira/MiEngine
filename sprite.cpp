@@ -144,6 +144,30 @@ void DrawSprite(XMFLOAT4 color, XMFLOAT4 uvRect, XMFLOAT3 normal)
 	g_pContext->Draw(4, 0); // 表示に使用する頂点数を指定
 }
 
+void DrawSpriteScreen(XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT4 uvRect)
+{
+    XMMATRIX world = XMMatrixIdentity();
+	{
+        XMMATRIX scale = XMMatrixScaling(size.x, size.y, 1.0f);
+        XMMATRIX translation = XMMatrixTranslation(position.x, position.y, 0.0f);
+
+        world = scale * translation;
+	}
+	
+	const float SCREEN_WIDTH = (float)Direct3D_GetBackBufferWidth();
+	const float SCREEN_HEIGHT = (float)Direct3D_GetBackBufferHeight();
+	Shader_SetMatrix(world * XMMatrixOrthographicOffCenterLH(
+		0.0f,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT,
+		0.0f,
+		0.0f,
+		1.0f));
+    Shader_SetWorldMatrix(world);
+
+    DrawSprite(color, uvRect, { 0.0f,0.0f,-1.0f });
+}
+
 void SetTexture(ID3D11ShaderResourceView* texture)
 {
 	// シェーダーリソース（テクスチャ）設定

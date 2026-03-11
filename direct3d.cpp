@@ -30,25 +30,10 @@ static D3D11_VIEWPORT               g_Viewport{};
 static bool configureBackBuffer();  // バックバッファの設定・生成
 static void releaseBackBuffer();    // バックバッファの解散
 
-// レンダリング先シーンテクスチャ関連
-static ID3D11Texture2D*             g_pSceneTexture = nullptr;
-static ID3D11RenderTargetView*      g_pSceneRtv = nullptr;
-static ID3D11ShaderResourceView*    g_pSceneSrv = nullptr;
-
-static bool configureSceneTexture();  // シーンテクスチャの設定・生成
-static void releaseSceneTexture();    // シーンテクスチャの解散
-
 // ブレンドステート関連
 static float bFactor[4] = { 0.0f,0.0f,0.0f,0.0f };
 static ID3D11BlendState* bState[BLENDSTATE_MAX];
 static ID3D11DepthStencilState* g_pDepthState[DEPTHSTATE_MAX];
-// 行列置き場
-static DirectX::XMMATRIX g_viewMatrix = DirectX::XMMatrixIdentity();
-static DirectX::XMMATRIX g_projectionMatrix = DirectX::XMMatrixIdentity();
-
-// カメラ位置
-static DirectX::XMFLOAT3 g_cameraForward;
-static DirectX::XMFLOAT3 g_cameraRight;
 
 //===================================================
 // Direct3D初期化処理
@@ -100,11 +85,6 @@ bool Direct3D_Initialize(HWND hWnd)
 
     if (!configureBackBuffer()) {
         MessageBox(hWnd, "バックバッファの設定に失敗しました", "エラー", MB_OK);
-        return false;
-    }
-
-    if (!configureSceneTexture()) {
-        MessageBox(hWnd, "シーンテクスチャの設定に失敗しました", "エラー", MB_OK);
         return false;
     }
 
@@ -200,7 +180,6 @@ bool Direct3D_Initialize(HWND hWnd)
 void Direct3D_Finalize()
 {
     releaseBackBuffer();
-    releaseSceneTexture();
 
     if (g_pSwapChain) {
         g_pSwapChain->Release();
@@ -216,23 +195,6 @@ void Direct3D_Finalize()
         g_pDevice->Release();
         g_pDevice = nullptr;
     }
-}
-
-static float g_clearColor[4] = { 0.2f,0.4f,0.8f,1.0f };
-
-void Direct3D_BeginScene(float r, float g, float b)
-{
-    // シーンバッファのクリア
-    
-
-    //float clear_color[4] = { 0.1f,0.7f,1.0f,1.0f }; // クリア色設定
-    g_pDeviceContext->ClearRenderTargetView(g_pSceneRtv, g_clearColor);
-    g_pDeviceContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-    // シーンバッファをレンダーターゲットに設定
-    g_pDeviceContext->OMSetRenderTargets(1, &g_pSceneRtv, g_pDepthStencilView);
-
-    Direct3D_ResetViewport();
 }
 
 void Direct3D_Clear()
@@ -374,65 +336,6 @@ void releaseBackBuffer()
     }
 }
 
-bool configureSceneTexture()
-{
-    HRESULT hr;
-
-    D3D11_TEXTURE2D_DESC texDesc = {};
-    texDesc.Width = g_BackBufferDecs.Width;
-    texDesc.Height = g_BackBufferDecs.Height;
-    texDesc.MipLevels = 1;
-    texDesc.ArraySize = 1;
-    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBAの色情報
-    texDesc.SampleDesc.Count = 1;
-    texDesc.Usage = D3D11_USAGE_DEFAULT;
-    texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-
-    ID3D11Texture2D* sceneTexture = nullptr;
-    hr = g_pDevice->CreateTexture2D(&texDesc, nullptr, &sceneTexture);
-    if (FAILED(hr)) {
-        hal::dout << "シーン描画用のテクスチャ生成に失敗しました" << std::endl;
-        return false;
-    }
-
-    // RTV作成
-    hr = g_pDevice->CreateRenderTargetView(sceneTexture, nullptr, &g_pSceneRtv);
-    if (FAILED(hr)) {
-        sceneTexture->Release();
-        hal::dout << "シーン描画用のレンダーターゲットビューの生成に失敗しました" << std::endl;
-        return false;
-    }
-
-    // SRV作成
-    hr = g_pDevice->CreateShaderResourceView(sceneTexture, nullptr, &g_pSceneSrv);
-    sceneTexture->Release();
-    if (FAILED(hr)) {
-        hal::dout << "シーン描画用のシェーダーリソースビューの生成に失敗しました" << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-void releaseSceneTexture()
-{
-    if(g_pSceneRtv) {
-        g_pSceneRtv->Release();
-        g_pSceneRtv = nullptr;
-    }
-    if(g_pSceneSrv) {
-        g_pSceneSrv->Release();
-        g_pSceneSrv = nullptr;
-    }
-    if(g_pSceneTexture) {
-        g_pSceneTexture->Release();
-        g_pSceneTexture = nullptr;
-    }
-}
-
-//===================================================
-// ブレンドステート設定
-//===================================================
 void SetBlendState(BLENDSTATE blend)
 {
     g_pDeviceContext->OMSetBlendState(bState[blend], bFactor, 0xffffff);
@@ -443,83 +346,110 @@ void SetDepthState(DEPTHSTATE depth)
     g_pDeviceContext->OMSetDepthStencilState(g_pDepthState[depth], NULL);
 }
 
-//===================================================
-// シーンのスナップショット用SRVを作成
-//===================================================
-void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** ppSrv)
+void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex)
 {
-    if (*ppSrv == nullptr) {
-        
+    ID3D11Texture2D* snapshot = nullptr;
+
+    if (*snapshotSrv == nullptr) {
+        // g_SceneTextureと同じ設定で、スナップショット先の空テクスチャを生成
+        D3D11_TEXTURE2D_DESC desc = {};
+        (*fromTex)->GetDesc(&desc);
+        g_pDevice->CreateTexture2D(&desc, nullptr, &snapshot);
+
+        // スナップショット先からSRVを生成
+        g_pDevice->CreateShaderResourceView(snapshot, nullptr, snapshotSrv);
     }
     else {
-        (*ppSrv)->Release();
-        *ppSrv = nullptr;
-    }
+        // SRVからリソースを取得し、スナップショット先のテクスチャを得る
+        ID3D11Resource* resource = nullptr;
+        (*snapshotSrv)->GetResource(&resource);
 
-    // SceneSRVの元テクスチャを取得
-    ID3D11Texture2D* sceneTex = nullptr;
-    g_pSceneSrv->GetResource((ID3D11Resource**)&sceneTex);
-
-    // SceneSRVと同じ設定で、スナップショット先の空テクスチャを生成
-    ID3D11Texture2D* snapshot = nullptr;
-    D3D11_TEXTURE2D_DESC desc = {};
-    sceneTex->GetDesc(&desc);
-    {
-        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&snapshot);
+        resource->Release();
     }
-    g_pDevice->CreateTexture2D(&desc, nullptr, &snapshot);
 
     // シーンテクスチャの内容をスナップショット先へコピー
-    g_pDeviceContext->CopyResource(snapshot, sceneTex);
+    g_pDeviceContext->CopyResource(snapshot, *fromTex);
 
-    // スナップショット先からSRVを生成
-    g_pDevice->CreateShaderResourceView(snapshot, nullptr, ppSrv);
-
-    sceneTex->Release();
     snapshot->Release();
 }
 
-DirectX::XMMATRIX& Direct3D_GetViewMatrix()
+
+void Direct3D_SetSceneRenderTarget(ID3D11RenderTargetView* rtv)
 {
-    return g_viewMatrix;
+    if (rtv == nullptr) {
+        hal::dout << "rtvポインタ自体がnullです" << std::endl;
+        return;
+    }
+
+    float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
+    g_pDeviceContext->ClearRenderTargetView(rtv, clear_color);
+    g_pDeviceContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    // シーンバッファをレンダーターゲットに設定
+    g_pDeviceContext->OMSetRenderTargets(1, &rtv, g_pDepthStencilView);
+
+    Direct3D_ResetViewport();
 }
 
-DirectX::XMMATRIX& Direct3D_GetProjectionMatrix()
+void Direct3D_CreateSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv)
 {
-    return g_projectionMatrix;
+    if (!tex || !srv || !rtv) return;
+
+    *tex = nullptr;
+    *srv = nullptr;
+    *rtv = nullptr;
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = g_BackBufferDecs.Width;
+    desc.Height = g_BackBufferDecs.Height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = 0;
+
+    HRESULT hr = g_pDevice->CreateTexture2D(&desc, nullptr, tex);
+    if (FAILED(hr) || !(*tex)) {
+        hal::dout << "シーンテクスチャの生成に失敗しました" << std::endl;
+        return;
+    }
+
+    hr = g_pDevice->CreateShaderResourceView(*tex, nullptr, srv);
+    if (FAILED(hr) || !(*srv)) {
+        hal::dout << "SRVの生成に失敗しました" << std::endl;
+        (*tex)->Release();
+        *tex = nullptr;
+        return;
+    }
+
+    hr = g_pDevice->CreateRenderTargetView(*tex, nullptr, rtv);
+    if (FAILED(hr) || !(*rtv)) {
+        hal::dout << "RTVの生成に失敗しました" << std::endl;
+        (*srv)->Release();
+        *srv = nullptr;
+        (*tex)->Release();
+        *tex = nullptr;
+        return;
+    }
 }
 
-void Direct3D_SetViewMatrix(const DirectX::XMMATRIX& matrix)
+void Direct3D_ReleaseSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv)
 {
-	g_viewMatrix = matrix;
-}
-
-void Direct3D_SetProjectionMatrix(const DirectX::XMMATRIX& matrix)
-{
-	g_projectionMatrix = matrix;
-}
-
-void Direct3D_SetCameraInfo(DirectX::XMFLOAT3 const& position, DirectX::XMFLOAT3 const& atPosition)
-{
-    DirectX::XMFLOAT3 forward = {
-        atPosition.x - position.x,
-        0.0f,
-        atPosition.z - position.z
-    };
-    g_cameraForward = forward;
-    g_cameraRight = {
-        forward.z,
-        0.0f,
-        -forward.x
-    };
-}
-
-DirectX::XMFLOAT3 Direct3D_GetCameraForward()
-{
-    return g_cameraForward;
-}
-
-DirectX::XMFLOAT3 Direct3D_GetCameraRight()
-{
-    return g_cameraRight;
+    if (*srv) {
+        (*srv)->Release();
+        *srv = nullptr;
+    }
+    if (*rtv) {
+        (*rtv)->Release();
+        *rtv = nullptr;
+    }
+    if (*tex) {
+        (*tex)->Release();
+        *tex = nullptr;
+    }
 }

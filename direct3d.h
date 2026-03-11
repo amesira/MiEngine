@@ -26,8 +26,6 @@
 bool Direct3D_Initialize(HWND hWnd);    // DirectXの初期化
 void Direct3D_Finalize();               // DirectXの終了処理
 
-void Direct3D_BeginScene(float r, float g, float b);
-
 void Direct3D_Clear();  // バックバッファのクリア
 void Direct3D_Present();// バックバッファの表示
 
@@ -62,17 +60,13 @@ void SetBlendState(BLENDSTATE blend);
 void SetDepthState(DEPTHSTATE depth);
 
 // スナップショット用シーンテクスチャSRVの作成
-void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** ppSrv);
+void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);
 
-// ビュー行列・プロジェクション行列の取得・設定
-DirectX::XMMATRIX& Direct3D_GetViewMatrix();
-DirectX::XMMATRIX& Direct3D_GetProjectionMatrix();
-void Direct3D_SetViewMatrix(const DirectX::XMMATRIX& matrix);
-void Direct3D_SetProjectionMatrix(const DirectX::XMMATRIX& matrix);
+// シーンセット
+void Direct3D_SetSceneRenderTarget(ID3D11RenderTargetView* rtv);
 
-// カメラ位置の設定
-void Direct3D_SetCameraInfo(DirectX::XMFLOAT3 const& position, DirectX::XMFLOAT3 const& atPosition);
-DirectX::XMFLOAT3 Direct3D_GetCameraForward();
-DirectX::XMFLOAT3 Direct3D_GetCameraRight();
+// シーン用RTV・SRVの作成・解放
+void Direct3D_CreateSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv);
+void Direct3D_ReleaseSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv);
 
 #endif

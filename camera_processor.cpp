@@ -77,20 +77,16 @@ void CameraProcessor::Process(IScene* pScene)
 }
 
 // 描画に必要な情報をまとめる構造体RenderViewのリストを取得
-std::vector<RenderView> CameraProcessor::GetRenderViews() const
+void CameraProcessor::GetRenderViews(std::vector<RenderView>& outViews)
 {
-    std::vector<RenderView> renderViews;
     for (int i = 0; i < m_cameraCounter; i++) {
         CameraComponent* camera = m_cameras[i];
         if (!camera) continue;
 
-        RenderView view;
+        RenderView& view = outViews[i];
         view.viewMatrix = camera->GetViewMatrix();
         view.projectionMatrix = camera->GetProjectionMatrix();
         view.enableLighting = true; // ライトは有効にする
         view.enableUI = true;       // UI描画も有効にする
-        renderViews.push_back(view);
     }
-
-    return renderViews;
 }

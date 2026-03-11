@@ -38,9 +38,6 @@ void OpaqueRenderPass::Finalize()
 // OpaqueRenderPassの処理
 void OpaqueRenderPass::Process(IScene* pScene)
 {
-    XMMATRIX viewMatrix = Direct3D_GetViewMatrix();
-    XMMATRIX projectionMatrix = Direct3D_GetProjectionMatrix();
-
     // コンポーネントプール取得
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
@@ -74,7 +71,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
         XMMATRIX worldMatrix = scaling * rotation * translation;
 
         // 行列セット
-        Shader_SetMatrix(worldMatrix * viewMatrix * projectionMatrix);
+        Shader_SetMatrix(worldMatrix * m_viewMatrix * m_projectionMatrix);
         Shader_SetWorldMatrix(worldMatrix);
 
         Shader_SetPixelOption(m.GetColor(), 0.0f);

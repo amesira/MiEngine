@@ -217,18 +217,18 @@ void CollisionPass::DrawDebugCollider(IScene* pScene)
                 verts[i].z += t->GetPosition().z + c.GetCenter().z;
             }
 
-            DrawLine(verts[0], verts[1], debugColor);
-            DrawLine(verts[1], verts[2], debugColor);
-            DrawLine(verts[2], verts[3], debugColor);
-            DrawLine(verts[3], verts[0], debugColor);
-            DrawLine(verts[4], verts[5], debugColor);
-            DrawLine(verts[5], verts[6], debugColor);
-            DrawLine(verts[6], verts[7], debugColor);
-            DrawLine(verts[7], verts[4], debugColor);
-            DrawLine(verts[0], verts[4], debugColor);
-            DrawLine(verts[1], verts[5], debugColor);
-            DrawLine(verts[2], verts[6], debugColor);
-            DrawLine(verts[3], verts[7], debugColor);
+            DebugRenderer_DrawLine(verts[0], verts[1], debugColor);
+            DebugRenderer_DrawLine(verts[1], verts[2], debugColor);
+            DebugRenderer_DrawLine(verts[2], verts[3], debugColor);
+            DebugRenderer_DrawLine(verts[3], verts[0], debugColor);
+            DebugRenderer_DrawLine(verts[4], verts[5], debugColor);
+            DebugRenderer_DrawLine(verts[5], verts[6], debugColor);
+            DebugRenderer_DrawLine(verts[6], verts[7], debugColor);
+            DebugRenderer_DrawLine(verts[7], verts[4], debugColor);
+            DebugRenderer_DrawLine(verts[0], verts[4], debugColor);
+            DebugRenderer_DrawLine(verts[1], verts[5], debugColor);
+            DebugRenderer_DrawLine(verts[2], verts[6], debugColor);
+            DebugRenderer_DrawLine(verts[3], verts[7], debugColor);
         }
     }
 
@@ -285,7 +285,7 @@ void CollisionPass::DrawDebugCollider(IScene* pScene)
                     p2[j] = { p2[j].x + center.x, p2[j].y + center.y, p2[j].z + center.z };
 
                     // 描画
-                    DrawLine(p1[j], p2[j], debugColor);
+                    DebugRenderer_DrawLine(p1[j], p2[j], debugColor);
                 }
             }
         }

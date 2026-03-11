@@ -16,16 +16,19 @@
 #include "opaque_render_pass.h"
 #include "ui_render_pass.h"
 
+#include "direct3d.h"
+#include "Windows.h"
+#include "wrl/client.h"
+using Microsoft::WRL::ComPtr;
+
 class RenderProcessor : public Processor {
 private:
-    RenderView m_renderView;
+    RenderView* m_renderView;
 
-    // LightingPass
     LightingPass m_lightingPass;
     // ShadowMapPass
     // 
     // SkyboxPass
-    // OpaqueRenderPass
     OpaqueRenderPass m_opaqueRenderPass;
     // TransparentPass
     // 
@@ -40,13 +43,16 @@ private:
     // 
     // ←Snapshot !
 
+    // シーンのスナップショット用SRV
+    
+
 public:
     void    Initialize()override;
     void    Finalize()override;
     void    Process(IScene* pScene)override;
 
     // 描画に必要な情報をまとめる構造体RenderViewのバインド
-    void    BindRenderView(const RenderView& view) {
+    void    BindRenderView(RenderView* view) {
         m_renderView = view;
     }
 

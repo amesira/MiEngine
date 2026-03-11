@@ -10,17 +10,18 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "direct3d.h"
+using namespace DirectX;
 
 void DebugRenderer_Initialize();
 void DebugRenderer_Finalize();
 
 // 描画コマンドをバッファに追加
-void DebugRenderer_DrawFlush();
+void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection);
 
 void DebugRenderer_ResetBuffer();
 
 // ライン描画関数
 // ・ここで描画情報をバッファに追加しておき、フレームの最後にまとめて描画するイメージ
-void DrawLine(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, DirectX::XMFLOAT4 color);
+void DebugRenderer_DrawLine(XMFLOAT3 start, XMFLOAT3 end, XMFLOAT4 color);
 
 #endif // DEBUG_RENDERER_H

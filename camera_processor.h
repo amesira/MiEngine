@@ -10,6 +10,7 @@
 #include <string>
 #include "direct3d.h"
 
+#include <vector>
 #include "render_view.h"
 
 #include <DirectXMath.h>
@@ -29,7 +30,7 @@ public:
     void    Process(IScene* pScene) override;
 
     // RenderViewの取得
-    std::vector<RenderView> GetRenderViews() const ;
+    void GetRenderViews(std::vector<RenderView>& outViews);
 
 };
 #endif // CAMERA_PROCESSOR_H

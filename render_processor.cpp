@@ -10,6 +10,7 @@
 
 #include "shader.h"
 #include "sprite.h"
+#include "direct3d.h"
 
 // 描画制御プロセッサーの初期化
 void RenderProcessor::Initialize()
@@ -17,7 +18,6 @@ void RenderProcessor::Initialize()
     m_lightingPass.Initialize();
     m_opaqueRenderPass.Initialize();
     m_uiRenderPass.Initialize();
-
 }
 
 // 描画制御プロセッサーの終了処理
@@ -31,27 +31,42 @@ void RenderProcessor::Finalize()
 // 描画制御プロセッサーの処理
 void RenderProcessor::Process(IScene* pScene)
 {
+    if (!m_renderView) return; // RenderViewがバインドされていない場合は処理しない
+
+    // インスタンシングデータをクリア
     ClearInstanceData();
 
-    // ビュー行列とプロジェクション行列をシェーダーに設定
-    Direct3D_SetViewMatrix(m_renderView.viewMatrix);
-    Direct3D_SetProjectionMatrix(m_renderView.projectionMatrix);
+    // シーンを初期化
+    Direct3D_SetSceneRenderTarget(m_renderView->colorBufferRTV.Get());
 
-    // ライト設定パス
+    // 1.ライト設定パス
     m_lightingPass.Process(pScene);
 
-    SetDepthState(DEPTHSTATE_ENABLE);    // デプス有効
+    // 2.シャドウマップパス
 
-    // 3D描画パス
-    m_lightingPass.SetLightEnable(m_renderView.enableLighting);
+    // 3.スカイボックスパス
+
+    // 4.3Dオブジェクト描画
+    m_lightingPass.SetLightEnable(m_renderView->enableLighting);
+    SetDepthState(DEPTHSTATE_ENABLE);
+
+    // 不透明物体
+    m_opaqueRenderPass.BindMatrix(m_renderView->viewMatrix, m_renderView->projectionMatrix);
     m_opaqueRenderPass.Process(pScene);
+    // 透明物体
+    // m_transparentRenderPass.Process(pScene);
 
-    m_lightingPass.SetLightEnable(false);   // ライト無効
+    m_lightingPass.SetLightEnable(false);
+    SetDepthState(DEPTHSTATE_DISABLE);
 
-    SetDepthState(DEPTHSTATE_DISABLE); // デプス無効
+    // 5.PostEffect描画
+    if (m_renderView->enablePostEffect) {
+        // ポストエフェクト描画処理
+        // m_postEffectPass.Process(pScene);
+    }
 
-    // UI描画
-    if (m_renderView.enableUI) {
+    // 6.2DScreen描画
+    if (m_renderView->enableUI) {
         m_uiRenderPass.Process(pScene);
     }
 }

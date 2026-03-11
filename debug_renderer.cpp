@@ -38,20 +38,16 @@ void DebugRenderer_Finalize()
     SAFE_RELEASE(g_pLineVertexBuffer);
 }
 
-void DebugRenderer_DrawFlush()
+void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
 {
-    if(g_LineVertices.empty()) return;
+    if (g_LineVertices.empty()) return;
 
     Shader_Begin();
-
-    XMMATRIX projection = Direct3D_GetProjectionMatrix();
-    XMMATRIX view = Direct3D_GetViewMatrix();
-
     Shader_SetMatrix(view * projection);
 
     //----------------------------------------------------
     // 頂点バッファを更新
-	//----------------------------------------------------
+    //----------------------------------------------------
     {
         // 頂点バッファをロック
         D3D11_MAPPED_SUBRESOURCE msr;
@@ -60,7 +56,7 @@ void DebugRenderer_DrawFlush()
         // 頂点バッファへの仮想ポインタを取得
         Vertex* v = (Vertex*)msr.pData;
 
-        for(int i = 0; i < g_LineVertices.size(); i++) {
+        for (int i = 0; i < g_LineVertices.size(); i++) {
             v[i].position = g_LineVertices[i].position;
             v[i].color = g_LineVertices[i].color;
         }
@@ -79,8 +75,6 @@ void DebugRenderer_DrawFlush()
 
     // ポリゴン描画命令発行
     g_pContext->Draw(g_LineVertices.size(), 0);
-
-    
 }
 
 void DebugRenderer_ResetBuffer()
@@ -88,7 +82,7 @@ void DebugRenderer_ResetBuffer()
     g_LineVertices.clear();
 }
 
-void DrawLine(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, DirectX::XMFLOAT4 color)
+void DebugRenderer_DrawLine(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, DirectX::XMFLOAT4 color)
 {
     // 頂点バッファの容量オーバー防止
     if(g_LineVertices.size() + 2 > NUM_VERTEX) {

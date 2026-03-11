@@ -13,6 +13,9 @@
 #include "camera_processor.h"
 #include "render_processor.h"
 
+#include <vector>
+#include "render_view.h"
+
 class GameWorld {
 public:
     void Initialize();
@@ -28,6 +31,7 @@ private:
     PhysicsProcessor   m_physicsProcessor;
     BehaviorProcessor  m_behaviorProcessor;
 
+    std::vector<RenderView> m_renderViews;
     CameraProcessor    m_cameraProcessor;
     RenderProcessor    m_renderProcessor;
 };

@@ -25,6 +25,12 @@ void FinalizeSprite();
 
 /// @brief スプライト描画
 void DrawSprite(XMFLOAT4 color,XMFLOAT4 uvRect,XMFLOAT3 normal = XMFLOAT3(0.0f,0.0f,1.0f));
+/// @brief スプライト描画
+/// @param position 位置
+/// @param size 大きさ
+/// @param color 色
+/// @param uvRect UV座標
+void DrawSpriteScreen(XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT4 uvRect);
 
 /// @brief テクスチャセット
 void SetTexture(ID3D11ShaderResourceView* texture);
