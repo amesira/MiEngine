@@ -1,10 +1,10 @@
 //===================================================
-// renderer_3dmodel_processor.cpp
+// opaque_render_pass.cpp
 // 
 // Author：Miu Kitamura
-// Date  ：2025/12/27
+// Date  ：2026/03/11
 //===================================================
-#include "renderer_3dmodel_processor.h"
+#include "opaque_render_pass.h"
 #include "scene_interface.h"
 #include "game_object.h"
 
@@ -17,37 +17,38 @@ using namespace DirectX;
 // graphics, devices
 #include "shader.h"
 #include "sprite.h"
-#include "keyboard.h"
 
 #include "model.h"
 
-// component
 #include "transform_component.h"
 #include "model_component.h"
 
-void Renderer3DModelProcessor::Initialize()
+// OpaqueRenderPassの初期化
+void OpaqueRenderPass::Initialize()
 {
-    
+
 }
 
-void Renderer3DModelProcessor::Finalize()
+// OpaqueRenderPassの終了処理
+void OpaqueRenderPass::Finalize()
 {
-    
+
 }
 
-void Renderer3DModelProcessor::Process(IScene* pScene)
+// OpaqueRenderPassの処理
+void OpaqueRenderPass::Process(IScene* pScene)
 {
-    DirectX::XMMATRIX viewMatrix = Direct3D_GetViewMatrix();
-    DirectX::XMMATRIX projectionMatrix = Direct3D_GetProjectionMatrix();
+    XMMATRIX viewMatrix = Direct3D_GetViewMatrix();
+    XMMATRIX projectionMatrix = Direct3D_GetProjectionMatrix();
 
     // コンポーネントプール取得
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
     if (!transformPool || !modelPool)return;
 
-    auto& modelPoolList = modelPool->GetList(); 
+    auto& modelPoolList = modelPool->GetList();
 
-    for(ModelComponent& m : modelPoolList) {
+    for (ModelComponent& m : modelPoolList) {
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
 
         // component無効チェック
@@ -59,18 +60,18 @@ void Renderer3DModelProcessor::Process(IScene* pScene)
         if (!model)continue;
 
         // ワールド行列計算
-        DirectX::XMMATRIX scaling = DirectX::XMMatrixScaling(
+        XMMATRIX scaling = XMMatrixScaling(
             t->GetScaling().x,
             t->GetScaling().y,
             t->GetScaling().z);
-        DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationQuaternion(
+        XMMATRIX rotation = XMMatrixRotationQuaternion(
             t->GetRotation());
-        DirectX::XMMATRIX translation = DirectX::XMMatrixTranslation(
+        XMMATRIX translation = XMMatrixTranslation(
             t->GetPosition().x,
             t->GetPosition().y,
             t->GetPosition().z);
 
-        DirectX::XMMATRIX worldMatrix = scaling * rotation * translation;
+        XMMATRIX worldMatrix = scaling * rotation * translation;
 
         // 行列セット
         Shader_SetMatrix(worldMatrix * viewMatrix * projectionMatrix);

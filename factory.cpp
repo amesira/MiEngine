@@ -8,7 +8,6 @@
 
 // component
 #include "transform_component.h"
-#include "cubemesh_component.h"
 #include "collider_component.h"
 #include "rigidbody_component.h"
 #include "rect_transform_component.h"
@@ -94,4 +93,45 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
+}
+
+void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const wchar_t* texturePath)
+{
+    // component生成・登録
+    RectTransformComponent* rectTransform = uiImage->AddComponent<RectTransformComponent>();
+    ImageComponent* imageComp = uiImage->AddComponent<ImageComponent>();
+
+    // component設定
+    rectTransform->SetPosition({ position.x, position.y, 0.0f });
+    rectTransform->SetScaling({ size.x, size.y, 1.0f });
+    imageComp->Load(texturePath);
+}
+
+void Factory::CreateUiText(GameObject* uiText, XMFLOAT2 position, XMFLOAT2 size, const std::u8string text)
+{
+    // component生成・登録
+    RectTransformComponent* rectTransform = uiText->AddComponent<RectTransformComponent>();
+    TextComponent* textComp = uiText->AddComponent<TextComponent>();
+
+    // component設定
+    rectTransform->SetPosition({ position.x, position.y, 0.0f });
+    rectTransform->SetScaling({ size.x, size.y, 1.0f });
+    textComp->SetText(text);
+    textComp->SetFontSize(32.0f);
+    textComp->SetColor({1.0f, 0.5f, 0.5f, 1.0f});
+    textComp->SetCenter(true);
+}
+
+void Factory::CreateUiSlider(GameObject* uiSlider, XMFLOAT2 position, XMFLOAT2 size, float value)
+{
+    // component生成・登録
+    RectTransformComponent* rectTransform = uiSlider->AddComponent<RectTransformComponent>();
+    SliderComponent* sliderComp = uiSlider->AddComponent<SliderComponent>();
+
+    // component設定
+    rectTransform->SetPosition({ position.x, position.y, 0.0f });
+    rectTransform->SetScaling({ size.x, size.y, 1.0f });
+    sliderComp->SetValue(value);
+    sliderComp->SetBgColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+    sliderComp->SetFillColor({ 0.8f, 0.8f, 0.8f, 1.0f });
 }

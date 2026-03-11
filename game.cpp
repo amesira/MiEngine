@@ -39,6 +39,15 @@ void GameScene::Initialize()
     GameObject* player = this->CreateGameObject();
     Factory::CreatePlayer(player, { 0.0f,3.0f,10.0f });
 
+    // ui
+    GameObject* uiText = this->CreateGameObject();
+    Factory::CreateUiText(uiText, { 300.0f, 100.0f }, { 200.0f, 50.0f }, u8"Hello, World!");
+
+    GameObject* uiImage = this->CreateGameObject();
+    Factory::CreateUiImage(uiImage, { 300.0f, 300.0f }, { 100.0f, 100.0f }, L"asset\\Texture\\test.jpg");
+
+    GameObject* uiSlider = this->CreateGameObject();
+    Factory::CreateUiSlider(uiSlider, { 300.0f, 500.0f }, { 200.0f, 20.0f }, 0.5f);
 
 }
 

@@ -143,6 +143,7 @@
     <ClCompile Include="debug_renderer.cpp" />
     <ClCompile Include="direct3d.cpp" />
     <ClCompile Include="integrate_pass.cpp" />
+    <ClCompile Include="opaque_render_pass.cpp" />
     <ClCompile Include="render_processor.cpp" />
     <ClCompile Include="resolve_pass.cpp" />
     <ClCompile Include="engine.cpp" />
@@ -152,22 +153,21 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game_object.h" />
     <ClCompile Include="keyboard.cpp" />
-    <ClCompile Include="light_processor.cpp" />
+    <ClCompile Include="lighting_pass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="physics_processor.cpp" />
     <ClCompile Include="player_behavior.cpp" />
     <ClCompile Include="processor_manager.cpp" />
-    <ClCompile Include="renderer_3dcube_processor.cpp" />
-    <ClCompile Include="renderer_3dmodel_processor.cpp" />
-    <ClCompile Include="renderer_font_processor.cpp" />
-    <ClCompile Include="renderer_image_processor.cpp" />
-    <ClCompile Include="renderer_slider_processor.cpp" />
+    <ClCompile Include="collector_font.cpp" />
+    <ClCompile Include="collector_image.cpp" />
+    <ClCompile Include="collector_slider.cpp" />
     <ClCompile Include="scene_manager.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="stb_implementation.cpp" />
+    <ClCompile Include="ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="behavior_component.h" />
@@ -178,10 +178,12 @@
     <ClInclude Include="collision_pass.h" />
     <ClInclude Include="component_pool.h" />
     <ClInclude Include="component_pool_interface.h" />
-    <ClInclude Include="cubemesh_component.h" />
     <ClInclude Include="debug_renderer.h" />
+    <ClInclude Include="draw_command.h" />
     <ClInclude Include="integrate_pass.h" />
+    <ClInclude Include="opaque_render_pass.h" />
     <ClInclude Include="render_processor.h" />
+    <ClInclude Include="render_view.h" />
     <ClInclude Include="resolve_pass.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="factory.h" />
@@ -189,7 +191,7 @@
     <ClInclude Include="mi_fps.h" />
     <ClInclude Include="image_component.h" />
     <ClInclude Include="light_component.h" />
-    <ClInclude Include="light_processor.h" />
+    <ClInclude Include="lighting_pass.h" />
     <ClInclude Include="mi_math.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="model_component.h" />
@@ -198,7 +200,6 @@
     <ClInclude Include="player_behavior.h" />
     <ClInclude Include="processor_manager.h" />
     <ClInclude Include="rect_transform_component.h" />
-    <ClInclude Include="renderer_3dcube_processor.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="debug_ostream.h" />
@@ -207,10 +208,9 @@
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="processor.h" />
-    <ClInclude Include="renderer_3dmodel_processor.h" />
-    <ClInclude Include="renderer_font_processor.h" />
-    <ClInclude Include="renderer_image_processor.h" />
-    <ClInclude Include="renderer_slider_processor.h" />
+    <ClInclude Include="collector_font.h" />
+    <ClInclude Include="collector_image.h" />
+    <ClInclude Include="collector_slider.h" />
     <ClInclude Include="rigidbody_component.h" />
     <ClInclude Include="scene_base.h" />
     <ClInclude Include="scene_interface.h" />
@@ -222,6 +222,7 @@
     <ClInclude Include="text_component.h" />
     <ClInclude Include="transform_component.h" />
     <ClInclude Include="component_type_id.h" />
+    <ClInclude Include="ui_render_pass.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader_pixel.hlsl">

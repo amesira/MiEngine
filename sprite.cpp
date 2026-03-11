@@ -144,6 +144,12 @@ void DrawSprite(XMFLOAT4 color, XMFLOAT4 uvRect, XMFLOAT3 normal)
 	g_pContext->Draw(4, 0); // 表示に使用する頂点数を指定
 }
 
+void SetTexture(ID3D11ShaderResourceView* texture)
+{
+	// シェーダーリソース（テクスチャ）設定
+    g_pContext->PSSetShaderResources(0, 1, &texture);
+}
+
 void PrepareDrawInstance()
 {
     //-------------------------
@@ -225,7 +231,7 @@ void DrawInstance()
 	g_InstanceCount = -1;
 }
 
-void EndDrawInstance()
+void ClearInstanceData()
 {
 	// インスタンスバッファのデフォルト設定
 	D3D11_MAPPED_SUBRESOURCE msr;

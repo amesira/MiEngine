@@ -15,9 +15,6 @@
     <ClCompile Include="camera_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="light_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClCompile>
     <ClCompile Include="physics_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
@@ -96,26 +93,26 @@
     <ClCompile Include="render_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="renderer_3dcube_processor.cpp">
+    <ClCompile Include="ui_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="renderer_3dmodel_processor.cpp">
+    <ClCompile Include="opaque_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="renderer_font_processor.cpp">
+    <ClCompile Include="lighting_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="renderer_image_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="collector_image.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClCompile>
-    <ClCompile Include="renderer_slider_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="collector_slider.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="collector_font.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cubemesh_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
-    </ClInclude>
     <ClInclude Include="image_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
@@ -147,9 +144,6 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="camera_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="light_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
     <ClInclude Include="physics_processor.h">
@@ -254,20 +248,29 @@
     <ClInclude Include="render_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="renderer_3dcube_processor.h">
+    <ClInclude Include="ui_render_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="renderer_3dmodel_processor.h">
+    <ClInclude Include="opaque_render_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="renderer_font_processor.h">
+    <ClInclude Include="lighting_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="renderer_image_processor.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="draw_command.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
-    <ClInclude Include="renderer_slider_processor.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="render_view.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="collector_image.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="collector_slider.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="collector_font.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -321,6 +324,9 @@
     </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass\Context">
+      <UniqueIdentifier>{27fbcdb5-aeda-4b7e-b721-cba25d0149e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
