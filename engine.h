@@ -30,7 +30,6 @@ private:
 
 private:
     bool m_isRunning;
-
     EditorContext m_editorContext;
 
     MiImguiManager m_imguiManager;

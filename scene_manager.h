@@ -44,6 +44,12 @@ private:
     // シーンの生成と初期化
     void LoadScene(SceneID sceneId);
 
+public:
+    // シーンのリロード
+    void ReloadScene() {
+        ReleaseScene();
+        LoadScene(m_currentScene);
+    }
 };
 
 #endif // SCENE_MANAGER_H

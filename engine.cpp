@@ -45,8 +45,6 @@ bool MiEngine::Initialize(HWND hWnd)
     // ImGuiの初期化
     m_imguiManager.Initialize(hWnd);
     {
-        m_editorContext.scene = m_gameWorld.GetSceneManager().GetCurrentScene();
-        m_editorContext.sceneRenderView = &m_gameWorld.GetRenderViews()[0];
         m_editorContext.displayX = 1920.0f;
         m_editorContext.displayY = 1080.0f;
 
@@ -103,7 +101,16 @@ bool MiEngine::RunOneFrame()
 // MiEngineの更新処理
 void MiEngine::Update()
 {
-    m_gameWorld.Update();
+    if (m_editorContext.triggerSceneReload) {
+        m_editorContext.triggerSceneReload = false;
+        m_gameWorld.GetSceneManager().ReloadScene();
+
+        m_editorContext.selectedObject = nullptr; // 選択オブジェクトをリセット
+    }
+
+    if (m_editorContext.currentEditorMode == EditorContext::EditorMode::Play) {
+        m_gameWorld.Update();
+    }
 }
 
 // MiEngineの描画処理
@@ -112,6 +119,8 @@ void MiEngine::Render()
     m_gameWorld.Render();
 
     // ImGuiの描画
+    m_editorContext.scene = m_gameWorld.GetSceneManager().GetCurrentScene();
+    m_editorContext.sceneRenderView = &m_gameWorld.GetRenderViews()[0];
     m_imguiManager.RenderProcess();
 
     Direct3D_Present();

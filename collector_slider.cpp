@@ -65,7 +65,19 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch
 
         // 塗りつぶし描画コマンド
         float value = slider->GetValue();
-        instance.position.x = rect->GetPosition().x - (rect->GetScaling().x * (1.0f - value)) * 0.5f;
+        {
+            XMFLOAT2 fillLocalPos = { -(rect->GetScaling().x * (1.0f - value)) * 0.5f, 0.0f };
+            float cosA = cosf(instance.angleZ);
+            float sinA = sinf(instance.angleZ);
+            XMFLOAT2 fillRotatedPos = {
+                fillLocalPos.x * cosA - fillLocalPos.y * sinA,
+                fillLocalPos.x * sinA + fillLocalPos.y * cosA
+            };
+            instance.position = {
+                rect->GetPosition().x + fillRotatedPos.x,
+                rect->GetPosition().y + fillRotatedPos.y
+            };
+        }
         instance.size.x = rect->GetScaling().x * value;
         instance.color = slider->GetFillColor();
 

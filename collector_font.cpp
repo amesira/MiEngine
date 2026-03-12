@@ -21,6 +21,8 @@
 #include "game_object.h"
 #include "rect_transform_component.h"
 
+#include "mi_math.h"
+
 static ID3D11Device* g_pDevice = nullptr;
 static ID3D11DeviceContext* g_pContext = nullptr;
 
@@ -115,6 +117,8 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
 
 		// 各文字の出力
 		XMFLOAT3 rectPos = rect->GetPosition();
+
+        XMFLOAT3 pivotPos = { 0.0f, 0.0f, 0.0f };
 		{
 			// Textを中央揃えにする場合、開始位置を調整
 			float xOffset = 0.0f;
@@ -130,7 +134,7 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
 					xOffset += (glyph->x_advance * render_scale) * 0.5f;
 				}
 			}
-			rectPos.x -= xOffset;
+			pivotPos.x -= xOffset;
 		}
 
 		current_char = text->GetText().c_str();
@@ -141,17 +145,29 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
 			const GlyphInfo* glyph = GetGlyph(fontType, codepoint);
 			if (!glyph) continue;
 
-			// --- 頂点データを計算 ---
-			float x0 = rectPos.x + (glyph->x_off * render_scale);
-			float y0 = rectPos.y + (glyph->y_off * render_scale); // ★Y方向を反転
+            // ローカルな頂点データを計算
+			float x0 = pivotPos.x + (glyph->x_off * render_scale);
+			float y0 = pivotPos.y + (glyph->y_off * render_scale); // ★Y方向を反転
 			float x1 = x0 + (glyph->width * render_scale);
 			float y1 = y0 + (glyph->height * render_scale); // ★Y方向を反転
 
 			// インスタンス更新
-			instance.position = {
-				(x0 + x1) / 2.0f,
-				(y0 + y1) / 2.0f
-			};
+            XMFLOAT2 localPos = { (x0 + x1) / 2.0f, (y0 + y1) / 2.0f };
+			{
+				// ピボット位置からのオフセットを回転させて加算
+				float cosAngle = cosf(instance.angleZ);
+				float sinAngle = sinf(instance.angleZ);
+				XMFLOAT3 rotatedOffset = {
+                    localPos.x* cosAngle - localPos.y * sinAngle,
+                    localPos.x* sinAngle + localPos.y * cosAngle,
+					0.0f
+				};
+				instance.position = {
+					rectPos.x + rotatedOffset.x,
+					rectPos.y + rotatedOffset.y,
+                };
+			}
+			
 			instance.size = {
 				x1 - x0,
 				y1 - y0
@@ -161,7 +177,7 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
 			};
 
 			// 文字送り (変更なし)
-			rectPos.x += (glyph->x_advance * render_scale);
+			pivotPos.x += (glyph->x_advance * render_scale);
 
 			// インスタンス追加
 			batch.instances.push_back(instance);
