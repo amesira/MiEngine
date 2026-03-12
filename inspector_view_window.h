@@ -8,6 +8,7 @@
 #define INSPECTOR_VIEW_WINDOW_H
 #include "imgui_window_interface.h"
 class EditorContext;
+class GameObject;
 
 class InspectorViewWindow : public IImguiWindow {
 private:
@@ -16,6 +17,10 @@ private:
 public:
     InspectorViewWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
     void Draw() override;
+
+private:
+    void DrawComponentInspector(GameObject* gameObject);
+
 };
 
 #endif // INSPECTOR_VIEW_WINDOW_H

@@ -83,7 +83,7 @@ public:
     }
 
     // GameObjectリストの取得
-    std::vector<GameObject>& GetGameObjects() { return m_gameObjects; }
+    std::vector<GameObject>& GetGameObjects() override { return m_gameObjects; }
 
     // GameObjectの破棄
     void    CollectDestroyedGameObjects() {
@@ -121,6 +121,11 @@ public:
             }
         }
         return nullptr;
+    }
+
+    // ComponentPoolの取得
+    std::vector<std::unique_ptr<IComponentPool>>& GetComponentPools() override {
+        return m_componentPools;
     }
 };
 

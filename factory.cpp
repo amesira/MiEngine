@@ -41,6 +41,8 @@ void Factory::CreateCamera(GameObject* obj, DirectX::XMFLOAT3 position, DirectX:
 
 void Factory::CreateLight(GameObject* obj, DirectX::XMFLOAT4 direction, DirectX::XMFLOAT4 diffuse, DirectX::XMFLOAT4 ambient)
 {
+    obj->SetName("Light");
+
     // component生成・登録
     LightComponent* lightComp = obj->AddComponent<LightComponent>();
     
@@ -52,6 +54,8 @@ void Factory::CreateLight(GameObject* obj, DirectX::XMFLOAT4 direction, DirectX:
 
 void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)
 {
+    cube->SetName("Box");
+
     // component生成・登録
     TransformComponent* transform = cube->AddComponent<TransformComponent>();
     BoxColliderComponent* collider = cube->AddComponent<BoxColliderComponent>();
@@ -72,6 +76,8 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
 
 void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
 {
+    player->SetName("Player");
+
     // component生成・登録
     TransformComponent* transform = player->AddComponent<TransformComponent>();
     BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
@@ -97,6 +103,8 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
 
 void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const wchar_t* texturePath)
 {
+    uiImage->SetName("UiImage");
+
     // component生成・登録
     RectTransformComponent* rectTransform = uiImage->AddComponent<RectTransformComponent>();
     ImageComponent* imageComp = uiImage->AddComponent<ImageComponent>();
@@ -109,6 +117,8 @@ void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 siz
 
 void Factory::CreateUiText(GameObject* uiText, XMFLOAT2 position, XMFLOAT2 size, const std::u8string text)
 {
+    uiText->SetName("UiText");
+
     // component生成・登録
     RectTransformComponent* rectTransform = uiText->AddComponent<RectTransformComponent>();
     TextComponent* textComp = uiText->AddComponent<TextComponent>();
@@ -124,6 +134,8 @@ void Factory::CreateUiText(GameObject* uiText, XMFLOAT2 position, XMFLOAT2 size,
 
 void Factory::CreateUiSlider(GameObject* uiSlider, XMFLOAT2 position, XMFLOAT2 size, float value)
 {
+    uiSlider->SetName("UiSlider");
+
     // component生成・登録
     RectTransformComponent* rectTransform = uiSlider->AddComponent<RectTransformComponent>();
     SliderComponent* sliderComp = uiSlider->AddComponent<SliderComponent>();

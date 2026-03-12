@@ -43,7 +43,20 @@ private:
     // DebugWorld* m_pDebugWorld;
 
 public:
+    // GameWorldへのアクセス
     const GameWorld& GetGameWorld() const { return m_gameWorld; }
+
+    // EditorContextへのアクセス
+    void AddLogMessage(const std::string& message) {
+        m_editorContext.logMessages.push_back(message);
+
+        // 最大ログ数制限
+        const size_t MAX_LOG = 1024;
+        if (m_editorContext.logMessages.size() > MAX_LOG){
+            m_editorContext.logMessages.erase(
+                m_editorContext.logMessages.begin());
+        }
+    }
 
 };
 

@@ -21,5 +21,7 @@ void ToolBarWindow::Draw()
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoTitleBar);
 
+    ImGui::Text("Mi Engine v1");
+
     ImGui::End();
 }

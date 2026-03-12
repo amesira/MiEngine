@@ -14,12 +14,18 @@ using namespace DirectX;
 
 class TransformComponent;
 class RigidbodyComponent;
+class ModelComponent;
 
 class PlayerBehavior : public BehaviorComponent {
 private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
+    ModelComponent* m_model = nullptr;
+
     XMFLOAT3 m_moveDirection = { 0.0f,0.0f,0.0f };
+
+    float m_moveSpeed = 2.0f;
+    XMFLOAT4 m_color = { 1.0f,1.0f,1.0f,1.0f };
 
 public:
     PlayerBehavior() {}
@@ -27,6 +33,8 @@ public:
 
     void    Start() override;
     void    Update() override;
+
+    void    DrawComponentInspector() override;
 
 };
 

@@ -21,5 +21,9 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     col = float4(1.0, 1.0, 1.0, g_Texture.Sample(g_SamplerState, ps_in.texcoord).r);
 	
     col *= ps_in.color;
+    if (col.a < 0.01)
+    {
+        discard;
+    }
     return col;
 }

@@ -24,10 +24,12 @@ void GameScene::Initialize()
 
     // camera
     GameObject* camera = this->CreateGameObject();
-    Factory::CreateCamera(camera, { 0.0f,15.0f,-1.0f }, { 0.0f,0.0f,8.0f });
+    Factory::CreateCamera(camera, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
 
     GameObject* cube = this->CreateGameObject();
     Factory::CreateBox(cube, { 0.0f,0.0f,10.0f }, {0.0f, 0.0f, 0.0f}, {6.0f, 1.0f, 6.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
+    cube = this->CreateGameObject();
+    Factory::CreateBox(cube, { -3.0f,1.0f,10.0f }, { 0.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f }, { 0.7f, 0.5f, 0.5f, 1.0f });
     
     // light
     GameObject* light = this->CreateGameObject();

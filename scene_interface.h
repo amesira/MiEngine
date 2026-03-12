@@ -44,6 +44,8 @@ public:
         }
         return nullptr;
     }
+    // ComponentPoolのリストを取得
+    virtual std::vector<std::unique_ptr<IComponentPool>>& GetComponentPools() = 0;
 
     // 型TのComponentPoolを追加
     template<class T>
@@ -78,6 +80,8 @@ public:
     // GameObjectの取得
     virtual GameObject* GetGameObjectByID(unsigned int id) = 0;
     virtual GameObject* GetGameObjectByName(const std::string& name) = 0;
+
+    virtual std::vector<GameObject>& GetGameObjects() = 0;
 
 };
 

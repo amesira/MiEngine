@@ -70,7 +70,7 @@ void MiImguiManager::SetupEditorImguiStyle()
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowPadding = ImVec2(5, 5);
-    style.FramePadding = ImVec2(10, 10);
+    style.FramePadding = ImVec2(5, 5);
     style.ItemSpacing = ImVec2(8, 6);
     style.ItemInnerSpacing = ImVec2(6, 4);
 
@@ -79,6 +79,6 @@ void MiImguiManager::SetupEditorImguiStyle()
     colors[ImGuiCol_Border] = ImVec4(0.22f, 0.24f, 0.29f, 1.00f);
 
     colors[ImGuiCol_TitleBg] = ImVec4(0.50f, 0.12f, 0.26f, 1.00f);
-    colors[ImGuiCol_TitleBgActive] = ImVec4(0.16f, 0.22f, 0.35f, 1.00f);
-    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.08f, 0.10f, 0.13f, 1.00f);
+    colors[ImGuiCol_TitleBgActive] = ImVec4(0.36f, 0.22f, 0.35f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.28f, 0.10f, 0.13f, 1.00f);
 }

@@ -30,6 +30,8 @@ public:
     virtual void    Start() = 0;
     virtual void    Update() = 0;
 
+    virtual void    DrawComponentInspector() = 0;
+
 };
 
 #endif // BEHAVIOR_COMPONENT_H

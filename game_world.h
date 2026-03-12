@@ -36,7 +36,10 @@ private:
     RenderProcessor    m_renderProcessor;
 
 public:
-    const std::vector<RenderView>& GetRenderViews() const { return m_renderViews; }
+    // SceneManagerへのアクセス
+    SceneManager& GetSceneManager() { return m_sceneManager; }
+    // RenderViewへのアクセス
+    std::vector<RenderView>& GetRenderViews() { return m_renderViews; }
 };
 
 #endif // GAME_WORLD_H

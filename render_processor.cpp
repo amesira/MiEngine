@@ -12,6 +12,8 @@
 #include "sprite.h"
 #include "direct3d.h"
 
+#include "debug_renderer.h"
+
 // 描画制御プロセッサーの初期化
 void RenderProcessor::Initialize()
 {
@@ -57,6 +59,10 @@ void RenderProcessor::Process(IScene* pScene)
     // m_transparentRenderPass.Process(pScene);
 
     m_lightingPass.SetLightEnable(false);
+
+    // デバッグ描画
+    DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
+
     SetDepthState(DEPTHSTATE_DISABLE);
 
     // 5.PostEffect描画

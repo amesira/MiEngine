@@ -13,6 +13,8 @@
 #include "mi_fps.h"
 #include "model.h"
 
+#include "debug_renderer.h"
+
 #include "scene_view_window.h"
 #include "inspector_view_window.h"
 #include "hierarchy_view_window.h"
@@ -35,22 +37,31 @@ bool MiEngine::Initialize(HWND hWnd)
     Model_Initialize();
     FPS_Initialize(hWnd);
 
+    DebugRenderer_Initialize();
+
     // GameWorldの初期化
     m_gameWorld.Initialize();
 
     // ImGuiの初期化
     m_imguiManager.Initialize(hWnd);
     {
+        m_editorContext.scene = m_gameWorld.GetSceneManager().GetCurrentScene();
         m_editorContext.sceneRenderView = &m_gameWorld.GetRenderViews()[0];
+        m_editorContext.displayX = 1920.0f;
+        m_editorContext.displayY = 1080.0f;
 
         SceneViewWindow sceneViewWindow(&m_editorContext);
         m_imguiManager.AddWindow(std::make_unique<SceneViewWindow>(sceneViewWindow));
+
         InspectorViewWindow inspectorViewWindow(&m_editorContext);
         m_imguiManager.AddWindow(std::make_unique<InspectorViewWindow>(inspectorViewWindow));
+
         HierarchyViewWindow hierarchyViewWindow(&m_editorContext);
         m_imguiManager.AddWindow(std::make_unique<HierarchyViewWindow>(hierarchyViewWindow));
+
         DebugViewWindow debugViewWindow(&m_editorContext);
         m_imguiManager.AddWindow(std::make_unique<DebugViewWindow>(debugViewWindow));
+
         ToolBarWindow toolBarWindow(&m_editorContext);
         m_imguiManager.AddWindow(std::make_unique<ToolBarWindow>(toolBarWindow));
     }
@@ -69,6 +80,8 @@ void MiEngine::Finalize()
     FinalizeSprite();
     Shader_Finalize();
     Direct3D_Finalize();
+
+    DebugRenderer_Finalize();
 }
 
 // MiEngineの1フレーム分の処理
@@ -99,9 +112,6 @@ void MiEngine::Render()
     m_gameWorld.Render();
 
     // ImGuiの描画
-    m_editorContext.displayX = static_cast<float>(Direct3D_GetBackBufferWidth());
-    m_editorContext.displayY = static_cast<float>(Direct3D_GetBackBufferHeight());
-
     m_imguiManager.RenderProcess();
 
     Direct3D_Present();

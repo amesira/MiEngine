@@ -101,6 +101,11 @@ public:
         }
     }
 
+    // Component基底クラスの取得
+    Component* GetComponentInterface(unsigned int gameObjectID) override {
+        return GetByGameObjectID(gameObjectID);
+    }
+
 };
 
 #endif

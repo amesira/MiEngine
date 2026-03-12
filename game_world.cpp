@@ -41,6 +41,7 @@ void GameWorld::Finalize()
 // GameWorldの更新処理
 void GameWorld::Update()
 {
+    // デバッグ描画のバッファリセット
     DebugRenderer_ResetBuffer();
 
     // Scene管理の更新

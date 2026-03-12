@@ -33,8 +33,9 @@ public:
 
 private:
     // オーナー設定が出来るのはGameObjectだけ。
-    friend GameObject;
+    friend class GameObject;
     void    SetOwner(GameObject* pGameObject) { m_pOwner = pGameObject; }
+
 };
 
 

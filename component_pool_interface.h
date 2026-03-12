@@ -33,6 +33,9 @@ public:
     // コンポーネントに対して関数を適用
     virtual void    Foreach(std::function<void(Component* c)> func) = 0;
 
+    // Component基底クラスの取得
+    virtual Component* GetComponentInterface(unsigned int gameObjectID) = 0;
+
 };
 
 #endif

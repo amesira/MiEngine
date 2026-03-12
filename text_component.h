@@ -36,6 +36,9 @@ private:
 
 public:
     void    SetText(const std::u8string& text) { m_text = text; }
+    void    SetText(const char8_t* text) { m_text = text; }
+    void    SetText(const std::string& text) { m_text = std::u8string(text.begin(), text.end()); }
+
     void    SetColor(DirectX::XMFLOAT4 color) { m_color = color; }
     void    SetFontType(Font fontType) { m_fontType = fontType; }
     void    SetFontSize(int fontSize) { m_fontSize = fontSize; }

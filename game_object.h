@@ -24,7 +24,7 @@ private:
     IScene*         m_pScene = nullptr; // 所属するシーンへのポインタ
     unsigned int    m_id = -1;           // GameObjectのID
 
-    std::string     m_name = "None";    // GameObjectの名前
+    std::string     m_name = "GameObject";    // GameObjectの名前
     bool            m_active = true;    // アクティブフラグ
     bool            m_isDestroy = false;// 破棄予約フラグ
     
@@ -38,7 +38,7 @@ private:
     void    FinalizeInternal() {
         m_id = -1;
 
-        m_name = "None";
+        m_name = "GameObject";
         m_active = false;
         m_isDestroy = false;
     }
@@ -86,9 +86,49 @@ public:
         }
         else {
             // GetComponentsByBaseTypeから取得する
-            // 未実装
         }
         return nullptr;
+    }
+
+    // GameObjectが持つすべてのComponentを取得
+    std::vector<Component*> GetAllComponents(){
+        std::vector<Component*> result;
+
+        if (!m_pScene) return result;
+
+        auto& pools = m_pScene->GetComponentPools();
+        for (auto& pool : pools) {
+            if (!pool) continue;
+
+            Component* comp = pool->GetComponentInterface(m_id);
+            if (comp) {
+                result.push_back(comp);
+            }
+        }
+        return result;
+    }
+
+    // GameObjectが持つ全てのBehaviorComponentを取得
+    std::vector<BehaviorComponent*> GetBehaviorComponents() {
+        std::vector<BehaviorComponent*> result;
+
+        if (!m_pScene) return result;
+
+        auto& pools = m_pScene->GetComponentPools();
+        for (auto& pool : pools) {
+            if (!pool) continue;
+
+            // ベースとなる型がBehaviorComponentのComponentPoolを探す
+            if (pool->GetBaseTypeID() != ComponentTypeID::getTypeID<BehaviorComponent>()) continue;
+
+            // そのComponentPoolからGameObjectが持つBehaviorComponentを取得
+            pool->Foreach([this, &result](Component* c) {
+                if (c->GetOwner()->GetID() == m_id) {
+                    result.push_back(static_cast<BehaviorComponent*>(c));
+                }
+            });
+        }
+        return result;
     }
 };
 
