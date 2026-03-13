@@ -143,6 +143,54 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
         ImGui::PopID();
     }
 
+    // LightComponentのプロパティ表示
+    auto* light = gameObject->GetComponent<LightComponent>();
+    if (light) {
+        ImGui::PushID(light);
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+            auto direction = light->GetDirection();
+            if (ImGui::DragFloat4("Direction", &direction.x, 0.1f)) {
+                light->SetDirection(direction);
+            }
+            auto diffuse = light->GetDiffuse();
+            if (ImGui::ColorEdit4("Diffuse", &diffuse.x)) {
+                light->SetDiffuse(diffuse);
+            }
+            auto ambient = light->GetAmbient();
+            if (ImGui::ColorEdit4("Ambient", &ambient.x)) {
+                light->SetAmbient(ambient);
+            }
+        }
+        ImGui::PopID();
+    }
+
+    // CameraComponentのプロパティ表示
+    auto* camera = gameObject->GetComponent<CameraComponent>();
+    if (camera) {
+        ImGui::PushID(camera);
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+            XMFLOAT3 atPosition = camera->GetAtPosition();
+            if (ImGui::DragFloat3("At Position", &atPosition.x, 0.1f)) {
+                camera->SetAtPosition(atPosition);
+            }
+            float fov = camera->GetFov();
+            if (ImGui::DragFloat("Field Of View", &fov, 0.1f, 1.0f, 179.0f)) {
+                camera->SetFov(fov);
+            }
+            float nearClip = camera->GetNearClip();
+            if (ImGui::DragFloat("Near Clip", &nearClip, 0.1f, 0.01f, 1000.0f)) {
+                camera->SetNearClip(nearClip);
+            }
+            float farClip = camera->GetFarClip();
+            if (ImGui::DragFloat("Far Clip", &farClip, 0.1f, 0.01f, 10000.0f)) {
+                camera->SetFarClip(farClip);
+            }
+        }
+        ImGui::PopID();
+    }
+
     // RigidbodyComponentのプロパティ表示
     auto* rigidbody = gameObject->GetComponent<RigidbodyComponent>();
     if (rigidbody) {

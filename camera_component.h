@@ -16,7 +16,7 @@ class CameraProcessor;
 
 class CameraComponent : public Component {
 private:
-    XMFLOAT3    m_atPosition = { 0.0f, 0.0f, 0.0f };// 注視点(オーナーの回転を使う場合、Processorで更新される)
+    XMFLOAT3    m_atPosition = { 0.0f, 0.0f, 0.0f };// 注視点
     XMFLOAT3    m_upVector = { 0.0f, 1.0f, 0.0f };  // 上方ベクトル
 
     float       m_fov = 60.0f;              // 視野角（画角）

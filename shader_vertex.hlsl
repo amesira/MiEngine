@@ -92,7 +92,7 @@ VS_OUTPUT main(VS_INPUT vs_in)
         {
             float light = -dot(normal.xyz, Lights[i].Direction.xyz);
             light = saturate(light);
-            vs_out.color.rgb *= light;
+            vs_out.color.rgb *= light * Lights[i].Diffuse.rgb;
             vs_out.color.rgb += Lights[i].Ambient.rgb;
         }
     }
