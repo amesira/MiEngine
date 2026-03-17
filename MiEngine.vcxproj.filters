@@ -10,6 +10,9 @@
     <FxCompile Include="shader_vertex.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader_light.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera_processor.cpp">
@@ -24,7 +27,7 @@
     <ClCompile Include="keyboard.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="Audio.cpp">
+    <ClCompile Include="audio.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
     <ClCompile Include="model.cpp">
@@ -200,7 +203,7 @@
     <ClInclude Include="keyboard.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="Audio.h">
+    <ClInclude Include="audio.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
     <ClInclude Include="component_type_id.h">

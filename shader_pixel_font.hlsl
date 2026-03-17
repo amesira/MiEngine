@@ -10,6 +10,8 @@ SamplerState g_SamplerState : register(s0);
 struct PS_INPUT // VS_OUTPUTと同じ内容
 {
     float4 posH : SV_Position;   // ピクセルの座標
+    float4 posW : POSITION1; // ワールド座標
+    float4 normal : NORMAL0; // ピクセルの法線
     float4 color : COLOR0;       // ピクセルの色
     float2 texcoord : TEXCOORD0; // テクスチャ座標
 };

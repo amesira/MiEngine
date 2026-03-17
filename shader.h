@@ -49,21 +49,17 @@ enum ShaderBeginMode {
 	MAX,
 };
 
-#define MAX_LIGHT (4)
-
 bool Shader_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 void Shader_Finalize();
 
 void Shader_SetMatrix(const XMMATRIX& matrix);
 void Shader_SetWorldMatrix(const XMMATRIX& world);
 
-void Shader_SetLight(int index, 
-	const XMFLOAT4& dir, const XMFLOAT4& diff, const XMFLOAT4& ambi);
-void Shader_SetLightEnable(int index, bool enable);
+void Shader_Begin(ShaderBeginMode mode = ShaderBeginMode::Default);
 
 void Shader_SetPixelOption(const XMFLOAT4& colorRate, float grayRate);
-void Shader_SetPixelOptionAlphaRate(const XMFLOAT4& alphaColor);
 
-void Shader_Begin(ShaderBeginMode mode = ShaderBeginMode::Default);
+void Shader_BindVsConstantBuffer(UINT slot, ID3D11Buffer* pBuffer);
+void Shader_BindPsConstantBuffer(UINT slot, ID3D11Buffer* pBuffer);
 
 #endif // SHADER_H

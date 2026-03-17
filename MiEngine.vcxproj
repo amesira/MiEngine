@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="audio.cpp" />
     <ClCompile Include="behavior_processor.cpp" />
     <ClCompile Include="camera_processor.cpp" />
     <ClCompile Include="collision_pass.cpp" />
@@ -225,7 +225,7 @@
     <ClInclude Include="physics_processor.h" />
     <ClInclude Include="player_behavior.h" />
     <ClInclude Include="rect_transform_component.h" />
-    <ClInclude Include="Audio.h" />
+    <ClInclude Include="audio.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="debug_ostream.h" />
     <ClInclude Include="direct3d.h" />
@@ -252,6 +252,9 @@
     <ClInclude Include="ui_render_pass.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="shader_light.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="shader_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
