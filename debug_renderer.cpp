@@ -45,6 +45,7 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
     Shader_Begin();
     Shader_SetMatrix(view * projection);
 
+
     //----------------------------------------------------
     // 頂点バッファを更新
     //----------------------------------------------------

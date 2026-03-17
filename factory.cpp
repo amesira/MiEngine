@@ -44,6 +44,7 @@ void Factory::CreateLight(GameObject* obj, DirectX::XMFLOAT4 direction, DirectX:
     obj->SetName("Light");
 
     // component生成・登録
+    TransformComponent* transform = obj->AddComponent<TransformComponent>();
     LightComponent* lightComp = obj->AddComponent<LightComponent>();
     
     // component設定

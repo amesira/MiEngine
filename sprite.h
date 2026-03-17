@@ -47,3 +47,5 @@ void    DrawInstance();
 
 /// @brief インスタンシングデータクリア
 void    ClearInstanceData();
+
+void    SetWorldMatrix(const XMMATRIX& world);

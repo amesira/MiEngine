@@ -271,3 +271,26 @@ void ClearInstanceData()
 	UINT offset = 0;
 	g_pContext->IASetVertexBuffers(1, 1, &g_pInstanceBuffer, &stride, &offset);
 }
+
+void SetWorldMatrix(const XMMATRIX& world)
+{
+	// インスタンスバッファのデフォルト設定
+	D3D11_MAPPED_SUBRESOURCE msr;
+	g_pContext->Map(g_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+
+	g_InstanceData = (InstanceData*)msr.pData;
+	g_InstanceData[0] = InstanceData();
+
+    // ワールド行列をセット
+	g_InstanceData[0].world0 = XMFLOAT4(world.r[0].m128_f32[0], world.r[0].m128_f32[1], world.r[0].m128_f32[2], world.r[0].m128_f32[3]);
+	g_InstanceData[0].world1 = XMFLOAT4(world.r[1].m128_f32[0], world.r[1].m128_f32[1], world.r[1].m128_f32[2], world.r[1].m128_f32[3]);
+	g_InstanceData[0].world2 = XMFLOAT4(world.r[2].m128_f32[0], world.r[2].m128_f32[1], world.r[2].m128_f32[2], world.r[2].m128_f32[3]);
+	g_InstanceData[0].world3 = XMFLOAT4(world.r[3].m128_f32[0], world.r[3].m128_f32[1], world.r[3].m128_f32[2], world.r[3].m128_f32[3]);
+
+	g_pContext->Unmap(g_pInstanceBuffer, 0);
+
+	// インスタンスバッファを描画パイプラインに設定
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	g_pContext->IASetVertexBuffers(1, 1, &g_pInstanceBuffer, &stride, &offset);
+}

@@ -23,6 +23,7 @@ using namespace DirectX;
 #include "transform_component.h"
 #include "model_component.h"
 
+
 // OpaqueRenderPassの初期化
 void OpaqueRenderPass::Initialize()
 {
@@ -71,8 +72,8 @@ void OpaqueRenderPass::Process(IScene* pScene)
         XMMATRIX worldMatrix = scaling * rotation * translation;
 
         // 行列セット
-        Shader_SetMatrix(worldMatrix * m_viewMatrix * m_projectionMatrix);
-        Shader_SetWorldMatrix(worldMatrix);
+        Shader_SetMatrix(m_viewMatrix * m_projectionMatrix);
+        SetWorldMatrix(worldMatrix);
 
         Shader_SetPixelOption(m.GetColor(), 0.0f);
 
