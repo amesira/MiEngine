@@ -49,7 +49,6 @@ void RenderProcessor::Process(IScene* pScene)
     // 3.スカイボックスパス
 
     // 4.3Dオブジェクト描画
-    Shader_Begin();
     m_lightingPass.BindLightBuffer();
     m_lightingPass.SetLightEnable(m_renderView->enableLighting);
     SetDepthState(DEPTHSTATE_ENABLE);

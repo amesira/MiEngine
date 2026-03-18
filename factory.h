@@ -17,8 +17,9 @@ using namespace DirectX;
 
 namespace Factory {
     void CreateCamera    (GameObject*, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 atPosition);
-    void CreateLight        (GameObject*, DirectX::XMFLOAT4 direction, DirectX::XMFLOAT4 diffuse, DirectX::XMFLOAT4 ambient);
-    
+    void CreateDirectionalLight(GameObject*, DirectX::XMFLOAT4 direction, DirectX::XMFLOAT4 diffuse, DirectX::XMFLOAT4 ambient);
+    void CreatePointLight(GameObject* obj, XMFLOAT4 diffuse, float range);
+
     void CreateBox          (GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color);
     void CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position);
 

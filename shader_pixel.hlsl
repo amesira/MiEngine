@@ -45,5 +45,4 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     if (col.a <= 0.01f) discard;
     
     return col;
-    //return float4(ps_in.posW.xyz * 0.01f, 1.0f);
 }

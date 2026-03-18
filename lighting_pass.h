@@ -18,24 +18,28 @@ using Microsoft::WRL::ComPtr;
 #pragma region ライトの構造体定義
 // DirectionalLight構造体
 struct alignas(16) GPU_DirectionalLight {
-    int enable;
-    float padding[3];
+    int     enable;
+    float   padding[3];
 
     XMFLOAT4 direction;
     XMFLOAT4 diffuse;
     XMFLOAT4 ambient;
+
+    float   intensity;
+    float   padding2[3];
 };
 
 // PointLight構造体
 struct alignas(16) GPU_PointLight {
-    int enable;
-    float padding[3];
+    int     enable;
+    float   padding[3];
 
     XMFLOAT4 position;
     XMFLOAT4 diffuse;
 
-    float range;
-    float padding2[3];
+    float   intensity;
+    float   range;
+    float   padding2[2];
 };
 
 // SpotLight構造体
@@ -47,9 +51,10 @@ struct alignas(16) GPU_SpotLight {
     XMFLOAT4 direction;
     XMFLOAT4 diffuse;
 
-    float range;
-    float spotAngle;
-    float padding2[2];
+    float   intensity;
+    float   range;
+    float   spotAngle;
+    float   padding2[1];
 };
 #pragma endregion
 
@@ -60,8 +65,8 @@ private:
     static const int SPOT_LIGHT_MAX = 4;
 
     struct alignas(16) LightBufferData {
-        int enableLighting; // ライティング全体の有効・無効
-        float padding[3];
+        int     enableLighting; // ライティング全体の有効・無効
+        float   padding[3];
 
         GPU_DirectionalLight directionalLights[DIRECTIONAL_LIGHT_MAX];
         GPU_PointLight  pointLights[POINT_LIGHT_MAX];

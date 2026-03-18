@@ -149,17 +149,54 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
         ImGui::PushID(light);
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-            auto direction = light->GetDirection();
-            if (ImGui::DragFloat4("Direction", &direction.x, 0.1f)) {
-                light->SetDirection(direction);
+            int lightType = static_cast<int>(light->GetLightType());
+            const char* lightTypeItems[] = { "Directional", "Point", "Spot" };
+            if (ImGui::Combo("Light Type", &lightType, lightTypeItems, IM_ARRAYSIZE(lightTypeItems))) {
+                light->SetLightType(static_cast<LightComponent::LightType>(lightType));
             }
+
+            ImGui::Separator();
+
+            // LightType
+            switch (light->GetLightType()) {
+            case LightComponent::LightType::Directional:
+            {
+                auto direction = light->GetDirection();
+                if (ImGui::DragFloat4("Direction", &direction.x, 0.1f)) {
+                    light->SetDirection(direction);
+                }
+                auto ambient = light->GetAmbient();
+                if (ImGui::ColorEdit4("Ambient", &ambient.x)) {
+                    light->SetAmbient(ambient);
+                }
+                break;
+            }
+            }
+
             auto diffuse = light->GetDiffuse();
             if (ImGui::ColorEdit4("Diffuse", &diffuse.x)) {
                 light->SetDiffuse(diffuse);
             }
-            auto ambient = light->GetAmbient();
-            if (ImGui::ColorEdit4("Ambient", &ambient.x)) {
-                light->SetAmbient(ambient);
+
+            ImGui::Separator();
+            
+            float intensity = light->GetIntensity();
+            if (ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f, 10.0f)) {
+                light->SetIntensity(intensity);
+            }
+            // Rangeは点光源・スポットライトのみ
+            if (light->GetLightType() != LightComponent::LightType::Directional) {
+                float range = light->GetRange();
+                if (ImGui::DragFloat("Range", &range, 0.1f, 0.0f, 100.0f)) {
+                    light->SetRange(range);
+                }
+            }
+            // スポットライトのみスポット角度を表示
+            if (light->GetLightType() == LightComponent::LightType::Spot) {
+                float spotAngle = light->GetSpotAngle();
+                if (ImGui::DragFloat("Spot Angle", &spotAngle, 0.1f, 1.0f, 179.0f)) {
+                    light->SetSpotAngle(spotAngle);
+                }
             }
         }
         ImGui::PopID();

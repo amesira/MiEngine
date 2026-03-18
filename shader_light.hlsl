@@ -16,6 +16,9 @@ struct DirectionalLight {
     float4  Direction;  // 光の方向
 	float4  Diffuse;    // 光の色
     float4  Ambient;    // 環境光の色
+    
+    float   Intensity; // 光の強さ
+    float3  padding2;
 };
 
 // PointLight構造体
@@ -27,8 +30,9 @@ struct PointLight {
     float4  Position;   // 光の位置
     float4  Diffuse;    // 光の色
     
+    float   Intensity;  // 光の強さ
     float   Range;      // 光の届く距離
-    float3  padding2;
+    float2  padding2;
 };
 
 // SpotLight構造体
@@ -41,9 +45,10 @@ struct SpotLight {
     float4  Direction;  // 光の方向
     float4  Diffuse;    // 光の色
     
+    float   Intensity;  // 光の強さ
     float   Range;      // 光の届く距離
     float   SpotAngle;  // スポットライトの角度（単位：ラジアン角）
-    float2  padding2;
+    float   padding2;
 };
 
 // ライト定数バッファ
@@ -72,14 +77,14 @@ float3 CalcLight_DirectionalLights(float3 normal)
         if (light.Enable == 0) continue;
         
         // ライトの方向を正規化
-        float3 L = normalize(-light.Direction.xyz);
+        float3 L = normalize(light.Direction.xyz);
         
         // ディフューズ成分を計算（0~1の範囲にclamp）
-        float NdotL = saturate(dot(N, L));
+        float NdotL = saturate(dot(N, -L));
         
         // ライトの色を加算
-        lighting += light.Diffuse.rgb * NdotL;
-        lighting += light.Ambient.rgb; // 環境光はそのまま
+        lighting += light.Diffuse.rgb * NdotL * light.Intensity;
+        lighting += light.Ambient.rgb;
     }
     
     return lighting;
@@ -114,10 +119,10 @@ float3 CalcLight_PointLights(float3 posW, float3 normal)
         
         // 距離減衰を計算（距離が遠いほど減衰する。distance >= Rangeのときは0になる）
         float attenuation = saturate(1.0f - distance / light.Range);
-        //attenuation *= attenuation; // 距離減衰を二次関数的に強める
+        attenuation *= attenuation; // 距離減衰を二次関数的に強める
         
         // ライトの色を加算
-        lighting += light.Diffuse.rgb * NdotL * attenuation;
+        lighting += light.Diffuse.rgb * NdotL * attenuation * light.Intensity;
     }
     
     return lighting;
@@ -163,7 +168,7 @@ float3 CalcLight_SpotLights(float3 posW, float3 normal)
         attenuation *= attenuation; // 距離減衰を二次関数的に強める
         
         // ライトの色を加算
-        lighting += light.Diffuse.rgb * NdotL * attenuation;
+        lighting += light.Diffuse.rgb * NdotL * attenuation * light.Intensity;
     }
     
     return lighting;

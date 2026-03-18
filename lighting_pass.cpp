@@ -54,29 +54,75 @@ void LightingPass::Process(IScene* pScene)
         m_lightBufferData.spotLights[i].enable = 0;
     }
 
-    m_lightBufferData = {};
+    int directionalLightCount = 0;
+    int pointLightCount = 0;
+    int spotLightCount = 0;
 
-    // ライトの情報をバッファデータに設定
+    // LightComponentPoolを走査
     for (LightComponent& lightComp : lightCompList) {
         LightComponent* light = &lightComp;
         TransformComponent* transform = transformCompPool->GetByGameObjectID(lightComp.GetOwner()->GetID());
         if (!light->GetEnable() || !transform) continue;
 
-        // DirectionalLightとして設定（今回はDirectionalLightのみ対応）
-        //m_lightBufferData.directionalLights[0].enable = 1;
-        //m_lightBufferData.directionalLights[0].direction = light->GetDirection(); // ライトの方向を設定
-        //m_lightBufferData.directionalLights[0].diffuse = light->GetDiffuse();
-        //m_lightBufferData.directionalLights[0].ambient = light->GetAmbient();
+        // ライトの情報をバッファデータに設定
+        switch (light->GetLightType()) {
+        case LightComponent::LightType::Directional:
+        {
+            if (directionalLightCount >= DIRECTIONAL_LIGHT_MAX) continue;
+            GPU_DirectionalLight& data = m_lightBufferData.directionalLights[directionalLightCount];
+            {
+                data.enable = 1;
+                data.direction = light->GetDirection();
+                data.diffuse = light->GetDiffuse();
+                data.ambient = light->GetAmbient();
 
-        m_lightBufferData.pointLights[0].enable = 1;
-        m_lightBufferData.pointLights[0].position = {
-            transform->GetPosition().x,
-            transform->GetPosition().y,
-            transform->GetPosition().z,
-            1.0f // w成分はポイントライトであることを示すために1.0fにする
-        };
-        m_lightBufferData.pointLights[0].diffuse = light->GetDiffuse();
-        m_lightBufferData.pointLights[0].range = 10.0f; // ライトの範囲を設定
+                data.intensity = light->GetIntensity();
+            }
+            directionalLightCount++;
+            break;
+        }
+        case LightComponent::LightType::Point:
+        {
+            if (pointLightCount >= POINT_LIGHT_MAX) continue;
+            GPU_PointLight& data = m_lightBufferData.pointLights[pointLightCount];
+            {
+                data.enable = 1;
+                data.position = {
+                    transform->GetPosition().x,
+                    transform->GetPosition().y,
+                    transform->GetPosition().z,
+                    1.0f
+                };
+                data.diffuse = light->GetDiffuse();
+    
+                data.intensity = light->GetIntensity();
+                data.range = light->GetRange();
+            }
+            pointLightCount++;
+            break;
+        }
+        case LightComponent::LightType::Spot:
+        {
+            if (spotLightCount >= SPOT_LIGHT_MAX) continue;
+            GPU_SpotLight& data = m_lightBufferData.spotLights[spotLightCount];
+            {
+                data.enable = 1;
+                data.position = {
+                    transform->GetPosition().x,
+                    transform->GetPosition().y,
+                    transform->GetPosition().z,
+                    1.0f
+                };
+                data.direction = light->GetDirection();
+                data.diffuse = light->GetDiffuse();
+                data.intensity = light->GetIntensity();
+                data.range = light->GetRange();
+                data.spotAngle = light->GetSpotAngle();
+            }
+            spotLightCount++;
+            break;
+        }
+        }
     }
 
     // 定数バッファにライトの情報を転送

@@ -31,17 +31,13 @@ void ToolBarWindow::Draw()
     ImGui::SameLine();
 
     const char* items[] = { "Edit", "Play" };
-    static int currentIndex = 0;
+    int currentIndex = static_cast<int>(m_editorContext->currentEditorMode);
 
     ImGui::SetNextItemWidth(120);
     if (ImGui::Combo("##Mode", &currentIndex, items, IM_ARRAYSIZE(items))) {
         // currentIndex が変わったとき
-        if (currentIndex == 0) {
-            m_editorContext->currentEditorMode = EditorContext::EditorMode::Edit;
-        }
-        else if (currentIndex == 1) {
-            m_editorContext->currentEditorMode = EditorContext::EditorMode::Play;
-        }
+        EditorContext::EditorMode newMode = static_cast<EditorContext::EditorMode>(currentIndex);
+        m_editorContext->currentEditorMode = newMode;
     }
     ImGui::SameLine();
 

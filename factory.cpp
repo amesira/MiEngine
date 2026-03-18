@@ -39,18 +39,39 @@ void Factory::CreateCamera(GameObject* obj, DirectX::XMFLOAT3 position, DirectX:
     camera->SetFarClip(100.0f);
 }
 
-void Factory::CreateLight(GameObject* obj, DirectX::XMFLOAT4 direction, DirectX::XMFLOAT4 diffuse, DirectX::XMFLOAT4 ambient)
+void Factory::CreateDirectionalLight(GameObject* obj, DirectX::XMFLOAT4 direction, DirectX::XMFLOAT4 diffuse, DirectX::XMFLOAT4 ambient)
 {
-    obj->SetName("Light");
+    obj->SetName("DirectionalLight");
 
     // component生成・登録
     TransformComponent* transform = obj->AddComponent<TransformComponent>();
     LightComponent* lightComp = obj->AddComponent<LightComponent>();
     
     // component設定
+    lightComp->SetLightType(LightComponent::LightType::Directional);
+
     lightComp->SetDirection(direction);
     lightComp->SetDiffuse(diffuse);
     lightComp->SetAmbient(ambient);
+
+    lightComp->SetIntensity(1.2f);
+}
+
+void Factory::CreatePointLight(GameObject* obj, XMFLOAT4 diffuse, float range)
+{
+    obj->SetName("PointLight");
+
+    // component生成・登録
+    TransformComponent* transform = obj->AddComponent<TransformComponent>();
+    LightComponent* lightComp = obj->AddComponent<LightComponent>();
+
+    // component設定
+    lightComp->SetLightType(LightComponent::LightType::Point);
+
+    lightComp->SetDiffuse(diffuse);
+
+    lightComp->SetIntensity(2.0f);
+    lightComp->SetRange(range);
 }
 
 void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)
