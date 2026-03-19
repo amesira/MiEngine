@@ -18,16 +18,18 @@ using namespace DirectX;
 #include "shader.h"
 #include "sprite.h"
 
-#include "model.h"
-
 #include "transform_component.h"
 #include "model_component.h"
 
+static ID3D11ShaderResourceView* defaultTextureSRV = nullptr;
 
 // OpaqueRenderPassの初期化
 void OpaqueRenderPass::Initialize()
 {
+    m_pDevice = Direct3D_GetDevice();
+    m_pContext = Direct3D_GetDeviceContext();
 
+    LoadTexture(&defaultTextureSRV, L"asset\\texture\\white.bmp");
 }
 
 // OpaqueRenderPassの終了処理
@@ -54,7 +56,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
         if (!m.GetEnable() || !t->GetEnable())continue;
 
         // モデルデータ取得
-        MODEL* model = m.GetModel();
+        ModelResource* model = m.GetModelResource();
         if (!model)continue;
 
         // ワールド行列計算
@@ -78,9 +80,44 @@ void OpaqueRenderPass::Process(IScene* pScene)
         Shader_SetPixelOption(m.GetColor(), 0.0f);
 
         // モデル描画
-        ModelDraw(model);
+        DrawModel(model, worldMatrix, m.GetColor());
     }
 
     // オプションリセット
     Shader_SetPixelOption(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f);
+}
+
+//---------------------------------------------
+
+// モデル描画
+void OpaqueRenderPass::DrawModel(ModelResource* model, const XMMATRIX& world, const XMFLOAT4& color)
+{
+    // プリミティブトポロジ設定
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    model->meshes[0].numVertices;
+
+    for (unsigned int m = 0; m < model->meshes.size(); m++)
+    {
+        ModelMesh& mesh = model->meshes[m];
+
+        // テクスチャ設定の仮
+        if (model->textures.empty()) {
+
+        }
+        m_pContext->PSSetShaderResources(0, 1, &defaultTextureSRV);
+
+        //m_pContext->PSSetShaderResources(0, 1, model->textures[0].texture);
+
+        // 頂点バッファ設定
+        UINT stride = sizeof(Vertex);
+        UINT offset = 0;
+        m_pContext->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
+        
+        // インデックスバッファ設定
+        m_pContext->IASetIndexBuffer(mesh.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+        
+        // ポリゴン描画
+        m_pContext->DrawIndexed(mesh.numIndices, 0, 0);
+    }
 }

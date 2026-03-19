@@ -63,6 +63,7 @@ void LightingPass::Process(IScene* pScene)
         LightComponent* light = &lightComp;
         TransformComponent* transform = transformCompPool->GetByGameObjectID(lightComp.GetOwner()->GetID());
         if (!light->GetEnable() || !transform) continue;
+        if (!light->GetOwner()->GetActive()) continue;
 
         // ライトの情報をバッファデータに設定
         switch (light->GetLightType()) {

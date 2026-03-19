@@ -21,6 +21,8 @@
 // behavior
 #include "player_behavior.h"
 
+#include "resource_manager.h"
+
 void Factory::CreateCamera(GameObject* obj, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 atPosition)
 {
     obj->SetName("Camera");
@@ -92,7 +94,8 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
         scaling.y * 2.0f,
         scaling.z * 2.0f
         });
-    modelComp->LoadModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    modelComp->SetModelResource(modelResource);
     modelComp->SetColor(color);
 }
 
@@ -116,7 +119,9 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
         scaling.y * 2.0f,
         scaling.z * 2.0f
         });
-    modelComp->LoadModel("asset\\Model\\cube.fbx");
+
+    ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    modelComp->SetModelResource(modelResource);
     modelComp->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
 
     // behavior生成・登録
@@ -168,4 +173,19 @@ void Factory::CreateUiSlider(GameObject* uiSlider, XMFLOAT2 position, XMFLOAT2 s
     sliderComp->SetValue(value);
     sliderComp->SetBgColor({ 0.2f, 0.2f, 0.2f, 1.0f });
     sliderComp->SetFillColor({ 0.8f, 0.8f, 0.8f, 1.0f });
+}
+
+void Factory::CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 position, XMFLOAT3 scaling)
+{
+    obj->SetName("Model");
+
+    // component生成・登録
+    TransformComponent* transform = obj->AddComponent<TransformComponent>();
+    ModelComponent* modelComp = obj->AddComponent<ModelComponent>();
+
+    // component設定
+    transform->SetPosition(position);
+    transform->SetScaling(scaling);
+    ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel(modelPath);
+    modelComp->SetModelResource(modelResource);
 }

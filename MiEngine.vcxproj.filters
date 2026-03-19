@@ -30,9 +30,6 @@
     <ClCompile Include="audio.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -150,6 +147,12 @@
     <ClCompile Include="debug_view_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
+    <ClCompile Include="model_repository.cpp">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_manager.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -209,7 +212,7 @@
     <ClInclude Include="component_type_id.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="model_resource.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="mouse.h">
@@ -355,6 +358,12 @@
     </ClInclude>
     <ClInclude Include="debug_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="model_repository.h">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="resource_manager.h">
+      <Filter>Sources\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

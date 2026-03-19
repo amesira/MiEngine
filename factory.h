@@ -26,6 +26,8 @@ namespace Factory {
     void CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const wchar_t* texturePath);
     void CreateUiText(GameObject* uiText, XMFLOAT2 position, XMFLOAT2 size, const std::u8string text);
     void CreateUiSlider(GameObject* uiSlider, XMFLOAT2 position, XMFLOAT2 size, float value);
+
+    void CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 position, XMFLOAT3 scaling);
 }
 
 #endif

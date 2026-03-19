@@ -51,6 +51,10 @@ void GameScene::Initialize()
     GameObject* uiSlider = this->CreateGameObject();
     Factory::CreateUiSlider(uiSlider, { 300.0f, 500.0f }, { 200.0f, 20.0f }, 0.5f);
 
+    // model
+    GameObject* model = this->CreateGameObject();
+    Factory::CreateModel(model, "asset\\Model\\character.fbx", { 3.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f });
+
 }
 
 // ゲームシーン終了処理

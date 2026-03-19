@@ -9,30 +9,28 @@
 
 #include "component.h"
 
-#include "model.h"
+#include "model_resource.h"
 #include <iostream>
 
-// directX
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "direct3d.h"
+using namespace DirectX;
 
 class ModelComponent : public Component {
 private:
-    std::unique_ptr<MODEL>  m_model = nullptr;
-    DirectX::XMFLOAT4       m_color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    ModelResource* m_pModelResource = nullptr;
+    XMFLOAT4        m_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 public:
-    void    SetModel(std::unique_ptr<MODEL> model) { m_model = std::move(model); }
-    MODEL*  GetModel() const { return m_model.get(); }
+    // モデルファイルパスの設定・取得
+    void    SetModelResource(ModelResource* pModelResource) { m_pModelResource = pModelResource; }
+    ModelResource* GetModelResource() const { return m_pModelResource; }
 
-    void    SetColor(DirectX::XMFLOAT4 color) { m_color = color; }
-    DirectX::XMFLOAT4   GetColor() const { return m_color; }
+    // 色の設定・取得
+    void    SetColor(XMFLOAT4 color) { m_color = color; }
+    XMFLOAT4   GetColor() const { return m_color; }
 
-    // モデル読み込み
-    void LoadModel(const char* filePath) {
-        m_model = std::unique_ptr<MODEL>(ModelLoad(filePath));
-    }
 };
 
 #endif // MODEL_COMPONENT_H

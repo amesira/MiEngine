@@ -154,6 +154,7 @@
     <ClCompile Include="inspector_view_window.cpp" />
     <ClCompile Include="integrate_pass.cpp" />
     <ClCompile Include="mi_imgui_manager.cpp" />
+    <ClCompile Include="model_repository.cpp" />
     <ClCompile Include="opaque_render_pass.cpp" />
     <ClCompile Include="render_processor.cpp" />
     <ClCompile Include="resolve_pass.cpp" />
@@ -166,13 +167,13 @@
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="lighting_pass.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="model.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="physics_processor.cpp" />
     <ClCompile Include="player_behavior.cpp" />
     <ClCompile Include="collector_font.cpp" />
     <ClCompile Include="collector_image.cpp" />
     <ClCompile Include="collector_slider.cpp" />
+    <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="scene_manager.cpp" />
     <ClCompile Include="scene_view_window.cpp" />
     <ClCompile Include="shader.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="integrate_pass.h" />
     <ClInclude Include="mi_imgui_manager.h" />
     <ClInclude Include="imgui_window_interface.h" />
+    <ClInclude Include="model_repository.h" />
     <ClInclude Include="opaque_render_pass.h" />
     <ClInclude Include="render_processor.h" />
     <ClInclude Include="render_view.h" />
@@ -219,7 +221,7 @@
     <ClInclude Include="light_component.h" />
     <ClInclude Include="lighting_pass.h" />
     <ClInclude Include="mi_math.h" />
-    <ClInclude Include="model.h" />
+    <ClInclude Include="model_resource.h" />
     <ClInclude Include="model_component.h" />
     <ClInclude Include="pass.h" />
     <ClInclude Include="physics_processor.h" />
@@ -236,6 +238,7 @@
     <ClInclude Include="collector_font.h" />
     <ClInclude Include="collector_image.h" />
     <ClInclude Include="collector_slider.h" />
+    <ClInclude Include="resource_manager.h" />
     <ClInclude Include="rigidbody_component.h" />
     <ClInclude Include="scene_base.h" />
     <ClInclude Include="scene_interface.h" />

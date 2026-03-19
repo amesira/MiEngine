@@ -11,7 +11,6 @@
 #include "sprite.h"
 #include "Audio.h"
 #include "mi_fps.h"
-#include "model.h"
 
 #include "debug_renderer.h"
 
@@ -34,8 +33,9 @@ bool MiEngine::Initialize(HWND hWnd)
     Shader_Initialize(pDevice, pContext);
     InitializeSprite();
     InitAudio();
-    Model_Initialize();
     FPS_Initialize(hWnd);
+
+    ResourceManager::GetInstance().Initialize();
 
     DebugRenderer_Initialize();
 
@@ -73,8 +73,9 @@ void MiEngine::Finalize()
     // GameWorldの終了処理
     m_gameWorld.Finalize();
 
+    ResourceManager::GetInstance().Finalize();
+
     UninitAudio();
-    Model_Finalize();
     FinalizeSprite();
     Shader_Finalize();
     Direct3D_Finalize();

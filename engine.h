@@ -12,6 +12,7 @@
 #include "mi_imgui_manager.h"
 
 #include "editor_context.h"
+#include "resource_manager.h"
 
 class MiEngine {
 public:
@@ -33,6 +34,7 @@ private:
     EditorContext m_editorContext;
 
     MiImguiManager m_imguiManager;
+   // ResourceManager m_resourceManager = ResourceManager::GetInstance();
     // AssetManager* m_pAssetManager;
     // Renderer* m_pRenderer;
     // InputSystem* m_pInputSystem;
@@ -44,6 +46,9 @@ private:
 public:
     // GameWorldへのアクセス
     const GameWorld& GetGameWorld() const { return m_gameWorld; }
+
+    // ResourceManagerへのアクセス
+   // ResourceManager& GetResourceManager() { return m_resourceManager; }
 
     // EditorContextへのアクセス
     void AddLogMessage(const std::string& message) {
