@@ -17,6 +17,8 @@
 #include "camera_component.h"
 #include "light_component.h"
 #include "slider_component.h"
+#include "joint_component.h"
+#include "joint_group_component.h"
 
 // behavior
 #include "player_behavior.h"
@@ -188,4 +190,69 @@ void Factory::CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 posit
     transform->SetScaling(scaling);
     ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel(modelPath);
     modelComp->SetModelResource(modelResource);
+}
+
+void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, XMFLOAT3 endPosition, float interval)
+{
+    jointGroup->SetName("JointGroup");
+
+    // component生成・登録
+    TransformComponent* transform = jointGroup->AddComponent<TransformComponent>();
+    JointGroupComponent* jointGroupComp = jointGroup->AddComponent<JointGroupComponent>();
+
+    // component設定
+    transform->SetPosition(startPosition);
+
+    // JointComponentをintervalの間隔で配置する
+    XMFLOAT3 direction = {
+        endPosition.x - startPosition.x,
+        endPosition.y - startPosition.y,
+        endPosition.z - startPosition.z
+    };
+
+    float length = sqrtf(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+    int jointCount = static_cast<int>(length / interval) + 1;
+
+    unsigned int prevJointID = -1;
+
+    for (int i = 0; i < jointCount; i++) {
+        GameObject* jointObj = jointGroup->GetScene()->CreateGameObject();
+        jointObj->SetName("Joint" + std::to_string(i));
+
+        TransformComponent* jointTransform = jointObj->AddComponent<TransformComponent>();
+        RigidbodyComponent* jointRigidbody = jointObj->AddComponent<RigidbodyComponent>();
+        SphereColliderComponent* jointCollider = jointObj->AddComponent<SphereColliderComponent>();
+        ModelComponent* jointModel = jointObj->AddComponent<ModelComponent>();
+        JointComponent* jointComp = jointObj->AddComponent<JointComponent>();
+        jointComp->SetGroupID(jointGroup->GetID());
+        jointComp->SetRestLength(interval);
+
+        jointTransform->SetScaling({0.3f, 0.3f, 0.3f});
+        jointCollider->SetRadius(0.3f);
+
+        if (prevJointID != -1) {
+            jointComp->SetConnectedBodyID(prevJointID);
+        }
+        prevJointID = jointObj->GetID();
+
+        float t = static_cast<float>(i) / (jointCount - 1);
+        XMFLOAT3 jointPos = {
+            startPosition.x + direction.x * t,
+            startPosition.y + direction.y * t,
+            startPosition.z + direction.z * t
+        };
+
+        jointTransform->SetPosition(jointPos);
+        jointModel->SetModelResource(ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\sphere.fbx"));
+        jointModel->SetColor({ 0.5f, 0.5f, 1.0f, 1.0f });
+
+        if (i == 0 || i == jointCount - 1) {
+            // 最初と最後のJointはキネマティックにする
+            jointRigidbody->SetIsKinematic(true);
+        }
+        else {
+            jointRigidbody->SetIsKinematic(false);
+            jointRigidbody->SetMass(1.0f);
+        }
+    }
 }

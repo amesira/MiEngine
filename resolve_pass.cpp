@@ -55,6 +55,11 @@ void ResolvePass::Process(IScene* pScene)
             if (!transform || !collider || !rigidbody)continue;
             if (!transform->GetEnable() || !collider->GetEnable() || !rigidbody->GetEnable())continue;
 
+            if (rigidbody->GetIsKinematic()) {
+                rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
+                continue;
+            }
+
             // 物理演算補正適用
             ApplyResolve(transform, collider, rigidbody, deltaTime);
         }
@@ -71,6 +76,11 @@ void ResolvePass::Process(IScene* pScene)
             // コンポーネントが無効ならスキップ
             if (!transform || !collider || !rigidbody)continue;
             if (!transform->GetEnable() || !collider->GetEnable() || !rigidbody->GetEnable())continue;
+
+            if (rigidbody->GetIsKinematic()) {
+                rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
+                continue;
+            }
 
             // 物理演算補正適用
             ApplyResolve(transform, collider, rigidbody, deltaTime);

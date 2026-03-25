@@ -72,9 +72,6 @@
     <ClCompile Include="scene_manager.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="player_behavior.cpp">
-      <Filter>Sources\Game\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="behavior_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
@@ -152,6 +149,21 @@
     </ClCompile>
     <ClCompile Include="resource_manager.cpp">
       <Filter>Sources\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="player_attack_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="player_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="player_move_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="player_input_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="constraint_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -266,9 +278,6 @@
     <ClInclude Include="scene_manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="player_behavior.h">
-      <Filter>Sources\Game\Behavior</Filter>
-    </ClInclude>
     <ClInclude Include="behavior_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
@@ -365,6 +374,27 @@
     <ClInclude Include="resource_manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="player_move_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="player_attack_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="player_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="player_input_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="constraint_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    </ClInclude>
+    <ClInclude Include="joint_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="joint_group_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -426,6 +456,9 @@
     </Filter>
     <Filter Include="Utility\ImguiWindow">
       <UniqueIdentifier>{f6eed08c-fb73-4a55-89a8-f4c273ea1ea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Behavior\PlayerBehavior">
+      <UniqueIdentifier>{4d0768cd-3d37-4572-b155-d56409e44dd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

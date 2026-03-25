@@ -17,10 +17,6 @@ using namespace DirectX;
 
 class ColliderComponent :public Component {
 public:
-    enum class Shape {
-        Box,
-        Sphere,
-    };
     struct CollisionData {
         ColliderComponent*  m_other = nullptr;  // 衝突相手のコライダーコンポーネント
         XMFLOAT3    m_mtv = { 0.0f,0.0f,0.0f }; // 最小移動ベクトル
@@ -56,7 +52,6 @@ public:
     static const int MAX_COLLISION_DATA = 8;
 
 protected:
-    Shape m_shape = Shape::Box;
     DirectX::XMFLOAT3 m_center = { 0.0f,0.0f,0.0f };
 
 private:
@@ -65,9 +60,6 @@ private:
     
 public:
     ~ColliderComponent() = default;
-
-    // コライダーの形状取得
-    Shape   GetShape()const { return m_shape; }
 
     void    SetCenter(DirectX::XMFLOAT3 center) { m_center = center; }
     DirectX::XMFLOAT3   GetCenter()const { return m_center; }
@@ -164,7 +156,7 @@ private:
     DirectX::XMFLOAT3   m_scale = { 1.0f,1.0f,1.0f };
 
 public:
-    BoxColliderComponent() {  m_shape = ColliderComponent::Shape::Box; }
+    BoxColliderComponent() {}
 
     void    SetScale(DirectX::XMFLOAT3 scale) {  m_scale = scale;}
     DirectX::XMFLOAT3   GetScale() { return m_scale; }
@@ -175,7 +167,7 @@ private:
     float   m_radius = 0.5f;
 
 public:
-    SphereColliderComponent() { m_shape = ColliderComponent::Shape::Sphere; }
+    SphereColliderComponent() { }
 
     void    SetRadius(float radius) { m_radius = radius; }
     float   GetRadius() { return m_radius; }

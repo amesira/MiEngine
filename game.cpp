@@ -55,6 +55,10 @@ void GameScene::Initialize()
     GameObject* model = this->CreateGameObject();
     Factory::CreateModel(model, "asset\\Model\\character.fbx", { 3.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f });
 
+    // JointGroup
+    GameObject* jointGroup = this->CreateGameObject();
+    Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
+
 }
 
 // ゲームシーン終了処理

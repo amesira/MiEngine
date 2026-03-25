@@ -71,7 +71,7 @@ public:
                 m_freeIndices.push_back(i);
 
                 m_components[i].SetEnable(false); // 無効化しておく
-                m_gameObjectIDs[i] = -1; // 無効なIDにしておく
+                m_gameObjectIDs[i] = UINT_FAST16_MAX; // 無効なIDにしておく
 
                 return;
             }

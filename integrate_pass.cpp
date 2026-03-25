@@ -47,6 +47,12 @@ void IntegratePass::Process(IScene* pScene)
         transform->SetPrevPosition(transform->GetPosition());
         rigidbody->SetPrevVelocity(rigidbody->GetVelocity());
 
+        // キネマティックなら速度を0にして位置の更新も行わない
+        if (rigidbody->GetIsKinematic()) {
+            rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
+            continue;
+        }
+
         DirectX::XMFLOAT3 velocity = rigidbody->GetVelocity();
         {
             // 摩擦の適用

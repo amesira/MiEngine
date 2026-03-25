@@ -27,6 +27,11 @@
 #include "image_component.h"
 #include "slider_component.h"
 
+#include "model_component.h"
+
+#include "joint_group_component.h"
+#include "joint_component.h"
+
 
 void InspectorViewWindow::Draw()
 {
@@ -246,6 +251,11 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                 rigidbody->SetEnable(enable);
             }
 
+            bool isKinematic = rigidbody->GetIsKinematic();
+            if (ImGui::Checkbox("Is Kinematic", &isKinematic)) {
+                rigidbody->SetIsKinematic(isKinematic);
+            }
+
             auto velocity = rigidbody->GetVelocity();
             if (ImGui::DragFloat3("Velocity", &velocity.x, 0.1f)) {
                 rigidbody->SetVelocity(velocity);
@@ -331,6 +341,48 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
         ImGui::PopID();
     }
 
+    // JointGroupComponentのプロパティ表示
+    auto* jointGroup = gameObject->GetComponent<JointGroupComponent>();
+    if (jointGroup) {
+        ImGui::PushID(jointGroup);
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Joint Group", ImGuiTreeNodeFlags_DefaultOpen)) {
+            float stiffness = jointGroup->GetStiffness();
+            if (ImGui::DragFloat("Stiffness", &stiffness, 0.1f, 0.0f, 1000.0f)) {
+                jointGroup->SetStiffness(stiffness);
+            }
+            float damping = jointGroup->GetDamping();
+            if (ImGui::DragFloat("Damping", &damping, 0.01f, 0.0f, 1.0f)) {
+                jointGroup->SetDamping(damping);
+            }
+
+            int resolveIterations = jointGroup->GetResolveIterations();
+            if (ImGui::DragInt("Resolve Iterations", &resolveIterations, 1.0f, 1, 10)) {
+                jointGroup->SetResolveIterations(resolveIterations);
+            }
+        }
+        ImGui::PopID();
+    }
+
+    // JointComponentのプロパティ表示
+    auto* joint = gameObject->GetComponent<JointComponent>();
+    if (joint) {
+        ImGui::PushID(joint);
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Joint", ImGuiTreeNodeFlags_DefaultOpen)) {
+            unsigned int connectedObjectID = joint->GetConnectedBodyID();
+            if (ImGui::DragScalar("Connected Object ID", ImGuiDataType_U32, &connectedObjectID, 1.0f, nullptr, nullptr)) {
+                joint->SetConnectedBodyID(connectedObjectID);
+            }
+
+            float restLength = joint->GetRestLength();
+            if (ImGui::DragFloat("Rest Length", &restLength, 0.1f, 0.0f, 100.0f)) {
+                joint->SetRestLength(restLength);
+            }
+        }
+        ImGui::PopID();
+    }
+
 #pragma region UIComponents
     auto* text = gameObject->GetComponent<TextComponent>();
     if (text) {
@@ -395,4 +447,5 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
 
 #pragma endregion
     
+
 }

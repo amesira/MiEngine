@@ -32,6 +32,8 @@ public:
     virtual void    Update() = 0;
     virtual void    Draw() = 0;
 
+    virtual GameObject* CreateGameObject() = 0;
+
     // 型TのComponentPoolを取得
     template<class T>
     ComponentPool<T>* GetComponentPool() {

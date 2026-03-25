@@ -59,7 +59,7 @@ public:
 
     // GameObjectの生成
     // ・return: 生成したGameObjectへのポインタ
-    GameObject* CreateGameObject() {
+    GameObject* CreateGameObject() override {
         assert(m_gameObjects.size() < MAX_GAMEOBJECTS && "IScene has reached its maximum GameObject capacity.");
 
         // 空きスロットがあればそこを利用

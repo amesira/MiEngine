@@ -28,8 +28,14 @@ void PhysicsProcessor::Finalize()
 
 void PhysicsProcessor::Process(IScene* pScene)
 {
-    // 各Passの処理
+    // 重力・外力を位置へ適用
     m_integratePass.Process(pScene);
+    // 位置から衝突判定
     m_collisionPass.Process(pScene);
+    // 衝突解決・演算補正
     m_resolvePass.Process(pScene);
+
+    // 拘束解決
+    m_constraintPass.Process(pScene);
+
 }

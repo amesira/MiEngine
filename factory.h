@@ -28,6 +28,8 @@ namespace Factory {
     void CreateUiSlider(GameObject* uiSlider, XMFLOAT2 position, XMFLOAT2 size, float value);
 
     void CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 position, XMFLOAT3 scaling);
+
+    void CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, XMFLOAT3 endPosition, float interval);
 }
 
 #endif

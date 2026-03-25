@@ -4,6 +4,55 @@ using namespace DirectX;
 
 namespace MiMath
 {
+    // 加算
+    inline XMVECTOR Add(const XMVECTOR& va, const XMVECTOR& vb) {
+        return XMVectorAdd(va, vb);
+    }
+    inline XMFLOAT3 Add(const XMFLOAT3& a, const XMFLOAT3& b) {
+        XMVECTOR va = XMLoadFloat3(&a);
+        XMVECTOR vb = XMLoadFloat3(&b);
+        XMVECTOR vr = Add(va, vb);
+        XMFLOAT3 result;
+        XMStoreFloat3(&result, vr);
+        return result;
+    }
+
+    // 減算
+    inline XMVECTOR Subtract(const XMVECTOR& va, const XMVECTOR& vb) {
+        return XMVectorSubtract(va, vb);
+    }
+    inline XMFLOAT3 Subtract(const XMFLOAT3& a, const XMFLOAT3& b) {
+        XMVECTOR va = XMLoadFloat3(&a);
+        XMVECTOR vb = XMLoadFloat3(&b);
+        XMVECTOR vr = Subtract(va, vb);
+        XMFLOAT3 result;
+        XMStoreFloat3(&result, vr);
+        return result;
+    }
+
+    // 乗算
+    inline XMVECTOR Multiply(const XMVECTOR& va, const XMVECTOR& vb) {
+        return XMVectorMultiply(va, vb);
+    }
+    inline XMFLOAT3 Multiply(const XMFLOAT3& a, const XMFLOAT3& b) {
+        XMVECTOR va = XMLoadFloat3(&a);
+        XMVECTOR vb = XMLoadFloat3(&b);
+        XMVECTOR vr = Multiply(va, vb);
+        XMFLOAT3 result;
+        XMStoreFloat3(&result, vr);
+        return result;
+    }
+    inline XMVECTOR Multiply(const XMVECTOR& v, float scalar) {
+        return XMVectorScale(v, scalar);
+    }
+    inline XMFLOAT3 Multiply(const XMFLOAT3& v, float scalar) {
+        XMVECTOR vv = XMLoadFloat3(&v);
+        XMVECTOR vr = Multiply(vv, scalar);
+        XMFLOAT3 result;
+        XMStoreFloat3(&result, vr);
+        return result;
+    }
+
     // 値をmin〜maxの範囲にクランプする
     inline float Clamp(float value, float min, float max) {
         if (value < min) return min;

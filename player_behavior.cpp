@@ -12,11 +12,18 @@
 #include "keyboard.h"
 #include "debug_ostream.h"
 
+#include "imgui_window_interface.h"
+
+// プレイヤーが依存するComponentのヘッダ
 #include "transform_component.h"
 #include "rigidbody_component.h"
 #include "model_component.h"
 
-#include "imgui_window_interface.h"
+// プレイヤーを構成する各種ビヘイビアのヘッダ
+#include "player_input_behavior.h"
+#include "player_move_behavior.h"
+#include "player_attack_behavior.h"
+
 
 void PlayerBehavior::Start()
 {
@@ -26,6 +33,12 @@ void PlayerBehavior::Start()
     m_transform = owner->GetComponent<TransformComponent>();
     m_rigidbody = owner->GetComponent<RigidbodyComponent>();
     m_model = owner->GetComponent<ModelComponent>();
+
+    // プレイヤーを構成する各種ビヘイビアの追加
+    m_inputBehavior = owner->AddComponent<PlayerInputBehavior>();
+    m_moveBehavior = owner->AddComponent<PlayerMoveBehavior>();
+    m_attackBehavior = owner->AddComponent<PlayerAttackBehavior>();
+
 }
 
 void PlayerBehavior::Update()

@@ -16,11 +16,20 @@ class TransformComponent;
 class RigidbodyComponent;
 class ModelComponent;
 
+class PlayerInputBehavior;
+class PlayerMoveBehavior;
+class PlayerAttackBehavior;
+
 class PlayerBehavior : public BehaviorComponent {
 private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
     ModelComponent* m_model = nullptr;
+
+    // プレイヤーを構成する各種ビヘイビア
+    PlayerInputBehavior*    m_inputBehavior = nullptr;
+    PlayerMoveBehavior*     m_moveBehavior = nullptr;
+    PlayerAttackBehavior*   m_attackBehavior = nullptr;
 
     XMFLOAT3 m_moveDirection = { 0.0f,0.0f,0.0f };
 
