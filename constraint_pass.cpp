@@ -159,8 +159,9 @@ void ConstraintPass::Process(IScene* pScene)
     }
 }
 
+// グループ内のMassPointにVelocityDampingを適用
 void ConstraintPass::ApplyVelocityDamping(
-    JointGroupComponent* group, std::vector<MassPoint*> massPointsInGroup)
+    JointGroupComponent* group, std::vector<MassPoint*>& massPointsInGroup)
 {
     // 1.重心位置、重心速度を計算
     XMFLOAT3 centerPos = { 0.0f,0.0f,0.0f };

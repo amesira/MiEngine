@@ -246,13 +246,14 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
         jointModel->SetModelResource(ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\sphere.fbx"));
         jointModel->SetColor({ 0.5f, 0.5f, 1.0f, 1.0f });
 
+        jointRigidbody->SetMass(3.0f);
         if (i == 0 || i == jointCount - 1) {
             // 最初と最後のJointはキネマティックにする
             jointRigidbody->SetIsKinematic(true);
         }
         else {
             jointRigidbody->SetIsKinematic(false);
-            jointRigidbody->SetMass(1.0f);
+            jointRigidbody->SetMass(3.0f);
         }
     }
 }

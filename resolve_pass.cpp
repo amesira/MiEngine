@@ -17,6 +17,8 @@
 
 #include "mi_fps.h"
 
+#include "debug_ostream.h"
+
 // 接地判定の閾値
 #define ON_GROUND_THRESHOLD (0.03f)
 
@@ -88,32 +90,49 @@ void ResolvePass::Process(IScene* pScene)
     }
 }
 
-void ResolvePass::ApplyResolve(TransformComponent* transform, ColliderComponent* collider, RigidbodyComponent* rigidbody, float deltaTime)
+void ResolvePass::ApplyResolve(
+    TransformComponent* transform, ColliderComponent* collider, RigidbodyComponent* rigidbody, float deltaTime)
 {
     bool isGrounded = false;
 
     // 外力を算出
-    DirectX::XMFLOAT3 revVelocity = { 0.0f,0.0f,0.0f };
+    XMFLOAT3 revVelocity = { 0.0f,0.0f,0.0f };
     {
-        DirectX::XMFLOAT3   minMtv = collider->GetMinMtv();
-        DirectX::XMFLOAT3   maxMtv = collider->GetMaxMtv();
+        XMFLOAT3 min = { 0.0f, 0.0f, 0.0f };
+        XMFLOAT3 max = { 0.0f, 0.0f, 0.0f };
+        float minMtvY = 0.0f;
 
-        // minMtvが負、maxMtvが正の成分のみを採用する
-        if (minMtv.x > 0.0f)minMtv.x = 0.0f;
-        if (minMtv.y > 0.0f)minMtv.y = 0.0f;
-        if (minMtv.z > 0.0f)minMtv.z = 0.0f;
+        // 衝突情報から最小移動ベクトルの最大値と最小値を算出
+        auto collisionDataList = ColliderComponent::Internal::GetCollisionData(collider);
+        for (const auto& data : collisionDataList) {
+            if (data.m_other == nullptr || !data.m_isCollision) {
+                continue;
+            }
+            
+            if (data.m_correction.x < min.x)min.x = data.m_correction.x;
+            if (data.m_correction.y < min.y)min.y = data.m_correction.y;
+            if (data.m_correction.z < min.z)min.z = data.m_correction.z;
 
-        if (maxMtv.x < 0.0f)maxMtv.x = 0.0f;
-        if (maxMtv.y < 0.0f)maxMtv.y = 0.0f;
-        if (maxMtv.z < 0.0f)maxMtv.z = 0.0f;
+            if (data.m_correction.x > max.x)max.x = data.m_correction.x;
+            if (data.m_correction.y > max.y)max.y = data.m_correction.y;
+            if (data.m_correction.z > max.z)max.z = data.m_correction.z;
+
+            if (data.m_mtv.y < minMtvY)minMtvY = data.m_mtv.y;
+        }
+
+        // 補正値へ統合
+        XMFLOAT3 correction = { 0.0f,0.0f,0.0f };
+        correction.x = min.x + max.x;
+        correction.y = min.y + max.y;
+        correction.z = min.z + max.z;
 
         // 外力に適用
-        revVelocity.x += (minMtv.x + maxMtv.x) / deltaTime;
-        revVelocity.y += (minMtv.y + maxMtv.y) / deltaTime;
-        revVelocity.z += (minMtv.z + maxMtv.z) / deltaTime;
+        revVelocity.x += correction.x / deltaTime;
+        revVelocity.y += correction.y / deltaTime;
+        revVelocity.z += correction.z / deltaTime;
 
         // 接地判定
-        if (minMtv.y < 0.03f) {
+        if (minMtvY < 0.03f) {
             isGrounded = true;
         }
     }
@@ -124,12 +143,12 @@ void ResolvePass::ApplyResolve(TransformComponent* transform, ColliderComponent*
     revVelocity.z = MiMath::Clamp(revVelocity.z, -REV_VELOCITY_MAX, REV_VELOCITY_MAX);
 
     // 位置と速度を算出
-    DirectX::XMFLOAT3   position = transform->GetPosition();
+    XMFLOAT3   position = transform->GetPosition();
     position.x += revVelocity.x * deltaTime;
     position.y += revVelocity.y * deltaTime;
     position.z += revVelocity.z * deltaTime;
 
-    DirectX::XMFLOAT3   velocity = rigidbody->GetVelocity();
+    XMFLOAT3   velocity = rigidbody->GetVelocity();
     velocity.x += revVelocity.x * 0.03f;
     velocity.y += revVelocity.y * 0.03f;
     velocity.z += revVelocity.z * 0.03f;
@@ -137,7 +156,7 @@ void ResolvePass::ApplyResolve(TransformComponent* transform, ColliderComponent*
     // 動きが余りに小さかった場合
     // ・移動をリセットする
     // ・速度は0に近づける
-    DirectX::XMFLOAT3 prevPosition = transform->GetPrevPosition();
+    XMFLOAT3 prevPosition = transform->GetPrevPosition();
     if (abs(position.x - prevPosition.x) < 0.005f) {
         position.x = prevPosition.x;
         velocity.x *= 0.5f;

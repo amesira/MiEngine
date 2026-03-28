@@ -38,7 +38,7 @@ private:
     // VelocityDampingの適用
     void    ApplyVelocityDamping(
         JointGroupComponent* group,
-        std::vector<MassPoint*> massPointsInGroup);
+        std::vector<MassPoint*>& massPointsInGroup);
 
 };
 

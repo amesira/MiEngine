@@ -70,8 +70,6 @@ void PlayerBehavior::Update()
     m_rigidbody->SetVelocity(velocity);
 
     m_model->SetColor(m_color);
-
-    hal::dout << "Velocity: (" << velocity.x << ", " << velocity.y << ", " << velocity.z << ")" << std::endl;
 }
 
 void PlayerBehavior::DrawComponentInspector()

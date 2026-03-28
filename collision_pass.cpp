@@ -9,9 +9,11 @@
 #include "game_object.h"
 #include "scene_interface.h"
 #include "mi_math.h"
+#include "mi_fps.h"
 
 #include "transform_component.h"
 #include "collider_component.h"
+#include "rigidbody_component.h"
 
 #include "debug_renderer.h"
 
@@ -41,53 +43,83 @@ void CollisionPass::Finalize()
 
 void CollisionPass::Process(IScene* pScene)
 {
+    float deltaTime = FPS_GetDeltaTime();
+
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
+    auto* rigidbodyPool = pScene->GetComponentPool<RigidbodyComponent>();
     auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPool = pScene->GetComponentPool<SphereColliderComponent>();
-    if(transformPool == nullptr)return;
+    if (transformPool == nullptr || (boxColliderPool == nullptr && sphereColliderPool == nullptr)) {
+        return;
+    }
 
+    //----------------------------------------------------
+    // CCBステップ数の更新
+	//----------------------------------------------------
+    if (rigidbodyPool) {
+        auto colliderComponents = pScene->GetComponentsByBaseType<ColliderComponent>();
+        for (ColliderComponent* collider : colliderComponents) {
+            RigidbodyComponent* rb = rigidbodyPool->GetByGameObjectID(collider->GetOwner()->GetID());
+            if (rb == nullptr) continue;
+            if (!rb->GetEnable()) continue;
+
+            int ccbStep = CalculateCCBStep(rb, deltaTime);
+            ColliderComponent::Internal::SetCCBStep(collider, ccbStep);
+        }
+    }
+
+    //----------------------------------------------------
+    // BoxColliderの衝突情報の更新と当たり判定
+	//----------------------------------------------------
     if(boxColliderPool){
         auto& boxColliderList = boxColliderPool->GetList();
+
         // 衝突情報の更新
         for (BoxColliderComponent& c : boxColliderList) {
-            c.UpdateCollisionData();
+            ColliderComponent::Internal::UpdateCollisionData(&c);
         }
     
-        //----------------------------------------------------
         // 当たり判定処理
-	    //----------------------------------------------------
-    #pragma region CollisionDetection
-        // BoxCollider同士の当たり判定
         for (int i = 0; i < boxColliderList.size(); i++) {
             BoxColliderComponent* colliderA = &boxColliderList[i];
             TransformComponent* transformA = transformPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
-
             if (colliderA == nullptr || transformA == nullptr) continue;
             if (!colliderA->GetEnable() || !transformA->GetEnable()) continue;
             
-
             for (int j = 0; j < boxColliderList.size() - (i + 1); j++) {
                 BoxColliderComponent* colliderB = &boxColliderList[i + (j + 1)];
                 TransformComponent* transformB = transformPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-
                 if (colliderB == nullptr || transformB == nullptr) continue;
                 if (!colliderB->GetEnable() || !transformB->GetEnable()) continue;
 
                 // レイヤーマスクによる当たり判定スキップ
-                if (!COLLISION_MATRIX[(int)colliderA->GetLayer()][(int)colliderB->GetLayer()]) continue;
+                if (IsIgnoreLayerPair((int)colliderA->GetLayer(), (int)colliderB->GetLayer())) continue;
 
                 // 詳細な衝突判定
-                CollisionResult result = CheckBoxToBox(
-                    transformA, colliderA,
-                    transformB, colliderB);
+                CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
+                CheckOBB(outResult, transformA, colliderA,transformB, colliderB);
 
                 // 衝突している場合
-                if (result.isCollision) {
-                    colliderA->RegisterCollisionData(colliderB, result.mtv);
-                    colliderB->RegisterCollisionData(colliderA, {
-                        -result.mtv.x,
-                        -result.mtv.y,
-                        -result.mtv.z });
+                if (outResult.isCollision) {
+                    // 衝突情報の登録
+                    auto slotA = ColliderComponent::Internal::RegisterCollisionData(colliderA, colliderB);
+                    auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
+
+                    // Correctionの作成
+                    XMFLOAT3 correctionA, correctionB;
+                    RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
+                    RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
+                    CreateCorrection(correctionA, outResult.mtv, colliderA, colliderB, rbA, rbB);
+                    CreateCorrection(correctionB, MiMath::Multiply(outResult.mtv, -1.0f), colliderB, colliderA, rbB, rbA);
+
+                    if (slotA) {
+                        slotA->m_mtv = outResult.mtv;
+                        slotA->m_correction = correctionA;
+                    }
+                    if (slotB) {
+                        slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
+                        slotB->m_correction = correctionB;
+                    }
                 }
             }
         }
@@ -96,39 +128,50 @@ void CollisionPass::Process(IScene* pScene)
     if(sphereColliderPool){
         auto& sphereColliderList = sphereColliderPool->GetList();
         for (SphereColliderComponent& c : sphereColliderList) {
-            c.UpdateCollisionData();
+            ColliderComponent::Internal::UpdateCollisionData(&c);
         }
 
         // SphereCollider同士の当たり判定
         for(int i = 0; i < sphereColliderList.size(); i++) {
             SphereColliderComponent* colliderA = &sphereColliderList[i];
             TransformComponent* transformA = transformPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
-
             if (colliderA == nullptr || transformA == nullptr) continue;
             if (!colliderA->GetEnable() || !transformA->GetEnable()) continue;
 
             for (int j = 0; j < sphereColliderList.size() - (i + 1); j++) {
                 SphereColliderComponent* colliderB = &sphereColliderList[i + (j + 1)];
                 TransformComponent* transformB = transformPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-
                 if (colliderB == nullptr || transformB == nullptr) continue;
                 if (!colliderB->GetEnable() || !transformB->GetEnable()) continue;
 
                 // レイヤーマスクによる当たり判定スキップ
-                if (!COLLISION_MATRIX[(int)colliderA->GetLayer()][(int)colliderB->GetLayer()]) continue;
+                if (IsIgnoreLayerPair((int)colliderA->GetLayer(), (int)colliderB->GetLayer())) continue;
 
                 // 詳細な衝突判定
-                CollisionResult result = CheckSphereToSphere(
-                    transformA, colliderA,
-                    transformB, colliderB);
+                CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
+                CheckSphere(outResult, transformA, colliderA, transformB, colliderB);
 
                 // 衝突している場合
-                if (result.isCollision) {
-                    colliderA->RegisterCollisionData(colliderB, result.mtv);
-                    colliderB->RegisterCollisionData(colliderA, {
-                        -result.mtv.x,
-                        -result.mtv.y,
-                        -result.mtv.z });
+                if (outResult.isCollision) {
+                    // 衝突情報の登録
+                    auto slotA = ColliderComponent::Internal::RegisterCollisionData(colliderA, colliderB);
+                    auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
+
+                    // Correctionの作成
+                    XMFLOAT3 correctionA, correctionB;
+                    RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
+                    RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
+                    CreateCorrection(correctionA, outResult.mtv, colliderA, colliderB, rbA, rbB);
+                    CreateCorrection(correctionB, MiMath::Multiply(outResult.mtv, -1.0f), colliderB, colliderA, rbB, rbA);
+
+                    if (slotA) {
+                        slotA->m_mtv = outResult.mtv;
+                        slotA->m_correction = correctionA;
+                    }
+                    if (slotB) {
+                        slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
+                        slotB->m_correction = correctionB;
+                    }
                 }
             }
         }
@@ -142,158 +185,96 @@ void CollisionPass::Process(IScene* pScene)
         for (int i = 0; i < boxColliderList.size(); i++) {
             BoxColliderComponent* colliderA = &boxColliderList[i];
             TransformComponent* transformA = transformPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
-
             if (colliderA == nullptr || transformA == nullptr) continue;
             if (!colliderA->GetEnable() || !transformA->GetEnable()) continue;
 
             for (int j = 0; j < sphereColliderList.size(); j++) {
                 SphereColliderComponent* colliderB = &sphereColliderList[j];
                 TransformComponent* transformB = transformPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-
                 if (colliderB == nullptr || transformB == nullptr) continue;
                 if (!colliderB->GetEnable() || !transformB->GetEnable()) continue;
 
                 // レイヤーマスクによる当たり判定スキップ
-                if (!COLLISION_MATRIX[(int)colliderA->GetLayer()][(int)colliderB->GetLayer()]) continue;
+                if (IsIgnoreLayerPair((int)colliderA->GetLayer(), (int)colliderB->GetLayer())) continue;
 
-                CollisionResult result = CheckBoxToSphere(
-                    transformA, colliderA,
-                    transformB, colliderB);
+                CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
+                CheckOBBSphere(outResult, transformA, colliderA, transformB, colliderB);
 
                 // 衝突している場合
-                if (result.isCollision) {
-                    colliderA->RegisterCollisionData(colliderB, result.mtv);
-                    colliderB->RegisterCollisionData(colliderA, {
-                        -result.mtv.x,
-                        -result.mtv.y,
-                        -result.mtv.z });
+                if (outResult.isCollision) {
+                    // 衝突情報の登録
+                    auto slotA = ColliderComponent::Internal::RegisterCollisionData(colliderA, colliderB);
+                    auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
+
+                    // Correctionの作成
+                    XMFLOAT3 correctionA, correctionB;
+                    RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
+                    RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
+                    CreateCorrection(correctionA, outResult.mtv, colliderA, colliderB, rbA, rbB);
+                    CreateCorrection(correctionB, MiMath::Multiply(outResult.mtv, -1.0f), colliderB, colliderA, rbB, rbA);
+
+                    if (slotA) {
+                        slotA->m_mtv = outResult.mtv;
+                        slotA->m_correction = correctionA;
+                    }
+                    if (slotB) {
+                        slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
+                        slotB->m_correction = correctionB;
+                    }
                 }
             }
         }
     }
+
 #pragma endregion
 
+    //----------------------------------------------------
     // デバッグ用コライダー描画
-    DrawDebugCollider(pScene);
-}
-
-// デバッグ用コライダー描画
-void CollisionPass::DrawDebugCollider(IScene* pScene)
-{
-    auto* transformPool = pScene->GetComponentPool<TransformComponent>();
-    auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
-    auto* sphereColliderPool = pScene->GetComponentPool<SphereColliderComponent>();
-    if(transformPool == nullptr)return;
-
-    const DirectX::XMFLOAT4 debugColor = { 0.0f,1.0f,0.0f,1.0f };
-
-    if(boxColliderPool){
+	//----------------------------------------------------
+    if (boxColliderPool) {
         auto& boxColliderList = boxColliderPool->GetList();
-        // BoxColliderのデバッグ描画
-        for(BoxColliderComponent& c : boxColliderList) {
-            TransformComponent* t = transformPool->GetByGameObjectID(c.GetOwner()->GetID());
-
-            // Nullチェック・Enableチェック
-            if (t == nullptr) continue;
-            if (!c.GetEnable() || !t->GetEnable()) continue;
-
-            // 頂点座標を算出
-            XMFLOAT3 verts[8] = {
-                { -c.GetScale().x * 0.5f, -c.GetScale().y * 0.5f, -c.GetScale().z * 0.5f },
-                {  c.GetScale().x * 0.5f, -c.GetScale().y * 0.5f, -c.GetScale().z * 0.5f },
-                {  c.GetScale().x * 0.5f,  c.GetScale().y * 0.5f, -c.GetScale().z * 0.5f },
-                { -c.GetScale().x * 0.5f,  c.GetScale().y * 0.5f, -c.GetScale().z * 0.5f },
-                { -c.GetScale().x * 0.5f, -c.GetScale().y * 0.5f,  c.GetScale().z * 0.5f },
-                {  c.GetScale().x * 0.5f, -c.GetScale().y * 0.5f,  c.GetScale().z * 0.5f },
-                {  c.GetScale().x * 0.5f,  c.GetScale().y * 0.5f,  c.GetScale().z * 0.5f },
-                { -c.GetScale().x * 0.5f,  c.GetScale().y * 0.5f,  c.GetScale().z * 0.5f },
-            };
-
-            // 回転させる
-            for(int i = 0; i < 8; i++) {
-                verts[i] = MiMath::RotateVector(t->GetRotation(), verts[i]);
-                verts[i].x += t->GetPosition().x + c.GetCenter().x;
-                verts[i].y += t->GetPosition().y + c.GetCenter().y;
-                verts[i].z += t->GetPosition().z + c.GetCenter().z;
-            }
-
-            DebugRenderer_DrawLine(verts[0], verts[1], debugColor);
-            DebugRenderer_DrawLine(verts[1], verts[2], debugColor);
-            DebugRenderer_DrawLine(verts[2], verts[3], debugColor);
-            DebugRenderer_DrawLine(verts[3], verts[0], debugColor);
-            DebugRenderer_DrawLine(verts[4], verts[5], debugColor);
-            DebugRenderer_DrawLine(verts[5], verts[6], debugColor);
-            DebugRenderer_DrawLine(verts[6], verts[7], debugColor);
-            DebugRenderer_DrawLine(verts[7], verts[4], debugColor);
-            DebugRenderer_DrawLine(verts[0], verts[4], debugColor);
-            DebugRenderer_DrawLine(verts[1], verts[5], debugColor);
-            DebugRenderer_DrawLine(verts[2], verts[6], debugColor);
-            DebugRenderer_DrawLine(verts[3], verts[7], debugColor);
+        for (BoxColliderComponent& c : boxColliderList) {
+            TransformComponent* transform = transformPool->GetByGameObjectID(c.GetOwner()->GetID());
+            if (transform == nullptr) continue;
+            if (!c.GetEnable() || !transform->GetEnable()) continue;
+            DrawDebug_ColliderLine(transform, &c);
         }
     }
-
-    if(sphereColliderPool){
+    if (sphereColliderPool) {
         auto& sphereColliderList = sphereColliderPool->GetList();
-        //-----------------------------------------
-        // SphereColliderのデバッグ描画
-        //-----------------------------------------
-        for(SphereColliderComponent& c : sphereColliderList) {
-            TransformComponent* t = transformPool->GetByGameObjectID(c.GetOwner()->GetID());
-
-            // Nullチェック・Enableチェック
-            if (t == nullptr) continue;
-            if (!c.GetEnable() || !t->GetEnable()) continue;
-
-            // 円の分割数
-            const int circleSegment = 16;
-            const float step = DirectX::XM_2PI / circleSegment;
-
-            const float radius = c.GetRadius();
-            const XMFLOAT3 center = {
-                t->GetPosition().x + c.GetCenter().x,
-                t->GetPosition().y + c.GetCenter().y,
-                t->GetPosition().z + c.GetCenter().z
-            };
-            const XMFLOAT3 rotation = t->GetEulerRotation();
-
-            // 円の描画
-            for (int i = 0; i < circleSegment; i++) {
-                float theta1 = (float)i * step;
-                float theta2 = (float)(i + 1) * step;
-
-                XMFLOAT3 p1[3];
-                XMFLOAT3 p2[3];
-
-                // XY平面
-                p1[0] = { radius * cosf(theta1), radius * sinf(theta1), 0.0f };
-                p2[0] = { radius * cosf(theta2), radius * sinf(theta2), 0.0f };
-
-                // YZ平面
-                p1[1] = { 0.0f, radius * cosf(theta1), radius * sinf(theta1) };
-                p2[1] = { 0.0f, radius * cosf(theta2), radius * sinf(theta2) };
-
-                // ZX平面
-                p1[2] = { radius * sinf(theta1), 0.0f, radius * cosf(theta1) };
-                p2[2] = { radius * sinf(theta2), 0.0f, radius * cosf(theta2) };
-
-                // 各平面ごとに描画
-                for (int j = 0; j < 3; j++) {
-                    // 回転・平行移動を適用
-                    p1[j] = MiMath::RotateVector(rotation, p1[j]);
-                    p1[j] = { p1[j].x + center.x, p1[j].y + center.y, p1[j].z + center.z };
-                    p2[j] = MiMath::RotateVector(rotation, p2[j]);
-                    p2[j] = { p2[j].x + center.x, p2[j].y + center.y, p2[j].z + center.z };
-
-                    // 描画
-                    DebugRenderer_DrawLine(p1[j], p2[j], debugColor);
-                }
-            }
+        for (SphereColliderComponent& c : sphereColliderList) {
+            TransformComponent* transform = transformPool->GetByGameObjectID(c.GetOwner()->GetID());
+            if (transform == nullptr) continue;
+            if (!c.GetEnable() || !transform->GetEnable()) continue;
+            DrawDebug_ColliderLine(transform, &c);
         }
     }
+
 }
 
-#pragma region aabb bounds calculation
+// レイヤーマスクによる当たり判定スキップ
+bool CollisionPass::IsIgnoreLayerPair(int layerA, int layerB)
+{
+    if (!COLLISION_MATRIX[layerA][layerB]) {
+        return true;
+    }
+    return false;
+}
 
+// CCBステップ数の計算
+int CollisionPass::CalculateCCBStep(RigidbodyComponent* rb, float deltaTime)
+{
+    XMFLOAT3 vel = rb->GetVelocity();
+    float velocityMag = vel.x * vel.x + vel.y * vel.y + vel.z * vel.z;
+
+    if (velocityMag > VELOCITY_CCB_THRESHOLD) {
+        return static_cast<int>((velocityMag - VELOCITY_CCB_THRESHOLD) / VELOCITY_CCB_RANGE) + 1;
+    }
+
+    return 1;
+}
+
+#pragma region AABB境界情報の計算・判定
 // BoxColliderのAABB境界情報計算
 CollisionPass::Bounds CollisionPass::ConvertToBounds(
     TransformComponent* t, BoxColliderComponent* c)
@@ -355,15 +336,12 @@ CollisionPass::Bounds CollisionPass::ConvertToBounds(TransformComponent* t, Sphe
 
     return bounds;
 }
-#pragma endregion
 
 // AABB同士の衝突判定
-CollisionPass::CollisionResult CollisionPass::CheckAABB(Bounds a, Bounds b)
+void CollisionPass::CheckAABB(CollisionResult& result, Bounds a, Bounds b)
 {
-    CollisionResult result = {};
-
     // 衝突判定
-    result.isCollision= (
+    result.isCollision = (
         a.minX <= b.maxX &&
         a.maxX >= b.minX &&
         a.minY <= b.maxY &&
@@ -375,7 +353,7 @@ CollisionPass::CollisionResult CollisionPass::CheckAABB(Bounds a, Bounds b)
     // Aの最小移動ベクトル
     // ・BとAが重なっている場合、AをBの外に出すためにAが移動すべき最小のベクトル
     result.mtv = { 0.0f,0.0f,0.0f };
-    if(result.isCollision){
+    if (result.isCollision) {
         float dx = (a.minX < b.minX) ? (b.minX - a.maxX) : (b.maxX - a.minX);
         float dy = (a.minY < b.minY) ? (b.minY - a.maxY) : (b.maxY - a.minY);
         float dz = (a.minZ < b.minZ) ? (b.minZ - a.maxZ) : (b.maxZ - a.minZ);
@@ -391,16 +369,16 @@ CollisionPass::CollisionResult CollisionPass::CheckAABB(Bounds a, Bounds b)
             result.mtv.z = dz;
         }
     }
-
-    return result;
 }
+#pragma endregion
 
-#pragma region collision functions
-
+#pragma region 当たり判定の本格チェック
 // Box同士の衝突判定
-CollisionPass::CollisionResult CollisionPass::CheckBoxToBox(TransformComponent* tA, BoxColliderComponent* cA, TransformComponent* tB, BoxColliderComponent* cB)
+void CollisionPass::CheckOBB(
+    CollisionResult& result,
+    TransformComponent* tA, BoxColliderComponent* cA, 
+    TransformComponent* tB, BoxColliderComponent* cB)
 {
-    CollisionResult result = {};
     result.isCollision = false;
 
     // コライダーのワールド座標を取得
@@ -484,7 +462,7 @@ CollisionPass::CollisionResult CollisionPass::CheckBoxToBox(TransformComponent* 
         if (interval > (rA + rB)) {
             // 衝突していない
             result.isCollision = false;
-            return result;
+            return;
         }
 
         // 最小移動ベクトルの計算
@@ -512,15 +490,14 @@ CollisionPass::CollisionResult CollisionPass::CheckBoxToBox(TransformComponent* 
         mtvAxis.y * minOverlap,
         mtvAxis.z * minOverlap
     };
-
-    return result;
 }
 
 // BoxとSphereの衝突判定
-CollisionPass::CollisionResult CollisionPass::CheckBoxToSphere(TransformComponent* tA, BoxColliderComponent* cA, TransformComponent* tB, SphereColliderComponent* cB)
+void CollisionPass::CheckOBBSphere(
+    CollisionResult& result,
+    TransformComponent* tA, BoxColliderComponent* cA, 
+    TransformComponent* tB, SphereColliderComponent* cB)
 {
-    CollisionResult result = { false,{0.0f,0.0f,0.0f} };
-
     // ワールド座標系での中心座標を計算
     XMFLOAT3 boxPos = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
     boxPos.x += tA->GetPosition().x;
@@ -594,15 +571,14 @@ CollisionPass::CollisionResult CollisionPass::CheckBoxToSphere(TransformComponen
 
         result.mtv = worldMtv;
     }
-
-    return result;
 }
 
 // Sphere同士の衝突判定
-CollisionPass::CollisionResult CollisionPass::CheckSphereToSphere(TransformComponent* tA, SphereColliderComponent* cA, TransformComponent* tB, SphereColliderComponent* cB)
+void CollisionPass::CheckSphere(
+    CollisionResult& result,
+    TransformComponent* tA, SphereColliderComponent* cA, 
+    TransformComponent* tB, SphereColliderComponent* cB)
 {
-    CollisionResult result = { false,{0.0f,0.0f,0.0f} };
-
     // ワールド座標系での中心座標、半径を計算
     DirectX::XMFLOAT3 posA = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
     posA.x += tA->GetPosition().x;
@@ -646,8 +622,132 @@ CollisionPass::CollisionResult CollisionPass::CheckSphereToSphere(TransformCompo
             -direction.z * overlap
         };
     }
-
-    return result;
 }
 
+#pragma endregion
+
+// Correctionの作成
+void CollisionPass::CreateCorrection(
+    XMFLOAT3& outCorrection, const XMFLOAT3& mtv,
+    ColliderComponent* collider, ColliderComponent* otherCollider,
+    RigidbodyComponent* rb, RigidbodyComponent* otherRb)
+{
+    // 補正値がない場合
+    outCorrection = { 0.0f,0.0f,0.0f };
+    if (!collider->GetCreateCorrection()) return;
+    if (rb == nullptr) return;
+    if (rb->GetIsKinematic()) return;
+
+    // 補正値がそのままmtvになる場合
+    outCorrection = mtv;
+    if (!otherCollider->GetCreateCorrection()) return;
+    if (otherRb == nullptr) return;
+    if (otherRb->GetIsKinematic()) return;
+
+    // 補正値を質量比で分割する場合
+    float massRatio = rb->GetMass() / (rb->GetMass() + otherRb->GetMass());
+    outCorrection = MiMath::Multiply(mtv, massRatio);
+}
+
+#pragma region デバッグ用コライダー描画
+
+// デバッグ用コライダー描画（BoxCollider）
+void CollisionPass::DrawDebug_ColliderLine(TransformComponent* transform, BoxColliderComponent* boxCollider)
+{
+    const DirectX::XMFLOAT4 debugColor = { 0.0f,1.0f,0.0f,1.0f };
+
+    TransformComponent* t = transform;
+    BoxColliderComponent* c = boxCollider;
+    if (t == nullptr || c == nullptr) return;
+    if (!t->GetEnable() || !c->GetEnable()) return;
+
+    // 頂点座標を算出
+    XMFLOAT3 verts[8] = {
+        { -c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
+        {  c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
+        {  c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
+        { -c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
+        { -c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
+        {  c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
+        {  c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
+        { -c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
+    };
+
+    // 回転させる
+    for (int i = 0; i < 8; i++) {
+        verts[i] = MiMath::RotateVector(t->GetRotation(), verts[i]);
+        verts[i].x += t->GetPosition().x + c->GetCenter().x;
+        verts[i].y += t->GetPosition().y + c->GetCenter().y;
+        verts[i].z += t->GetPosition().z + c->GetCenter().z;
+    }
+
+    DebugRenderer_DrawLine(verts[0], verts[1], debugColor);
+    DebugRenderer_DrawLine(verts[1], verts[2], debugColor);
+    DebugRenderer_DrawLine(verts[2], verts[3], debugColor);
+    DebugRenderer_DrawLine(verts[3], verts[0], debugColor);
+    DebugRenderer_DrawLine(verts[4], verts[5], debugColor);
+    DebugRenderer_DrawLine(verts[5], verts[6], debugColor);
+    DebugRenderer_DrawLine(verts[6], verts[7], debugColor);
+    DebugRenderer_DrawLine(verts[7], verts[4], debugColor);
+    DebugRenderer_DrawLine(verts[0], verts[4], debugColor);
+    DebugRenderer_DrawLine(verts[1], verts[5], debugColor);
+    DebugRenderer_DrawLine(verts[2], verts[6], debugColor);
+    DebugRenderer_DrawLine(verts[3], verts[7], debugColor);
+}
+
+// デバッグ用コライダー描画（SphereCollider）
+void CollisionPass::DrawDebug_ColliderLine(TransformComponent* transform, SphereColliderComponent* sphereCollider)
+{
+    const DirectX::XMFLOAT4 debugColor = { 0.0f,1.0f,0.0f,1.0f };
+
+    TransformComponent* t = transform;
+    SphereColliderComponent* c = sphereCollider;
+    if (t == nullptr || c == nullptr) return;
+    if (!t->GetEnable() || !c->GetEnable()) return;
+
+    // 円の分割数
+    const int circleSegment = 16;
+    const float step = DirectX::XM_2PI / circleSegment;
+
+    const float radius = c->GetRadius();
+    const XMFLOAT3 center = {
+        t->GetPosition().x + c->GetCenter().x,
+        t->GetPosition().y + c->GetCenter().y,
+        t->GetPosition().z + c->GetCenter().z
+    };
+    const XMFLOAT3 rotation = t->GetEulerRotation();
+
+    // 円の描画
+    for (int i = 0; i < circleSegment; i++) {
+        float theta1 = (float)i * step;
+        float theta2 = (float)(i + 1) * step;
+
+        XMFLOAT3 p1[3];
+        XMFLOAT3 p2[3];
+
+        // XY平面
+        p1[0] = { radius * cosf(theta1), radius * sinf(theta1), 0.0f };
+        p2[0] = { radius * cosf(theta2), radius * sinf(theta2), 0.0f };
+
+        // YZ平面
+        p1[1] = { 0.0f, radius * cosf(theta1), radius * sinf(theta1) };
+        p2[1] = { 0.0f, radius * cosf(theta2), radius * sinf(theta2) };
+
+        // ZX平面
+        p1[2] = { radius * sinf(theta1), 0.0f, radius * cosf(theta1) };
+        p2[2] = { radius * sinf(theta2), 0.0f, radius * cosf(theta2) };
+
+        // 各平面ごとに描画
+        for (int j = 0; j < 3; j++) {
+            // 回転・平行移動を適用
+            p1[j] = MiMath::RotateVector(rotation, p1[j]);
+            p1[j] = { p1[j].x + center.x, p1[j].y + center.y, p1[j].z + center.z };
+            p2[j] = MiMath::RotateVector(rotation, p2[j]);
+            p2[j] = { p2[j].x + center.x, p2[j].y + center.y, p2[j].z + center.z };
+
+            // 描画
+            DebugRenderer_DrawLine(p1[j], p2[j], debugColor);
+        }
+    }
+}
 #pragma endregion

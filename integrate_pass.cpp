@@ -44,8 +44,8 @@ void IntegratePass::Process(IScene* pScene)
         if (!transform || !rigidbody)continue;
         if (!transform->GetEnable() || !rigidbody->GetEnable())continue;
 
-        transform->SetPrevPosition(transform->GetPosition());
-        rigidbody->SetPrevVelocity(rigidbody->GetVelocity());
+        //transform->SetPrevPosition(transform->GetPosition());
+        //rigidbody->SetPrevVelocity(rigidbody->GetVelocity());
 
         // キネマティックなら速度を0にして位置の更新も行わない
         if (rigidbody->GetIsKinematic()) {

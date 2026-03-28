@@ -11,6 +11,7 @@
 #include "text_component.h"
 #include "image_component.h"
 #include "camera_component.h"
+#include "rigidbody_component.h"
 
 #include "rect_transform_component.h"
 
@@ -30,7 +31,13 @@ void GameScene::Initialize()
     Factory::CreateBox(cube, { 0.0f,0.0f,10.0f }, {0.0f, 0.0f, 0.0f}, {6.0f, 1.0f, 6.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
     cube = this->CreateGameObject();
     Factory::CreateBox(cube, { -3.0f,1.0f,10.0f }, { 0.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f }, { 0.7f, 0.5f, 0.5f, 1.0f });
+    cube->AddComponent<RigidbodyComponent>();
     
+    cube = this->CreateGameObject();
+    Factory::CreateBox(cube, { 3.0f,2.0f,10.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.5f, 1.0f }, { 0.5f, 0.7f, 0.5f, 1.0f });
+    cube->AddComponent<BoxColliderComponent>()->SetScale({ 1.0f, 1.0f, 1.0f });
+    cube->AddComponent<RigidbodyComponent>();
+
     // light
     GameObject* light = this->CreateGameObject();
     Factory::CreateDirectionalLight(light, { -0.5f,-1.0f,-0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
