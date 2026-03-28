@@ -44,13 +44,17 @@ private:
     }
 
 public:
+    // シーンの取得
     IScene*         GetScene() const { return m_pScene; }
+    // IDの取得
     unsigned int    GetID() const { return m_id; }
 
+    // 名前の設定・取得
     void    SetName(const std::string& name) { m_name = name; }
-    void    SetActive(bool active) { m_active = active; }
-
     std::string     GetName() const { return m_name; }
+
+    // アクティブの設定・取得
+    void    SetActive(bool active) { m_active = active; }
     bool            GetActive() { return m_active; }
 
     // GameObjectの破棄予約
@@ -130,6 +134,7 @@ public:
         }
         return result;
     }
+
 };
 
 #endif

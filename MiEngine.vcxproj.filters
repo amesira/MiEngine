@@ -159,11 +159,11 @@
     <ClCompile Include="player_move_behavior.cpp">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="player_input_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
-    </ClCompile>
     <ClCompile Include="constraint_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    </ClCompile>
+    <ClCompile Include="health_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -383,9 +383,6 @@
     <ClInclude Include="player_behavior.h">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="player_input_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
-    </ClInclude>
     <ClInclude Include="constraint_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
@@ -394,6 +391,9 @@
     </ClInclude>
     <ClInclude Include="joint_group_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="health_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -459,6 +459,9 @@
     </Filter>
     <Filter Include="Sources\Game\Behavior\PlayerBehavior">
       <UniqueIdentifier>{4d0768cd-3d37-4572-b155-d56409e44dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Behavior\BaseBehavior">
+      <UniqueIdentifier>{21317434-64d7-48b9-8676-91420017e91f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

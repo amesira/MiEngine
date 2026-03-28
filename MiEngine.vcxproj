@@ -144,6 +144,7 @@
     <ClCompile Include="debug_renderer.cpp" />
     <ClCompile Include="debug_view_window.cpp" />
     <ClCompile Include="direct3d.cpp" />
+    <ClCompile Include="health_behavior.cpp" />
     <ClCompile Include="hierarchy_view_window.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -158,7 +159,6 @@
     <ClCompile Include="model_repository.cpp" />
     <ClCompile Include="opaque_render_pass.cpp" />
     <ClCompile Include="player_attack_behavior.cpp" />
-    <ClCompile Include="player_input_behavior.cpp" />
     <ClCompile Include="player_move_behavior.cpp" />
     <ClCompile Include="render_processor.cpp" />
     <ClCompile Include="resolve_pass.cpp" />
@@ -200,6 +200,7 @@
     <ClInclude Include="debug_view_window.h" />
     <ClInclude Include="draw_command.h" />
     <ClInclude Include="editor_context.h" />
+    <ClInclude Include="health_behavior.h" />
     <ClInclude Include="hierarchy_view_window.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
@@ -218,7 +219,6 @@
     <ClInclude Include="model_repository.h" />
     <ClInclude Include="opaque_render_pass.h" />
     <ClInclude Include="player_attack_behavior.h" />
-    <ClInclude Include="player_input_behavior.h" />
     <ClInclude Include="player_move_behavior.h" />
     <ClInclude Include="render_processor.h" />
     <ClInclude Include="render_view.h" />

@@ -20,7 +20,6 @@
 #include "model_component.h"
 
 // プレイヤーを構成する各種ビヘイビアのヘッダ
-#include "player_input_behavior.h"
 #include "player_move_behavior.h"
 #include "player_attack_behavior.h"
 
@@ -35,7 +34,6 @@ void PlayerBehavior::Start()
     m_model = owner->GetComponent<ModelComponent>();
 
     // プレイヤーを構成する各種ビヘイビアの追加
-    m_inputBehavior = owner->AddComponent<PlayerInputBehavior>();
     m_moveBehavior = owner->AddComponent<PlayerMoveBehavior>();
     m_attackBehavior = owner->AddComponent<PlayerAttackBehavior>();
 

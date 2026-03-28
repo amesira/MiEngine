@@ -60,8 +60,14 @@ void CollisionPass::Process(IScene* pScene)
         auto colliderComponents = pScene->GetComponentsByBaseType<ColliderComponent>();
         for (ColliderComponent* collider : colliderComponents) {
             RigidbodyComponent* rb = rigidbodyPool->GetByGameObjectID(collider->GetOwner()->GetID());
-            if (rb == nullptr) continue;
-            if (!rb->GetEnable()) continue;
+            if (rb == nullptr) {
+                ColliderComponent::Internal::SetCCBStep(collider, 1);
+                continue;
+            }
+            if (!rb->GetEnable()) {
+                ColliderComponent::Internal::SetCCBStep(collider, 1);
+                continue;
+            }
 
             int ccbStep = CalculateCCBStep(rb, deltaTime);
             ColliderComponent::Internal::SetCCBStep(collider, ccbStep);

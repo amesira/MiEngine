@@ -16,7 +16,6 @@ class TransformComponent;
 class RigidbodyComponent;
 class ModelComponent;
 
-class PlayerInputBehavior;
 class PlayerMoveBehavior;
 class PlayerAttackBehavior;
 
@@ -27,7 +26,6 @@ private:
     ModelComponent* m_model = nullptr;
 
     // プレイヤーを構成する各種ビヘイビア
-    PlayerInputBehavior*    m_inputBehavior = nullptr;
     PlayerMoveBehavior*     m_moveBehavior = nullptr;
     PlayerAttackBehavior*   m_attackBehavior = nullptr;
 
