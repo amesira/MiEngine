@@ -8,6 +8,9 @@
 #define SCENE_MANAGER_H
 
 class IScene;
+class SceneBase;
+
+class GameWorld;
 
 class SceneManager {
 public:
@@ -20,7 +23,7 @@ public:
     };
 
 private:
-    IScene* m_pScene = nullptr;
+    SceneBase* m_pScene = nullptr;
 
     SceneID m_currentScene = SceneID::None;
     SceneID m_nextScene = SceneID::None;
@@ -35,7 +38,7 @@ public:
     void ChangeScene(SceneID sceneId);
 
     // 現在のシーンを取得
-    IScene* GetCurrentScene() const { return m_pScene; }
+    IScene* GetCurrentScene() const;
 
 private:
     // シーンの終了と破棄

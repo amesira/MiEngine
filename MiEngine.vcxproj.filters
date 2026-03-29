@@ -224,9 +224,6 @@
     <ClInclude Include="component_type_id.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="model_resource.h">
-      <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="mouse.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
@@ -395,6 +392,18 @@
     <ClInclude Include="health_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
+    <ClInclude Include="model_resource.h">
+      <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
+    </ClInclude>
+    <ClInclude Include="texture_resource.h">
+      <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
+    </ClInclude>
+    <ClInclude Include="material_resource.h">
+      <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
+    </ClInclude>
+    <ClInclude Include="engine_service_locator.h">
+      <Filter>Sources\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -462,6 +471,9 @@
     </Filter>
     <Filter Include="Sources\Game\Behavior\BaseBehavior">
       <UniqueIdentifier>{21317434-64d7-48b9-8676-91420017e91f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\System\Graphics\GraphicsResource">
+      <UniqueIdentifier>{b2d9e375-8123-4c2d-b1e6-f7a883b59809}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

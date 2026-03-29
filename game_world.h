@@ -40,6 +40,7 @@ public:
     SceneManager& GetSceneManager() { return m_sceneManager; }
     // RenderViewへのアクセス
     std::vector<RenderView>& GetRenderViews() { return m_renderViews; }
+
 };
 
 #endif // GAME_WORLD_H

@@ -23,7 +23,7 @@
 // behavior
 #include "player_behavior.h"
 
-#include "resource_manager.h"
+#include "engine_service_locator.h"
 
 void Factory::CreateCamera(GameObject* obj, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 atPosition)
 {
@@ -96,7 +96,8 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
         scaling.y * 2.0f,
         scaling.z * 2.0f
         });
-    ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
     modelComp->SetColor(color);
 }
@@ -122,7 +123,7 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
         scaling.z * 2.0f
         });
 
-    ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
     modelComp->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
 
@@ -188,7 +189,7 @@ void Factory::CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 posit
     // component設定
     transform->SetPosition(position);
     transform->SetScaling(scaling);
-    ModelResource* modelResource = ResourceManager::GetInstance().GetModelRepository()->GetModel(modelPath);
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel(modelPath);
     modelComp->SetModelResource(modelResource);
 }
 
@@ -243,7 +244,7 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
         };
 
         jointTransform->SetPosition(jointPos);
-        jointModel->SetModelResource(ResourceManager::GetInstance().GetModelRepository()->GetModel("asset\\Model\\sphere.fbx"));
+        jointModel->SetModelResource(EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\sphere.fbx"));
         jointModel->SetColor({ 0.5f, 0.5f, 1.0f, 1.0f });
 
         jointRigidbody->SetMass(3.0f);

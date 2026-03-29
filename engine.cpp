@@ -20,10 +20,15 @@
 #include "tool_bar_window.h"
 #include "debug_view_window.h"
 
+#include "engine_service_locator.h"
+
 // MiEngineの初期化処理
 bool MiEngine::Initialize(HWND hWnd)
 {
     m_isRunning = true;
+
+    // サービスロケーターにエンジンインスタンスをセット
+    EngineServiceLocator::s_engineInstance = this;
 
     Direct3D_Initialize(hWnd);
 
@@ -35,7 +40,7 @@ bool MiEngine::Initialize(HWND hWnd)
     InitAudio();
     FPS_Initialize(hWnd);
 
-    ResourceManager::GetInstance().Initialize();
+    m_resourceManager.Initialize();
 
     DebugRenderer_Initialize();
 
@@ -73,7 +78,7 @@ void MiEngine::Finalize()
     // GameWorldの終了処理
     m_gameWorld.Finalize();
 
-    ResourceManager::GetInstance().Finalize();
+    m_resourceManager.Finalize();
 
     UninitAudio();
     FinalizeSprite();

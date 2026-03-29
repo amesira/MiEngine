@@ -18,6 +18,7 @@ using Microsoft::WRL::ComPtr;
 
 class aiScene;
 
+// モデルのメッシュデータ
 struct ModelMesh {
 	std::string name;
 	ComPtr<ID3D11Buffer> vertexBuffer;
@@ -26,11 +27,13 @@ struct ModelMesh {
 	unsigned int numIndices;
 };
 
+// モデルのテクスチャデータ
 struct ModelTexture {
 	std::string name;
 	ComPtr<ID3D11ShaderResourceView> texture;
 };
 
+// モデルリソース
 class ModelResource {
 public:
     const aiScene* AiScene = nullptr;

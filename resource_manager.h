@@ -13,11 +13,6 @@ private:
     ModelRepository m_modelRepository;
 
 public:
-    static ResourceManager& GetInstance() {
-        static ResourceManager instance;
-        return instance;
-    }
-
     // 初期化
     void Initialize();
     // 終了処理

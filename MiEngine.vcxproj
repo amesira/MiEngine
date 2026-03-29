@@ -200,6 +200,7 @@
     <ClInclude Include="debug_view_window.h" />
     <ClInclude Include="draw_command.h" />
     <ClInclude Include="editor_context.h" />
+    <ClInclude Include="engine_service_locator.h" />
     <ClInclude Include="health_behavior.h" />
     <ClInclude Include="hierarchy_view_window.h" />
     <ClInclude Include="imconfig.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="integrate_pass.h" />
     <ClInclude Include="joint_component.h" />
     <ClInclude Include="joint_group_component.h" />
+    <ClInclude Include="material_resource.h" />
     <ClInclude Include="mi_imgui_manager.h" />
     <ClInclude Include="imgui_window_interface.h" />
     <ClInclude Include="model_repository.h" />
@@ -258,6 +260,7 @@
     <ClInclude Include="slider_component.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="stb_truetype.h" />
+    <ClInclude Include="texture_resource.h" />
     <ClInclude Include="text_component.h" />
     <ClInclude Include="tool_bar_window.h" />
     <ClInclude Include="transform_component.h" />

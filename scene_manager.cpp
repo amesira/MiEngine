@@ -57,6 +57,11 @@ void SceneManager::ChangeScene(SceneID sceneId)
     m_nextScene = sceneId;
 }
 
+IScene* SceneManager::GetCurrentScene() const
+{
+    return m_pScene;
+}
+
 //--------------------------------- private
 // シーンの終了と破棄
 void SceneManager::ReleaseScene()

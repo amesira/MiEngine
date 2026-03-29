@@ -15,10 +15,25 @@
 #include "resource_manager.h"
 
 class MiEngine {
+private:
+    bool m_isRunning = false;
+    EditorContext m_editorContext;
+
+    MiImguiManager m_imguiManager;
+    ResourceManager m_resourceManager;
+    // AssetManager* m_pAssetManager;
+    // Renderer* m_pRenderer;
+    // InputSystem* m_pInputSystem;
+    // AudioSystem* m_pAudioSystem;
+
+    GameWorld m_gameWorld;
+    // DebugWorld* m_pDebugWorld;
+
 public:
-    static MiEngine& GetInstance() {
-        static MiEngine instance;
-        return instance;
+    MiEngine() {
+        static bool instantiated = false;
+        assert(!instantiated && "MiEngineは1つしかインスタンス化できません。");
+        instantiated = true;
     }
 
     bool Initialize(HWND hWnd);
@@ -29,26 +44,13 @@ private:
     void Update();
     void Render();
 
-private:
-    bool m_isRunning;
-    EditorContext m_editorContext;
-
-    MiImguiManager m_imguiManager;
-   // ResourceManager m_resourceManager = ResourceManager::GetInstance();
-    // AssetManager* m_pAssetManager;
-    // Renderer* m_pRenderer;
-    // InputSystem* m_pInputSystem;
-    // AudioSystem* m_pAudioSystem;
-
-    GameWorld m_gameWorld;
-    // DebugWorld* m_pDebugWorld;
 
 public:
     // GameWorldへのアクセス
     const GameWorld& GetGameWorld() const { return m_gameWorld; }
 
     // ResourceManagerへのアクセス
-   // ResourceManager& GetResourceManager() { return m_resourceManager; }
+    ResourceManager& GetResourceManager() { return m_resourceManager; }
 
     // EditorContextへのアクセス
     void AddLogMessage(const std::string& message) {

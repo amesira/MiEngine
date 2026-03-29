@@ -1,6 +1,6 @@
 #include"debug_ostream.h"
 
-#include "engine.h"
+#include "engine_service_locator.h"
 
 namespace hal {
     debug_ostream dout;
@@ -12,8 +12,7 @@ namespace hal {
         OutputDebugStringA(message.c_str());
 
         // Debug View への出力も行う
-        static MiEngine& engine = MiEngine::GetInstance();
-        engine.AddLogMessage(message);
+        EngineServiceLocator::AddLogMessage(message);
 
         // バッファクリア
         str(std::basic_string<char>());

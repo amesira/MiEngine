@@ -642,12 +642,14 @@ void CollisionPass::CreateCorrection(
     outCorrection = { 0.0f,0.0f,0.0f };
     if (!collider->GetCreateCorrection()) return;
     if (rb == nullptr) return;
+    if (!rb->GetEnable()) return;
     if (rb->GetIsKinematic()) return;
 
     // 補正値がそのままmtvになる場合
     outCorrection = mtv;
     if (!otherCollider->GetCreateCorrection()) return;
     if (otherRb == nullptr) return;
+    if (!otherRb->GetEnable()) return;
     if (otherRb->GetIsKinematic()) return;
 
     // 補正値を質量比で分割する場合

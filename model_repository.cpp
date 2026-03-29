@@ -16,8 +16,6 @@
 #include "assimp/matrix4x4.h"
 #pragma comment (lib, "assimp-vc143-mt.lib")
 
-
-
 // モデルリポジトリの初期化
 void ModelRepository::Initialize() 
 {

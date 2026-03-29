@@ -19,7 +19,7 @@ using namespace DirectX;
 
 class ModelComponent : public Component {
 private:
-    ModelResource* m_pModelResource = nullptr;
+    ModelResource*  m_pModelResource = nullptr;
     XMFLOAT4        m_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 public:
