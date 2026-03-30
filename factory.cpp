@@ -76,6 +76,12 @@ void Factory::CreatePointLight(GameObject* obj, XMFLOAT4 diffuse, float range)
 
     lightComp->SetIntensity(2.0f);
     lightComp->SetRange(range);
+
+
+    SphereColliderComponent* collider = obj->AddComponent<SphereColliderComponent>();
+    collider->SetRadius(0.1f);
+    collider->SetCreateCorrection(false);
+
 }
 
 void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)

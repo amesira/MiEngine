@@ -31,6 +31,8 @@ struct ModelMesh {
 struct ModelTexture {
 	std::string name;
 	ComPtr<ID3D11ShaderResourceView> texture;
+
+    // TextureResource も入れるべき。nameはTextureResourceのfilePathと同じものを入れる。
 };
 
 // モデルリソース

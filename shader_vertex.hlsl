@@ -57,8 +57,9 @@ VS_OUTPUT main(VS_INPUT vs_in)
     vs_out.posW = mul(vs_in.posL, worldMatrix);
     vs_out.posH = mul(vs_out.posW, mtx);
     
-    // 法線を行列変換
-    vs_out.normal = mul(vs_in.normal, worldMatrix);
+    // 法線変換
+    float3x3 normalMatrix = (float3x3)worldMatrix;
+    vs_out.normal.xyz = normalize(mul(vs_in.normal, normalMatrix));
     
     // 頂点カラー
     vs_out.color = vs_in.color * vs_in.ins_color;

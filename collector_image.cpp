@@ -38,6 +38,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2
 
         if (!rect) continue;
         if (!image->GetEnable()) continue;
+        if (!image->GetOwner()->GetActive()) continue;
 
         // 描画コマンドに追加
         DrawBatch2D batch;

@@ -23,7 +23,6 @@ void ModelRepository::Initialize()
     m_pContext = Direct3D_GetDeviceContext();
 
     m_modelCache.clear();
-
 }
 
 // モデルリポジトリの終了処理

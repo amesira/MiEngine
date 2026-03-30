@@ -10,8 +10,20 @@
     <FxCompile Include="shader_vertex.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader_light.hlsl">
+    <FxCompile Include="lit_ps.hlsl">
       <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="lighting.hlsl">
+      <Filter>Shader\common</Filter>
+    </FxCompile>
+    <FxCompile Include="material.hlsl">
+      <Filter>Shader\common</Filter>
+    </FxCompile>
+    <FxCompile Include="transform.hlsl">
+      <Filter>Shader\common</Filter>
+    </FxCompile>
+    <FxCompile Include="camera.hlsl">
+      <Filter>Shader\common</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="health_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="texture_repository.cpp">
+      <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +419,9 @@
     <ClInclude Include="engine_service_locator.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="texture_repository.h">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -474,6 +492,9 @@
     </Filter>
     <Filter Include="Sources\Engine\System\Graphics\GraphicsResource">
       <UniqueIdentifier>{b2d9e375-8123-4c2d-b1e6-f7a883b59809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\common">
+      <UniqueIdentifier>{cc3a5256-4193-4967-a000-678caecd58d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

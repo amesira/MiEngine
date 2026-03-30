@@ -3,7 +3,7 @@
 // 
 // Author：Miu Kitamura
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-#include "shader_light.hlsl"
+#include "lighting.hlsl"
 
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
@@ -18,7 +18,7 @@ cbuffer Option : register(b0)
 struct PS_INPUT // VS_OUTPUTと同じ内容
 {
     float4 posH     : SV_Position;  // ピクセルの座標
-    float4 posW : POSITION1; // ワールド座標
+    float4 posW     : POSITION1; // ワールド座標
     float4 normal   : NORMAL0;      // ピクセルの法線
     float4 color    : COLOR0;       // ピクセルの色
     float2 texcoord : TEXCOORD0;    // テクスチャ座標
@@ -30,17 +30,25 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     // テクスチャの色を取得・乗算
     col = g_Texture.Sample(g_SamplerState, ps_in.texcoord);
-    col *= ps_in.color;
+    //col *= ps_in.color * colorRate;
+    //* g_DirectionalLights[0].Ambient;
     
     // ライトの影響を加算
     if (g_EnableLighting != 0)
     {
-        col.rgb *= CalcLight_DirectionalLights(ps_in.normal.xyz);
-        col.rgb += CalcLight_PointLights(ps_in.posW.xyz, ps_in.normal.xyz) * 3.0f;
-        col.rgb += CalcLight_SpotLights(ps_in.posW.xyz, ps_in.normal.xyz);
+        float diffuseRate = 0.0f;
+        float stiffness = 16.0f;
+        col.rgb += CalcDiffuse_DirectionalLights(ps_in.normal.xyz) * diffuseRate;
+        col.rgb += CalcSpecular_DirectionalLights(ps_in.normal.xyz, ps_in.posW.xyz, float3(0.0f, 10.0f, -1.0f), stiffness) ;
+        
+        col.rgb += CalcDiffuse_PointLights(ps_in.normal.xyz, ps_in.posW.xyz) * diffuseRate;
+        col.rgb += CalcSpecular_PointLights(ps_in.normal.xyz, ps_in.posW.xyz, float3(0.0f, 10.0f, -1.0f), stiffness);
+        
+        col.rgb += CalcDiffuse_SpotLights(ps_in.normal.xyz, ps_in.posW.xyz) * diffuseRate;
+        col.rgb += CalcSpecular_SpotLights(ps_in.normal.xyz, ps_in.posW.xyz, float3(0.0f, 10.0f, -1.0f), stiffness);
     }
     
-    col.rgb *= colorRate.rgb; // 色の乗算
+    col.rgb *= ps_in.color * colorRate.rgb * g_DirectionalLights[0].Ambient.rgb;
     
     if (col.a <= 0.01f) discard;
     

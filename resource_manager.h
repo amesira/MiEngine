@@ -6,10 +6,14 @@
 //---------------------------------------------------
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
+#include "texture_repository.h"
 #include "model_repository.h"
 
 class ResourceManager {
 private:
+    // テクスチャリポジトリ
+    TextureRepository m_textureRepository;
+    // モデルリポジトリ
     ModelRepository m_modelRepository;
 
 public:
@@ -18,6 +22,8 @@ public:
     // 終了処理
     void Finalize();
 
+    // テクスチャリポジトリへのアクセス
+    TextureRepository* GetTextureRepository() { return &m_textureRepository; }
     // モデルリポジトリへのアクセス
     ModelRepository* GetModelRepository() { return &m_modelRepository; }
 

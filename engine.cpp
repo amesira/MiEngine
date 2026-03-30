@@ -86,6 +86,9 @@ void MiEngine::Finalize()
     Direct3D_Finalize();
 
     DebugRenderer_Finalize();
+
+    // サービスロケーターのエンジンインスタンスをクリア
+    EngineServiceLocator::s_engineInstance = nullptr;
 }
 
 // MiEngineの1フレーム分の処理
