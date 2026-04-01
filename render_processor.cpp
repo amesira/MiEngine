@@ -8,18 +8,29 @@
 //===================================================
 #include "render_processor.h"
 
-#include "shader.h"
-#include "sprite.h"
 #include "direct3d.h"
+#include "shader_manager.h"
+#include "engine_service_locator.h"
 
 #include "debug_renderer.h"
 
 // 描画制御プロセッサーの初期化
 void RenderProcessor::Initialize()
 {
-    m_lightingPass.Initialize();
+    m_pDevice = Direct3D_GetDevice();
+    m_pContext = Direct3D_GetDeviceContext();
+
+    m_lightingPass.Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
     m_opaqueRenderPass.Initialize();
-    m_uiRenderPass.Initialize();
+    m_uiRenderPass.Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
+
+    // 頂点バッファ生成
+    D3D11_BUFFER_DESC bd = {};
+    bd.Usage = D3D11_USAGE_DYNAMIC;
+    bd.ByteWidth = sizeof(Vertex) * 4; // フルスクリーンクワッドの頂点数
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    Direct3D_GetDevice()->CreateBuffer(&bd, NULL, &m_pVertexBuffer);
 }
 
 // 描画制御プロセッサーの終了処理
@@ -36,7 +47,7 @@ void RenderProcessor::Process(IScene* pScene)
     if (!m_renderView) return; // RenderViewがバインドされていない場合は処理しない
 
     // インスタンシングデータをクリア
-    ClearInstanceData();
+    //ClearInstanceData();
 
     // シーンを初期化
     Direct3D_SetSceneRenderTarget(m_renderView->colorBufferRTV.Get());
@@ -62,7 +73,7 @@ void RenderProcessor::Process(IScene* pScene)
     m_lightingPass.SetLightEnable(false);
 
     // デバッグ描画
-    ClearInstanceData();
+    //ClearInstanceData();
     DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
 
     SetDepthState(DEPTHSTATE_DISABLE);
@@ -77,4 +88,51 @@ void RenderProcessor::Process(IScene* pScene)
     if (m_renderView->enableUI) {
         m_uiRenderPass.Process(pScene);
     }
+}
+
+// SRVをフルスクリーンクワッドに描画する関数
+void RenderProcessor::DrawFullScreenQuad(ID3D11ShaderResourceView* srv)
+{
+    m_pContext->PSSetShaderResources(0, 1, &srv);
+
+    float SCREEN_WIDTH = static_cast<float>(Direct3D_GetBackBufferWidth());
+    float SCREEN_HEIGHT = static_cast<float>(Direct3D_GetBackBufferHeight());
+
+    // フルスクリーンクワッドの頂点データ
+    D3D11_MAPPED_SUBRESOURCE msr;
+    m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    Vertex* v = (Vertex*)msr.pData;
+
+    v[0].position = XMFLOAT3(-SCREEN_WIDTH / 2.0f, -SCREEN_HEIGHT / 2.0f, 0.0f);
+    v[0].texCoord = XMFLOAT2(0.0f, 0.0f);
+    
+    v[1].position = XMFLOAT3(SCREEN_WIDTH / 2.0f, -SCREEN_HEIGHT / 2.0f, 0.0f);
+    v[1].texCoord = XMFLOAT2(1.0f, 0.0f);
+
+    v[2].position = XMFLOAT3(-SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0.0f);
+    v[2].texCoord = XMFLOAT2(0.0f, 1.0f);
+
+    v[3].position = XMFLOAT3(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0.0f);
+    v[3].texCoord = XMFLOAT2(1.0f, 1.0f);
+
+    for (int i = 0; i < 4; i++) {
+        v[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+    }
+
+    m_pContext->Unmap(m_pVertexBuffer, 0);
+
+    // 頂点バッファの設定
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+    m_pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+    // プリミティブトポロジ設定 トライアングルストリップ
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+    // ポリゴン描画命令発行
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
+    EngineServiceLocator::UpdateTransformCB({ XMMatrixIdentity(), XMMatrixIdentity() });
+    EngineServiceLocator::UpdateCameraCB({ XMMatrixIdentity(), XMMatrixIdentity(), XMFLOAT4(0,0,0,1) });
+    m_pContext->Draw(4, 0);
 }

@@ -53,7 +53,7 @@ void GameScene::Initialize()
     Factory::CreateUiText(uiText, { 300.0f, 100.0f }, { 200.0f, 50.0f }, u8"Hello, World!");
 
     GameObject* uiImage = this->CreateGameObject();
-    Factory::CreateUiImage(uiImage, { 300.0f, 300.0f }, { 100.0f, 100.0f }, L"asset\\Texture\\test.jpg");
+    Factory::CreateUiImage(uiImage, { 300.0f, 300.0f }, { 100.0f, 100.0f }, "asset\\Texture\\test.jpg");
 
     GameObject* uiSlider = this->CreateGameObject();
     Factory::CreateUiSlider(uiSlider, { 300.0f, 500.0f }, { 200.0f, 20.0f }, 0.5f);

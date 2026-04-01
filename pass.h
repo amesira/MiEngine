@@ -17,7 +17,7 @@ class Pass {
 public:
     virtual ~Pass() = default;
 
-    virtual void    Initialize() = 0;
+    virtual void    Initialize() {};
     virtual void    Finalize() = 0;
 
     virtual void    Process(IScene* pScene) = 0;

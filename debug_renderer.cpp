@@ -5,9 +5,9 @@
 // Date  ：2025/12/04
 //===================================================
 #include "debug_renderer.h"
+
 #include <vector>
-#include "shader.h"
-#include "sprite.h"
+#include "engine_service_locator.h"
 
 static ID3D11Device* g_pDevice = nullptr;
 static ID3D11DeviceContext* g_pContext = nullptr;
@@ -42,9 +42,13 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
 {
     if (g_LineVertices.empty()) return;
 
-    Shader_Begin();
-    Shader_SetMatrix(view * projection);
+    /*Shader_Begin();
+    Shader_SetMatrix(view * projection);*/
 
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
+
+    EngineServiceLocator::UpdateTransformCB({ XMMatrixIdentity(), XMMatrixIdentity() });
+    EngineServiceLocator::UpdateCameraCB({ view, projection, {0.0f, 0.0f, 0.0f, 1.0f} });
 
     //----------------------------------------------------
     // 頂点バッファを更新

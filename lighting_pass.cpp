@@ -14,8 +14,13 @@
 
 #include "debug_ostream.h"
 
-void LightingPass::Initialize()
+#include "engine_service_locator.h"
+
+void LightingPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+    m_pDevice = pDevice;
+    m_pContext = pContext;
+
     // 定数バッファの作成
     D3D11_BUFFER_DESC buffer_desc{};
     buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -25,10 +30,15 @@ void LightingPass::Initialize()
     buffer_desc.CPUAccessFlags = 0;
     buffer_desc.MiscFlags = 0;
     buffer_desc.StructureByteStride = 0;
-    Direct3D_GetDevice()->CreateBuffer(&buffer_desc, nullptr, m_lightBuffer.GetAddressOf());
+    m_pDevice->CreateBuffer(&buffer_desc, nullptr, m_lightBuffer.GetAddressOf());
 
     // ライティング全体を有効にしておく
     m_lightBufferData.enableLighting = 1;
+
+    // シェーダーにライトバッファを登録
+    auto* shader = EngineServiceLocator::GetShaderManager();
+    shader->RegisterCB(ShaderManager::ShaderType::Lit, 10, m_lightBuffer.GetAddressOf());
+    shader->RegisterCB(ShaderManager::ShaderType::Default, 10, m_lightBuffer.GetAddressOf());
 }
 
 void LightingPass::Finalize()
@@ -133,8 +143,8 @@ void LightingPass::Process(IScene* pScene)
 // ライトバッファをシェーダーにバインド
 void LightingPass::BindLightBuffer()
 {
-    Shader_BindVsConstantBuffer(10, m_lightBuffer.Get());
-    Shader_BindPsConstantBuffer(10, m_lightBuffer.Get());
+    /*Shader_BindVsConstantBuffer(10, m_lightBuffer.Get());
+    Shader_BindPsConstantBuffer(10, m_lightBuffer.Get());*/
 }
 
 // ライトの有効・無効設定

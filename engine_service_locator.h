@@ -29,7 +29,29 @@ public:
     static ModelRepository* GetModelRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetModelRepository() : nullptr;
     }
+    static TextureRepository* GetTextureRepository() {
+        return s_engineInstance ? s_engineInstance->GetResourceManager().GetTextureRepository() : nullptr;
+    }
 
+    // ShaderManagerへのアクセス
+    static ShaderManager* GetShaderManager() {
+        return s_engineInstance ? &s_engineInstance->GetShaderManager() : nullptr;
+    }
+    static void BindShader(ShaderManager::ShaderType shaderType) {
+        if (s_engineInstance) {
+            s_engineInstance->GetShaderManager().BindShader(shaderType);
+        }
+    }
+    static void UpdateTransformCB(const ShaderManager::TransformBuffer& transformData) {
+        if (s_engineInstance) {
+            s_engineInstance->GetShaderManager().UpdateTransformCB(transformData);
+        }
+    }
+    static void UpdateCameraCB(const ShaderManager::CameraBuffer& cameraData) {
+        if (s_engineInstance) {
+            s_engineInstance->GetShaderManager().UpdateCameraCB(cameraData);
+        }
+    }
 };
 
 #endif // ENGINE_SERVICE_LOCATOR_H

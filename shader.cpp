@@ -158,39 +158,39 @@ void Shader_SetWorldMatrix(const DirectX::XMMATRIX& world)
 	// 定数バッファに行列をセット
 	g_pContext->UpdateSubresource(g_pWorldCB, 0, nullptr, &transpose, 0, 0);
 }
-
-void Shader_Begin(ShaderBeginMode mode)
-{
-	switch (mode)
-	{
-    case ShaderBeginMode::Default:
-    {
-		g_pContext->VSSetShader(g_pVertexShader, nullptr, 0);
-		g_pContext->PSSetShader(g_pPixelShader, nullptr, 0);
-		g_pContext->IASetInputLayout(g_pInputLayout);
-
-		g_pContext->VSSetConstantBuffers(0, 1, &g_pMtxCB);
-        g_pContext->VSSetConstantBuffers(1, 1, &g_pWorldCB);
-        //g_pContext->VSSetConstantBuffers(2, 1, &g_pLightCB);
-        g_pContext->PSSetConstantBuffers(0, 1, &g_pOptionCB);
-		break;
-    }
-      
-	case ShaderBeginMode::TrueTypeFont:
-	{
-		g_pContext->VSSetShader(g_pVertexShader, nullptr, 0);
-		g_pContext->PSSetShader(g_pFontShader, nullptr, 0);
-		g_pContext->IASetInputLayout(g_pInputLayout);
-
-		g_pContext->VSSetConstantBuffers(0, 1, &g_pMtxCB);
-		g_pContext->VSSetConstantBuffers(1, 1, &g_pWorldCB);
-		//g_pContext->VSSetConstantBuffers(2, 1, &g_pLightCB);
-		g_pContext->PSSetConstantBuffers(0, 1, &g_pOptionCB);
-		break;
-	}
-	default: break;
-	}
-}
+//
+//void Shader_Begin(ShaderBeginMode mode)
+//{
+//	switch (mode)
+//	{
+//    case ShaderBeginMode::Default:
+//    {
+//		g_pContext->VSSetShader(g_pVertexShader, nullptr, 0);
+//		g_pContext->PSSetShader(g_pPixelShader, nullptr, 0);
+//		g_pContext->IASetInputLayout(g_pInputLayout);
+//
+//		g_pContext->VSSetConstantBuffers(0, 1, &g_pMtxCB);
+//        g_pContext->VSSetConstantBuffers(1, 1, &g_pWorldCB);
+//        //g_pContext->VSSetConstantBuffers(2, 1, &g_pLightCB);
+//        g_pContext->PSSetConstantBuffers(0, 1, &g_pOptionCB);
+//		break;
+//    }
+//      
+//	case ShaderBeginMode::TrueTypeFont:
+//	{
+//		g_pContext->VSSetShader(g_pVertexShader, nullptr, 0);
+//		g_pContext->PSSetShader(g_pFontShader, nullptr, 0);
+//		g_pContext->IASetInputLayout(g_pInputLayout);
+//
+//		g_pContext->VSSetConstantBuffers(0, 1, &g_pMtxCB);
+//		g_pContext->VSSetConstantBuffers(1, 1, &g_pWorldCB);
+//		//g_pContext->VSSetConstantBuffers(2, 1, &g_pLightCB);
+//		g_pContext->PSSetConstantBuffers(0, 1, &g_pOptionCB);
+//		break;
+//	}
+//	default: break;
+//	}
+//}
 
 void Shader_SetPixelOption(const XMFLOAT4& colorRate, float grayRate)
 {

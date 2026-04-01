@@ -35,8 +35,9 @@ bool MiEngine::Initialize(HWND hWnd)
     ID3D11Device* pDevice = Direct3D_GetDevice();
     ID3D11DeviceContext* pContext = Direct3D_GetDeviceContext();
 
-    Shader_Initialize(pDevice, pContext);
-    InitializeSprite();
+   /* Shader_Initialize(pDevice, pContext);
+    InitializeSprite();*/
+    m_shaderManager.Initialize(pDevice, pContext);
     InitAudio();
     FPS_Initialize(hWnd);
 
@@ -79,10 +80,11 @@ void MiEngine::Finalize()
     m_gameWorld.Finalize();
 
     m_resourceManager.Finalize();
+    m_shaderManager.Finalize();
 
     UninitAudio();
-    FinalizeSprite();
-    Shader_Finalize();
+    /*FinalizeSprite();
+    Shader_Finalize();*/
     Direct3D_Finalize();
 
     DebugRenderer_Finalize();

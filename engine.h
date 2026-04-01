@@ -13,14 +13,17 @@
 
 #include "editor_context.h"
 #include "resource_manager.h"
+#include "shader_manager.h"
 
 class MiEngine {
 private:
     bool m_isRunning = false;
     EditorContext m_editorContext;
 
-    MiImguiManager m_imguiManager;
+    MiImguiManager  m_imguiManager;
     ResourceManager m_resourceManager;
+    ShaderManager   m_shaderManager;
+
     // AssetManager* m_pAssetManager;
     // Renderer* m_pRenderer;
     // InputSystem* m_pInputSystem;
@@ -51,6 +54,8 @@ public:
 
     // ResourceManagerへのアクセス
     ResourceManager& GetResourceManager() { return m_resourceManager; }
+    // ShaderManagerへのアクセス
+    ShaderManager& GetShaderManager() { return m_shaderManager; }
 
     // EditorContextへのアクセス
     void AddLogMessage(const std::string& message) {

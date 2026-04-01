@@ -61,7 +61,7 @@ void TextureRepository::LoadTexture(const std::string& filePath)
     CreateShaderResourceView(m_pDevice, image.GetImages(), image.GetImageCount(), metadata, textureResource->texture.GetAddressOf());
 
     // 読み込み失敗時のエラーチェック
-    assert(textureResource->texture.Get());
+    //assert(textureResource->texture.Get());
 }
 
 // テクスチャの解放

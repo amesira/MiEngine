@@ -11,19 +11,31 @@
 using namespace DirectX;
 
 #include "sprite.h"
-#include "shader.h"
 
 #include <algorithm>
 
+#include "engine_service_locator.h"
+
 // UiRenderPassの初期化
-void UIRenderPass::Initialize()
+void UIRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+    m_pDevice = pDevice;
+    m_pContext = pContext;
+
     m_batches.reserve(2048);
 
     // 描画コマンドの収集クラスの初期化
     m_collectorImage.Initialize();
     m_collectorSlider.Initialize();
     m_collectorFont.Initialize();
+
+    // 頂点バッファ生成
+	D3D11_BUFFER_DESC bd = {};
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof(Vertex) * 4;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_pDevice->CreateBuffer(&bd, NULL, &m_pVertexBuffer);
 }
 
 // UiRenderPassの終了処理
@@ -41,18 +53,24 @@ void UIRenderPass::Process(IScene* pScene)
     //----------------------------------------------------
     // UI描画のセットアップ
 	//----------------------------------------------------
-    Shader_Begin();
+   // Shader_Begin();
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
     SetBlendState(BLENDSTATE_ALFA);
 
     const float SCREEN_WIDTH = (float)Direct3D_GetBackBufferWidth();
     const float SCREEN_HEIGHT = (float)Direct3D_GetBackBufferHeight();
-    Shader_SetMatrix(XMMatrixOrthographicOffCenterLH(
+    /*Shader_SetMatrix(XMMatrixOrthographicOffCenterLH(
         0.0f,
         SCREEN_WIDTH,
         SCREEN_HEIGHT,
         0.0f,
         0.0f,
-        1.0f));
+        1.0f));*/
+    EngineServiceLocator::UpdateCameraCB({
+        XMMatrixIdentity(), // ビュー行列は単位行列（UIはワールド座標と同じ）
+        XMMatrixOrthographicOffCenterLH(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f), // プロジェクション行列は正射影
+        XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f) // カメラの位置は適当（UIはワールド座標と同じなので）
+        });
 
     // UI描画コマンドのバッチ処理
     m_batches.clear();
@@ -75,20 +93,24 @@ void UIRenderPass::Process(IScene* pScene)
             // シェーダーの切り替え
             switch (batch.shaderType) {
             case DrawBatch2D::ShaderType::Default:
-                Shader_Begin();
+                //Shader_Begin();
+                EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
                 break;
             case DrawBatch2D::ShaderType::Font:
-                Shader_Begin(ShaderBeginMode::TrueTypeFont);
+                //Shader_Begin(ShaderBeginMode::TrueTypeFont);
+                EngineServiceLocator::BindShader(ShaderManager::ShaderType::TlueTypeFontUnlit);
                 break;
             }
             currentShaderType = batch.shaderType;
         }
 
         // インスタンシング準備
-        PrepareDrawInstance();
+      //  PrepareDrawInstance();
 
         // テクスチャをシェーダーに設定
-        SetTexture(batch.texture);
+        //SetTexture(batch.texture);
+
+        m_pContext->PSSetShaderResources(0, 1, &batch.texture);
 
         for (const DrawCommand2DInstance& instance : batch.instances) {
             // ワールド行列の計算
@@ -101,13 +123,51 @@ void UIRenderPass::Process(IScene* pScene)
             }
 
             // インスタンシングデータの追加
-            AddInstanceData(world, instance.color, instance.uvRect);
+           // AddInstanceData(world, instance.color, instance.uvRect);
+
+            EngineServiceLocator::UpdateTransformCB({ world, XMMatrixIdentity() });
+            //DrawSprite(instance.color, instance.uvRect);
+
+            D3D11_MAPPED_SUBRESOURCE msr;
+            m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+
+            Vertex* v = (Vertex*)msr.pData;
+            v[0].position = XMFLOAT3(-0.5f, -0.5f, 0.0f);
+            v[0].texCoord = XMFLOAT2(instance.uvRect.x, instance.uvRect.y + instance.uvRect.w);
+
+            v[1].position = XMFLOAT3(0.5f, -0.5f, 0.0f);
+            v[1].texCoord = XMFLOAT2(instance.uvRect.x + instance.uvRect.z, instance.uvRect.y + instance.uvRect.w);
+
+            v[2].position = XMFLOAT3(-0.5f, 0.5f, 0.0f);
+            v[2].texCoord = XMFLOAT2(instance.uvRect.x, instance.uvRect.y);
+
+            v[3].position = XMFLOAT3(0.5f, 0.5f, 0.0f);
+            v[3].texCoord = XMFLOAT2(instance.uvRect.x + instance.uvRect.z, instance.uvRect.y);
+
+            for (int i = 0; i < 4; i++) {
+                v[i].color = instance.color;
+                v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+            }
+
+            m_pContext->Unmap(m_pVertexBuffer, 0);
+
+            // 頂点バッファの設定
+            UINT stride = sizeof(Vertex);
+            UINT offset = 0;
+            m_pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+            // プリミティブトポロジ設定 トライアングルストリップ
+            m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+            // ポリゴン描画命令発行
+            m_pContext->Draw(4, 0); // 表示に使用する頂点数を指定
+
         }
 
         // インスタンシング描画命令
-        DrawInstance();
+       // DrawInstance();
     }
 
-    Shader_Begin();
-    ClearInstanceData();
+    /*Shader_Begin();
+    ClearInstanceData();*/
 }

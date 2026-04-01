@@ -6,8 +6,6 @@
 //===================================================
 #include "model_repository.h"
 
-#include "sprite.h"
-#include "shader.h"
 #include <memory>
 
 #include "assimp/cimport.h"
@@ -15,6 +13,8 @@
 #include "assimp/postprocess.h"
 #include "assimp/matrix4x4.h"
 #pragma comment (lib, "assimp-vc143-mt.lib")
+
+#include "engine_service_locator.h"
 
 // モデルリポジトリの初期化
 void ModelRepository::Initialize() 

@@ -16,11 +16,17 @@
 #include "slider_component.h"
 #include "transform_component.h"
 
+#include "engine_service_locator.h"
+
 static ID3D11ShaderResourceView* g_pTexture = nullptr;
 
 void CollectorSlider::Initialize()
 {
-    LoadTexture(&g_pTexture, L"asset\\Texture\\white.bmp");
+    //LoadTexture(&g_pTexture, L"asset\\Texture\\white.bmp");
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture("asset\\Texture\\white.bmp");
+    if (resource) {
+        g_pTexture = resource->texture.Get();
+    }
 }
 
 void CollectorSlider::Finalize()

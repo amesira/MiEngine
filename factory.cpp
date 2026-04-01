@@ -137,7 +137,7 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
     player->AddComponent<PlayerBehavior>();
 }
 
-void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const wchar_t* texturePath)
+void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, std::string texturePath)
 {
     uiImage->SetName("UiImage");
 
@@ -148,7 +148,11 @@ void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 siz
     // component設定
     rectTransform->SetPosition({ position.x, position.y, 0.0f });
     rectTransform->SetScaling({ size.x, size.y, 1.0f });
-    imageComp->Load(texturePath);
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(texturePath);
+    if (resource) {
+        imageComp->SetTexture(resource->texture.Get());
+    }
+
 }
 
 void Factory::CreateUiText(GameObject* uiText, XMFLOAT2 position, XMFLOAT2 size, const std::u8string text)

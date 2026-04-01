@@ -72,12 +72,16 @@ private:
         GPU_PointLight  pointLights[POINT_LIGHT_MAX];
         GPU_SpotLight   spotLights[SPOT_LIGHT_MAX];
     } m_lightBufferData;
+
+    ID3D11Device* m_pDevice;
+    ID3D11DeviceContext* m_pContext;
+
     ComPtr<ID3D11Buffer> m_lightBuffer;
 
     int m_lightCount;
 
 public:
-    void Initialize() override;
+    void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void Finalize() override;
     void Process(IScene* pScene) override;
 

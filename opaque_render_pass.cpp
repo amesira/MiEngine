@@ -21,6 +21,8 @@ using namespace DirectX;
 #include "transform_component.h"
 #include "model_component.h"
 
+#include "engine_service_locator.h"
+
 static ID3D11ShaderResourceView* defaultTextureSRV = nullptr;
 
 // OpaqueRenderPassの初期化
@@ -29,7 +31,11 @@ void OpaqueRenderPass::Initialize()
     m_pDevice = Direct3D_GetDevice();
     m_pContext = Direct3D_GetDeviceContext();
 
-    LoadTexture(&defaultTextureSRV, L"asset\\texture\\white.bmp");
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture("asset\\texture\\white.bmp");
+    if (resource) {
+        defaultTextureSRV = resource->texture.Get();
+    }
+    //LoadTexture(&defaultTextureSRV, L"asset\\texture\\white.bmp");
 }
 
 // OpaqueRenderPassの終了処理
@@ -47,6 +53,8 @@ void OpaqueRenderPass::Process(IScene* pScene)
     if (!transformPool || !modelPool)return;
 
     auto& modelPoolList = modelPool->GetList();
+
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
 
     for (ModelComponent& m : modelPoolList) {
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
@@ -74,17 +82,23 @@ void OpaqueRenderPass::Process(IScene* pScene)
         XMMATRIX worldMatrix = scaling * rotation * translation;
 
         // 行列セット
-        Shader_SetMatrix(m_viewMatrix * m_projectionMatrix);
-        SetWorldMatrix(worldMatrix);
+        /*Shader_SetMatrix(m_viewMatrix * m_projectionMatrix);
+        SetWorldMatrix(worldMatrix);*/
+        EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
+        EngineServiceLocator::UpdateCameraCB({
+            m_viewMatrix,
+            m_projectionMatrix,
+            XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f)
+            });
 
-        Shader_SetPixelOption(m.GetColor(), 0.0f);
+        //Shader_SetPixelOption(m.GetColor(), 0.0f);
 
         // モデル描画
         DrawModel(model, worldMatrix, m.GetColor());
     }
 
     // オプションリセット
-    Shader_SetPixelOption(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f);
+    //Shader_SetPixelOption(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f);
 }
 
 //---------------------------------------------

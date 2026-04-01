@@ -192,6 +192,9 @@
     <ClCompile Include="texture_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="shader_manager.cpp">
+      <Filter>Sources\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -433,6 +436,9 @@
     </ClInclude>
     <ClInclude Include="texture_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="shader_manager.h">
+      <Filter>Sources\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

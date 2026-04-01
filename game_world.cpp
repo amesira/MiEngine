@@ -7,7 +7,7 @@
 #include "game_world.h"
 #include "debug_renderer.h"
 #include "sprite.h"
-#include "shader.h"
+#include "engine_service_locator.h"
 
 // GameWorldの初期化
 void GameWorld::Initialize()
@@ -70,11 +70,16 @@ void GameWorld::Render()
 
     Direct3D_Clear();
 
-    Shader_Begin();
-    SetBlendState(BLENDSTATE_ALFA);
-    SetTexture(m_renderViews[0].colorBufferSRV.Get());
+   // Shader_Begin();
+    /*EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
 
-    float SCREEN_WIDTH = static_cast<float>(Direct3D_GetBackBufferWidth());
-    float SCREEN_HEIGHT = static_cast<float>(Direct3D_GetBackBufferHeight());
-    DrawSpriteScreen({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f}, {SCREEN_WIDTH, SCREEN_HEIGHT}, {1,1,1,1}, {0,0,1,1});
+    SetBlendState(BLENDSTATE_ALFA);*/
+    //SetTexture(m_renderViews[0].colorBufferSRV.Get());
+
+
+   /* float SCREEN_WIDTH = static_cast<float>(Direct3D_GetBackBufferWidth());
+    float SCREEN_HEIGHT = static_cast<float>(Direct3D_GetBackBufferHeight());*/
+    //DrawSpriteScreen({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f}, {SCREEN_WIDTH, SCREEN_HEIGHT}, {1,1,1,1}, {0,0,1,1});
+
+    m_renderProcessor.DrawFullScreenQuad(m_renderViews[0].colorBufferSRV.Get());
 }

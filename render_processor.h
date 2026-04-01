@@ -23,28 +23,18 @@ using Microsoft::WRL::ComPtr;
 
 class RenderProcessor : public Processor {
 private:
+    ID3D11Device* m_pDevice = nullptr;
+    ID3D11DeviceContext* m_pContext = nullptr;
+
+    ID3D11Buffer* m_pVertexBuffer = nullptr;
+
+    // RenderViewへのポインタ
     RenderView* m_renderView;
 
     LightingPass m_lightingPass;
-    // ShadowMapPass
-    // 
-    // SkyboxPass
     OpaqueRenderPass m_opaqueRenderPass;
     // TransparentPass
-    // 
-    // ←Snapshot !
-    // 
-    // PostEffectPass
-    // 
-    // ←Snapshot !
-    // 
-    // UIRenderPass
     UIRenderPass m_uiRenderPass;
-    // 
-    // ←Snapshot !
-
-    // シーンのスナップショット用SRV
-    
 
 public:
     void    Initialize()override;
@@ -55,6 +45,9 @@ public:
     void    BindRenderView(RenderView* view) {
         m_renderView = view;
     }
+
+    // SRVをフルスクリーンクワッドに描画する関数
+    void    DrawFullScreenQuad(ID3D11ShaderResourceView* srv);
 
 };
 
