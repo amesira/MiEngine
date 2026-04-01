@@ -3,34 +3,16 @@
 // 
 // Author：Miu Kitamura
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-// 行列定数バッファ
-cbuffer Buffer0 : register(b0)
-{
-    float4x4 mtx;
-}
-
-// 
-cbuffer Buffer1:register(b1)
-{
-    float4x4 World;
-}
+#include "transform.hlsl"
+#include "camera.hlsl"
 
 // 入力用頂点構造体
 struct VS_INPUT
 {
-    // slot0: 頂点座標
     float4 posL     : POSITION0;    // 頂点座標
     float4 normal   : NORMAL0;      // 頂点法線
     float4 color    : COLOR0;       // 頂点カラー（R,G,B,A）
     float2 texcoord : TEXCOORD0;    // テクスチャ座標（U,V）
-    
-    // slot1: インスタンスバッファ
-    float4 ins_world0 : INS_WORLD0; // インスタンス用ワールド行列0
-    float4 ins_world1 : INS_WORLD1; // インスタンス用ワールド行列1
-    float4 ins_world2 : INS_WORLD2; // インスタンス用ワールド行列2
-    float4 ins_world3 : INS_WORLD3; // インスタンス用ワールド行列3
-    float4 ins_color : INS_COLOR0; // インスタンスカラー（R,G,B,A）
-    float4 ins_uvrect : INS_UVRECT0; // インスタンスUV矩形（U,V,幅,高）
 };
 
 // 出力用頂点構造体
@@ -46,26 +28,22 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT vs_in)
 {
     VS_OUTPUT vs_out;
+    vs_in.posL.w = 1.0f; // 同次座標のw成分を1に設定
     
     // 頂点を行列変換
-    float4x4 worldMatrix = float4x4(
-        vs_in.ins_world0,
-        vs_in.ins_world1,
-        vs_in.ins_world2,
-        vs_in.ins_world3
-    );
-    vs_out.posW = mul(vs_in.posL, worldMatrix);
-    vs_out.posH = mul(vs_out.posW, mtx);
+    vs_out.posW = mul(vs_in.posL, g_WorldMatrix);
+    
+    vs_out.posH = mul(mul(vs_out.posW, g_ViewMatrix), g_ProjectionMatrix);
     
     // 法線変換
-    float3x3 normalMatrix = (float3x3)worldMatrix;
+    float3x3 normalMatrix = (float3x3)g_WorldMatrix;
     vs_out.normal.xyz = normalize(mul(vs_in.normal, normalMatrix));
     
     // 頂点カラー
-    vs_out.color = vs_in.color * vs_in.ins_color;
+    vs_out.color = vs_in.color;
     
     // テクスチャ座標
-    vs_out.texcoord = vs_in.texcoord * vs_in.ins_uvrect.zw + vs_in.ins_uvrect.xy;
+    vs_out.texcoord = vs_in.texcoord;
     
     return vs_out;
 }

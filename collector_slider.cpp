@@ -9,8 +9,6 @@
 #include "game_object.h"
 
 #include "direct3d.h"
-#include "sprite.h"
-#include "shader.h"
 
 #include "rect_transform_component.h"
 #include "slider_component.h"
@@ -23,7 +21,7 @@ static ID3D11ShaderResourceView* g_pTexture = nullptr;
 void CollectorSlider::Initialize()
 {
     //LoadTexture(&g_pTexture, L"asset\\Texture\\white.bmp");
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture("asset\\Texture\\white.bmp");
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(L"asset\\Texture\\white.bmp");
     if (resource) {
         g_pTexture = resource->texture.Get();
     }

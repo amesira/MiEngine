@@ -17,7 +17,7 @@ private:
     ID3D11DeviceContext* m_pContext = nullptr;
 
     // テクスチャリソースのキャッシュ
-    std::unordered_map<std::string, std::unique_ptr<TextureResource>> m_textureCache;
+    std::unordered_map<const wchar_t*, std::unique_ptr<TextureResource>> m_textureCache;
 
 public:
     // 初期化
@@ -26,14 +26,14 @@ public:
     void Finalize();
 
     // テクスチャの取得。キャッシュに無い場合は読み込む。
-    TextureResource* GetTexture(const std::string& filePath);
+    TextureResource* GetTexture(const wchar_t* filePath);
 
 private:
     // テクスチャの読み込み
-    void LoadTexture(const std::string& filePath);
+    void LoadTexture(const wchar_t* filePath);
 
     // テクスチャの解放
-    void ReleaseTexture(const std::string& filePath);
+    void ReleaseTexture(const wchar_t* filePath);
 };
 
 #endif // TEXTURE_REPOSITORY_H

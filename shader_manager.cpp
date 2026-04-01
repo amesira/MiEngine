@@ -138,13 +138,6 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
             { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
-            { "INS_WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-            { "INS_WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-            { "INS_WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-            { "INS_WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-            { "INS_COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-            { "INS_UVRECT",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
         };
 
         UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
@@ -174,13 +167,6 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
              { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
              { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
              { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
-             { "INS_WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-             { "INS_WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-             { "INS_WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-             { "INS_WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-             { "INS_COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-             { "INS_UVRECT",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
         };
         UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
         hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, &m_shaderContainer[i].inputLayout);
@@ -282,17 +268,20 @@ void ShaderManager::BindShader(ShaderType shaderType)
 // TransformBufferを更新する関数
 void ShaderManager::UpdateTransformCB(const TransformBuffer& transformData)
 {
-    m_pContext->UpdateSubresource(m_transformCB, 0, nullptr, &transformData, 0, 0);
+    XMMATRIX transposedWorld = XMMatrixTranspose(transformData.world);
+    XMMATRIX transposedNormal = XMMatrixTranspose(transformData.normal);
+
+    TransformBuffer transposedData{ transposedWorld, transposedNormal };
+    m_pContext->UpdateSubresource(m_transformCB, 0, nullptr, &transposedData, 0, 0);
 }
 // CameraBufferを更新する関数
 void ShaderManager::UpdateCameraCB(const CameraBuffer& cameraData)
 {
-    m_pContext->UpdateSubresource(m_cameraCB, 0, nullptr, &cameraData, 0, 0);
-}
-// 任意の定数バッファを更新する関数
-void ShaderManager::UpdateOtherCB(UINT slot, const void* data, size_t dataSize)
-{
+    XMMATRIX transposedView = XMMatrixTranspose(cameraData.view);
+    XMMATRIX transposedProjection = XMMatrixTranspose(cameraData.projection);
 
+    CameraBuffer transposedData{ transposedView, transposedProjection, cameraData.eyePos };
+    m_pContext->UpdateSubresource(m_cameraCB, 0, nullptr, &transposedData, 0, 0);
 }
 
 //----------------------------------------------------------------------------- private

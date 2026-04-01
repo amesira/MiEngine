@@ -6,7 +6,6 @@
 //===================================================
 #include "texture_repository.h"
 
-#include "shader.h"
 #include <memory>
 #include "DirectXTex.h"
 
@@ -26,13 +25,13 @@ void TextureRepository::Finalize()
 {
     for (auto& pair : m_textureCache)
     {
-        ReleaseTexture(pair.first);
+        //ReleaseTexture(pair.first);
     }
     m_textureCache.clear();
 }
 
 // テクスチャの取得。キャッシュに無い場合は読み込む。
-TextureResource* TextureRepository::GetTexture(const std::string& filePath)
+TextureResource* TextureRepository::GetTexture(const wchar_t* filePath)
 {
     // キャッシュを確認
     auto it = m_textureCache.find(filePath);
@@ -40,6 +39,7 @@ TextureResource* TextureRepository::GetTexture(const std::string& filePath)
     {
         return it->second.get();
     }
+
     // キャッシュに無い場合は読み込む
     LoadTexture(filePath);
     return m_textureCache[filePath].get();
@@ -48,7 +48,7 @@ TextureResource* TextureRepository::GetTexture(const std::string& filePath)
 //-------------------------------------
 
 // テクスチャの読み込み
-void TextureRepository::LoadTexture(const std::string& filePath)
+void TextureRepository::LoadTexture(const wchar_t* filePath)
 {
     m_textureCache[filePath] = std::make_unique<TextureResource>();
     TextureResource* textureResource = m_textureCache[filePath].get();
@@ -57,15 +57,15 @@ void TextureRepository::LoadTexture(const std::string& filePath)
     // テクスチャの読み込み
     TexMetadata metadata;
     ScratchImage image;
-    LoadFromWICFile(std::wstring(filePath.begin(), filePath.end()).c_str(), WIC_FLAGS_NONE, &metadata, image);
+    LoadFromWICFile(filePath, WIC_FLAGS_NONE, &metadata, image);
     CreateShaderResourceView(m_pDevice, image.GetImages(), image.GetImageCount(), metadata, textureResource->texture.GetAddressOf());
 
     // 読み込み失敗時のエラーチェック
-    //assert(textureResource->texture.Get());
+    assert(textureResource->texture.Get());
 }
 
 // テクスチャの解放
-void TextureRepository::ReleaseTexture(const std::string& filePath)
+void TextureRepository::ReleaseTexture(const wchar_t* filePath)
 {
     auto it = m_textureCache.find(filePath);
     if (it != m_textureCache.end())

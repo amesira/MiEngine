@@ -47,7 +47,7 @@ public:
     }
 
     // SRVをフルスクリーンクワッドに描画する関数
-    void    DrawFullScreenQuad(ID3D11ShaderResourceView* srv);
+    void    DrawFullScreenQuad(ID3D11ShaderResourceView** srv);
 
 };
 

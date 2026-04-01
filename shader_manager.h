@@ -110,8 +110,6 @@ public:
     void    UpdateTransformCB(const TransformBuffer& transformData);
     // CameraBufferを更新する関数
     void    UpdateCameraCB(const CameraBuffer& cameraData);
-    // 任意の定数バッファを更新する関数
-    void    UpdateOtherCB(UINT slot, const void* data, size_t dataSize);
 
 private:
     // 頂点シェーダー読み込み

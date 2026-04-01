@@ -66,12 +66,6 @@
     <ClCompile Include="stb_implementation.cpp">
       <Filter>External</Filter>
     </ClCompile>
-    <ClCompile Include="shader.cpp">
-      <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="sprite.cpp">
-      <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="mi_fps.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
@@ -259,12 +253,6 @@
     </ClInclude>
     <ClInclude Include="stb_truetype.h">
       <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="sprite.h">
-      <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="shader.h">
-      <Filter>Sources\Engine\System\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="processor.h">
       <Filter>Sources\Engine\Core</Filter>

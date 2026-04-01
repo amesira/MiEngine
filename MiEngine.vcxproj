@@ -180,9 +180,7 @@
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="scene_manager.cpp" />
     <ClCompile Include="scene_view_window.cpp" />
-    <ClCompile Include="shader.cpp" />
     <ClCompile Include="shader_manager.cpp" />
-    <ClCompile Include="sprite.cpp" />
     <ClCompile Include="stb_implementation.cpp" />
     <ClCompile Include="texture_repository.cpp" />
     <ClCompile Include="tool_bar_window.cpp" />
@@ -258,10 +256,8 @@
     <ClInclude Include="scene_interface.h" />
     <ClInclude Include="scene_manager.h" />
     <ClInclude Include="scene_view_window.h" />
-    <ClInclude Include="shader.h" />
     <ClInclude Include="shader_manager.h" />
     <ClInclude Include="slider_component.h" />
-    <ClInclude Include="sprite.h" />
     <ClInclude Include="stb_truetype.h" />
     <ClInclude Include="texture_repository.h" />
     <ClInclude Include="texture_resource.h" />

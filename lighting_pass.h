@@ -81,11 +81,14 @@ private:
     int m_lightCount;
 
 public:
+    // 初期化
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+    // 終了処理
     void Finalize() override;
+    // 実行
     void Process(IScene* pScene) override;
 
-    void BindLightBuffer();
+    // ライトをセット
     void SetLightEnable(bool enable);
 
 };

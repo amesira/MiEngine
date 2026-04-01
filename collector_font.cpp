@@ -14,8 +14,6 @@
 #include <fstream>
 #include <iostream>
 #include "direct3d.h"
-#include "shader.h"
-#include "sprite.h"
 
 #include "scene_interface.h"
 #include "game_object.h"

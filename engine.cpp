@@ -7,8 +7,6 @@
 #include "engine.h"
 
 #include "direct3d.h"
-#include "shader.h"
-#include "sprite.h"
 #include "Audio.h"
 #include "mi_fps.h"
 

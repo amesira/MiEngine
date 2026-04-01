@@ -8,7 +8,6 @@
 #include "scene_interface.h"
 #include "game_object.h"
 
-#include "shader.h"
 #include "transform_component.h"
 #include "light_component.h"
 
@@ -138,13 +137,6 @@ void LightingPass::Process(IScene* pScene)
 
     // 定数バッファにライトの情報を転送
     Direct3D_GetDeviceContext()->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
-}
-
-// ライトバッファをシェーダーにバインド
-void LightingPass::BindLightBuffer()
-{
-    /*Shader_BindVsConstantBuffer(10, m_lightBuffer.Get());
-    Shader_BindPsConstantBuffer(10, m_lightBuffer.Get());*/
 }
 
 // ライトの有効・無効設定

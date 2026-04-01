@@ -10,7 +10,6 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-#include "sprite.h"
 
 #include <algorithm>
 
@@ -53,23 +52,18 @@ void UIRenderPass::Process(IScene* pScene)
     //----------------------------------------------------
     // UI描画のセットアップ
 	//----------------------------------------------------
-   // Shader_Begin();
     EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
     SetBlendState(BLENDSTATE_ALFA);
+    SetDepthState(DEPTHSTATE_DISABLE);
 
     const float SCREEN_WIDTH = (float)Direct3D_GetBackBufferWidth();
     const float SCREEN_HEIGHT = (float)Direct3D_GetBackBufferHeight();
-    /*Shader_SetMatrix(XMMatrixOrthographicOffCenterLH(
-        0.0f,
-        SCREEN_WIDTH,
-        SCREEN_HEIGHT,
-        0.0f,
-        0.0f,
-        1.0f));*/
+
+    // カメラ行列の更新（UIはワールド行列は単位行列、ビュー行列も単位行列、プロジェクション行列はオーソゴナル）
     EngineServiceLocator::UpdateCameraCB({
-        XMMatrixIdentity(), // ビュー行列は単位行列（UIはワールド座標と同じ）
-        XMMatrixOrthographicOffCenterLH(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f), // プロジェクション行列は正射影
-        XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f) // カメラの位置は適当（UIはワールド座標と同じなので）
+        XMMatrixIdentity(),
+        XMMatrixOrthographicOffCenterLH(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f),
+        XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f)
         });
 
     // UI描画コマンドのバッチ処理
@@ -93,23 +87,16 @@ void UIRenderPass::Process(IScene* pScene)
             // シェーダーの切り替え
             switch (batch.shaderType) {
             case DrawBatch2D::ShaderType::Default:
-                //Shader_Begin();
                 EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
                 break;
             case DrawBatch2D::ShaderType::Font:
-                //Shader_Begin(ShaderBeginMode::TrueTypeFont);
                 EngineServiceLocator::BindShader(ShaderManager::ShaderType::TlueTypeFontUnlit);
                 break;
             }
             currentShaderType = batch.shaderType;
         }
 
-        // インスタンシング準備
-      //  PrepareDrawInstance();
-
-        // テクスチャをシェーダーに設定
-        //SetTexture(batch.texture);
-
+        // テクスチャのセット
         m_pContext->PSSetShaderResources(0, 1, &batch.texture);
 
         for (const DrawCommand2DInstance& instance : batch.instances) {
@@ -122,15 +109,12 @@ void UIRenderPass::Process(IScene* pScene)
                 world = scale * rotation * translation;
             }
 
-            // インスタンシングデータの追加
-           // AddInstanceData(world, instance.color, instance.uvRect);
-
+            // シェーダーの定数バッファにワールド行列を更新
             EngineServiceLocator::UpdateTransformCB({ world, XMMatrixIdentity() });
-            //DrawSprite(instance.color, instance.uvRect);
 
+            // 頂点バッファに頂点データを転送
             D3D11_MAPPED_SUBRESOURCE msr;
             m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-
             Vertex* v = (Vertex*)msr.pData;
             v[0].position = XMFLOAT3(-0.5f, -0.5f, 0.0f);
             v[0].texCoord = XMFLOAT2(instance.uvRect.x, instance.uvRect.y + instance.uvRect.w);
@@ -148,7 +132,6 @@ void UIRenderPass::Process(IScene* pScene)
                 v[i].color = instance.color;
                 v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
             }
-
             m_pContext->Unmap(m_pVertexBuffer, 0);
 
             // 頂点バッファの設定
@@ -161,13 +144,6 @@ void UIRenderPass::Process(IScene* pScene)
 
             // ポリゴン描画命令発行
             m_pContext->Draw(4, 0); // 表示に使用する頂点数を指定
-
         }
-
-        // インスタンシング描画命令
-       // DrawInstance();
     }
-
-    /*Shader_Begin();
-    ClearInstanceData();*/
 }

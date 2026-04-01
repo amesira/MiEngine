@@ -14,10 +14,6 @@
 #include "direct3d.h"
 using namespace DirectX;
 
-// graphics, devices
-#include "shader.h"
-#include "sprite.h"
-
 #include "transform_component.h"
 #include "model_component.h"
 
@@ -31,7 +27,7 @@ void OpaqueRenderPass::Initialize()
     m_pDevice = Direct3D_GetDevice();
     m_pContext = Direct3D_GetDeviceContext();
 
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture("asset\\texture\\white.bmp");
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(L"asset\\Texture\\white.bmp");
     if (resource) {
         defaultTextureSRV = resource->texture.Get();
     }

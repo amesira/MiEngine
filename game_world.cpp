@@ -6,8 +6,9 @@
 //===================================================
 #include "game_world.h"
 #include "debug_renderer.h"
-#include "sprite.h"
 #include "engine_service_locator.h"
+
+static ID3D11ShaderResourceView* g_debugTextureSRV = nullptr;
 
 // GameWorldの初期化
 void GameWorld::Initialize()
@@ -23,6 +24,11 @@ void GameWorld::Initialize()
 
     // RenderViewの初期化
     m_renderViews.resize(8);
+
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(L"asset//Texture//test.jpg");
+    if (resource) {
+        g_debugTextureSRV = resource->texture.Get();
+    }
 }
 
 // GameWorldの終了処理
@@ -70,16 +76,7 @@ void GameWorld::Render()
 
     Direct3D_Clear();
 
-   // Shader_Begin();
-    /*EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
+    //m_renderProcessor.DrawFullScreenQuad(&g_debugTextureSRV);
+    // m_renderViews[0].colorBufferSRV = g_debugTextureSRV;
 
-    SetBlendState(BLENDSTATE_ALFA);*/
-    //SetTexture(m_renderViews[0].colorBufferSRV.Get());
-
-
-   /* float SCREEN_WIDTH = static_cast<float>(Direct3D_GetBackBufferWidth());
-    float SCREEN_HEIGHT = static_cast<float>(Direct3D_GetBackBufferHeight());*/
-    //DrawSpriteScreen({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f}, {SCREEN_WIDTH, SCREEN_HEIGHT}, {1,1,1,1}, {0,0,1,1});
-
-    m_renderProcessor.DrawFullScreenQuad(m_renderViews[0].colorBufferSRV.Get());
 }

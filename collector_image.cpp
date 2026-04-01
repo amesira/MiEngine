@@ -43,7 +43,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2
         // 描画コマンドに追加
         DrawBatch2D batch;
         batch.orderInLayer = rect->GetPosition().z;
-        batch.texture = image->GetTexture();
+        batch.texture = image->GetTextureResource()->texture.Get();
 
         DrawCommand2DInstance instance;
         instance.position = { rect->GetPosition().x, rect->GetPosition().y };
