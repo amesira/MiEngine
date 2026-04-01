@@ -57,9 +57,9 @@ cbuffer LightBuffer : register(b10)
     bool                g_EnableLighting; // ライティング全体の有効・無効フラグ
     float3              padding;
     
-    DirectionalLight g_DirectionalLights[DIRECTIONAL_LIGHT_MAX];
-    PointLight g_PointLights[POINT_LIGHT_MAX];
-    SpotLight g_SpotLights[SPOT_LIGHT_MAX];
+    DirectionalLight    g_DirectionalLights[DIRECTIONAL_LIGHT_MAX];
+    PointLight          g_PointLights[POINT_LIGHT_MAX];
+    SpotLight           g_SpotLights[SPOT_LIGHT_MAX];
 }
 
 // 拡散反射の計算関数（ディレクショナルライト用）
@@ -108,7 +108,6 @@ float3 CalcSpecular_DirectionalLights(float3 normal, float3 posW, float3 eyePos,
         float3 L = normalize(-light.Direction.xyz);
         
         // 鏡面反射ベクトルを計算
-        // R = reflect(-L, N); と書くこともできる
         //float3 R = 2.0f * N * dot(N, L) - L;
         float3 R = reflect(-L, N);
         

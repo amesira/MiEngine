@@ -25,6 +25,18 @@
     <FxCompile Include="camera.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
+    <FxCompile Include="lit_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="unlit_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="skinned_lit_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="unlit_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera_processor.cpp">
