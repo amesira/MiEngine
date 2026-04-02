@@ -28,13 +28,14 @@ struct SkinnedLitVertex {
 };
 struct UnlitVertex {
     XMFLOAT3 position;  // 頂点の位置
+    XMFLOAT4 color;     // 頂点の色
     XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
 };
 
 struct Vertex {
     XMFLOAT3 position;  // 頂点の位置
     XMFLOAT3 normal;    // 頂点の法線
-    XMFLOAT4 color;     // 頂点カラー（R,G,B,A）
+    XMFLOAT4 color;     // 頂点の色
     XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
 };
 
@@ -106,10 +107,10 @@ public:
     // シェーダーをバインドする関数
     void    BindShader(ShaderType shaderType);
 
-    // TransformBufferを更新する関数
-    void    UpdateTransformCB(const TransformBuffer& transformData);
-    // CameraBufferを更新する関数
-    void    UpdateCameraCB(const CameraBuffer& cameraData);
+    // TransformBufferをバインドする関数
+    void    BindTransformCB(const TransformBuffer& transformData);
+    // CameraBufferをバインドする関数
+    void    BindCameraCB(const CameraBuffer& cameraData);
 
 private:
     // 頂点シェーダー読み込み

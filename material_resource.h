@@ -79,6 +79,15 @@ public:
     }
 };
 
+// マテリアルインスタンス
+class MaterialInstance {
+public:
+    MaterialResource* materialResource = nullptr;
 
+    bool isOverrideBaseColor = false;
+    XMFLOAT4 overrideBaseColor = { 1,1,1,1 };
+    bool isOverrideEmissiveColor = false;
+    XMFLOAT3 overrideEmissiveColor = { 0,0,0 };
+};
 
 #endif // MATERIAL_H

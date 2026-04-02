@@ -31,12 +31,12 @@ VS_OUTPUT main(VS_INPUT vs_in)
     
     // 頂点を行列変換
     vs_out.posW = mul(vs_in.posL, g_WorldMatrix);
-    vs_out.posH = mul(vs_out.posW, g_ViewMatrix * g_ProjectionMatrix);
+    vs_out.posH = mul(mul(vs_out.posW, g_ViewMatrix), g_ProjectionMatrix);
     
     // 法線変換
     // （g_NormalMatrixを使う予定）
     float3x3 normalMatrix = (float3x3)g_WorldMatrix;
-    vs_out.normal.xyz = normalize(mul(vs_in.normal, normalMatrix));
+    vs_out.normal.xyz = normalize(mul(vs_in.normal.xyz, normalMatrix));
     
     // テクスチャ座標
     vs_out.texcoord = vs_in.texcoord;

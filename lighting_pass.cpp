@@ -136,14 +136,14 @@ void LightingPass::Process(IScene* pScene)
     }
 
     // 定数バッファにライトの情報を転送
-    Direct3D_GetDeviceContext()->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
 }
 
-// ライトの有効・無効設定
-void LightingPass::SetLightEnable(bool enable)
+// ライトのバインド
+void LightingPass::BindLightCB(bool enable)
 {
     m_lightBufferData.enableLighting = enable ? 1 : 0;
 
     // 定数バッファにライトの情報を転送
-    Direct3D_GetDeviceContext()->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
 }

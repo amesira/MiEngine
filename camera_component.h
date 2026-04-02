@@ -26,6 +26,7 @@ private:
 
     XMMATRIX    m_view;         // ビュー行列
     XMMATRIX    m_projection;   // プロジェクション行列
+    XMFLOAT3    m_eyePosition = { 0.0f, 0.0f, -5.0f }; // カメラの位置
 
     // シェーダー
     float       m_shaderGrayRate = 0.0f;
@@ -48,15 +49,13 @@ public:
 
     XMMATRIX    GetViewMatrix() const { return m_view; }
     XMMATRIX    GetProjectionMatrix() const { return m_projection; }
-
-    // シェーダーオプション設定
-    void    SetShaderGrayRate(float grayRate) { m_shaderGrayRate = grayRate; }
-    float   GetShaderGrayRate() const { return m_shaderGrayRate; }
+    XMFLOAT3    GetEyePosition() const { return m_eyePosition; }
 
 private:
     friend CameraProcessor;
     void    SetViewMatrix(XMMATRIX view) { m_view = view; }
     void    SetProjectionMatrix(XMMATRIX projection) { m_projection = projection; }
+    void    SetEyePosition(XMFLOAT3 eyePosition) { m_eyePosition = eyePosition; }
 
     ID3D11ShaderResourceView* m_snapshot = nullptr; // スナップショット用テクスチャSRV
     void    SetSnapshot(ID3D11ShaderResourceView* snapshot) { m_snapshot = snapshot; }

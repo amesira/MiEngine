@@ -13,6 +13,7 @@
 #include "debug_ostream.h"
 
 #include "imgui_window_interface.h"
+#include "material_repository.h"
 
 // プレイヤーが依存するComponentのヘッダ
 #include "transform_component.h"
@@ -32,6 +33,7 @@ void PlayerBehavior::Start()
     m_transform = owner->GetComponent<TransformComponent>();
     m_rigidbody = owner->GetComponent<RigidbodyComponent>();
     m_model = owner->GetComponent<ModelComponent>();
+    m_myMaterial = m_model->GetMaterialSlots()[0].materialResource;
 
     // プレイヤーを構成する各種ビヘイビアの追加
     m_moveBehavior = owner->AddComponent<PlayerMoveBehavior>();
@@ -66,8 +68,6 @@ void PlayerBehavior::Update()
     }
 
     m_rigidbody->SetVelocity(velocity);
-
-    m_model->SetColor(m_color);
 }
 
 void PlayerBehavior::DrawComponentInspector()
@@ -88,8 +88,18 @@ void PlayerBehavior::DrawComponentInspector()
         if (ImGui::DragFloat("Move Speed", &m_moveSpeed, 0.1f, 0.0f, 100.0f)) {
             m_moveSpeed = (std::max)(0.0f, m_moveSpeed);
         }
-        if (ImGui::ColorEdit4("Color", &m_color.x)) {
-            
+        
+        if (ImGui::ColorEdit4("Base Color", &(m_myMaterial->baseColor.x))) {
+            // カラーが変更されたときの処理（必要なら）
+        }
+        if (ImGui::ColorEdit3("Emissive Color", &(m_myMaterial->emissiveColor.x))) {
+            // カラーが変更されたときの処理（必要なら）
+        }
+        if (ImGui::DragFloat("Metallic", &m_myMaterial->metallic, 0.01f, 0.0f, 1.0f)) {
+            m_myMaterial->metallic = (std::clamp)(m_myMaterial->metallic, 0.0f, 1.0f);
+        }
+        if (ImGui::DragFloat("Roughness", &m_myMaterial->roughness, 0.01f, 0.0f, 1.0f)) {
+            m_myMaterial->roughness = (std::clamp)(m_myMaterial->roughness, 0.0f, 1.0f);
         }
     }
 

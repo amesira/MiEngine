@@ -21,7 +21,7 @@ static ID3D11ShaderResourceView* g_pTexture = nullptr;
 void CollectorSlider::Initialize()
 {
     //LoadTexture(&g_pTexture, L"asset\\Texture\\white.bmp");
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(L"asset\\Texture\\white.bmp");
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
     if (resource) {
         g_pTexture = resource->texture.Get();
     }

@@ -71,7 +71,7 @@ void Factory::CreatePointLight(GameObject* obj, XMFLOAT4 diffuse, float range)
 
     // component設定
     lightComp->SetLightType(LightComponent::LightType::Point);
-
+    lightComp->SetDirection({ 0.0f, -1.0f, 0.0f, 0.0f });
     lightComp->SetDiffuse(diffuse);
 
     lightComp->SetIntensity(2.0f);
@@ -105,7 +105,12 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
 
     ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
-    modelComp->SetColor(color);
+
+    auto& materialSlots = modelComp->GetMaterialSlots();
+    if (!materialSlots.empty()) {
+        materialSlots[0].isOverrideBaseColor = true;
+        materialSlots[0].overrideBaseColor = color;
+    }
 }
 
 void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
@@ -131,13 +136,18 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
 
     ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
-    modelComp->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
+    auto& materialSlots = modelComp->GetMaterialSlots();
+    if (!materialSlots.empty()) {
+        MaterialResource customMaterial;
+        customMaterial.name = "PlayerMaterial";
+        materialSlots[0].materialResource = EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(customMaterial);
+    }
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
 }
 
-void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const wchar_t* texturePath)
+void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 size, const std::wstring& texturePath)
 {
     uiImage->SetName("UiImage");
 
@@ -148,7 +158,7 @@ void Factory::CreateUiImage(GameObject* uiImage, XMFLOAT2 position, XMFLOAT2 siz
     // component設定
     rectTransform->SetPosition({ position.x, position.y, 0.0f });
     rectTransform->SetScaling({ size.x, size.y, 1.0f });
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(texturePath);
+    auto resource = EngineServiceLocator::GetTextureRepository()->GetTextureResource(texturePath);
     if (resource) {
         imageComp->SetTextureResource(resource);
     }
@@ -255,7 +265,6 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
 
         jointTransform->SetPosition(jointPos);
         jointModel->SetModelResource(EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\sphere.fbx"));
-        jointModel->SetColor({ 0.5f, 0.5f, 1.0f, 1.0f });
 
         jointRigidbody->SetMass(3.0f);
         if (i == 0 || i == jointCount - 1) {

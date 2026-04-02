@@ -89,7 +89,7 @@ public:
     void Process(IScene* pScene) override;
 
     // ライトをセット
-    void SetLightEnable(bool enable);
+    void BindLightCB(bool enable);
 
 };
 

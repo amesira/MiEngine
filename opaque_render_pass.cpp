@@ -19,7 +19,7 @@ using namespace DirectX;
 
 #include "engine_service_locator.h"
 
-static ID3D11ShaderResourceView* defaultTextureSRV = nullptr;
+#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 
 // OpaqueRenderPassの初期化
 void OpaqueRenderPass::Initialize()
@@ -27,11 +27,7 @@ void OpaqueRenderPass::Initialize()
     m_pDevice = Direct3D_GetDevice();
     m_pContext = Direct3D_GetDeviceContext();
 
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(L"asset\\Texture\\white.bmp");
-    if (resource) {
-        defaultTextureSRV = resource->texture.Get();
-    }
-    //LoadTexture(&defaultTextureSRV, L"asset\\texture\\white.bmp");
+    m_defaultTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
 }
 
 // OpaqueRenderPassの終了処理
@@ -48,10 +44,15 @@ void OpaqueRenderPass::Process(IScene* pScene)
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
     if (!transformPool || !modelPool)return;
 
+    // 定数バッファ更新
+    int shaderIndex = -1;
+
+    // 描画ステートのセット
+    SetBlendState(BLENDSTATE_NONE);
+    SetDepthState(DEPTHSTATE_ENABLE);
+
+    // モデル描画
     auto& modelPoolList = modelPool->GetList();
-
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Default);
-
     for (ModelComponent& m : modelPoolList) {
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
 
@@ -64,70 +65,58 @@ void OpaqueRenderPass::Process(IScene* pScene)
         if (!model)continue;
 
         // ワールド行列計算
-        XMMATRIX scaling = XMMatrixScaling(
-            t->GetScaling().x,
-            t->GetScaling().y,
-            t->GetScaling().z);
-        XMMATRIX rotation = XMMatrixRotationQuaternion(
-            t->GetRotation());
-        XMMATRIX translation = XMMatrixTranslation(
-            t->GetPosition().x,
-            t->GetPosition().y,
-            t->GetPosition().z);
+        XMMATRIX worldMatrix = XMMatrixIdentity();
+        {
+            XMMATRIX scaling = XMMatrixScaling(
+                t->GetScaling().x,
+                t->GetScaling().y,
+                t->GetScaling().z);
+            XMMATRIX rotation = XMMatrixRotationQuaternion(
+                t->GetRotation());
+            XMMATRIX translation = XMMatrixTranslation(
+                t->GetPosition().x,
+                t->GetPosition().y,
+                t->GetPosition().z);
 
-        XMMATRIX worldMatrix = scaling * rotation * translation;
+            worldMatrix = scaling * rotation * translation;
+        }
+
+        // シェーダーセット
+        if (shaderIndex == -1) {
+            shaderIndex = static_cast<int>(ShaderManager::ShaderType::Lit);
+            EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+        }
 
         // 行列セット
-        /*Shader_SetMatrix(m_viewMatrix * m_projectionMatrix);
-        SetWorldMatrix(worldMatrix);*/
         EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
-        EngineServiceLocator::UpdateCameraCB({
-            m_viewMatrix,
-            m_projectionMatrix,
-            XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f)
-            });
+        
+        // プリミティブトポロジ設定
+        m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-        //Shader_SetPixelOption(m.GetColor(), 0.0f);
+        for (unsigned int i = 0; i < model->meshes.size(); i++)
+        {
+            ModelMesh& mesh = model->meshes[i];
+            MaterialInstance& mat = m.GetMaterialSlots()[mesh.materialIndex];
 
-        // モデル描画
-        DrawModel(model, worldMatrix, m.GetColor());
+            // マテリアルバインド
+            MaterialBufferData materialBufferData = mat.materialResource->CreateBufferData();
+            materialBufferData.baseColor = mat.isOverrideBaseColor ? mat.overrideBaseColor : materialBufferData.baseColor;
+            materialBufferData.emissiveColor = mat.isOverrideEmissiveColor ? mat.overrideEmissiveColor : materialBufferData.emissiveColor;
+            MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);
+            MATERIAL_REPOSITORY->BindMaterialTexture(*mat.materialResource);
+
+            // 頂点バッファ設定
+            UINT stride = sizeof(LitVertex);
+            UINT offset = 0;
+            m_pContext->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
+
+            // インデックスバッファ設定
+            m_pContext->IASetIndexBuffer(mesh.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+            // ポリゴン描画
+            m_pContext->DrawIndexed(mesh.numIndices, 0, 0);
+        }
     }
-
-    // オプションリセット
-    //Shader_SetPixelOption(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f);
 }
 
 //---------------------------------------------
-
-// モデル描画
-void OpaqueRenderPass::DrawModel(ModelResource* model, const XMMATRIX& world, const XMFLOAT4& color)
-{
-    // プリミティブトポロジ設定
-    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    model->meshes[0].numVertices;
-
-    for (unsigned int m = 0; m < model->meshes.size(); m++)
-    {
-        ModelMesh& mesh = model->meshes[m];
-
-        // テクスチャ設定の仮
-        if (model->textures.empty()) {
-
-        }
-        m_pContext->PSSetShaderResources(0, 1, &defaultTextureSRV);
-
-        //m_pContext->PSSetShaderResources(0, 1, model->textures[0].texture);
-
-        // 頂点バッファ設定
-        UINT stride = sizeof(Vertex);
-        UINT offset = 0;
-        m_pContext->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
-        
-        // インデックスバッファ設定
-        m_pContext->IASetIndexBuffer(mesh.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        
-        // ポリゴン描画
-        m_pContext->DrawIndexed(mesh.numIndices, 0, 0);
-    }
-}

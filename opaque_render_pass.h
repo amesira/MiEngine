@@ -9,6 +9,7 @@
 #include "pass.h"
 #include <vector>
 
+#include "texture_resource.h"
 #include "model_resource.h"
 
 #include <DirectXMath.h>
@@ -20,21 +21,14 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
-    XMMATRIX m_viewMatrix;
-    XMMATRIX m_projectionMatrix;
+    TextureResource* m_defaultTexture = nullptr;
 
 public:
     void    Initialize() override;
     void    Finalize() override;
     void    Process(IScene* pScene) override;
 
-    void    BindMatrix(XMMATRIX view, XMMATRIX projection) {
-        m_viewMatrix = view;
-        m_projectionMatrix = projection;
-    }
-
 private:
-    void    DrawModel(ModelResource* model, const XMMATRIX& world, const XMFLOAT4& color);
 
 };
 

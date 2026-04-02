@@ -32,6 +32,9 @@ public:
     static TextureRepository* GetTextureRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetTextureRepository() : nullptr;
     }
+    static MaterialRepository* GetMaterialRepository() {
+        return s_engineInstance ? s_engineInstance->GetResourceManager().GetMaterialRepository() : nullptr;
+    }
 
     // ShaderManagerへのアクセス
     static ShaderManager* GetShaderManager() {
@@ -44,12 +47,12 @@ public:
     }
     static void UpdateTransformCB(const ShaderManager::TransformBuffer& transformData) {
         if (s_engineInstance) {
-            s_engineInstance->GetShaderManager().UpdateTransformCB(transformData);
+            s_engineInstance->GetShaderManager().BindTransformCB(transformData);
         }
     }
     static void UpdateCameraCB(const ShaderManager::CameraBuffer& cameraData) {
         if (s_engineInstance) {
-            s_engineInstance->GetShaderManager().UpdateCameraCB(cameraData);
+            s_engineInstance->GetShaderManager().BindCameraCB(cameraData);
         }
     }
 };

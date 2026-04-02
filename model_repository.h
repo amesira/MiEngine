@@ -30,7 +30,7 @@ public:
 
 private:
     // モデルの読み込み
-    void LoadModel(const std::string& filePath);
+    ModelResource* LoadModel(const std::string& filePath);
 
     // モデルの解放
     void ReleaseModel(const std::string& filePath);

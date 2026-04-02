@@ -20,29 +20,36 @@ struct PS_INPUT // VS_OUTPUTと同じ内容
 // ピクセルシェーダーのメイン関数
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float4 col = float4(0, 0, 0, 1); // 初期値は黒（不透明）
+    float4 col = float4(0, 0, 0, 1);
     
-   // // テクスチャの色を取得・乗算
-   //// col = g_AlbedoTexture.Sample(g_SamplerState, ps_in.texcoord);
-   // if (col.a <= 0.01f) discard;
+    // テクスチャの色を取得・乗算
+    col = g_Material.baseColor * g_AlbedoTexture.Sample(g_SamplerState, ps_in.texcoord);
+    if (col.a <= 0.01f) discard;
     
-   // // 法線マップを使用して法線を変換
-   // // https://www.opengl-tutorial.org/jp/intermediate-tutorials/tutorial-13-normal-mapping/
-   // //float4 normal = g_NormalTexture.Sample(g_SamplerState, ps_in.texcoord) * 2.0f - 1.0f;
+    // 法線マップを使用して法線を変換
     
-   // // 視点位置に向かってのベクトルを計算
-   // float3 toEye = normalize(g_EyePosition.rgb - ps_in.posW.xyz);
+    // ライトの影響を加算
+    if (g_EnableLighting != 0)
+    {
+        // ディフューズ光の計算
+        float3 diffuseLight = g_DirectionalLights[0].Ambient;
+        diffuseLight += CalcDiffuse_DirectionalLights(ps_in.normal.xyz) * (1.0f - g_Material.metallic);
+        diffuseLight += CalcDiffuse_PointLights(ps_in.normal.xyz, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
+        diffuseLight += CalcDiffuse_SpotLights(ps_in.normal.xyz, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
+        
+        // スペキュラ光の計算
+        float3 specularLight = float3(0, 0, 0);
+        float shininess = lerp(256.0f, 2.0f, g_Material.roughness);
+        specularLight += CalcSpecular_DirectionalLights(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
+        specularLight += CalcSpecular_PointLights(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
+        specularLight += CalcSpecular_SpotLights(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
+        
+        col.rgb *= diffuseLight; // ディフューズ光を乗算
+        col.rgb += specularLight; // スペキュラ光を加算
+    }
     
-   // // ライトの影響を加算
-   // if (g_EnableLighting != 0)
-   // {
-   //     col.rgb += CalcDiffuse_DirectionalLights(ps_in.normal.xyz);
-   //     col.rgb += CalcLight_PointLights(ps_in.posW.xyz, ps_in.normal.xyz);
-   //     col.rgb += CalcLight_SpotLights(ps_in.posW.xyz, ps_in.normal.xyz);
-   // }
-    
-   // // マテリアルのベースカラーとライトの環境光を加算
-   // col.rgb += g_Material.baseColor.rgb * g_DirectionalLights[0].Ambient.rgb;
+    // エミッシブカラーを加算
+    col.rgb += g_Material.emissiveColor;
     
     return col;
 }

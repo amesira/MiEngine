@@ -29,7 +29,7 @@ VS_OUTPUT main(VS_INPUT vs_in)
     VS_OUTPUT vs_out;
     
     vs_out.posH = mul(vs_in.posL, g_WorldMatrix);
-    vs_out.posH = mul(vs_out.posH, g_ViewMatrix * g_ProjectionMatrix);
+    vs_out.posH = mul(mul(vs_out.posH, g_ViewMatrix), g_ProjectionMatrix);
     
     // 色
     vs_out.color = vs_in.color;

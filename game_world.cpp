@@ -8,8 +8,6 @@
 #include "debug_renderer.h"
 #include "engine_service_locator.h"
 
-static ID3D11ShaderResourceView* g_debugTextureSRV = nullptr;
-
 // GameWorldの初期化
 void GameWorld::Initialize()
 {
@@ -24,11 +22,6 @@ void GameWorld::Initialize()
 
     // RenderViewの初期化
     m_renderViews.resize(8);
-
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTexture(L"asset//Texture//test.jpg");
-    if (resource) {
-        g_debugTextureSRV = resource->texture.Get();
-    }
 }
 
 // GameWorldの終了処理
@@ -73,10 +66,4 @@ void GameWorld::Render()
         m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
     }
-
-    Direct3D_Clear();
-
-    //m_renderProcessor.DrawFullScreenQuad(&g_debugTextureSRV);
-    // m_renderViews[0].colorBufferSRV = g_debugTextureSRV;
-
 }

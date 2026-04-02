@@ -20,7 +20,7 @@ using Microsoft::WRL::ComPtr;
 // テクスチャリソース
 class TextureResource {
 public:
-    const wchar_t* filePath; // テクスチャのファイルパス
+    std::wstring name;
     ComPtr<ID3D11ShaderResourceView> texture;
 };
 

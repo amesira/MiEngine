@@ -69,6 +69,7 @@ void CameraProcessor::Process(IScene* pScene)
 
         camera.SetViewMatrix(view);
         camera.SetProjectionMatrix(projection);
+        camera.SetEyePosition(transform->GetPosition());
 
         m_cameras[m_cameraCounter] = c;
 
@@ -86,6 +87,7 @@ void CameraProcessor::GetRenderViews(std::vector<RenderView>& outViews)
         RenderView& view = outViews[i];
         view.viewMatrix = camera->GetViewMatrix();
         view.projectionMatrix = camera->GetProjectionMatrix();
+        view.eyePosition = camera->GetEyePosition();
         view.enableLighting = true; // ライトは有効にする
         view.enableUI = true;       // UI描画も有効にする
     }

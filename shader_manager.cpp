@@ -109,33 +109,17 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     {
         i = static_cast<size_t>(ShaderType::TlueTypeFontUnlit);
 
-        /*if (!LoadVertexShader("ttf_unlit_vertex.cso", &m_shaderContainer[i].vertexShader, vbData)) {
+        if (!LoadVertexShader("unlit_vs.cso", &m_shaderContainer[i].vertexShader, vbData)) {
             hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderの頂点シェーダーの作成に失敗しました" << std::endl;
             return false;
         }
-        if (!LoadPixelShader("ttf_unlit_pixel.cso", &m_shaderContainer[i].pixelShader)) {
-            hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
-            return false;
-        }
-
-        D3D11_INPUT_ELEMENT_DESC layout[] = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        };*/
-
-        if (!LoadVertexShader("shader_vertex.cso", &m_shaderContainer[i].vertexShader, vbData)) {
-            hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderの頂点シェーダーの作成に失敗しました" << std::endl;
-            return false;
-        }
-        if (!LoadPixelShader("shader_pixel_font.cso", &m_shaderContainer[i].pixelShader)) {
+        if (!LoadPixelShader("ttf_unlit_ps.cso", &m_shaderContainer[i].pixelShader)) {
             hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
             return false;
         }
 
         D3D11_INPUT_ELEMENT_DESC layout[] = {
             { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
@@ -188,6 +172,8 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
     // TransformBuffer用の定数バッファの作成
     {
+        buffer_desc.Usage = D3D11_USAGE_DYNAMIC; // 動的に更新するための使用方法を指定
+        buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         buffer_desc.ByteWidth = sizeof(TransformBuffer);
         hr = m_pDevice->CreateBuffer(&buffer_desc, nullptr, &m_transformCB);
         if (FAILED(hr)) {
@@ -198,6 +184,8 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
     // CameraBuffer用の定数バッファの作成
     {
+        buffer_desc.Usage = D3D11_USAGE_DYNAMIC; // 動的に更新するための使用方法を指定
+        buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         buffer_desc.ByteWidth = sizeof(CameraBuffer);
         hr = m_pDevice->CreateBuffer(&buffer_desc, nullptr, &m_cameraCB);
         if (FAILED(hr)) {
@@ -266,22 +254,35 @@ void ShaderManager::BindShader(ShaderType shaderType)
 // -------------------------- Bind Buffer
 
 // TransformBufferを更新する関数
-void ShaderManager::UpdateTransformCB(const TransformBuffer& transformData)
+void ShaderManager::BindTransformCB(const TransformBuffer& transformData)
 {
+    // TransPose変換
     XMMATRIX transposedWorld = XMMatrixTranspose(transformData.world);
     XMMATRIX transposedNormal = XMMatrixTranspose(transformData.normal);
 
-    TransformBuffer transposedData{ transposedWorld, transposedNormal };
-    m_pContext->UpdateSubresource(m_transformCB, 0, nullptr, &transposedData, 0, 0);
+    // データをGPUに転送
+    D3D11_MAPPED_SUBRESOURCE msr = {};
+    m_pContext->Map(m_transformCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    TransformBuffer* tb = (TransformBuffer*)msr.pData;
+    tb->world = transposedWorld;
+    tb->normal = transposedNormal;
+    m_pContext->Unmap(m_transformCB, 0);
 }
 // CameraBufferを更新する関数
-void ShaderManager::UpdateCameraCB(const CameraBuffer& cameraData)
+void ShaderManager::BindCameraCB(const CameraBuffer& cameraData)
 {
+    // TransPose変換
     XMMATRIX transposedView = XMMatrixTranspose(cameraData.view);
     XMMATRIX transposedProjection = XMMatrixTranspose(cameraData.projection);
 
-    CameraBuffer transposedData{ transposedView, transposedProjection, cameraData.eyePos };
-    m_pContext->UpdateSubresource(m_cameraCB, 0, nullptr, &transposedData, 0, 0);
+    // データをGPUに転送
+    D3D11_MAPPED_SUBRESOURCE msr = {};
+    m_pContext->Map(m_cameraCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    CameraBuffer* cb = (CameraBuffer*)msr.pData;
+    cb->view = transposedView;
+    cb->projection = transposedProjection;
+    cb->eyePos = cameraData.eyePos;
+    m_pContext->Unmap(m_cameraCB, 0);
 }
 
 //----------------------------------------------------------------------------- private

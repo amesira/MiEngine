@@ -9,6 +9,7 @@
 
 #include "component.h"
 
+#include "material_resource.h"
 #include "model_resource.h"
 #include <iostream>
 
@@ -19,17 +20,26 @@ using namespace DirectX;
 
 class ModelComponent : public Component {
 private:
+    // モデルリソース
     ModelResource*  m_pModelResource = nullptr;
-    XMFLOAT4        m_color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    // マテリアルスロット
+    std::vector<MaterialInstance> m_materialSlots;
 
 public:
     // モデルファイルパスの設定・取得
-    void    SetModelResource(ModelResource* pModelResource) { m_pModelResource = pModelResource; }
+    void    SetModelResource(ModelResource* pModelResource) { 
+        m_pModelResource = pModelResource;
+
+        m_materialSlots.clear();
+        m_materialSlots.resize(pModelResource->materialResources.size());
+        for (size_t i = 0; i < m_materialSlots.size(); i++) {
+            m_materialSlots[i].materialResource = pModelResource->materialResources[i];
+        }
+    }
     ModelResource* GetModelResource() const { return m_pModelResource; }
 
-    // 色の設定・取得
-    void    SetColor(XMFLOAT4 color) { m_color = color; }
-    XMFLOAT4   GetColor() const { return m_color; }
+    // マテリアルスロットの取得
+    std::vector<MaterialInstance>& GetMaterialSlots() { return m_materialSlots; }
 
 };
 

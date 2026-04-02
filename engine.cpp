@@ -33,8 +33,6 @@ bool MiEngine::Initialize(HWND hWnd)
     ID3D11Device* pDevice = Direct3D_GetDevice();
     ID3D11DeviceContext* pContext = Direct3D_GetDeviceContext();
 
-   /* Shader_Initialize(pDevice, pContext);
-    InitializeSprite();*/
     m_shaderManager.Initialize(pDevice, pContext);
     InitAudio();
     FPS_Initialize(hWnd);
@@ -81,8 +79,6 @@ void MiEngine::Finalize()
     m_shaderManager.Finalize();
 
     UninitAudio();
-    /*FinalizeSprite();
-    Shader_Finalize();*/
     Direct3D_Finalize();
 
     DebugRenderer_Finalize();
@@ -126,6 +122,8 @@ void MiEngine::Update()
 void MiEngine::Render()
 {
     m_gameWorld.Render();
+
+    Direct3D_Clear();
 
     // ImGuiの描画
     m_editorContext.scene = m_gameWorld.GetSceneManager().GetCurrentScene();

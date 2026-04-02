@@ -1,5 +1,5 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-// unlit_ps.hlsl
+// ttf_unlit_ps.hlsl
 // 
 // Author：Miu Kitamura
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -21,7 +21,8 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     float4 col = ps_in.color;
     
     // テクスチャの色を取得・乗算
-    col *= g_Texture.Sample(g_SamplerState, ps_in.texcoord);
+    // ・文字のテクスチャはグレースケールなので、R成分をアルファ値として使用
+    col *= float4(1.0, 1.0, 1.0, g_Texture.Sample(g_SamplerState, ps_in.texcoord).r);
     
     if (col.a <= 0.01f) discard;
     return col;

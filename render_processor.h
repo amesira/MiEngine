@@ -46,8 +46,11 @@ public:
         m_renderView = view;
     }
 
-    // SRVをフルスクリーンクワッドに描画する関数
-    void    DrawFullScreenQuad(ID3D11ShaderResourceView** srv);
+private:
+    // 3D描画時のカメラCBバインド
+    void    Bind3DCameraCB(const RenderView* view);
+    // 2D描画時のカメラCBバインド
+    void    Bind2DCameraCB(const RenderView* view);
 
 };
 

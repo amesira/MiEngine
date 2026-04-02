@@ -16,33 +16,35 @@ using namespace DirectX;
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
 
+#include "texture_resource.h"
+#include "material_resource.h"
+
 class aiScene;
 
 // モデルのメッシュデータ
 struct ModelMesh {
 	std::string name;
+
+    // 頂点バッファとインデックスバッファ
 	ComPtr<ID3D11Buffer> vertexBuffer;
 	ComPtr<ID3D11Buffer> indexBuffer;
 	unsigned int numVertices;
 	unsigned int numIndices;
-};
 
-// モデルのテクスチャデータ
-struct ModelTexture {
-	std::string name;
-	ComPtr<ID3D11ShaderResourceView> texture;
-
-    // TextureResource も入れるべき。nameはTextureResourceのfilePathと同じものを入れる。
+    // マテリアルインデックス
+	uint32_t materialIndex;
 };
 
 // モデルリソース
 class ModelResource {
 public:
     const aiScene* AiScene = nullptr;
+	std::string name;
 
-	std::string filePath;
+    // メッシュのリスト
 	std::vector<ModelMesh> meshes;
-	std::vector<ModelTexture> textures;
+    // モデル標準となるマテリアルリソースのリスト
+    std::vector<MaterialResource*> materialResources;
 
 };
 #endif // MODEL_RESOURCE_H

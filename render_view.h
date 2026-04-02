@@ -15,6 +15,7 @@ struct RenderView {
     // カメラ情報
     XMMATRIX viewMatrix;        // ビュー行列
     XMMATRIX projectionMatrix;  // プロジェクション行列
+    XMFLOAT3 eyePosition;       // カメラの位置
 
     // 描画処理の有効・無効
     bool enableLighting;      // ライトの有効・無効
@@ -43,6 +44,7 @@ struct RenderView {
     RenderView() :
         viewMatrix(XMMatrixIdentity()),
         projectionMatrix(XMMatrixIdentity()),
+        eyePosition(0, 0, 0),
         enableLighting(true),
         enableShadowMap(true),
         enablePostEffect(true),

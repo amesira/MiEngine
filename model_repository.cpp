@@ -7,6 +7,7 @@
 #include "model_repository.h"
 
 #include <memory>
+#include "mi_string.h"
 
 #include "assimp/cimport.h"
 #include "assimp/scene.h"
@@ -15,6 +16,9 @@
 #pragma comment (lib, "assimp-vc143-mt.lib")
 
 #include "engine_service_locator.h"
+
+#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
+#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 
 // モデルリポジトリの初期化
 void ModelRepository::Initialize() 
@@ -46,25 +50,33 @@ ModelResource* ModelRepository::GetModel(const std::string& filePath)
     }
 
     // キャッシュに無い場合は読み込む
-    LoadModel(filePath);
-    return m_modelCache[filePath].get();
+    return LoadModel(filePath);
 }
 
 //------------------------------------
 
 // モデルの読み込み
-void ModelRepository::LoadModel(const std::string& filePath)
+ModelResource* ModelRepository::LoadModel(const std::string& filePath)
 {
+    const aiScene* scene = aiImportFile(
+        filePath.c_str(), 
+        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+
+    // 読み込みエラーチェック
+    if (scene == nullptr)
+    {
+        return nullptr;
+    }
+
+    // モデルリソースを作成してキャッシュに追加
     m_modelCache[filePath] = std::make_unique<ModelResource>();
     ModelResource* model = m_modelCache[filePath].get();
-    model->filePath = filePath;
-
-    const aiScene* scene = aiImportFile(filePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
-    assert(scene);
+    model->name = filePath;
     model->AiScene = scene;
+    model->meshes.reserve(scene->mNumMeshes);
+    model->materialResources.resize(scene->mNumMaterials);
 
     // メッシュの読み込み
-    model->meshes.reserve(scene->mNumMeshes);
     for (unsigned int m = 0; m < scene->mNumMeshes; m++)
     {
         aiMesh* mesh = scene->mMeshes[m];
@@ -75,38 +87,26 @@ void ModelRepository::LoadModel(const std::string& filePath)
         modelMesh.name = mesh->mName.C_Str();
         modelMesh.numVertices = mesh->mNumVertices;
         modelMesh.numIndices = mesh->mNumFaces * 3;
+        modelMesh.materialIndex = mesh->mMaterialIndex;
 
         // 頂点バッファ生成
         {
-            Vertex* vertex = new Vertex[mesh->mNumVertices];
+            LitVertex* vertex = new LitVertex[mesh->mNumVertices];
 
             for (unsigned int v = 0; v < mesh->mNumVertices; v++)
             {
-                vertex[v].position = XMFLOAT3(mesh->mVertices[v].x, -mesh->mVertices[v].z, mesh->mVertices[v].y);
+                vertex[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
                 vertex[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
-                vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, -mesh->mNormals[v].z, mesh->mNormals[v].y);
-
-                // マテリアル取得
-                XMFLOAT4 baseColor = { 1.0f,1.0f,1.0f,1.0f };
-                aiColor4D c;
-                if (AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_BASE_COLOR, &c) ||
-                    AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &c))
-                {
-                    baseColor = { c.r, c.g, c.b, c.a };
-                }
-
-                vertex[v].color = baseColor;
+                vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
             }
 
-            D3D11_BUFFER_DESC bd;
-            ZeroMemory(&bd, sizeof(bd));
+            D3D11_BUFFER_DESC bd = {};
             bd.Usage = D3D11_USAGE_DYNAMIC;
-            bd.ByteWidth = sizeof(Vertex) * mesh->mNumVertices;
+            bd.ByteWidth = sizeof(LitVertex) * mesh->mNumVertices;
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-            D3D11_SUBRESOURCE_DATA sd;
-            ZeroMemory(&sd, sizeof(sd));
+            D3D11_SUBRESOURCE_DATA sd = {};
             sd.pSysMem = vertex;
 
             m_pDevice->CreateBuffer(&bd, &sd, &modelMesh.vertexBuffer);
@@ -127,39 +127,67 @@ void ModelRepository::LoadModel(const std::string& filePath)
                 index[f * 3 + 2] = face->mIndices[2];
             }
 
-            D3D11_BUFFER_DESC bd;
-            ZeroMemory(&bd, sizeof(bd));
+            D3D11_BUFFER_DESC bd = {};
             bd.Usage = D3D11_USAGE_DEFAULT;
             bd.ByteWidth = sizeof(unsigned int) * mesh->mNumFaces * 3;
             bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
             bd.CPUAccessFlags = 0;
 
-            D3D11_SUBRESOURCE_DATA sd;
-            ZeroMemory(&sd, sizeof(sd));
+            D3D11_SUBRESOURCE_DATA sd = {};
             sd.pSysMem = index;
             m_pDevice->CreateBuffer(&bd, &sd, &modelMesh.indexBuffer);
 
             delete[] index;
         }
+
+        // マテリアルリソースの生成
+        {
+            XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
+            std::wstring albedoTexturePath;
+
+            // マテリアルからベースカラーを取得
+            {
+                aiColor4D c;
+                if (AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_BASE_COLOR, &c) ||
+                    AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &c))
+                {
+                    albedoColor = { c.r, c.g, c.b, c.a };
+                }
+            }
+
+            // マテリアルからテクスチャパスを取得
+            if (mat->GetTextureCount(aiTextureType_BASE_COLOR) > 0 ||
+                mat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+            {
+                aiString texturePath;
+                if (AI_SUCCESS == mat->GetTexture(aiTextureType_BASE_COLOR, 0, &texturePath) ||
+                    AI_SUCCESS == mat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
+                {
+                    albedoTexturePath = MiString::ToWString(texturePath.C_Str());
+                }
+            }
+
+            // 標準マテリアルを生成
+            MaterialResource material;
+            {
+                material.name = filePath + "%material%" + mat->GetName().C_Str();
+                material.renderMode = (albedoColor.w < 1.0f) ? RenderMode::Transparent : RenderMode::Opaque;
+
+                material.baseColor = albedoColor;
+
+                if (!albedoTexturePath.empty()) {
+                    material.albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(albedoTexturePath);
+                }
+            }
+
+            // マテリアルセットアップ
+            if (modelMesh.materialIndex < model->materialResources.size() && modelMesh.materialIndex >= 0) {
+                model->materialResources[modelMesh.materialIndex] = MATERIAL_REPOSITORY->GenerateMaterial(material);
+            }
+        }
     }
 
-    // テクスチャの読み込み
-    model->textures.reserve(scene->mNumTextures);
-    for (unsigned int i = 0; i < scene->mNumTextures; i++)
-    {
-        aiTexture* aitexture = scene->mTextures[i];
-
-        ID3D11ShaderResourceView* texture;
-        TexMetadata metadata;
-        ScratchImage image;
-        LoadFromWICMemory(aitexture->pcData, aitexture->mWidth, WIC_FLAGS_NONE, &metadata, image);
-        CreateShaderResourceView(m_pDevice, image.GetImages(), image.GetImageCount(), metadata, &texture);
-        assert(texture);
-
-        ModelTexture& modelTexture = model->textures.emplace_back();
-        modelTexture.name = aitexture->mFilename.C_Str();
-        modelTexture.texture = texture;
-    }
+    return model;
 }
 
 // モデルの解放
@@ -174,13 +202,6 @@ void ModelRepository::ReleaseModel(const std::string& filePath)
             mesh.vertexBuffer.Reset();
             mesh.indexBuffer.Reset();
         }
-        // テクスチャの解放
-        for (ModelTexture& texture : model->textures)
-        {
-            texture.texture.Reset();
-        }
-
         aiReleaseImport(model->AiScene);
-
     }
 }

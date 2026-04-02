@@ -4,7 +4,7 @@
     <FxCompile Include="shader_pixel.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader_pixel_font.hlsl">
+    <FxCompile Include="ttf_unlit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader_vertex.hlsl">
@@ -188,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="shader_manager.cpp">
       <Filter>Sources\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="material_repository.cpp">
+      <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -427,6 +430,12 @@
     </ClInclude>
     <ClInclude Include="shader_manager.h">
       <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="material_repository.h">
+      <Filter>Sources\Engine\System\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="mi_string.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

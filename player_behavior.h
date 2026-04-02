@@ -16,6 +16,8 @@ class TransformComponent;
 class RigidbodyComponent;
 class ModelComponent;
 
+class MaterialResource;
+
 class PlayerMoveBehavior;
 class PlayerAttackBehavior;
 
@@ -32,7 +34,8 @@ private:
     XMFLOAT3 m_moveDirection = { 0.0f,0.0f,0.0f };
 
     float m_moveSpeed = 2.0f;
-    XMFLOAT4 m_color = { 1.0f,1.0f,1.0f,1.0f };
+
+    MaterialResource* m_myMaterial = nullptr;
 
 public:
     PlayerBehavior() {}
