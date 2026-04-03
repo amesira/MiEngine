@@ -17,6 +17,7 @@ using namespace DirectX;
 struct LitVertex {
     XMFLOAT3 position;  // 頂点の位置
     XMFLOAT3 normal;    // 頂点の法線
+    XMFLOAT4 color;     // 頂点の色
     XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
 };
 struct SkinnedLitVertex {
@@ -26,18 +27,6 @@ struct SkinnedLitVertex {
     XMFLOAT4 boneWeights; // ボーンの重み
     XMINT4   boneIndices; // ボーンのインデックス
 };
-struct UnlitVertex {
-    XMFLOAT3 position;  // 頂点の位置
-    XMFLOAT4 color;     // 頂点の色
-    XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
-};
-
-struct Vertex {
-    XMFLOAT3 position;  // 頂点の位置
-    XMFLOAT3 normal;    // 頂点の法線
-    XMFLOAT4 color;     // 頂点の色
-    XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
-};
 
 // シェーダー管理クラス
 class ShaderManager {
@@ -46,10 +35,9 @@ public:
     enum class ShaderType {
         Lit,
         SkinnedLit,
-        Unlit,
 
+        Unlit,
         TlueTypeFontUnlit,
-        Default,
 
         MAX,
     };

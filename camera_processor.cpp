@@ -33,7 +33,7 @@ void CameraProcessor::Process(IScene* pScene)
     m_cameraCounter = 0;
     for (CameraComponent& camera : cameraCompList) {
         CameraComponent* c = &camera;
-        TransformComponent* transform = camera.GetOwner()->GetComponent<TransformComponent>();
+        TransformComponent* transform = transformCompPool->GetByGameObjectID(camera.GetOwner()->GetID());
         
         // 無効なコンポーネントはスキップ
         if (!transform || !c) continue;

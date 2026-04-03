@@ -7,6 +7,7 @@
 #include "camera.hlsl"
 #include "lighting.hlsl"
 #include "material.hlsl"
+#include "shadowing.hlsl"
 
 // ピクセルシェーダーの入力構造体
 struct PS_INPUT // VS_OUTPUTと同じ内容
@@ -50,6 +51,21 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     // エミッシブカラーを加算
     col.rgb += g_Material.emissiveColor;
+    
+    // シャドウマッピングの影響を減算
+    float4 lightSpacePos = WorldToLightSpace(ps_in.posW);
+    float2 shadowUV = CalcShadowUV(lightSpacePos);
+    
+    float depthInLightSpace = lightSpacePos.z / lightSpacePos.w;
+    float depthInShadowMap = g_ShadowMap.Sample(g_SamplerState, shadowUV).r;
+    
+    float bias = 0.001f;
+    if (depthInLightSpace > depthInShadowMap + bias){
+        col.rgb *= 0.5f; // シャドウマップで影になると判断された場合、色を暗くする
+    }
+    else{
+        
+    }
     
     return col;
 }

@@ -12,6 +12,7 @@ struct VS_INPUT
 {
     float4 posL     : POSITION0;    // 頂点座標
     float4 normal   : NORMAL0;      // 頂点法線
+    float4 color    : COLOR0;       // 頂点カラー（使用しないが、構造を合わせるために定義）
     float2 texcoord : TEXCOORD0;    // テクスチャ座標（U,V）
 };
 

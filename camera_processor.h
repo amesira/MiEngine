@@ -32,5 +32,8 @@ public:
     // RenderViewの取得
     void GetRenderViews(std::vector<RenderView>& outViews);
 
+    // CameraCounterの取得
+    int GetCameraCounter() const { return m_cameraCounter; }
+
 };
 #endif // CAMERA_PROCESSOR_H

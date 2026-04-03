@@ -197,6 +197,7 @@ void Direct3D_Finalize()
     }
 }
 
+// バックバッファのクリアとレンダーターゲット、デプスステンシルの設定
 void Direct3D_Clear()
 {
     /* バックバッファクリア */
@@ -210,21 +211,18 @@ void Direct3D_Clear()
     Direct3D_ResetViewport();
 }
 
+// スワップチェーンの表示
 void Direct3D_Present()
 {
-    /* スワップチェーンの表示 */
     g_pSwapChain->Present(1, 0);
 }
 
+// ビューポートの設定
 void Direct3D_ResetViewport()
 {
-    // ビューポートの設定
     g_pDeviceContext->RSSetViewports(1, &g_Viewport);
 }
 
-//===================================================
-// ゲッター
-//===================================================
 ID3D11Device* Direct3D_GetDevice() {
     return g_pDevice;
 }
@@ -241,9 +239,7 @@ unsigned int Direct3D_GetBackBufferHeight() {
     return g_BackBufferDecs.Height;
 }
 
-//===================================================
-// バックバッファ処理
-//===================================================
+// バックバッファ関連のリソースを生成・設定する関数
 bool configureBackBuffer()
 {
     HRESULT hr;
@@ -318,6 +314,7 @@ bool configureBackBuffer()
     return true;
 }
 
+// バックバッファ関連のリソースを解放する関数
 void releaseBackBuffer()
 {
     if (g_pRenderTargetView) {
@@ -336,16 +333,19 @@ void releaseBackBuffer()
     }
 }
 
+// ブレンドステートの切り替え関数
 void SetBlendState(BLENDSTATE blend)
 {
     g_pDeviceContext->OMSetBlendState(bState[blend], bFactor, 0xffffff);
 }
 
+// デプスステートの切り替え関数
 void SetDepthState(DEPTHSTATE depth)
 {
     g_pDeviceContext->OMSetDepthStencilState(g_pDepthState[depth], NULL);
 }
 
+// シーンテクスチャの内容をスナップショット先へコピーし、SRVを生成する関数
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex)
 {
     ID3D11Texture2D* snapshot = nullptr;
@@ -374,31 +374,31 @@ void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3
     snapshot->Release();
 }
 
-
-void Direct3D_SetSceneRenderTarget(ID3D11RenderTargetView* rtv)
+// シーンのレンダーターゲットを切り替える関数
+void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
 {
-    if (rtv == nullptr) {
-        hal::dout << "rtvポインタ自体がnullです" << std::endl;
-        return;
+    if (rtv) {
+        float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
+        g_pDeviceContext->ClearRenderTargetView(rtv, clear_color);
+    }
+    if (dsv) {
+        g_pDeviceContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH, 1.0f, 0);
     }
 
-    float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
-    g_pDeviceContext->ClearRenderTargetView(rtv, clear_color);
-    g_pDeviceContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
     // シーンバッファをレンダーターゲットに設定
-    g_pDeviceContext->OMSetRenderTargets(1, &rtv, g_pDepthStencilView);
+    g_pDeviceContext->OMSetRenderTargets(1, &rtv, dsv);
 
     Direct3D_ResetViewport();
 }
 
-void Direct3D_CreateSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv)
+// シーンテクスチャの生成と関連ビューの作成
+void Direct3D_CreateColorBuffer(ID3D11Texture2D** tex, ID3D11RenderTargetView** rtv, ID3D11ShaderResourceView** srv)
 {
-    if (!tex || !srv || !rtv) return;
+    if (!tex && !srv && !rtv) return;
 
-    *tex = nullptr;
-    *srv = nullptr;
-    *rtv = nullptr;
+    HRESULT hr;
+
+    ID3D11Texture2D* outTex = nullptr;
 
     D3D11_TEXTURE2D_DESC desc = {};
     desc.Width = g_BackBufferDecs.Width;
@@ -413,43 +413,95 @@ void Direct3D_CreateSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
 
-    HRESULT hr = g_pDevice->CreateTexture2D(&desc, nullptr, tex);
-    if (FAILED(hr) || !(*tex)) {
+    hr = g_pDevice->CreateTexture2D(&desc, nullptr, &outTex);
+    if (FAILED(hr) || !(outTex)) {
         hal::dout << "シーンテクスチャの生成に失敗しました" << std::endl;
         return;
     }
 
-    hr = g_pDevice->CreateShaderResourceView(*tex, nullptr, srv);
-    if (FAILED(hr) || !(*srv)) {
-        hal::dout << "SRVの生成に失敗しました" << std::endl;
-        (*tex)->Release();
-        *tex = nullptr;
-        return;
+    if (srv){
+        hr = g_pDevice->CreateShaderResourceView(outTex, nullptr, srv);
+        if (FAILED(hr) || !(*srv)) {
+            hal::dout << "SRVの生成に失敗しました" << std::endl;
+            outTex->Release();
+            outTex = nullptr;
+            return;
+        }
     }
 
-    hr = g_pDevice->CreateRenderTargetView(*tex, nullptr, rtv);
-    if (FAILED(hr) || !(*rtv)) {
-        hal::dout << "RTVの生成に失敗しました" << std::endl;
-        (*srv)->Release();
-        *srv = nullptr;
-        (*tex)->Release();
-        *tex = nullptr;
-        return;
+    if (rtv) {
+        hr = g_pDevice->CreateRenderTargetView(outTex, nullptr, rtv);
+        if (FAILED(hr) || !(*rtv)) {
+            hal::dout << "RTVの生成に失敗しました" << std::endl;
+            if (srv) {
+                (*srv)->Release();
+                *srv = nullptr;
+            }
+            outTex->Release();
+            outTex = nullptr;
+            return;
+        }
+    }
+
+    if (tex) {
+        *tex = outTex;
+    }
+     else {
+        outTex->Release();
     }
 }
 
-void Direct3D_ReleaseSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv)
+// シーンテクスチャの深度ステンシルバッファとビューの生成
+void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv)
 {
-    if (*srv) {
-        (*srv)->Release();
-        *srv = nullptr;
+    if (!tex || !dsv || !srv) return;
+    *tex = nullptr;
+    *dsv = nullptr;
+    *srv = nullptr;
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = g_BackBufferDecs.Width;
+    desc.Height = g_BackBufferDecs.Height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = 0;
+    HRESULT hr = g_pDevice->CreateTexture2D(&desc, nullptr, tex);
+    if (FAILED(hr) || !(*tex)) {
+        hal::dout << "シーン用デプスステンシルバッファの生成に失敗しました" << std::endl;
+        return;
     }
-    if (*rtv) {
-        (*rtv)->Release();
-        *rtv = nullptr;
-    }
-    if (*tex) {
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+    dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsvDesc.Texture2D.MipSlice = 0;
+    dsvDesc.Flags = 0;
+    hr = g_pDevice->CreateDepthStencilView(*tex, &dsvDesc, dsv);
+    if (FAILED(hr) || !(*dsv)) {
+        hal::dout << "シーン用デプスステンシルビューの生成に失敗しました" << std::endl;
         (*tex)->Release();
         *tex = nullptr;
+        return;
+    }
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+    srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    hr = g_pDevice->CreateShaderResourceView(*tex, &srvDesc, srv);
+    if (FAILED(hr) || !(*srv)) {
+        hal::dout << "シーン用デプスステンシルSRVの生成に失敗しました" << std::endl;
+        (*dsv)->Release();
+        *dsv = nullptr;
+        (*tex)->Release();
+        *tex = nullptr;
+        return;
     }
 }

@@ -63,10 +63,12 @@ void SetDepthState(DEPTHSTATE depth);
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);
 
 // シーンセット
-void Direct3D_SetSceneRenderTarget(ID3D11RenderTargetView* rtv);
+void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
 
 // シーン用RTV・SRVの作成・解放
-void Direct3D_CreateSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv);
-void Direct3D_ReleaseSceneTexture(ID3D11Texture2D** tex, ID3D11ShaderResourceView** srv, ID3D11RenderTargetView** rtv);
+void Direct3D_CreateColorBuffer(ID3D11Texture2D** tex, ID3D11RenderTargetView** rtv, ID3D11ShaderResourceView** srv);
+
+// シーン用デプステンシルの作成・解放
+void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv);
 
 #endif

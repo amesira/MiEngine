@@ -20,17 +20,11 @@ void RenderProcessor::Initialize()
     m_pDevice = Direct3D_GetDevice();
     m_pContext = Direct3D_GetDeviceContext();
 
-    m_lightingPass.Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
-    m_opaqueRenderPass.Initialize();
-    m_uiRenderPass.Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
-
-    // 頂点バッファ生成
-    D3D11_BUFFER_DESC bd = {};
-    bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(Vertex) * 4; // フルスクリーンクワッドの頂点数
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    m_pDevice->CreateBuffer(&bd, NULL, &m_pVertexBuffer);
+    m_lightingPass.Initialize(m_pDevice, m_pContext);
+    m_shadowMapPass.Initialize(m_pDevice, m_pContext);
+    m_skyboxPass.Initialize(m_pDevice, m_pContext);
+    m_opaqueRenderPass.Initialize(m_pDevice, m_pContext);
+    m_uiRenderPass.Initialize(m_pDevice, m_pContext);
 }
 
 // 描画制御プロセッサーの終了処理
@@ -46,41 +40,58 @@ void RenderProcessor::Process(IScene* pScene)
 {
     if (!m_renderView) return; // RenderViewがバインドされていない場合は処理しない
 
-    // シーンを初期化
-    Direct3D_SetSceneRenderTarget(m_renderView->colorBufferRTV.Get());
+    //----------------------------------- 描画前の準備
 
     // 1.ライト設定パス
     m_lightingPass.Process(pScene);
 
     // 2.シャドウマップパス
+    m_lightingPass.BindLightCB(false);
+
+    m_shadowMapPass.SetEyePosition(m_renderView->eyePosition);
+    m_shadowMapPass.SetLightDirection(m_lightingPass.GetDirectionalLightDirection()); // ライトの方向は適当
+
+    m_shadowMapPass.Process(pScene);
+
+    //----------------------------------- Scene描画開始
+    Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
 
     // 3.スカイボックスパス
+    //m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
+    //m_skyboxPass.Process(pScene);
 
-    // 4.3Dオブジェクト描画
+    //----------------------------------- 3Dオブジェクト描画
     Bind3DCameraCB(m_renderView);
+
     m_lightingPass.BindLightCB(m_renderView->enableLighting);
+    m_shadowMapPass.BindShadowLightCB();
+    m_shadowMapPass.BindShadowMapSRV();
 
     // 不透明物体
     m_opaqueRenderPass.Process(pScene);
 
-    //// 透明物体
-    //// m_transparentRenderPass.Process(pScene);
+    // 透明物体
+    // m_transparentRenderPass.Process(pScene);
 
     //m_lightingPass.SetLightEnable(false);
 
+    //-----------------
+
     // デバッグ描画
+    m_lightingPass.BindLightCB(false);
     DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
+
+    //----------------------------------- 2Dオブジェクト描画
+    Bind2DCameraCB(m_renderView);
+    m_lightingPass.BindLightCB(false);
 
     // 5.PostEffect描画
     if (m_renderView->enablePostEffect) {
-        // ポストエフェクト描画処理
         // m_postEffectPass.Process(pScene);
     }
 
     // 6.2DScreen描画
-    Bind2DCameraCB(m_renderView);
     if (m_renderView->enableUI) {
-        m_lightingPass.BindLightCB(false);
         m_uiRenderPass.Process(pScene);
     }
 }

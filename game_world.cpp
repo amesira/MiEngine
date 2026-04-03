@@ -35,6 +35,9 @@ void GameWorld::Finalize()
 
     // Scene管理の終了処理
     m_sceneManager.Finalize();
+
+    // RenderViewの解放
+    m_renderViews.clear();
 }
 
 // GameWorldの更新処理
@@ -62,7 +65,10 @@ void GameWorld::Render()
     m_cameraProcessor.GetRenderViews(m_renderViews);
     
     // 描画制御プロセッサー処理
-    for (RenderView& view : m_renderViews) {
+    int numViews = m_cameraProcessor.GetCameraCounter();
+    for (int i = 0; i < m_renderViews.size(); i++) {
+        if (i >= numViews) break;
+        RenderView& view = m_renderViews[i];
         m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
     }

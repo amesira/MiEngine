@@ -13,6 +13,8 @@
 #include "render_view.h"
 
 #include "lighting_pass.h"
+#include "shadow_map_pass.h"
+#include "skybox_pass.h"
 #include "opaque_render_pass.h"
 #include "ui_render_pass.h"
 
@@ -26,12 +28,13 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
-    ID3D11Buffer* m_pVertexBuffer = nullptr;
-
     // RenderViewへのポインタ
     RenderView* m_renderView;
 
+    // 各パス
     LightingPass m_lightingPass;
+    ShadowMapPass m_shadowMapPass;
+    SkyboxPass m_skyboxPass;
     OpaqueRenderPass m_opaqueRenderPass;
     // TransparentPass
     UIRenderPass m_uiRenderPass;

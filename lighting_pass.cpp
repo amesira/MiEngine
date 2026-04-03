@@ -37,7 +37,7 @@ void LightingPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     // シェーダーにライトバッファを登録
     auto* shader = EngineServiceLocator::GetShaderManager();
     shader->RegisterCB(ShaderManager::ShaderType::Lit, 10, m_lightBuffer.GetAddressOf());
-    shader->RegisterCB(ShaderManager::ShaderType::Default, 10, m_lightBuffer.GetAddressOf());
+    shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 10, m_lightBuffer.GetAddressOf());
 }
 
 void LightingPass::Finalize()

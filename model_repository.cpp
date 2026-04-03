@@ -98,6 +98,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
                 vertex[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
                 vertex[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
                 vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+                vertex[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
             }
 
             D3D11_BUFFER_DESC bd = {};

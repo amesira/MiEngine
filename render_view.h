@@ -30,6 +30,7 @@ struct RenderView {
     // デプスバッファ
     ComPtr<ID3D11Texture2D>             depthBufferTexture;
     ComPtr<ID3D11DepthStencilView>      depthBufferDSV;
+    ComPtr<ID3D11ShaderResourceView>    depthBufferSRV;
 
     // ポストエフェクト用一時バッファ
     ComPtr<ID3D11Texture2D>             postEffectTexture;
@@ -49,7 +50,8 @@ struct RenderView {
         enableShadowMap(true),
         enablePostEffect(true),
         enableUI(true) {
-        Direct3D_CreateSceneTexture(&colorBufferTexture, &colorBufferSRV, &colorBufferRTV);
-        Direct3D_CreateSceneTexture(&postEffectTexture, &postEffectSRV, &postEffectRTV);
+        Direct3D_CreateColorBuffer(colorBufferTexture.GetAddressOf(), colorBufferRTV.GetAddressOf(), colorBufferSRV.GetAddressOf());
+        Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
+        Direct3D_CreateColorBuffer(postEffectTexture.GetAddressOf(), postEffectRTV.GetAddressOf(), postEffectSRV.GetAddressOf());
     }
 };

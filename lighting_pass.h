@@ -91,6 +91,15 @@ public:
     // ライトをセット
     void BindLightCB(bool enable);
 
+    // DirectionalLightの方向を取得
+    XMFLOAT3 GetDirectionalLightDirection() const {
+        return {
+            m_lightBufferData.directionalLights[0].direction.x,
+            m_lightBufferData.directionalLights[0].direction.y,
+            m_lightBufferData.directionalLights[0].direction.z
+        };
+    }
+
 };
 
 #endif // LIGHT_PROCESSOR_H

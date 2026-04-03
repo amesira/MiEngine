@@ -24,7 +24,7 @@ private:
     TextureResource* m_defaultTexture = nullptr;
 
 public:
-    void    Initialize() override;
+    void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void    Finalize() override;
     void    Process(IScene* pScene) override;
 

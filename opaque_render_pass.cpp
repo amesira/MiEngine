@@ -22,10 +22,10 @@ using namespace DirectX;
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 
 // OpaqueRenderPassの初期化
-void OpaqueRenderPass::Initialize()
+void OpaqueRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    m_pDevice = Direct3D_GetDevice();
-    m_pContext = Direct3D_GetDeviceContext();
+    m_pDevice = pDevice;
+    m_pContext = pContext;
 
     m_defaultTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
 }
@@ -44,14 +44,12 @@ void OpaqueRenderPass::Process(IScene* pScene)
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
     if (!transformPool || !modelPool)return;
 
-    // 定数バッファ更新
-    int shaderIndex = -1;
-
     // 描画ステートのセット
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);
 
     // モデル描画
+    int shaderIndex = -1;
     auto& modelPoolList = modelPool->GetList();
     for (ModelComponent& m : modelPoolList) {
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
@@ -118,5 +116,3 @@ void OpaqueRenderPass::Process(IScene* pScene)
         }
     }
 }
-
-//---------------------------------------------
