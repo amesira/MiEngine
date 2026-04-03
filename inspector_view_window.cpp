@@ -11,6 +11,8 @@
 #include "render_view.h"
 #include "game_object.h"
 
+#include "mi_string.h"
+
 #include "behavior_component.h"
 
 // 主要なComponentのヘッダをインクルード
@@ -378,6 +380,85 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             float restLength = joint->GetRestLength();
             if (ImGui::DragFloat("Rest Length", &restLength, 0.1f, 0.0f, 100.0f)) {
                 joint->SetRestLength(restLength);
+            }
+        }
+        ImGui::PopID();
+    }
+
+    // ModelComponentのプロパティ表示
+    auto* model = gameObject->GetComponent<ModelComponent>();
+    if (model) {
+        ImGui::PushID(model);
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen)) {
+            // モデルリソースの名前を表示
+            std::string modelName = model->GetModelResource()->name;
+            ImGui::Text("Model Resource:");
+            ImGui::Text("  %s", modelName.c_str());
+            
+            unsigned int materialCount = model->GetMaterialSlots().size();
+            ImGui::Text("Material Slots: %d", materialCount);
+
+            for (int i = 0; i < materialCount; i++) {
+                auto& materialInstance = model->GetMaterialSlots()[i];
+                ImGui::PushID(i);
+
+                // スロット単位でまとめる
+                if (ImGui::TreeNode(("Slot " + std::to_string(i)).c_str())) {
+                    ImGui::BeginChild("MaterialSlot", ImVec2(0, 300), true);
+                    std::string matName = materialInstance.materialResource ? materialInstance.materialResource->name : "None";
+                    auto split = MiString::Split(matName, '%');
+
+                    // "Material%Default"のような形式の場合、"Default"のみ表示する
+                    matName = split.size() > 2 ? split[2] : matName;
+                    
+                    ImGui::Text("Material:");
+                    ImGui::Text("  %s", matName.c_str());
+
+                    // オーバーライド設定
+                    bool overrideBaseColor = materialInstance.isOverrideBaseColor;
+                    if (ImGui::Checkbox("Override Base Color", &overrideBaseColor)) {
+                        materialInstance.isOverrideBaseColor = overrideBaseColor;
+                    }
+                    if (materialInstance.isOverrideBaseColor) {
+                        auto baseColor = materialInstance.overrideBaseColor;
+                        if (ImGui::ColorEdit4("Base Color", &baseColor.x)) {
+                            materialInstance.overrideBaseColor = baseColor;
+                        }
+                    }
+                    bool overrideEmissiveColor = materialInstance.isOverrideEmissiveColor;
+                    if (ImGui::Checkbox("Override Emissive Color", &overrideEmissiveColor)) {
+                        materialInstance.isOverrideEmissiveColor = overrideEmissiveColor;
+                    }
+                    if (materialInstance.isOverrideEmissiveColor) {
+                        auto emissiveColor = materialInstance.overrideEmissiveColor;
+                        if (ImGui::ColorEdit3("Emissive Color", &emissiveColor.x)) {
+                            materialInstance.overrideEmissiveColor = emissiveColor;
+                        }
+                    }
+
+                    ImGui::Separator();
+
+                    // マテリアルリソースのプロパティも表示する
+                    float metallic = materialInstance.materialResource ? materialInstance.materialResource->metallic : 0.0f;
+                    if (ImGui::DragFloat("Metallic", &metallic, 0.01f, 0.0f, 1.0f)) {
+                        if (materialInstance.materialResource) {
+                            materialInstance.materialResource->metallic = metallic;
+                        }
+                    }
+                    float roughness = materialInstance.materialResource ? materialInstance.materialResource->roughness : 1.0f;
+                    if (ImGui::DragFloat("Roughness", &roughness, 0.01f, 0.0f, 1.0f)) {
+                        if (materialInstance.materialResource) {
+                            materialInstance.materialResource->roughness = roughness;
+                        }
+                    }
+
+
+                    ImGui::EndChild();
+                    ImGui::TreePop();
+                }
+
+                ImGui::PopID();
             }
         }
         ImGui::PopID();

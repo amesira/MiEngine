@@ -55,16 +55,16 @@ public:
 
     // === テクスチャ ===
     TextureResource* albedoTexture = nullptr;   // アルベドテクスチャ
-    TextureResource* normalTexture = nullptr;   // 法線マップテクスチャ
-    TextureResource* emissiveTexture = nullptr; // 発光テクスチャ
-    TextureResource* aoTexture = nullptr;       // アンビエントオクルージョンテクスチャ
+    TextureResource* normalTexture = nullptr;   // 法線マップテクスチャ（未実装）
+    TextureResource* emissiveTexture = nullptr; // 発光テクスチャ（未実装）
+    TextureResource* aoTexture = nullptr;       // アンビエントオクルージョンテクスチャ（未実装）
 
     // === UV ===
-    XMFLOAT2 uvTiling = { 1,1 };    // UVのループ数
-    XMFLOAT2 uvOffset = { 0,0 };    // UVのオフセット
+    XMFLOAT2 uvTiling = { 1,1 };    // UVのループ数（未実装）
+    XMFLOAT2 uvOffset = { 0,0 };    // UVのオフセット（未実装）
 
     // === 描画設定 ===
-    bool cullBackFace = true;   // 背面カリングするか
+    bool cullBackFace = true;   // 背面カリングするか（未実装）
 
     // マテリアルバッファ生成
     MaterialBufferData CreateBufferData() const {
@@ -82,8 +82,10 @@ public:
 // マテリアルインスタンス
 class MaterialInstance {
 public:
+    // マテリアルリソースへのポインタ
     MaterialResource* materialResource = nullptr;
 
+    // オーバーライド設定
     bool isOverrideBaseColor = false;
     XMFLOAT4 overrideBaseColor = { 1,1,1,1 };
     bool isOverrideEmissiveColor = false;

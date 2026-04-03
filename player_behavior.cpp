@@ -88,18 +88,17 @@ void PlayerBehavior::DrawComponentInspector()
         if (ImGui::DragFloat("Move Speed", &m_moveSpeed, 0.1f, 0.0f, 100.0f)) {
             m_moveSpeed = (std::max)(0.0f, m_moveSpeed);
         }
-        
-        if (ImGui::ColorEdit4("Base Color", &(m_myMaterial->baseColor.x))) {
-            // カラーが変更されたときの処理（必要なら）
+
+        if (m_myMaterial) {
+            if (ImGui::DragFloat("Metallic", &m_myMaterial->metallic, 0.01f, 0.0f, 1.0f)) {
+                m_myMaterial->metallic = (std::clamp)(m_myMaterial->metallic, 0.0f, 1.0f);
+            }
+            if (ImGui::DragFloat("Roughness", &m_myMaterial->roughness, 0.01f, 0.0f, 1.0f)) {
+                m_myMaterial->roughness = (std::clamp)(m_myMaterial->roughness, 0.0f, 1.0f);
+            }
         }
-        if (ImGui::ColorEdit3("Emissive Color", &(m_myMaterial->emissiveColor.x))) {
-            // カラーが変更されたときの処理（必要なら）
-        }
-        if (ImGui::DragFloat("Metallic", &m_myMaterial->metallic, 0.01f, 0.0f, 1.0f)) {
-            m_myMaterial->metallic = (std::clamp)(m_myMaterial->metallic, 0.0f, 1.0f);
-        }
-        if (ImGui::DragFloat("Roughness", &m_myMaterial->roughness, 0.01f, 0.0f, 1.0f)) {
-            m_myMaterial->roughness = (std::clamp)(m_myMaterial->roughness, 0.0f, 1.0f);
+        else {
+            ImGui::Text("No material found. Please Game Start.");
         }
     }
 
