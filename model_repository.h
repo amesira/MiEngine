@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <memory>
+struct aiNode;
 
 class ModelRepository {
 private:

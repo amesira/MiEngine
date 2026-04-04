@@ -35,16 +35,35 @@ struct ModelMesh {
 	uint32_t materialIndex;
 };
 
+// ボーンのデータ
+struct ModelBone {
+	std::string name;
+    unsigned int index;
+
+    // ボーンのオフセット行列（モデル空間からボーン空間への変換行列）
+	XMMATRIX offsetMatrix;
+    XMMATRIX globalTransform;
+    XMMATRIX finalTransform;
+};
+
 // モデルリソース
 class ModelResource {
-public:
+private: friend class ModelRepository;
     const aiScene* AiScene = nullptr;
+
+public:
 	std::string name;
 
     // メッシュのリスト
 	std::vector<ModelMesh> meshes;
     // モデル標準となるマテリアルリソースのリスト
     std::vector<MaterialResource*> materialResources;
+
+    // ボーンのリスト
+    std::vector<ModelBone> bones;
+    std::unordered_map<std::string, unsigned int> boneNameToIndex;
+
+
 
 };
 #endif // MODEL_RESOURCE_H
