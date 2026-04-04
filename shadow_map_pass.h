@@ -32,9 +32,6 @@ private:
     ComPtr<ID3D11DepthStencilView>      depthBufferDSV;
     ComPtr<ID3D11ShaderResourceView>    depthBufferSRV;
 
-    // DefaultTexture
-    TextureResource* m_defaultTexture;
-
     // 視点位置（シャドウマップの中心位置として使用）
     XMFLOAT3 m_eyePosition;
     // ライト方向（シャドウマップの視野方向として使用）

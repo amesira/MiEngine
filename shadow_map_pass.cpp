@@ -38,9 +38,6 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
     // シャドウマップ用のリソース作成
     Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
-
-    // デフォルトテクスチャの取得
-    m_defaultTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
 }
 
 void ShadowMapPass::Finalize()
@@ -64,6 +61,7 @@ void ShadowMapPass::Process(IScene* pScene)
 
     // シャドウマップ用のシェーダーをバインド
     EngineServiceLocator::BindShader(ShaderManager::ShaderType::Unlit);
+    m_pContext->PSSetShader(nullptr, nullptr, 0);
 
     // カメラCBの更新
     float width = 60.0f;
@@ -81,9 +79,6 @@ void ShadowMapPass::Process(IScene* pScene)
 
     EngineServiceLocator::UpdateCameraCB({ viewMatrix, projectionMatrix, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)});
     m_shadowLightMatrix = viewMatrix * projectionMatrix;
-
-    // srvのバインド
-    m_pContext->PSSetShaderResources(0, 1, m_defaultTexture->texture.GetAddressOf());
 
     // モデル描画
     auto& modelPoolList = modelPool->GetList();
