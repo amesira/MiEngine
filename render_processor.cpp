@@ -57,8 +57,8 @@ void RenderProcessor::Process(IScene* pScene)
     Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
 
     // 3.スカイボックスパス
-    //m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
-    //m_skyboxPass.Process(pScene);
+    m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
+    m_skyboxPass.Process(pScene);
 
     //----------------------------------- 3Dオブジェクト描画
     Bind3DCameraCB(m_renderView);
