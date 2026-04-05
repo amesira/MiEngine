@@ -26,7 +26,7 @@ private:
     std::unordered_map<std::string, std::unique_ptr<MaterialResource>> m_materialCache;
 
     // マテリアルの定数バッファ
-    ID3D11Buffer* m_materialBuffer = nullptr;
+    ComPtr<ID3D11Buffer> m_materialBuffer;
 
 public:
     // 初期化

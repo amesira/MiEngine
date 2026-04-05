@@ -48,8 +48,11 @@ void OpaqueRenderPass::Process(IScene* pScene)
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);
 
+    // シェーダーの初期セット
+    ModelResource::VertexType currentVertexType = ModelResource::VertexType::Lit;
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+
     // モデル描画
-    int shaderIndex = -1;
     auto& modelPoolList = modelPool->GetList();
     for (ModelComponent& m : modelPoolList) {
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
@@ -61,6 +64,19 @@ void OpaqueRenderPass::Process(IScene* pScene)
         // モデルデータ取得
         ModelResource* model = m.GetModelResource();
         if (!model)continue;
+
+        // シェーダー切替
+        if (currentVertexType != model->vertexType) {
+            switch (model->vertexType) {
+            case ModelResource::VertexType::Lit:
+                EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+                break;
+            case ModelResource::VertexType::SkinnedLit:
+                EngineServiceLocator::BindShader(ShaderManager::ShaderType::SkinnedLit);
+                break;
+            }
+            currentVertexType = model->vertexType;
+        }
 
         // ワールド行列計算
         XMMATRIX worldMatrix = XMMatrixIdentity();
@@ -79,17 +95,27 @@ void OpaqueRenderPass::Process(IScene* pScene)
             worldMatrix = scaling * rotation * translation;
         }
 
-        // シェーダーセット
-        if (shaderIndex == -1) {
-            shaderIndex = static_cast<int>(ShaderManager::ShaderType::Lit);
-            EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+        // Transformバッファをバインド
+        EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
+
+        // スキニングCBバインド
+        if (currentVertexType == ModelResource::VertexType::SkinnedLit) {
+            EngineServiceLocator::GetModelRepository()->BindSkinningCB(model->bones);
         }
 
-        // 行列セット
-        EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
-        
         // プリミティブトポロジ設定
         m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        UINT stride = 0;
+        UINT offset = 0;
+        switch (model->vertexType) {
+            case ModelResource::VertexType::Lit:
+                stride = sizeof(LitVertex);
+                break;
+            case ModelResource::VertexType::SkinnedLit:
+                stride = sizeof(SkinnedLitVertex);
+                break;
+        }
 
         for (unsigned int i = 0; i < model->meshes.size(); i++)
         {
@@ -106,8 +132,6 @@ void OpaqueRenderPass::Process(IScene* pScene)
             MATERIAL_REPOSITORY->BindMaterialTexture(*mat.materialResource);
 
             // 頂点バッファ設定
-            UINT stride = sizeof(LitVertex);
-            UINT offset = 0;
             m_pContext->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
 
             // インデックスバッファ設定

@@ -58,7 +58,7 @@ void Factory::CreateDirectionalLight(GameObject* obj, DirectX::XMFLOAT4 directio
     lightComp->SetDiffuse(diffuse);
     lightComp->SetAmbient(ambient);
 
-    lightComp->SetIntensity(1.2f);
+    lightComp->SetIntensity(0.6f);
 }
 
 void Factory::CreatePointLight(GameObject* obj, XMFLOAT4 diffuse, float range)
@@ -126,15 +126,16 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
     // component設定
     transform->SetPosition(position);
 
-    XMFLOAT3 scaling = { 1.0f, 1.0f, 1.0f };
+    XMFLOAT3 scaling = { 0.8f, 0.8f, 0.8f };
     transform->SetScaling(scaling);
     collider->SetScale({
-        scaling.x * 2.0f,
-        scaling.y * 2.0f,
-        scaling.z * 2.0f
+        scaling.x * 1.0f / 0.8f,
+        scaling.y * 2.5f / 0.8f,
+        scaling.z * 1.0f / 0.8f
         });
+    collider->SetCenter({ 0.0f, collider->GetScale().y / 5.0f * 3.0f, 0.0f});
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\Charactor_PoseA.fbx");
     modelComp->SetModelResource(modelResource);
     auto& materialSlots = modelComp->GetMaterialSlots();
     if (!materialSlots.empty()) {

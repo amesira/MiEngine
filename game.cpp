@@ -40,7 +40,7 @@ void GameScene::Initialize()
 
     // light
     GameObject* light = this->CreateGameObject();
-    Factory::CreateDirectionalLight(light, { 10.0f,-1.0f,0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
+    Factory::CreateDirectionalLight(light, { 0.0f,-1.0f,0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
     light = this->CreateGameObject();
     Factory::CreatePointLight(light, {1.0f, 1.0f, 0.0f, 1.0f}, 10.0f);
 

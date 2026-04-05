@@ -59,8 +59,9 @@ void ShadowMapPass::Process(IScene* pScene)
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);
 
-    // シャドウマップ用のシェーダーをバインド
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Unlit);
+    // シェーダーの初期セット
+    ModelResource::VertexType currentVertexType = ModelResource::VertexType::Lit;
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
     m_pContext->PSSetShader(nullptr, nullptr, 0);
 
     // カメラCBの更新
@@ -93,6 +94,19 @@ void ShadowMapPass::Process(IScene* pScene)
         ModelResource* model = m.GetModelResource();
         if (!model)continue;
 
+        // シェーダー切替
+        if (currentVertexType != model->vertexType) {
+            switch (model->vertexType) {
+            case ModelResource::VertexType::Lit:
+                EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+                break;
+            case ModelResource::VertexType::SkinnedLit:
+                EngineServiceLocator::BindShader(ShaderManager::ShaderType::SkinnedLit);
+                break;
+            }
+            currentVertexType = model->vertexType;
+        }
+
         // ワールド行列計算
         XMMATRIX worldMatrix = XMMatrixIdentity();
         {
@@ -113,6 +127,22 @@ void ShadowMapPass::Process(IScene* pScene)
         // 行列セット
         EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
 
+        // スキニングCBバインド
+        if (currentVertexType == ModelResource::VertexType::SkinnedLit) {
+            EngineServiceLocator::GetModelRepository()->BindSkinningCB(model->bones);
+        }
+
+        UINT stride = 0;
+        UINT offset = 0;
+        switch (model->vertexType) {
+        case ModelResource::VertexType::Lit:
+            stride = sizeof(LitVertex);
+            break;
+        case ModelResource::VertexType::SkinnedLit:
+            stride = sizeof(SkinnedLitVertex);
+            break;
+        }
+
         // プリミティブトポロジ設定
         m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -121,8 +151,6 @@ void ShadowMapPass::Process(IScene* pScene)
             ModelMesh& mesh = model->meshes[i];
 
             // 頂点バッファ設定
-            UINT stride = sizeof(LitVertex);
-            UINT offset = 0;
             m_pContext->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
 
             // インデックスバッファ設定

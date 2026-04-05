@@ -10,6 +10,8 @@
 
 #include <unordered_map>
 #include <memory>
+
+#include "assimp/matrix4x4.h"
 struct aiNode;
 
 class ModelRepository {
@@ -20,6 +22,10 @@ private:
     // モデルリソースのキャッシュ
     std::unordered_map<std::string, std::unique_ptr<ModelResource>> m_modelCache;
 
+    // スキニングバッファ
+    ComPtr<ID3D11Buffer> m_skinningBuffer;
+
+
 public:
     // 初期化
     void Initialize();
@@ -29,9 +35,14 @@ public:
     // モデルの取得。キャッシュに無い場合は読み込む。
     ModelResource* GetModel(const std::string& filePath);
 
+    // スキニングCBのバインド
+    void BindSkinningCB(const std::vector<ModelBone>& bones);
+
 private:
     // モデルの読み込み
     ModelResource* LoadModel(const std::string& filePath);
+    // 
+    XMMATRIX AssimpMatToXMMatrix(const aiMatrix4x4& m);
 
     // モデルの解放
     void ReleaseModel(const std::string& filePath);

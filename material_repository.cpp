@@ -26,12 +26,12 @@ void MaterialRepository::Initialize()
     bufferDesc.ByteWidth = sizeof(MaterialBufferData);
     bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    m_pDevice->CreateBuffer(&bufferDesc, nullptr, &m_materialBuffer);
+    m_pDevice->CreateBuffer(&bufferDesc, nullptr, m_materialBuffer.GetAddressOf());
 
     auto shader = EngineServiceLocator::GetShaderManager();
     if (shader) {
-        shader->RegisterCB(ShaderManager::ShaderType::Lit, 9, &m_materialBuffer);
-        shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 9, &m_materialBuffer);
+        shader->RegisterCB(ShaderManager::ShaderType::Lit, 9, m_materialBuffer.GetAddressOf());
+        shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 9, m_materialBuffer.GetAddressOf());
     }
 
     // デフォルトテクスチャの作成
@@ -85,10 +85,10 @@ void MaterialRepository::BindMaterialCB(const MaterialBufferData& material)
 {
     // MaterialBuffferDataとしてGPUにデータ転送
     D3D11_MAPPED_SUBRESOURCE msr = {};
-    m_pContext->Map(m_materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    m_pContext->Map(m_materialBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
     MaterialBufferData* bufferData = reinterpret_cast<MaterialBufferData*>(msr.pData);
     *bufferData = material;
-    m_pContext->Unmap(m_materialBuffer, 0);
+    m_pContext->Unmap(m_materialBuffer.Get(), 0);
 }
 
 // マテリアルのバインド（テクスチャ）

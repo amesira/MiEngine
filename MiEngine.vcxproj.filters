@@ -1,13 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="shader_pixel.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="ttf_unlit_ps.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader_vertex.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="lit_ps.hlsl">
@@ -36,6 +30,12 @@
     </FxCompile>
     <FxCompile Include="unlit_ps.hlsl">
       <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="skinning.hlsl">
+      <Filter>Shader\common</Filter>
+    </FxCompile>
+    <FxCompile Include="shadowing.hlsl">
+      <Filter>Shader\common</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +192,8 @@
     <ClCompile Include="material_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="shadow_map_pass.cpp" />
+    <ClCompile Include="skybox_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -437,6 +439,8 @@
     <ClInclude Include="mi_string.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="shadow_map_pass.h" />
+    <ClInclude Include="skybox_pass.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

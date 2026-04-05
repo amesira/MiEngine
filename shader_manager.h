@@ -26,7 +26,7 @@ struct SkinnedLitVertex {
     XMFLOAT4 color;     // 頂点の色
     XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
 
-    XMINT4   boneIndices; // ボーンのインデックス
+    XMUINT4   boneIndices; // ボーンのインデックス
     XMFLOAT4 boneWeights; // ボーンの重み
 };
 

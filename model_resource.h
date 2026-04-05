@@ -63,7 +63,11 @@ public:
     std::vector<ModelBone> bones;
     std::unordered_map<std::string, unsigned int> boneNameToIndex;
 
-
+    // 頂点の種類
+    enum class VertexType {
+        Lit,
+        SkinnedLit
+    } vertexType = VertexType::Lit;
 
 };
 #endif // MODEL_RESOURCE_H

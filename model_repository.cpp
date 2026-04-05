@@ -12,7 +12,6 @@
 #include "assimp/cimport.h"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-#include "assimp/matrix4x4.h"
 #pragma comment (lib, "assimp-vc143-mt.lib")
 
 #include <iostream>
@@ -30,6 +29,18 @@ void ModelRepository::Initialize()
     m_pContext = Direct3D_GetDeviceContext();
 
     m_modelCache.clear();
+
+    // スキニングCBの作成
+    D3D11_BUFFER_DESC bd = {};
+    bd.Usage = D3D11_USAGE_DYNAMIC;
+    bd.ByteWidth = sizeof(XMMATRIX) * 256;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    m_pDevice->CreateBuffer(&bd, nullptr, m_skinningBuffer.GetAddressOf());
+    auto shader = EngineServiceLocator::GetShaderManager();
+    if (shader) {
+        shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 12, m_skinningBuffer.GetAddressOf());
+    }
 }
 
 // モデルリポジトリの終了処理
@@ -54,6 +65,20 @@ ModelResource* ModelRepository::GetModel(const std::string& filePath)
 
     // キャッシュに無い場合は読み込む
     return LoadModel(filePath);
+}
+
+// スキニングCBのバインド
+void ModelRepository::BindSkinningCB(const std::vector<ModelBone>& bones)
+{
+    D3D11_MAPPED_SUBRESOURCE msr = {};
+    m_pContext->Map(m_skinningBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    XMMATRIX* skinningData = reinterpret_cast<XMMATRIX*>(msr.pData);
+    for (size_t i = 0; i < bones.size(); i++)
+    {
+        XMMATRIX finalTransformTransposed = XMMatrixTranspose(bones[i].finalTransform);
+        skinningData[i] = finalTransformTransposed;
+    }
+    m_pContext->Unmap(m_skinningBuffer.Get(), 0);
 }
 
 //------------------------------------
@@ -104,12 +129,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             ModelBone modelBone = {};
             modelBone.name = bone->mName.C_Str();
             modelBone.index = static_cast<unsigned int>(model->bones.size());
-            modelBone.offsetMatrix = XMMATRIX(
-                bone->mOffsetMatrix.a1, bone->mOffsetMatrix.a2, bone->mOffsetMatrix.a3, bone->mOffsetMatrix.a4,
-                bone->mOffsetMatrix.b1, bone->mOffsetMatrix.b2, bone->mOffsetMatrix.b3, bone->mOffsetMatrix.b4,
-                bone->mOffsetMatrix.c1, bone->mOffsetMatrix.c2, bone->mOffsetMatrix.c3, bone->mOffsetMatrix.c4,
-                bone->mOffsetMatrix.d1, bone->mOffsetMatrix.d2, bone->mOffsetMatrix.d3, bone->mOffsetMatrix.d4
-            );
+            modelBone.offsetMatrix = AssimpMatToXMMatrix(bone->mOffsetMatrix);
 
             model->bones.emplace_back(modelBone);
             model->boneNameToIndex[modelBone.name] = modelBone.index;
@@ -119,6 +139,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         bool isSkinnedMesh = mesh->mNumBones > 0;
         if (!isSkinnedMesh) {
             LitVertex* vertex = new LitVertex[mesh->mNumVertices];
+            model->vertexType = ModelResource::VertexType::Lit;
 
             for (unsigned int v = 0; v < mesh->mNumVertices; v++)
             {
@@ -143,6 +164,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         }
         else {
             SkinnedLitVertex* vertex = new SkinnedLitVertex[mesh->mNumVertices];
+            model->vertexType = ModelResource::VertexType::SkinnedLit;
 
             for (unsigned int v = 0; v < mesh->mNumVertices; v++)
             {
@@ -195,7 +217,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
                     }
                 }
 
-                vertex[v].boneIndices = XMINT4(boneIndices[0], boneIndices[1], boneIndices[2], boneIndices[3]);
+                vertex[v].boneIndices = XMUINT4(boneIndices[0], boneIndices[1], boneIndices[2], boneIndices[3]);
                 vertex[v].boneWeights = XMFLOAT4(boneWeights[0], boneWeights[1], boneWeights[2], boneWeights[3]);
             }
 
@@ -293,12 +315,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
     // ボーンの親子関係の構築
     std::function<void(aiNode*, const XMMATRIX&)> buildBoneHierarchy = [&](aiNode* node, const XMMATRIX& parentTransform) {
 
-        XMMATRIX localTransform = XMMATRIX(
-            node->mTransformation.a1, node->mTransformation.a2, node->mTransformation.a3, node->mTransformation.a4,
-            node->mTransformation.b1, node->mTransformation.b2, node->mTransformation.b3, node->mTransformation.b4,
-            node->mTransformation.c1, node->mTransformation.c2, node->mTransformation.c3, node->mTransformation.c4,
-            node->mTransformation.d1, node->mTransformation.d2, node->mTransformation.d3, node->mTransformation.d4
-        );
+        XMMATRIX localTransform = AssimpMatToXMMatrix(node->mTransformation);
         XMMATRIX globalTransform = localTransform * parentTransform;
 
         // ノード名がボーン名と一致する場合、ボーンのグローバル変換行列を保存
@@ -318,11 +335,23 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
     // ボーン最終行列の計算
     for (ModelBone& bone : model->bones) {
         if (bone.index >= 0) {
+            //bone.finalTransform = bone.offsetMatrix * bone.globalTransform;
             bone.finalTransform = bone.offsetMatrix * bone.globalTransform;
         }
     }
 
     return model;
+}
+
+// Assimpの行列をXMMATRIXに変換
+XMMATRIX ModelRepository::AssimpMatToXMMatrix(const aiMatrix4x4& m)
+{
+    XMMATRIX xmMat = XMMATRIX(
+        m.a1, m.b1, m.c1, m.d1,
+        m.a2, m.b2, m.c2, m.d2,
+        m.a3, m.b3, m.c3, m.d3,
+        m.a4, m.b4, m.c4, m.d4);
+    return xmMat;
 }
 
 // モデルの解放
