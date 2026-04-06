@@ -218,10 +218,14 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
     }
 
     // ボーンの親子関係の構築
+    model->defaultPose.defaultPositions.resize(model->bones.size(), XMFLOAT4(0, 0, 0, 0));
+    model->defaultPose.defaultRotations.resize(model->bones.size(), XMFLOAT4(0, 0, 0, 1));
+    model->defaultPose.defaultScales.resize(model->bones.size(), XMFLOAT4(1, 1, 1, 0));
+    model->defaultPose.localTransforms.resize(model->bones.size(), XMMatrixIdentity());
     model->defaultPose.globalTransforms.resize(model->bones.size(), XMMatrixIdentity());
     model->defaultPose.boneTransforms.resize(model->bones.size(), XMMatrixIdentity());
 
-    std::function<void(aiNode*,const unsigned int, const XMMATRIX&)> buildBoneHierarchy = [&](aiNode* node, const unsigned int parentIndex, const XMMATRIX& parentTransform) {
+    std::function<void(aiNode*,unsigned int, const XMMATRIX&)> buildBoneHierarchy = [&](aiNode* node, unsigned int parentIndex, const XMMATRIX& parentTransform) {
 
         XMMATRIX localTransform = AssimpMatToXMMatrix(node->mTransformation);
         XMMATRIX globalTransform = localTransform * parentTransform;
@@ -232,8 +236,18 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         auto it = model->boneNameToIndex.find(node->mName.C_Str());
         if (it != model->boneNameToIndex.end()) {
             boneIndex = it->second;
+
+            model->defaultPose.localTransforms[boneIndex] = localTransform;
             model->defaultPose.globalTransforms[boneIndex] = globalTransform;
             model->bones[boneIndex].parentIndex = parentIndex;
+
+            // デフォルトの位置、回転、スケールを分解して保存
+            aiVector3D scaling, translation;
+            aiQuaternion rotation;
+            node->mTransformation.Decompose(scaling, rotation, translation);
+            model->defaultPose.defaultPositions[boneIndex] = XMFLOAT4(translation.x, translation.y, translation.z, 0.0f);
+            model->defaultPose.defaultRotations[boneIndex] = XMFLOAT4(rotation.x, rotation.y, rotation.z, rotation.w);
+            model->defaultPose.defaultScales[boneIndex] = XMFLOAT4(scaling.x, scaling.y, scaling.z, 0.0f);
         }
 
         // 子ノードを再帰的に処理
@@ -242,6 +256,20 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         }
     };
     buildBoneHierarchy(scene->mRootNode, UINT_MAX, XMMatrixIdentity());
+
+    // ボーンの子インデックスの構築
+    for (unsigned int i = 0; i < model->bones.size(); i++) {
+        unsigned int parentIndex = model->bones[i].parentIndex;
+        if (parentIndex < model->bones.size()) {
+            model->bones[parentIndex].childIndices.push_back(i);
+        }
+        else { 
+            // ルートボーンの場合
+            // memo: mRootNodeがRootBoneとは限らないため、親インデックスが存在しないボーンをルートとみなす
+            model->rootBoneIndex = i;
+            model->rootParentCorrection = XMMatrixInverse(nullptr, model->defaultPose.localTransforms[i]);
+        }
+    }
 
     // ボーン最終行列の計算
     for (int i = 0; i < model->bones.size(); i++) {
@@ -286,6 +314,11 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
                 aiVectorKey& scaleKey = channel->mScalingKeys[k];
                 channelData.scalingKeyframes.emplace_back(scaleKey.mTime / tps, XMFLOAT4(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z, 0.0f));
             }
+
+            // キーフレームで昇順ソート
+            std::sort(channelData.positionKeyframes.begin(), channelData.positionKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
+            std::sort(channelData.rotationKeyframes.begin(), channelData.rotationKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
+            std::sort(channelData.scalingKeyframes.begin(), channelData.scalingKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
         }
     }
 

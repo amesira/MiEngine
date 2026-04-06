@@ -12,6 +12,7 @@
 #include "behavior_processor.h"
 #include "camera_processor.h"
 #include "render_processor.h"
+#include "animation_processor.h"
 
 #include <vector>
 #include "render_view.h"
@@ -29,6 +30,7 @@ private:
 
     // Processor群
     PhysicsProcessor   m_physicsProcessor;
+    AnimationProcessor m_animationProcessor;
     BehaviorProcessor  m_behaviorProcessor;
 
     std::vector<RenderView> m_renderViews;

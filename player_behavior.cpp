@@ -11,6 +11,7 @@
 #include "mi_math.h"
 #include "keyboard.h"
 #include "debug_ostream.h"
+#include "mi_fps.h"
 
 #include "imgui_window_interface.h"
 #include "material_repository.h"
@@ -43,6 +44,8 @@ void PlayerBehavior::Start()
 
 void PlayerBehavior::Update()
 {
+    float deltaTime = FPS_GetDeltaTime();
+
     m_moveDirection = { 0.0f, 0.0f, 0.0f };
 
     if (Keyboard_IsKeyDown(KK_W)) {
@@ -65,6 +68,12 @@ void PlayerBehavior::Update()
 
     if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
         velocity.y = 5.0f;
+    }
+
+    // 速度方向に応じてプレイヤーの向きを変える
+    if (velocity.x != 0.0f || velocity.z != 0.0f) {
+        float angle = atan2f(m_moveDirection.x, m_moveDirection.z) + XM_PI;
+        m_transform->SetEulerRotation({ 0.0f, angle, 0.0f });
     }
 
     m_rigidbody->SetVelocity(velocity);

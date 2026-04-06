@@ -143,17 +143,23 @@ namespace MiMath
     inline XMVECTOR Lerp(const XMVECTOR& a, const XMVECTOR& b, float t) {
         return XMVectorAdd(a, XMVectorScale(XMVectorSubtract(b, a), t));
     }
-    inline XMFLOAT3 Lerp(const XMFLOAT3& a, const XMFLOAT3& b, float t) {
-        XMVECTOR va = XMLoadFloat3(&a);
-        XMVECTOR vb = XMLoadFloat3(&b);
-        XMVECTOR vr = Lerp(va, vb, t);
-        XMFLOAT3 result;
-        XMStoreFloat3(&result, vr);
-        return result;
-    }
-
     inline float Lerp(float a, float b, float t) {
         return a + (b - a) * t;
+    }
+    inline XMFLOAT3 Lerp(const XMFLOAT3& a, const XMFLOAT3& b, float t) {
+        XMFLOAT3 result = {};
+        result.x = Lerp(a.x, b.x, t);
+        result.y = Lerp(a.y, b.y, t);
+        result.z = Lerp(a.z, b.z, t);
+        return result;
+    }
+    inline XMFLOAT4 Lerp(const XMFLOAT4& a, const XMFLOAT4& b, float t) {
+        XMFLOAT4 result = {};
+        result.x = Lerp(a.x, b.x, t);
+        result.y = Lerp(a.y, b.y, t);
+        result.z = Lerp(a.z, b.z, t);
+        result.w = Lerp(a.w, b.w, t);
+        return result;
     }
 
     // ベクトルを回転させる

@@ -16,6 +16,7 @@ void GameWorld::Initialize()
 
     // Processor群の初期化
     m_physicsProcessor.Initialize();
+    m_animationProcessor.Initialize();
     m_behaviorProcessor.Initialize();
     m_cameraProcessor.Initialize();
     m_renderProcessor.Initialize();
@@ -29,6 +30,7 @@ void GameWorld::Finalize()
 {
     // Processor群の終了処理
     m_physicsProcessor.Finalize();
+    m_animationProcessor.Finalize();
     m_behaviorProcessor.Finalize();
     m_cameraProcessor.Finalize();
     m_renderProcessor.Finalize();
@@ -52,6 +54,7 @@ void GameWorld::Update()
 
     // Processor群の更新
     m_physicsProcessor.Process(scene);  // 物理演算制御プロセッサー処理
+    m_animationProcessor.Process(scene); // アニメーション制御プロセッサー処理
     m_behaviorProcessor.Process(scene); // Behavior制御プロセッサー処理
 }
 

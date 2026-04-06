@@ -135,7 +135,7 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
         });
     collider->SetCenter({ 0.0f, collider->GetScale().y / 5.0f * 3.0f, 0.0f});
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\Charactor_PoseA.fbx");
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\Charactor_AnimWalk.fbx");
     modelComp->SetModelResource(modelResource);
     auto& materialSlots = modelComp->GetMaterialSlots();
     if (!materialSlots.empty()) {

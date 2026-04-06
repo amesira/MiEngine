@@ -7,6 +7,7 @@
 #ifndef ANIMATION_PROCESSOR_H
 #define ANIMATION_PROCESSOR_H
 #include "processor.h"
+#include "model_resource.h"
 
 class AnimationProcessor : public Processor {
 private:
@@ -15,6 +16,10 @@ public:
     void Initialize() override;
     void Finalize() override;
     void Process(IScene* pScene) override;
+
+private:
+    // キーフレームの線形補間
+    XMFLOAT4 SamplingKeyframes(const std::vector<AnimationClip::Keyframe>& keyframes, float time);
 
 };
 

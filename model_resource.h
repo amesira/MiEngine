@@ -42,6 +42,8 @@ struct ModelBone {
 
     // 親ボーンのインデックス。ルートボーンの場合は-1
     unsigned int parentIndex;
+    // 子ボーンのインデックスのリスト
+    std::vector<unsigned int> childIndices;
 
     // ボーンのオフセット行列（モデル空間からボーン空間への変換行列）
 	XMMATRIX offsetMatrix;
@@ -49,8 +51,15 @@ struct ModelBone {
 
 // スケルトンポーズのデータ
 struct SkeletonPose {
+    std::vector<XMFLOAT4> defaultPositions;   // デフォルトの位置
+    std::vector<XMFLOAT4> defaultRotations;   // デフォルトの回転（クォータニオン）
+    std::vector<XMFLOAT4> defaultScales;      // デフォルトのスケール
+
+    std::vector<XMMATRIX> localTransforms;  // ローカル変換行列
     std::vector<XMMATRIX> globalTransforms; // グローバル変換行列
-    std::vector<XMMATRIX> boneTransforms;   // 最終的なボーンの変換行列
+
+    // スキニングに使用する最終的なボーン変換行列（グローバル変換行列とオフセット行列を掛け合わせたもの）
+    std::vector<XMMATRIX> boneTransforms;
 };
 
 // アニメーションクリップのデータ
@@ -96,7 +105,10 @@ public:
     // ボーンのリスト
     std::vector<ModelBone> bones;
     std::unordered_map<std::string, unsigned int> boneNameToIndex;
+    unsigned int rootBoneIndex = UINT_MAX;
+    XMMATRIX rootParentCorrection = XMMatrixIdentity(); // ルートボーンの補正行列
 
+    // デフォルトのスケルトンポーズ
     SkeletonPose defaultPose;
 
     // アニメーションクリップ
