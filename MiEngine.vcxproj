@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation_processor.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="behavior_processor.cpp" />
     <ClCompile Include="camera_processor.cpp" />
@@ -190,6 +191,8 @@
     <ClCompile Include="ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation_component.h" />
+    <ClInclude Include="animation_processor.h" />
     <ClInclude Include="behavior_component.h" />
     <ClInclude Include="behavior_processor.h" />
     <ClInclude Include="camera_component.h" />

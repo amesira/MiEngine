@@ -100,7 +100,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
 
         // スキニングCBバインド
         if (currentVertexType == ModelResource::VertexType::SkinnedLit) {
-            EngineServiceLocator::GetModelRepository()->BindSkinningCB(model->bones);
+            EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
         }
 
         // プリミティブトポロジ設定

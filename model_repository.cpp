@@ -63,14 +63,14 @@ ModelResource* ModelRepository::GetModel(const std::string& filePath)
 }
 
 // スキニングCBのバインド
-void ModelRepository::BindSkinningCB(const std::vector<ModelBone>& bones)
+void ModelRepository::BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix)
 {
     D3D11_MAPPED_SUBRESOURCE msr = {};
     m_pContext->Map(m_skinningBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
     XMMATRIX* skinningData = reinterpret_cast<XMMATRIX*>(msr.pData);
-    for (size_t i = 0; i < bones.size(); i++)
+    for (size_t i = 0; i < boneMatrix.size(); i++)
     {
-        XMMATRIX finalTransformTransposed = XMMatrixTranspose(bones[i].finalTransform);
+        XMMATRIX finalTransformTransposed = XMMatrixTranspose(boneMatrix[i]);
         skinningData[i] = finalTransformTransposed;
     }
     m_pContext->Unmap(m_skinningBuffer.Get(), 0);
@@ -218,30 +218,34 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
     }
 
     // ボーンの親子関係の構築
-    std::function<void(aiNode*, const XMMATRIX&)> buildBoneHierarchy = [&](aiNode* node, const XMMATRIX& parentTransform) {
+    model->defaultPose.globalTransforms.resize(model->bones.size(), XMMatrixIdentity());
+    model->defaultPose.boneTransforms.resize(model->bones.size(), XMMatrixIdentity());
+
+    std::function<void(aiNode*,const unsigned int, const XMMATRIX&)> buildBoneHierarchy = [&](aiNode* node, const unsigned int parentIndex, const XMMATRIX& parentTransform) {
 
         XMMATRIX localTransform = AssimpMatToXMMatrix(node->mTransformation);
         XMMATRIX globalTransform = localTransform * parentTransform;
 
+        int boneIndex = parentIndex;
+
         // ノード名がボーン名と一致する場合、ボーンのグローバル変換行列を保存
         auto it = model->boneNameToIndex.find(node->mName.C_Str());
         if (it != model->boneNameToIndex.end()) {
-            int boneIndex = it->second;
-            model->bones[boneIndex].globalTransform = globalTransform;
+            boneIndex = it->second;
+            model->defaultPose.globalTransforms[boneIndex] = globalTransform;
+            model->bones[boneIndex].parentIndex = parentIndex;
         }
 
         // 子ノードを再帰的に処理
         for (unsigned int i = 0; i < node->mNumChildren; i++) {
-            buildBoneHierarchy(node->mChildren[i], globalTransform);
+            buildBoneHierarchy(node->mChildren[i], boneIndex, globalTransform);
         }
     };
-    buildBoneHierarchy(scene->mRootNode, XMMatrixIdentity());
+    buildBoneHierarchy(scene->mRootNode, UINT_MAX, XMMatrixIdentity());
 
     // ボーン最終行列の計算
-    for (ModelBone& bone : model->bones) {
-        if (bone.index >= 0) {
-            bone.finalTransform = bone.offsetMatrix * bone.globalTransform;
-        }
+    for (int i = 0; i < model->bones.size(); i++) {
+        model->defaultPose.boneTransforms[i] = model->bones[i].offsetMatrix * model->defaultPose.globalTransforms[i];
     }
 
     // アニメーションデータの読み込み
@@ -251,8 +255,9 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         // AnimationClip構造体にデータを格納
         AnimationClip& clip = model->animationClips.emplace_back();
         clip.name = anim->mName.C_Str();
-        clip.duration = anim->mDuration;
-        clip.ticksPerSecond = anim->mTicksPerSecond;
+        float tps = static_cast<float>(anim->mTicksPerSecond != 0 ? anim->mTicksPerSecond : 25.0); // デフォルトは25ティック/秒
+        clip.duration = anim->mDuration / tps;
+        clip.ticksPerSecond = tps;
 
         for (unsigned int c = 0; c < anim->mNumChannels; c++) {
             aiNodeAnim* channel = anim->mChannels[c];
@@ -271,15 +276,15 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             // キーフレームデータのコピー
             for (unsigned int k = 0; k < channel->mNumPositionKeys; k++) {
                 aiVectorKey& posKey = channel->mPositionKeys[k];
-                channelData.positionKeyframes.emplace_back(posKey.mTime, XMFLOAT4(posKey.mValue.x, posKey.mValue.y, posKey.mValue.z, 0.0f));
+                channelData.positionKeyframes.emplace_back(posKey.mTime / tps, XMFLOAT4(posKey.mValue.x, posKey.mValue.y, posKey.mValue.z, 0.0f));
             }
             for (unsigned int k = 0; k < channel->mNumRotationKeys; k++) {
                 aiQuatKey& rotKey = channel->mRotationKeys[k];
-                channelData.rotationKeyframes.emplace_back(rotKey.mTime, XMFLOAT4(rotKey.mValue.x, rotKey.mValue.y, rotKey.mValue.z, rotKey.mValue.w));
+                channelData.rotationKeyframes.emplace_back(rotKey.mTime / tps, XMFLOAT4(rotKey.mValue.x, rotKey.mValue.y, rotKey.mValue.z, rotKey.mValue.w));
             }
             for (unsigned int k = 0; k < channel->mNumScalingKeys; k++) {
                 aiVectorKey& scaleKey = channel->mScalingKeys[k];
-                channelData.scalingKeyframes.emplace_back(scaleKey.mTime, XMFLOAT4(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z, 0.0f));
+                channelData.scalingKeyframes.emplace_back(scaleKey.mTime / tps, XMFLOAT4(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z, 0.0f));
             }
         }
     }

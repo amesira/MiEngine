@@ -129,7 +129,7 @@ void ShadowMapPass::Process(IScene* pScene)
 
         // スキニングCBバインド
         if (currentVertexType == ModelResource::VertexType::SkinnedLit) {
-            EngineServiceLocator::GetModelRepository()->BindSkinningCB(model->bones);
+            EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
         }
 
         UINT stride = 0;

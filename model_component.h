@@ -6,7 +6,6 @@
 //---------------------------------------------------
 #ifndef MODEL_COMPONENT_H
 #define MODEL_COMPONENT_H
-
 #include "component.h"
 
 #include "material_resource.h"
@@ -22,6 +21,10 @@ class ModelComponent : public Component {
 private:
     // モデルリソース
     ModelResource*  m_pModelResource = nullptr;
+
+    // スケルトンポーズ
+    SkeletonPose    m_skeletonPose;
+
     // マテリアルスロット
     std::vector<MaterialInstance> m_materialSlots;
 
@@ -30,6 +33,10 @@ public:
     void    SetModelResource(ModelResource* pModelResource) { 
         m_pModelResource = pModelResource;
 
+        // スケルトンポーズをモデルリソースのデフォルトポーズで初期化
+        m_skeletonPose = pModelResource->defaultPose;
+
+        // モデルリソースのマテリアルリストをマテリアルスロットにコピー
         m_materialSlots.clear();
         m_materialSlots.resize(pModelResource->materialResources.size());
         for (size_t i = 0; i < m_materialSlots.size(); i++) {
@@ -40,6 +47,10 @@ public:
 
     // マテリアルスロットの取得
     std::vector<MaterialInstance>& GetMaterialSlots() { return m_materialSlots; }
+
+    // スケルトンポーズの設定・取得
+    void SetSkeletonPose(const SkeletonPose& pose) { m_skeletonPose = pose; }
+    const SkeletonPose& GetSkeletonPose() const { return m_skeletonPose; }
 
 };
 

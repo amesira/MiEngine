@@ -40,10 +40,17 @@ struct ModelBone {
 	std::string name;
     unsigned int index;
 
+    // 親ボーンのインデックス。ルートボーンの場合は-1
+    unsigned int parentIndex;
+
     // ボーンのオフセット行列（モデル空間からボーン空間への変換行列）
 	XMMATRIX offsetMatrix;
-    XMMATRIX globalTransform;
-    XMMATRIX finalTransform;
+};
+
+// スケルトンポーズのデータ
+struct SkeletonPose {
+    std::vector<XMMATRIX> globalTransforms; // グローバル変換行列
+    std::vector<XMMATRIX> boneTransforms;   // 最終的なボーンの変換行列
 };
 
 // アニメーションクリップのデータ
@@ -89,6 +96,8 @@ public:
     // ボーンのリスト
     std::vector<ModelBone> bones;
     std::unordered_map<std::string, unsigned int> boneNameToIndex;
+
+    SkeletonPose defaultPose;
 
     // アニメーションクリップ
     std::vector<AnimationClip> animationClips;

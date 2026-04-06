@@ -10,6 +10,11 @@
 
 #include <unordered_map>
 #include <memory>
+#include <vector>
+#include <string>
+
+#include <DirectXMath.h>
+using namespace DirectX;
 
 #include "assimp/matrix4x4.h"
 #include "assimp/cimport.h"
@@ -41,7 +46,7 @@ public:
     ModelResource* GetModel(const std::string& filePath);
 
     // スキニングCBのバインド
-    void BindSkinningCB(const std::vector<ModelBone>& bones);
+    void BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix);
 
 private:
     // モデルの読み込み

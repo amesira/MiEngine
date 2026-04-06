@@ -194,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="shadow_map_pass.cpp" />
     <ClCompile Include="skybox_pass.cpp" />
+    <ClCompile Include="animation_processor.cpp">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -441,6 +444,12 @@
     </ClInclude>
     <ClInclude Include="shadow_map_pass.h" />
     <ClInclude Include="skybox_pass.h" />
+    <ClInclude Include="animation_processor.h">
+      <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="animation_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
