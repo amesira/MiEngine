@@ -12,7 +12,13 @@
 #include <memory>
 
 #include "assimp/matrix4x4.h"
-struct aiNode;
+#include "assimp/cimport.h"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#pragma comment (lib, "assimp-vc143-mt.lib")
+
+struct LitVertex;
+struct SkinnedLitVertex;
 
 class ModelRepository {
 private:
@@ -24,7 +30,6 @@ private:
 
     // スキニングバッファ
     ComPtr<ID3D11Buffer> m_skinningBuffer;
-
 
 public:
     // 初期化
@@ -41,8 +46,16 @@ public:
 private:
     // モデルの読み込み
     ModelResource* LoadModel(const std::string& filePath);
-    // 
+    // Assimpの行列をXMMATRIXに変換
     XMMATRIX AssimpMatToXMMatrix(const aiMatrix4x4& m);
+
+    // aiMeshから頂点バッファを作成
+    void SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh);
+    // aiMeshからスキニング頂点バッファを作成
+    void SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex);
+
+    // aiMaterialからMaterialResourceを作成
+    MaterialResource CreateMaterialResource(aiMaterial* mat);
 
     // モデルの解放
     void ReleaseModel(const std::string& filePath);

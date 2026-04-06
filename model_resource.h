@@ -46,6 +46,29 @@ struct ModelBone {
     XMMATRIX finalTransform;
 };
 
+// アニメーションクリップのデータ
+struct AnimationClip {
+    std::string name;
+
+    float duration;         // アニメーションの長さ（秒）
+    float ticksPerSecond;   // 1秒あたりのティック数
+
+    // ボーンごとのキーフレームデータ
+    struct Keyframe {
+        float time;           // キーフレームの時間（秒）
+        XMFLOAT4 keyValue;    // キーフレームの値（位置、回転、スケールなど）
+    };
+    struct AnimationChannel {
+        std::string boneName;            // 対象のボーン名
+        unsigned int boneIndex;          // 対象のボーンインデックス
+
+        std::vector<Keyframe> positionKeyframes;   // 位置のキーフレーム
+        std::vector<Keyframe> rotationKeyframes;   // 回転のキーフレーム
+        std::vector<Keyframe> scalingKeyframes;      // スケールのキーフレーム
+    };
+    std::vector<AnimationChannel> channels;
+};
+
 // モデルリソース
 class ModelResource {
 private: friend class ModelRepository;
@@ -54,20 +77,24 @@ private: friend class ModelRepository;
 public:
 	std::string name;
 
-    // メッシュのリスト
-	std::vector<ModelMesh> meshes;
-    // モデル標準となるマテリアルリソースのリスト
-    std::vector<MaterialResource*> materialResources;
-
-    // ボーンのリスト
-    std::vector<ModelBone> bones;
-    std::unordered_map<std::string, unsigned int> boneNameToIndex;
-
     // 頂点の種類
     enum class VertexType {
         Lit,
         SkinnedLit
     } vertexType = VertexType::Lit;
+
+    // メッシュのリスト
+	std::vector<ModelMesh> meshes;
+
+    // ボーンのリスト
+    std::vector<ModelBone> bones;
+    std::unordered_map<std::string, unsigned int> boneNameToIndex;
+
+    // アニメーションクリップ
+    std::vector<AnimationClip> animationClips;
+
+    // モデル標準となるマテリアルリソースのリスト
+    std::vector<MaterialResource*> materialResources;
 
 };
 #endif // MODEL_RESOURCE_H

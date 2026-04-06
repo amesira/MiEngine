@@ -9,11 +9,6 @@
 #include <memory>
 #include "mi_string.h"
 
-#include "assimp/cimport.h"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-#pragma comment (lib, "assimp-vc143-mt.lib")
-
 #include <iostream>
 #include <algorithm>
 
@@ -88,7 +83,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
 {
     const aiScene* scene = aiImportFile(
         filePath.c_str(), 
-        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
 
     // 読み込みエラーチェック
     if (scene == nullptr) return nullptr;
@@ -141,14 +136,10 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             LitVertex* vertex = new LitVertex[mesh->mNumVertices];
             model->vertexType = ModelResource::VertexType::Lit;
 
-            for (unsigned int v = 0; v < mesh->mNumVertices; v++)
-            {
-                vertex[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
-                vertex[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
-                vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
-                vertex[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-            }
+            // 頂点データを構造体に格納
+            SetLitVertexInfo(vertex, mesh);
 
+            // 頂点バッファの作成
             D3D11_BUFFER_DESC bd = {};
             bd.Usage = D3D11_USAGE_DYNAMIC;
             bd.ByteWidth = sizeof(LitVertex) * mesh->mNumVertices;
@@ -166,61 +157,10 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             SkinnedLitVertex* vertex = new SkinnedLitVertex[mesh->mNumVertices];
             model->vertexType = ModelResource::VertexType::SkinnedLit;
 
-            for (unsigned int v = 0; v < mesh->mNumVertices; v++)
-            {
-                vertex[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
-                vertex[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
-                vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
-                vertex[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+            // 頂点データを構造体に格納
+            SetSkinnedLitVertexInfo(vertex, mesh, model->boneNameToIndex);
 
-                // ボーンの影響を一時バッファへ格納
-                std::vector<std::pair<unsigned int, float>> boneWeightPairs;
-
-                for (unsigned int b = 0; b < mesh->mNumBones; b++) {
-                    for (unsigned int w = 0; w < mesh->mBones[b]->mNumWeights; w++) {
-                        unsigned int boneIndex = model->boneNameToIndex[mesh->mBones[b]->mName.C_Str()];
-
-                        if (mesh->mBones[b]->mWeights[w].mVertexId == v) {
-                            ModelBone& bone = model->bones[boneIndex];
-                            boneWeightPairs.emplace_back(
-                                bone.index, 
-                                mesh->mBones[b]->mWeights[w].mWeight);
-                        }
-                    }
-                }
-
-                // ボーンの影響を重みの大きい順にソート
-                auto weightSort = [](const std::pair<unsigned int, float>& a, const std::pair<unsigned int, float>& b) {
-                    return a.second > b.second;
-                    };
-                std::sort(boneWeightPairs.begin(), boneWeightPairs.end(), weightSort);
-
-                // 上位4つのボーンのみを使用
-                unsigned int boneIndices[4] = { 0, 0, 0, 0 };
-                float boneWeights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-
-                float totalWeight = 0.0f;
-                for (int i = 0; i < 4; i++) {
-                    if (i < (int)boneWeightPairs.size()) {
-                        totalWeight += boneWeightPairs[i].second;
-                    }
-                }
-
-                for (int i = 0; i < 4; i++) {
-                    if (i < (int)boneWeightPairs.size()) {
-                        boneIndices[i] = boneWeightPairs[i].first;
-                        boneWeights[i] = boneWeightPairs[i].second / totalWeight; // 重みを正規化
-                    }
-                    else {
-                        boneIndices[i] = 0;
-                        boneWeights[i] = 0.0f;
-                    }
-                }
-
-                vertex[v].boneIndices = XMUINT4(boneIndices[0], boneIndices[1], boneIndices[2], boneIndices[3]);
-                vertex[v].boneWeights = XMFLOAT4(boneWeights[0], boneWeights[1], boneWeights[2], boneWeights[3]);
-            }
-
+            // 頂点バッファの作成
             D3D11_BUFFER_DESC bd = {};
             bd.Usage = D3D11_USAGE_DYNAMIC;
             bd.ByteWidth = sizeof(SkinnedLitVertex) * mesh->mNumVertices;
@@ -263,43 +203,8 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
 
         // マテリアルリソースの生成
         {
-            XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
-            std::wstring albedoTexturePath;
-
-            // マテリアルからベースカラーを取得
-            {
-                aiColor4D c;
-                if (AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_BASE_COLOR, &c) ||
-                    AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &c))
-                {
-                    albedoColor = { c.r, c.g, c.b, c.a };
-                }
-            }
-
-            // マテリアルからテクスチャパスを取得
-            if (mat->GetTextureCount(aiTextureType_BASE_COLOR) > 0 ||
-                mat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-            {
-                aiString texturePath;
-                if (AI_SUCCESS == mat->GetTexture(aiTextureType_BASE_COLOR, 0, &texturePath) ||
-                    AI_SUCCESS == mat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
-                {
-                    albedoTexturePath = MiString::ToWString(texturePath.C_Str());
-                }
-            }
-
-            // 標準マテリアルを生成
-            MaterialResource material;
-            {
-                material.name = filePath + "%material%" + mat->GetName().C_Str();
-                material.renderMode = (albedoColor.w < 1.0f) ? RenderMode::Transparent : RenderMode::Opaque;
-
-                material.baseColor = albedoColor;
-
-                if (!albedoTexturePath.empty()) {
-                    material.albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(albedoTexturePath);
-                }
-            }
+            MaterialResource material = CreateMaterialResource(mat);
+            material.name = filePath + "_mat%" + mat->GetName().C_Str();
 
             // マテリアルセットアップ
             if (modelMesh.materialIndex < model->materialResources.size() && modelMesh.materialIndex >= 0) {
@@ -335,8 +240,47 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
     // ボーン最終行列の計算
     for (ModelBone& bone : model->bones) {
         if (bone.index >= 0) {
-            //bone.finalTransform = bone.offsetMatrix * bone.globalTransform;
             bone.finalTransform = bone.offsetMatrix * bone.globalTransform;
+        }
+    }
+
+    // アニメーションデータの読み込み
+    for (int a = 0; a < scene->mNumAnimations; a++) {
+        aiAnimation* anim = scene->mAnimations[a];
+
+        // AnimationClip構造体にデータを格納
+        AnimationClip& clip = model->animationClips.emplace_back();
+        clip.name = anim->mName.C_Str();
+        clip.duration = anim->mDuration;
+        clip.ticksPerSecond = anim->mTicksPerSecond;
+
+        for (unsigned int c = 0; c < anim->mNumChannels; c++) {
+            aiNodeAnim* channel = anim->mChannels[c];
+
+            // AnimationChannel構造体にデータを格納
+            AnimationClip::AnimationChannel& channelData = clip.channels.emplace_back();
+            channelData.boneName = channel->mNodeName.C_Str();
+            auto it = model->boneNameToIndex.find(channelData.boneName);
+            if (it != model->boneNameToIndex.end()) {
+                channelData.boneIndex = it->second;
+            }
+            else {
+                channelData.boneIndex = UINT_MAX;
+            }
+
+            // キーフレームデータのコピー
+            for (unsigned int k = 0; k < channel->mNumPositionKeys; k++) {
+                aiVectorKey& posKey = channel->mPositionKeys[k];
+                channelData.positionKeyframes.emplace_back(posKey.mTime, XMFLOAT4(posKey.mValue.x, posKey.mValue.y, posKey.mValue.z, 0.0f));
+            }
+            for (unsigned int k = 0; k < channel->mNumRotationKeys; k++) {
+                aiQuatKey& rotKey = channel->mRotationKeys[k];
+                channelData.rotationKeyframes.emplace_back(rotKey.mTime, XMFLOAT4(rotKey.mValue.x, rotKey.mValue.y, rotKey.mValue.z, rotKey.mValue.w));
+            }
+            for (unsigned int k = 0; k < channel->mNumScalingKeys; k++) {
+                aiVectorKey& scaleKey = channel->mScalingKeys[k];
+                channelData.scalingKeyframes.emplace_back(scaleKey.mTime, XMFLOAT4(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z, 0.0f));
+            }
         }
     }
 
@@ -352,6 +296,113 @@ XMMATRIX ModelRepository::AssimpMatToXMMatrix(const aiMatrix4x4& m)
         m.a3, m.b3, m.c3, m.d3,
         m.a4, m.b4, m.c4, m.d4);
     return xmMat;
+}
+
+// aiMeshから頂点バッファを作成
+void ModelRepository::SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh)
+{
+    for (unsigned int v = 0; v < mesh->mNumVertices; v++)
+    {
+        vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
+        vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
+        vertices[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+        vertices[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    return;
+}
+
+// aiMeshからスキニング頂点バッファを作成
+void ModelRepository::SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex)
+{
+    for (unsigned int v = 0; v < mesh->mNumVertices; v++)
+    {
+        vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
+        vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
+        vertices[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+        vertices[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+        // ボーンの影響を一時バッファへ格納
+        std::array<unsigned int, 4> boneIndices = { 0, 0, 0, 0 };
+        std::array<float, 4> boneWeights = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+        for (unsigned int b = 0; b < mesh->mNumBones; b++) {
+            for (unsigned int w = 0; w < mesh->mBones[b]->mNumWeights; w++) {
+                if (mesh->mBones[b]->mWeights[w].mVertexId != v) continue;
+
+                // インデックスと重みを取得
+                unsigned int boneIndex = boneNameToIndex.at(mesh->mBones[b]->mName.C_Str());
+                float weight = mesh->mBones[b]->mWeights[w].mWeight;
+                
+                // 自分より小さい重みを持つスロットを探し、そこにボーンインデックスと重みを挿入
+                int arrayIndex = std::find_if(boneWeights.begin(), boneWeights.end(), [weight](float w) { return w < weight; }) - boneWeights.begin();
+                if (arrayIndex < 4) {
+                    boneIndices[arrayIndex] = boneIndex;
+                    boneWeights[arrayIndex] = weight;
+                }
+                
+            }
+        }
+
+        // 重みの正規化
+        float totalWeight = 0.0f;
+        for (int i = 0; i < 4; i++) {
+            totalWeight += boneWeights[i];
+        }
+
+        for (int i = 0; i < 4; i++) {
+            boneIndices[i] = boneIndices[i];
+            boneWeights[i] = boneWeights[i] / totalWeight;
+
+        }
+
+        // スキニング情報を頂点構造体に格納
+        vertices[v].boneIndices = XMUINT4(boneIndices[0], boneIndices[1], boneIndices[2], boneIndices[3]);
+        vertices[v].boneWeights = XMFLOAT4(boneWeights[0], boneWeights[1], boneWeights[2], boneWeights[3]);
+    }
+}
+
+// aiMaterialからMaterialResourceを作成
+MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
+{
+    XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
+    std::wstring albedoTexturePath;
+
+    // マテリアルからベースカラーを取得
+    {
+        aiColor4D c;
+        if (AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_BASE_COLOR, &c) ||
+            AI_SUCCESS == aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &c))
+        {
+            albedoColor = { c.r, c.g, c.b, c.a };
+        }
+    }
+
+    // マテリアルからテクスチャパスを取得
+    if (mat->GetTextureCount(aiTextureType_BASE_COLOR) > 0 ||
+        mat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+    {
+        aiString texturePath;
+        if (AI_SUCCESS == mat->GetTexture(aiTextureType_BASE_COLOR, 0, &texturePath) ||
+            AI_SUCCESS == mat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
+        {
+            albedoTexturePath = MiString::ToWString(texturePath.C_Str());
+        }
+    }
+
+    // 標準マテリアルを生成
+    MaterialResource material;
+    {
+        material.renderMode = (albedoColor.w < 1.0f) ? RenderMode::Transparent : RenderMode::Opaque;
+
+        material.baseColor = albedoColor;
+
+        if (!albedoTexturePath.empty()) {
+            material.albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(albedoTexturePath);
+        }
+    }
+
+    return material;
 }
 
 // モデルの解放
