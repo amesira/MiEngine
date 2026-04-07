@@ -14,20 +14,32 @@ void SceneViewWindow::Draw()
 {
     ImGui::SetNextWindowPos({ 0.0f, m_editorContext->toolbarHeight });
     float width = m_editorContext->displayX - m_editorContext->hierarchyWidth - m_editorContext->inspectorWidth;
-    float height = width * 9.0f / 16.0f; // 16:9のアスペクト比を維持
-    ImGui::SetNextWindowSize({width, height });
+    float height = width * 9.0f / 16.0f;
+    ImGui::SetNextWindowSize({ width, height });
 
-    ImGui::Begin("Scene View", nullptr,
+    ImGui::Begin("ViewPort", nullptr,
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse);
+        ImGuiWindowFlags_NoCollapse | 
+        ImGuiWindowFlags_NoTitleBar);
 
-    // ここにシーンビューの内容を描画するコードを追加
-    const RenderView* renderView = m_editorContext->sceneRenderView;
-    ImTextureID sceneTextureID = (ImTextureID)(renderView->colorBufferSRV.Get());
+    if (ImGui::BeginTabBar("ViewTabs")) {
+        ImVec2 avail = ImGui::GetContentRegionAvail();
 
-    ImVec2 size = ImGui::GetContentRegionAvail(); // ウィンドウの利用可能なサイズを取得
-    ImGui::Image(sceneTextureID, size); // ダミーの画像表示（実際にはシーンのレンダリング結果をテクスチャとして表示する���
+        if (ImGui::BeginTabItem("SceneView")) {
+            const RenderView* renderView = m_editorContext->sceneRenderView;
+            ImGui::Image((ImTextureID)(renderView->colorBufferSRV.Get()), avail);
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("GameView")) {
+            const RenderView* renderView = m_editorContext->sceneRenderView;
+            ImGui::Image((ImTextureID)(renderView->colorBufferSRV.Get()), avail);
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
 
     ImGui::End();
 }
