@@ -29,6 +29,7 @@ float2 CalcShadowUV(float4 lightWorldPos)
     // ライト空間座標をNDC空間に変換
     float2 shadowUV = lightWorldPos.xy / lightWorldPos.w * 0.5f + 0.5f;
     shadowUV.y = 1.0f - shadowUV.y;
+    shadowUV = clamp(shadowUV, 0.0f, 1.0f);
     
     return shadowUV;
 }
