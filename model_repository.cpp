@@ -62,6 +62,69 @@ ModelResource* ModelRepository::GetModel(const std::string& filePath)
     return LoadModel(filePath);
 }
 
+// アニメーションの読み込み
+int ModelRepository::LoadAnimation(ModelResource* model, const std::string& filePath)
+{
+    const aiScene* scene = aiImportFile(
+        filePath.c_str(),
+        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
+
+    // 読み込みエラーチェック
+    if (scene == nullptr) return -1;
+
+    // アニメーションデータの読み込み
+    if (scene->mNumAnimations == 0) {
+        aiReleaseImport(scene);
+        return -1;
+    }
+    aiAnimation* anim = scene->mAnimations[0];
+
+    // AnimationClip構造体にデータを格納
+    AnimationClip& clip = model->animationClips.emplace_back();
+    clip.name = anim->mName.C_Str();
+    clip.filePath = filePath;
+    float tps = static_cast<float>(anim->mTicksPerSecond != 0 ? anim->mTicksPerSecond : 25.0); // デフォルトは25ティック/秒
+    clip.duration = anim->mDuration / tps;
+    clip.ticksPerSecond = tps;
+
+    for (unsigned int c = 0; c < anim->mNumChannels; c++) {
+        aiNodeAnim* channel = anim->mChannels[c];
+
+        // AnimationChannel構造体にデータを格納
+        AnimationClip::AnimationChannel& channelData = clip.channels.emplace_back();
+        channelData.boneName = channel->mNodeName.C_Str();
+        auto it = model->boneNameToIndex.find(channelData.boneName);
+        if (it != model->boneNameToIndex.end()) {
+            channelData.boneIndex = it->second;
+        }
+        else {
+            channelData.boneIndex = UINT_MAX;
+        }
+
+        // キーフレームデータのコピー
+        for (unsigned int k = 0; k < channel->mNumPositionKeys; k++) {
+            aiVectorKey& posKey = channel->mPositionKeys[k];
+            channelData.positionKeyframes.emplace_back(posKey.mTime / tps, XMFLOAT4(posKey.mValue.x, posKey.mValue.y, posKey.mValue.z, 0.0f));
+        }
+        for (unsigned int k = 0; k < channel->mNumRotationKeys; k++) {
+            aiQuatKey& rotKey = channel->mRotationKeys[k];
+            channelData.rotationKeyframes.emplace_back(rotKey.mTime / tps, XMFLOAT4(rotKey.mValue.x, rotKey.mValue.y, rotKey.mValue.z, rotKey.mValue.w));
+        }
+        for (unsigned int k = 0; k < channel->mNumScalingKeys; k++) {
+            aiVectorKey& scaleKey = channel->mScalingKeys[k];
+            channelData.scalingKeyframes.emplace_back(scaleKey.mTime / tps, XMFLOAT4(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z, 0.0f));
+        }
+
+        // キーフレームで昇順ソート
+        std::sort(channelData.positionKeyframes.begin(), channelData.positionKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
+        std::sort(channelData.rotationKeyframes.begin(), channelData.rotationKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
+        std::sort(channelData.scalingKeyframes.begin(), channelData.scalingKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
+    }
+
+    aiReleaseImport(scene);
+    return static_cast<int>(model->animationClips.size() - 1);
+}
+
 // スキニングCBのバインド
 void ModelRepository::BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix)
 {
@@ -93,7 +156,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
     ModelResource* model = m_modelCache[filePath].get();
 
     // モデルリソースにシーンデータを格納
-    model->name = filePath;
+    model->filePath = filePath;
     model->AiScene = scene;
     model->meshes.reserve(scene->mNumMeshes);
     model->materialResources.resize(scene->mNumMaterials);
@@ -276,51 +339,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         model->defaultPose.boneTransforms[i] = model->bones[i].offsetMatrix * model->defaultPose.globalTransforms[i];
     }
 
-    // アニメーションデータの読み込み
-    for (int a = 0; a < scene->mNumAnimations; a++) {
-        aiAnimation* anim = scene->mAnimations[a];
-
-        // AnimationClip構造体にデータを格納
-        AnimationClip& clip = model->animationClips.emplace_back();
-        clip.name = anim->mName.C_Str();
-        float tps = static_cast<float>(anim->mTicksPerSecond != 0 ? anim->mTicksPerSecond : 25.0); // デフォルトは25ティック/秒
-        clip.duration = anim->mDuration / tps;
-        clip.ticksPerSecond = tps;
-
-        for (unsigned int c = 0; c < anim->mNumChannels; c++) {
-            aiNodeAnim* channel = anim->mChannels[c];
-
-            // AnimationChannel構造体にデータを格納
-            AnimationClip::AnimationChannel& channelData = clip.channels.emplace_back();
-            channelData.boneName = channel->mNodeName.C_Str();
-            auto it = model->boneNameToIndex.find(channelData.boneName);
-            if (it != model->boneNameToIndex.end()) {
-                channelData.boneIndex = it->second;
-            }
-            else {
-                channelData.boneIndex = UINT_MAX;
-            }
-
-            // キーフレームデータのコピー
-            for (unsigned int k = 0; k < channel->mNumPositionKeys; k++) {
-                aiVectorKey& posKey = channel->mPositionKeys[k];
-                channelData.positionKeyframes.emplace_back(posKey.mTime / tps, XMFLOAT4(posKey.mValue.x, posKey.mValue.y, posKey.mValue.z, 0.0f));
-            }
-            for (unsigned int k = 0; k < channel->mNumRotationKeys; k++) {
-                aiQuatKey& rotKey = channel->mRotationKeys[k];
-                channelData.rotationKeyframes.emplace_back(rotKey.mTime / tps, XMFLOAT4(rotKey.mValue.x, rotKey.mValue.y, rotKey.mValue.z, rotKey.mValue.w));
-            }
-            for (unsigned int k = 0; k < channel->mNumScalingKeys; k++) {
-                aiVectorKey& scaleKey = channel->mScalingKeys[k];
-                channelData.scalingKeyframes.emplace_back(scaleKey.mTime / tps, XMFLOAT4(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z, 0.0f));
-            }
-
-            // キーフレームで昇順ソート
-            std::sort(channelData.positionKeyframes.begin(), channelData.positionKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
-            std::sort(channelData.rotationKeyframes.begin(), channelData.rotationKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
-            std::sort(channelData.scalingKeyframes.begin(), channelData.scalingKeyframes.end(), [](const auto& a, const auto& b) { return a.time < b.time; });
-        }
-    }
+    
 
     return model;
 }

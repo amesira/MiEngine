@@ -314,7 +314,6 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
         ImGui::PushID(sphereCollider);
         ImGui::Separator();
 
-        // enable
         bool enable = sphereCollider->GetEnable();
         if (!enable) {
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
@@ -390,9 +389,20 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
     if (model) {
         ImGui::PushID(model);
         ImGui::Separator();
+
+        bool enable = model->GetEnable();
+        if (!enable) {
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
+        }
+        bool prevEnable = enable;
+
         if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen)) {
+            if (ImGui::Checkbox("Enable", &enable)) {
+                model->SetEnable(enable);
+            }
+
             // モデルリソースの名前を表示
-            std::string modelName = model->GetModelResource()->name;
+            std::string modelName = model->GetModelResource()->filePath;
             ImGui::Text("Model Resource:");
             ImGui::Text("  %s", modelName.c_str());
             
@@ -461,6 +471,11 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                 ImGui::PopID();
             }
         }
+
+        if (!prevEnable) {
+            ImGui::PopStyleVar();
+        }
+
         ImGui::PopID();
     }
 

@@ -138,6 +138,7 @@
     <ClCompile Include="animation_processor.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="behavior_processor.cpp" />
+    <ClCompile Include="camera_control_behavior.cpp" />
     <ClCompile Include="camera_processor.cpp" />
     <ClCompile Include="collision_pass.cpp" />
     <ClCompile Include="constraint_pass.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="behavior_component.h" />
     <ClInclude Include="behavior_processor.h" />
     <ClInclude Include="camera_component.h" />
+    <ClInclude Include="camera_control_behavior.h" />
     <ClInclude Include="camera_processor.h" />
     <ClInclude Include="collider_component.h" />
     <ClInclude Include="collision_pass.h" />

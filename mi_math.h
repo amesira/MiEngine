@@ -187,7 +187,6 @@ namespace MiMath
 
         return rv;
     }
-
     inline XMFLOAT3 RotateVector(XMVECTOR quaternion, XMFLOAT3 v) {
         XMVECTOR q = XMQuaternionNormalize(quaternion);
 
@@ -200,6 +199,16 @@ namespace MiMath
         XMFLOAT3 rv;
         XMStoreFloat3(&rv, out);
         return rv;
+    }
+    inline XMFLOAT3 RotateVector(XMFLOAT4 quaternion, XMFLOAT3 v) {
+        return RotateVector(XMLoadFloat4(&quaternion), v);
+    }
+
+    // Pitch, Yaw, Rollからクォータニオンを作成する
+    inline XMFLOAT4 QuaternionFromEuler(XMFLOAT3 euler) {
+        XMFLOAT4 q;
+        XMStoreFloat4(&q, XMQuaternionRotationRollPitchYaw(euler.x, euler.y, euler.z));
+        return q;
     }
 
 }

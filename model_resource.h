@@ -65,6 +65,7 @@ struct SkeletonPose {
 // アニメーションクリップのデータ
 struct AnimationClip {
     std::string name;
+    std::string filePath;
 
     float duration;         // アニメーションの長さ（秒）
     float ticksPerSecond;   // 1秒あたりのティック数
@@ -91,7 +92,7 @@ private: friend class ModelRepository;
     const aiScene* AiScene = nullptr;
 
 public:
-	std::string name;
+    std::string filePath;
 
     // 頂点の種類
     enum class VertexType {

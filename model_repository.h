@@ -44,6 +44,8 @@ public:
 
     // モデルの取得。キャッシュに無い場合は読み込む。
     ModelResource* GetModel(const std::string& filePath);
+    // アニメーションの読み込み
+    int LoadAnimation(ModelResource* model, const std::string& filePath);
 
     // スキニングCBのバインド
     void BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix);

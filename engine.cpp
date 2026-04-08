@@ -34,6 +34,7 @@ bool MiEngine::Initialize(HWND hWnd)
     ID3D11DeviceContext* pContext = Direct3D_GetDeviceContext();
 
     m_shaderManager.Initialize(pDevice, pContext);
+
     InitAudio();
     FPS_Initialize(hWnd);
 
@@ -121,6 +122,7 @@ void MiEngine::Update()
 // MiEngineの描画処理
 void MiEngine::Render()
 {
+    // GameWorldの描画処理
     m_gameWorld.Render();
 
     Direct3D_Clear();

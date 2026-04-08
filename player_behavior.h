@@ -27,24 +27,34 @@ private:
     RigidbodyComponent* m_rigidbody = nullptr;
     ModelComponent* m_model = nullptr;
 
-    // プレイヤーを構成する各種ビヘイビア
     PlayerMoveBehavior*     m_moveBehavior = nullptr;
     PlayerAttackBehavior*   m_attackBehavior = nullptr;
 
-    XMFLOAT3 m_moveDirection = { 0.0f,0.0f,0.0f };
+    // プレイヤー入力構造体
+    struct PlayerInput {
+        float moveX = 0.0f;         // 水平方向の移動入力（-1.0f～1.0f）
+        float moveZ = 0.0f;         // 前後方向の移動入力（-1.0f～1.0f）
+        bool triggerJump = false;   // ジャンプ入力
+    };
+    PlayerInput m_input;
 
-    float m_moveSpeed = 2.0f;
+    // プレイヤー移動パラメータ
+    float   m_moveSpeed = 8.0f;
+    float   m_jumpForce = 10.0f;
+
+    float   m_currentAngleY = 0.0f; // プレイヤーの現在のY軸回転角度
 
     MaterialResource* m_myMaterial = nullptr;
 
 public:
-    PlayerBehavior() {}
-    ~PlayerBehavior() {}
-
+    ~PlayerBehavior() = default;
     void    Start() override;
     void    Update() override;
-
     void    DrawComponentInspector() override;
+
+private:
+    // プレイヤーの入力処理
+    PlayerInput UpdateInput(const PlayerInput& currentInput);
 
 };
 

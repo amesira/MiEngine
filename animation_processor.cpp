@@ -28,7 +28,7 @@ void AnimationProcessor::Process(IScene* pScene)
     if (!modelPool)return;
 
     static float timer = 0.0f;
-    float deltaTime = FPS_GetDeltaTime() * 3.0f;
+    float deltaTime = FPS_GetDeltaTime() * 1.5f;
     timer += deltaTime;
 
     // アニメーションの更新

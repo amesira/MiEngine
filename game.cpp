@@ -8,15 +8,18 @@
 
 #include "factory.h"
 #include "keyboard.h"
+
+#include "mi_fps.h"
+#include "scene_manager.h"
+
 #include "text_component.h"
 #include "image_component.h"
 #include "camera_component.h"
 #include "rigidbody_component.h"
-
 #include "rect_transform_component.h"
+#include "model_component.h"
 
-#include "mi_fps.h"
-#include "scene_manager.h"
+#include "camera_control_behavior.h"
 
 // ゲームシーン初期化処理
 void GameScene::Initialize()
@@ -26,9 +29,11 @@ void GameScene::Initialize()
     // camera
     GameObject* camera = this->CreateGameObject();
     Factory::CreateCamera(camera, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
+    camera->AddComponent<CameraControlBehavior>();
 
     GameObject* cube = this->CreateGameObject();
     Factory::CreateBox(cube, { 0.0f,0.0f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
+    cube->GetComponent<ModelComponent>()->SetEnable(false);
 
     cube = this->CreateGameObject();
     Factory::CreateBox(cube, { -3.0f,1.0f,10.0f }, { 0.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f }, { 0.7f, 0.5f, 0.5f, 1.0f });
