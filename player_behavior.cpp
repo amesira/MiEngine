@@ -26,7 +26,6 @@
 #include "player_move_behavior.h"
 #include "player_attack_behavior.h"
 
-
 void PlayerBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
@@ -89,7 +88,7 @@ void PlayerBehavior::Update()
             }
         }
 
-        m_transform->SetEulerRotation({ 0.0f, newAngleY, 0.0f });
+        m_transform->SetEulerAngle({ 0.0f, newAngleY, 0.0f });
 
         m_currentAngleY = newAngleY;
 

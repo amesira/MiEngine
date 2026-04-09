@@ -287,9 +287,7 @@ CollisionPass::Bounds CollisionPass::ConvertToBounds(
 {
     Bounds bounds = {};
 
-    using namespace DirectX;
-
-    XMMATRIX R = XMMatrixRotationQuaternion(t->GetRotation());
+    XMMATRIX R = XMMatrixRotationQuaternion(t->GetRotationVector());
 
     // half extents (ローカル半サイズ)
     float ex = c->GetScale().x * 0.5f;
@@ -298,9 +296,7 @@ CollisionPass::Bounds CollisionPass::ConvertToBounds(
 
     // ワールド座標系での中心座標を計算
     XMFLOAT3 pos = MiMath::RotateVector(t->GetRotation(), c->GetCenter());
-    pos.x += t->GetPosition().x;
-    pos.y += t->GetPosition().y;
-    pos.z += t->GetPosition().z;
+    pos = MiMath::Add(pos, t->GetPosition());
 
     // abs(R) * e
     XMFLOAT3 aabbExtents = {
@@ -517,10 +513,12 @@ void CollisionPass::CheckOBBSphere(
     // BoxColliderから見たSphereColliderのローカル座標を計算
     // ・BoxColliderをAABBとして扱うため
     XMFLOAT3 localSpherePos = MiMath::RotateVector(
-        {
-            // 回転の逆行列（共役クォータニオン）を使って逆回転
-            XMQuaternionConjugate(tA->GetRotation())
-        },
+        XMFLOAT4(
+            -tA->GetRotation().x, 
+            -tA->GetRotation().y, 
+            -tA->GetRotation().z, 
+            tA->GetRotation().w
+        ),
         {
             spherePos.x - boxPos.x,
             spherePos.y - boxPos.y,
@@ -723,7 +721,7 @@ void CollisionPass::DrawDebug_ColliderLine(TransformComponent* transform, Sphere
         t->GetPosition().y + c->GetCenter().y,
         t->GetPosition().z + c->GetCenter().z
     };
-    const XMFLOAT3 rotation = t->GetEulerRotation();
+    const XMFLOAT3 rotation = t->GetEulerAngle();
 
     // 円の描画
     for (int i = 0; i < circleSegment; i++) {

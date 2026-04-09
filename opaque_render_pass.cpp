@@ -85,8 +85,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
                 t->GetScaling().x,
                 t->GetScaling().y,
                 t->GetScaling().z);
-            XMMATRIX rotation = XMMatrixRotationQuaternion(
-                t->GetRotation());
+            XMMATRIX rotation = XMMatrixRotationQuaternion(t->GetRotationVector());
             XMMATRIX translation = XMMatrixTranslation(
                 t->GetPosition().x,
                 t->GetPosition().y,

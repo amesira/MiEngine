@@ -96,7 +96,7 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
 
     // component設定
     transform->SetPosition(position);
-    transform->SetEulerRotation(rotation);
+    transform->SetEulerAngle(rotation);
     transform->SetScaling(scaling);
     collider->SetScale({
         scaling.x * 2.0f,

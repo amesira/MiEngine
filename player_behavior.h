@@ -41,8 +41,8 @@ private:
     PlayerInput m_input;
 
     // プレイヤー移動パラメータ
-    float   m_moveSpeed = 8.0f;
-    float   m_jumpForce = 17.0f;
+    float   m_moveSpeed = 17.0f;
+    float   m_jumpForce = 10.0f;
 
     float   m_currentAngleY = 0.0f; // プレイヤーの現在のY軸回転角度
 
