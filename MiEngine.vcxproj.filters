@@ -197,6 +197,7 @@
     <ClCompile Include="animation_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
+    <ClCompile Include="camera_control_behavior.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -450,6 +451,7 @@
     <ClInclude Include="animation_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="camera_control_behavior.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

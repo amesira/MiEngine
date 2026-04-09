@@ -19,6 +19,7 @@
 #include "slider_component.h"
 #include "joint_component.h"
 #include "joint_group_component.h"
+#include "animation_component.h"
 
 // behavior
 #include "player_behavior.h"
@@ -122,6 +123,7 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
     BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
     ModelComponent* modelComp = player->AddComponent<ModelComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
+    AnimationComponent* animation = player->AddComponent<AnimationComponent>();
 
     // component設定
     transform->SetPosition(position);
@@ -145,7 +147,6 @@ void Factory::CreatePlayer(GameObject* player, DirectX::XMFLOAT3 position)
         customMaterial.name = "PlayerMaterial";
         materialSlots[0].materialResource = EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(customMaterial);
     }
-
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
 }

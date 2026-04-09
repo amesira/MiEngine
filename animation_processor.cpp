@@ -11,6 +11,7 @@
 #include "mi_fps.h"
 #include "mi_math.h"
 
+#include "animation_component.h"
 #include "model_component.h"
 
 void AnimationProcessor::Initialize() 
@@ -24,35 +25,57 @@ void AnimationProcessor::Finalize()
 void AnimationProcessor::Process(IScene* pScene) 
 {
     // コンポーネントプール取得
+    auto* animPool = pScene->GetComponentPool<AnimationComponent>();
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
-    if (!modelPool)return;
+    if (!animPool || !modelPool)return;
 
-    static float timer = 0.0f;
-    float deltaTime = FPS_GetDeltaTime() * 1.5f;
-    timer += deltaTime;
+    float deltaTime = FPS_GetDeltaTime();
 
     // アニメーションの更新
-    auto& modelComponents = modelPool->GetList();
-    for (auto& modelComp : modelComponents) {
-        if (!modelComp.GetEnable()) continue;
+    auto& animationComponents = animPool->GetList();
+    for (auto& animComp : animationComponents) {
+        if (!animComp.GetEnable()) continue;
+        ModelComponent* modelComp = modelPool->GetByGameObjectID(animComp.GetOwner()->GetID());
+        if (!modelComp) continue;
+        if (!modelComp->GetEnable()) continue;
 
-        // モデルリソースのアニメーションを再生
-        ModelResource* modelRes = modelComp.GetModelResource();
+        // モデルリソースを取得
+        ModelResource* modelRes = modelComp->GetModelResource();
         if (!modelRes) continue;
+        if (modelRes->animationClips.empty()) continue;
 
-        // ここではモデルリソースの最初のアニメーションクリップを再生する例
-        AnimationClip* clip = modelRes->animationClips.empty() ? nullptr : &modelRes->animationClips[0];
-        if (!clip) continue;
+        // 現在のアニメーションクリップを取得
+        AnimationState& animState = animComp.GetAnimationState();
+        if (animState.clipName == AnimationComponent::CLIP_NONE) continue;
 
-        SkeletonPose pose = modelComp.GetSkeletonPose();
+        int clipIndex = animState.clipIndex;
+        if (clipIndex < 0 || clipIndex >= modelRes->animationClips.size()) {
+            auto it = std::find_if(modelRes->animationClips.begin(), modelRes->animationClips.end(),
+                [&animState](const AnimationClip& clip) {
+                    return clip.name == animState.clipName;
+                });
+            if (it != modelRes->animationClips.end()) {
+                clipIndex = static_cast<int>(std::distance(modelRes->animationClips.begin(), it));
+                animState.clipIndex = clipIndex;
+            }
+            else {
+                animState.clipName = AnimationComponent::CLIP_NONE;
+                continue; // クリップが見つからない場合はスキップ
+            }
+        }
 
-        // ここでは単純に時間経過でアニメーションをループ再生する例
-        float animTime = fmod(timer, clip->duration);
+        AnimationClip* clip = &modelRes->animationClips[clipIndex];
+        SkeletonPose pose = modelComp->GetSkeletonPose();
+
+        // アニメーションタイマーを更新
+        animState.timer += deltaTime * animState.speed;
+        float animTime = fmod(animState.timer, clip->duration);
+
         for (auto& channel : clip->channels) {
 
             // ボーンのインデックスを取得
             unsigned int boneIndex = channel.boneIndex;
-            if (boneIndex >= modelComp.GetSkeletonPose().boneTransforms.size()) continue;
+            if (boneIndex >= pose.boneTransforms.size()) continue;
 
             // 位置、回転、スケールのキーフレームを線形補間して計算
             XMFLOAT4 position = pose.defaultPositions[boneIndex];
@@ -85,7 +108,7 @@ void AnimationProcessor::Process(IScene* pScene)
         }
 
         // ルートボーンから順にグローバル変換行列を計算
-        std::function<void(unsigned int, const XMMATRIX&)> calculateGlobalTransform = 
+        std::function<void(unsigned int, const XMMATRIX&)> calculateGlobalTransform =
             [&](unsigned int index, const XMMATRIX& parentTransform) {
 
             XMMATRIX localTransform = pose.localTransforms[index];
@@ -98,7 +121,7 @@ void AnimationProcessor::Process(IScene* pScene)
             for (unsigned int i : modelRes->bones[index].childIndices) {
                 calculateGlobalTransform(i, globalTransform);
             }
-        };
+            };
         calculateGlobalTransform(modelRes->rootBoneIndex, modelRes->rootParentCorrection);
 
         // 最終的なボーン変換行列の計算（グローバル変換行列とオフセット行列を掛け合わせる）
@@ -106,7 +129,7 @@ void AnimationProcessor::Process(IScene* pScene)
             pose.boneTransforms[i] = modelRes->bones[i].offsetMatrix * pose.globalTransforms[i];
         }
 
-        modelComp.SetSkeletonPose(pose);
+        modelComp->SetSkeletonPose(pose);
     }
 
 

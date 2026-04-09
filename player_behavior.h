@@ -15,6 +15,7 @@ using namespace DirectX;
 class TransformComponent;
 class RigidbodyComponent;
 class ModelComponent;
+class AnimationComponent;
 
 class MaterialResource;
 
@@ -26,6 +27,7 @@ private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
     ModelComponent* m_model = nullptr;
+    AnimationComponent* m_animation = nullptr;
 
     PlayerMoveBehavior*     m_moveBehavior = nullptr;
     PlayerAttackBehavior*   m_attackBehavior = nullptr;
@@ -40,7 +42,7 @@ private:
 
     // プレイヤー移動パラメータ
     float   m_moveSpeed = 8.0f;
-    float   m_jumpForce = 10.0f;
+    float   m_jumpForce = 17.0f;
 
     float   m_currentAngleY = 0.0f; // プレイヤーの現在のY軸回転角度
 

@@ -20,6 +20,7 @@
 #include "transform_component.h"
 #include "rigidbody_component.h"
 #include "model_component.h"
+#include "animation_component.h"
 
 // プレイヤーを構成する各種ビヘイビアのヘッダ
 #include "player_move_behavior.h"
@@ -34,6 +35,8 @@ void PlayerBehavior::Start()
     m_transform = owner->GetComponent<TransformComponent>();
     m_rigidbody = owner->GetComponent<RigidbodyComponent>();
     m_model = owner->GetComponent<ModelComponent>();
+    m_animation = owner->GetComponent<AnimationComponent>();
+
     m_myMaterial = m_model->GetMaterialSlots()[0].materialResource;
 
     // プレイヤーを構成する各種ビヘイビアの追加
@@ -41,6 +44,7 @@ void PlayerBehavior::Start()
     m_attackBehavior = owner->AddComponent<PlayerAttackBehavior>();
 
     m_rigidbody->SetMass(3.0f);
+    m_rigidbody->SetFriction({ 0.8f, 1.0f, 0.8f });
 }
 
 void PlayerBehavior::Update()
@@ -71,9 +75,8 @@ void PlayerBehavior::Update()
         }
     }
 
-
     // 速度方向に応じてプレイヤーの向きを変える
-    if (velocity.x != 0.0f || velocity.z != 0.0f) {
+    if (MiMath::Length(XMFLOAT3(velocity.x, 0.0f, velocity.z)) > 0.2f) {
         float angle = atan2f(velocity.x, velocity.z) + XM_PI;
         float newAngleY = MiMath::Lerp(m_currentAngleY, angle, std::clamp(deltaTime * 10.0f, 0.0f, 1.0f));
         if (std::abs(newAngleY - m_currentAngleY) > XM_PI) {
@@ -89,6 +92,11 @@ void PlayerBehavior::Update()
         m_transform->SetEulerRotation({ 0.0f, newAngleY, 0.0f });
 
         m_currentAngleY = newAngleY;
+
+        m_animation->SetAnimationState(0, 1.5f);
+    }
+    else {
+        m_animation->SetAnimationState(1, 1.0f);
     }
 
     // 適用処理

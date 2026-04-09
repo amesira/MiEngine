@@ -66,6 +66,7 @@ struct SkeletonPose {
 struct AnimationClip {
     std::string name;
     std::string filePath;
+    unsigned int index;
 
     float duration;         // アニメーションの長さ（秒）
     float ticksPerSecond;   // 1秒あたりのティック数

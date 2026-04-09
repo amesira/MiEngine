@@ -80,9 +80,10 @@ int ModelRepository::LoadAnimation(ModelResource* model, const std::string& file
     aiAnimation* anim = scene->mAnimations[0];
 
     // AnimationClip構造体にデータを格納
-    AnimationClip& clip = model->animationClips.emplace_back();
+    AnimationClip clip;
     clip.name = anim->mName.C_Str();
     clip.filePath = filePath;
+    clip.index = static_cast<unsigned int>(model->animationClips.size());
     float tps = static_cast<float>(anim->mTicksPerSecond != 0 ? anim->mTicksPerSecond : 25.0); // デフォルトは25ティック/秒
     clip.duration = anim->mDuration / tps;
     clip.ticksPerSecond = tps;
@@ -122,7 +123,9 @@ int ModelRepository::LoadAnimation(ModelResource* model, const std::string& file
     }
 
     aiReleaseImport(scene);
-    return static_cast<int>(model->animationClips.size() - 1);
+
+    model->animationClips.emplace_back(clip);
+    return clip.index;
 }
 
 // スキニングCBのバインド
