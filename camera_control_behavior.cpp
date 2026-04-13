@@ -11,6 +11,8 @@
 #include "mi_math.h"
 #include "mi_fps.h"
 
+#include "imgui_window_interface.h"
+
 #include "transform_component.h"
 #include "camera_component.h"
 #include "rigidbody_component.h"
@@ -72,7 +74,10 @@ void CameraControlBehavior::Update()
 // カメラ制御のインスペクタ表示処理
 void CameraControlBehavior::DrawComponentInspector()
 {
-    
+    float followDistance = m_followDistance;
+    if (ImGui::SliderFloat("Follow Distance", &followDistance, 5.0f, 30.0f)) {
+        m_followDistance = followDistance;
+    }
 }
 
 // スムーズダンパーの実装（CameraSmoothState版）
