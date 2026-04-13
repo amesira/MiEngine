@@ -92,10 +92,7 @@ private:
     // 当たり判定後の処理
 	//----------------------------------------------------
     // Correctionの作成
-    void    CreateCorrection(
-        XMFLOAT3& outCorrection, const XMFLOAT3& mtv, 
-        ColliderComponent* collider, ColliderComponent* otherCollider,
-        RigidbodyComponent* rb, RigidbodyComponent* otherRb);
+    float   CreateCorrectionRate(ColliderComponent* col, RigidbodyComponent* rb);
 
     //----------------------------------------------------
     // デバッグ用コライダー描画

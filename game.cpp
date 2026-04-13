@@ -32,17 +32,19 @@ void GameScene::Initialize()
     camera->AddComponent<CameraControlBehavior>();
 
     GameObject* cube = this->CreateGameObject();
-    Factory::CreateBox(cube, { 0.0f,0.0f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
+    Factory::CreateBox(cube, { 0.0f,-0.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
     cube->GetComponent<ModelComponent>()->SetEnable(false);
 
     cube = this->CreateGameObject();
     Factory::CreateBox(cube, { -3.0f,1.0f,10.0f }, { 0.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f }, { 0.7f, 0.5f, 0.5f, 1.0f });
     cube->AddComponent<RigidbodyComponent>();
     
-    cube = this->CreateGameObject();
-    Factory::CreateBox(cube, { 3.0f,2.0f,10.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.5f, 1.0f }, { 0.5f, 0.7f, 0.5f, 1.0f });
-    cube->AddComponent<BoxColliderComponent>()->SetScale({ 1.0f, 1.0f, 1.0f });
-    cube->AddComponent<RigidbodyComponent>();
+    for (int i = 0; i < 5; i++) {
+        cube = this->CreateGameObject();
+        Factory::CreateBox(cube, { 5.0f,2.0f + i * 3.0f,10.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f + i * 0.2f, 0.2f, 0.2f, 1.0f });
+        cube->AddComponent<RigidbodyComponent>();
+    }
+    
 
     // light
     GameObject* light = this->CreateGameObject();
@@ -73,9 +75,12 @@ void GameScene::Initialize()
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
 
     // field
-    GameObject* field = this->CreateGameObject();
-    Factory::CreateModel(field, "asset\\Model\\field.fbx", { 0.0f, -1.0f, 10.0f }, { 40.0f, 40.0f, 40.0f });
-
+    {
+        GameObject* field = this->CreateGameObject();
+        Factory::CreateModel(field, "asset\\Model\\field.fbx", { 0.0f, -1.0f, 10.0f }, { 40.0f, 40.0f, 40.0f });
+        field->GetComponent<ModelComponent>()->GetMaterialSlots()[0].isOverrideBaseColor = true;
+        field->GetComponent<ModelComponent>()->GetMaterialSlots()[0].overrideBaseColor = { 0.5f, 0.5f, 0.5f, 1.0f };
+    }
 }
 
 // ゲームシーン終了処理

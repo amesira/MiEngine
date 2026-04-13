@@ -116,7 +116,7 @@ void ResolvePass::ApplyResolve(
             if (data.m_correction.x > max.x)max.x = data.m_correction.x;
             if (data.m_correction.y > max.y)max.y = data.m_correction.y;
             if (data.m_correction.z > max.z)max.z = data.m_correction.z;
-
+            
             if (data.m_mtv.y < minMtvY)minMtvY = data.m_mtv.y;
         }
 

@@ -44,19 +44,16 @@ void IntegratePass::Process(IScene* pScene)
         if (!transform || !rigidbody)continue;
         if (!transform->GetEnable() || !rigidbody->GetEnable())continue;
 
-        //transform->SetPrevPosition(transform->GetPosition());
-        //rigidbody->SetPrevVelocity(rigidbody->GetVelocity());
-
         // キネマティックなら速度を0にして位置の更新も行わない
         if (rigidbody->GetIsKinematic()) {
             rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
             continue;
         }
 
-        DirectX::XMFLOAT3 velocity = rigidbody->GetVelocity();
+        XMFLOAT3 velocity = rigidbody->GetVelocity();
         {
             // 摩擦の適用
-            const DirectX::XMFLOAT3 friction = rigidbody->GetFriction();
+            const XMFLOAT3 friction = rigidbody->GetFriction();
             velocity.x *= friction.x;
             velocity.y *= friction.y;
             velocity.z *= friction.z;
@@ -67,7 +64,7 @@ void IntegratePass::Process(IScene* pScene)
         rigidbody->SetVelocity(velocity);
 
         // 位置の更新
-        DirectX::XMFLOAT3 position = transform->GetPosition();
+        XMFLOAT3 position = transform->GetPosition();
         position.x += velocity.x * deltaTime;
         position.y += velocity.y * deltaTime;
         position.z += velocity.z * deltaTime;

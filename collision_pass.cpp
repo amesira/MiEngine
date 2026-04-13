@@ -112,19 +112,28 @@ void CollisionPass::Process(IScene* pScene)
                     auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
 
                     // Correctionの作成
-                    XMFLOAT3 correctionA, correctionB;
+                    float correctionRateA = 0.0f;
+                    float correctionRateB = 0.0f;
+
                     RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
                     RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-                    CreateCorrection(correctionA, outResult.mtv, colliderA, colliderB, rbA, rbB);
-                    CreateCorrection(correctionB, MiMath::Multiply(outResult.mtv, -1.0f), colliderB, colliderA, rbB, rbA);
 
+                    correctionRateA = CreateCorrectionRate(colliderA, rbA);
+                    correctionRateB = CreateCorrectionRate(colliderB, rbB);
+
+                    float totalRate = correctionRateA + correctionRateB;
+                    if (totalRate > 0.0f) {
+                        correctionRateA /= totalRate;
+                        correctionRateB /= totalRate;
+                    }
+                    
                     if (slotA) {
                         slotA->m_mtv = outResult.mtv;
-                        slotA->m_correction = correctionA;
+                        slotA->m_correction = MiMath::Multiply(slotA->m_mtv, correctionRateA);
                     }
                     if (slotB) {
                         slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
-                        slotB->m_correction = correctionB;
+                        slotB->m_correction = MiMath::Multiply(slotB->m_mtv, correctionRateB);
                     }
                 }
             }
@@ -164,19 +173,28 @@ void CollisionPass::Process(IScene* pScene)
                     auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
 
                     // Correctionの作成
-                    XMFLOAT3 correctionA, correctionB;
+                    float correctionRateA = 0.0f;
+                    float correctionRateB = 0.0f;
+
                     RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
                     RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-                    CreateCorrection(correctionA, outResult.mtv, colliderA, colliderB, rbA, rbB);
-                    CreateCorrection(correctionB, MiMath::Multiply(outResult.mtv, -1.0f), colliderB, colliderA, rbB, rbA);
+
+                    correctionRateA = CreateCorrectionRate(colliderA, rbA);
+                    correctionRateB = CreateCorrectionRate(colliderB, rbB);
+
+                    float totalRate = correctionRateA + correctionRateB;
+                    if (totalRate > 0.0f) {
+                        correctionRateA /= totalRate;
+                        correctionRateB /= totalRate;
+                    }
 
                     if (slotA) {
                         slotA->m_mtv = outResult.mtv;
-                        slotA->m_correction = correctionA;
+                        slotA->m_correction = MiMath::Multiply(slotA->m_mtv, correctionRateA);
                     }
                     if (slotB) {
                         slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
-                        slotB->m_correction = correctionB;
+                        slotB->m_correction = MiMath::Multiply(slotB->m_mtv, correctionRateB);
                     }
                 }
             }
@@ -213,19 +231,28 @@ void CollisionPass::Process(IScene* pScene)
                     auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
 
                     // Correctionの作成
-                    XMFLOAT3 correctionA, correctionB;
+                    float correctionRateA = 0.0f;
+                    float correctionRateB = 0.0f;
+
                     RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
                     RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-                    CreateCorrection(correctionA, outResult.mtv, colliderA, colliderB, rbA, rbB);
-                    CreateCorrection(correctionB, MiMath::Multiply(outResult.mtv, -1.0f), colliderB, colliderA, rbB, rbA);
+
+                    correctionRateA = CreateCorrectionRate(colliderA, rbA);
+                    correctionRateB = CreateCorrectionRate(colliderB, rbB);
+
+                    float totalRate = correctionRateA + correctionRateB;
+                    if (totalRate > 0.0f) {
+                        correctionRateA /= totalRate;
+                        correctionRateB /= totalRate;
+                    }
 
                     if (slotA) {
                         slotA->m_mtv = outResult.mtv;
-                        slotA->m_correction = correctionA;
+                        slotA->m_correction = MiMath::Multiply(slotA->m_mtv, correctionRateA);
                     }
                     if (slotB) {
                         slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
-                        slotB->m_correction = correctionB;
+                        slotB->m_correction = MiMath::Multiply(slotB->m_mtv, correctionRateB);
                     }
                 }
             }
@@ -630,29 +657,24 @@ void CollisionPass::CheckSphere(
 
 #pragma endregion
 
-// Correctionの作成
-void CollisionPass::CreateCorrection(
-    XMFLOAT3& outCorrection, const XMFLOAT3& mtv,
-    ColliderComponent* collider, ColliderComponent* otherCollider,
-    RigidbodyComponent* rb, RigidbodyComponent* otherRb)
+// CorrectionRateの作成
+float CollisionPass::CreateCorrectionRate(ColliderComponent* col, RigidbodyComponent* rb)
 {
-    // 補正値がない場合
-    outCorrection = { 0.0f,0.0f,0.0f };
-    if (!collider->GetCreateCorrection()) return;
-    if (rb == nullptr) return;
-    if (!rb->GetEnable()) return;
-    if (rb->GetIsKinematic()) return;
+    // 補正値を作成しない場合
+    if (!col->GetCreateCorrection()) {
+        return 0.0f;
+    }
+    else if (rb == nullptr) {
+        return 0.0f;
+    }
+    else {
+        if (!rb->GetEnable() || rb->GetIsKinematic()) {
+            return 0.0f;
+        }
+    }
 
-    // 補正値がそのままmtvになる場合
-    outCorrection = mtv;
-    if (!otherCollider->GetCreateCorrection()) return;
-    if (otherRb == nullptr) return;
-    if (!otherRb->GetEnable()) return;
-    if (otherRb->GetIsKinematic()) return;
-
-    // 補正値を質量比で分割する場合
-    float massRatio = rb->GetMass() / (rb->GetMass() + otherRb->GetMass());
-    outCorrection = MiMath::Multiply(mtv, massRatio);
+    // 補正値を作成する場合、質量比に応じて分配するため質量をCorrectionRateとして返す
+    return rb->GetMass();
 }
 
 #pragma region デバッグ用コライダー描画
