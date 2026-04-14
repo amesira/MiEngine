@@ -7,6 +7,11 @@
 #include "game.h"
 
 #include "factory.h"
+#include "actor_factory.h"
+#include "environment_factory.h"
+#include "ui_factory.h"
+#include "render_effect_factory.h"
+
 #include "keyboard.h"
 
 #include "mi_fps.h"
@@ -18,6 +23,8 @@
 #include "rigidbody_component.h"
 #include "rect_transform_component.h"
 #include "model_component.h"
+#include "decal_component.h"
+#include "transform_component.h"
 
 #include "camera_control_behavior.h"
 
@@ -27,9 +34,8 @@ void GameScene::Initialize()
     this->Reset();
 
     // camera
-    GameObject* camera = this->CreateGameObject();
-    Factory::CreateCamera(camera, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
-    camera->AddComponent<CameraControlBehavior>();
+    GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
+    EnvironmentFactory::AttachCameraControl(camera);
 
     GameObject* cube = this->CreateGameObject();
     Factory::CreateBox(cube, { 0.0f,-0.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
@@ -45,26 +51,22 @@ void GameScene::Initialize()
         cube->AddComponent<RigidbodyComponent>();
     }
     
-
     // light
-    GameObject* light = this->CreateGameObject();
-    Factory::CreateDirectionalLight(light, { 0.0f,-1.0f,0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
-    light = this->CreateGameObject();
-    Factory::CreatePointLight(light, {1.0f, 1.0f, 0.0f, 1.0f}, 10.0f);
+    EnvironmentFactory::CreateDirectionalLight(this, { 0.0f,-1.0f,0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
+    EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
 
     // player
-    GameObject* player = this->CreateGameObject();
-    Factory::CreatePlayer(player, { 0.0f,3.0f,10.0f });
+    GameObject* player = ActorFactory::CreatePlayer(this, { 0.0f,3.0f,10.0f });
 
     // ui
-    GameObject* uiText = this->CreateGameObject();
-    Factory::CreateUiText(uiText, { 300.0f, 100.0f }, { 200.0f, 50.0f }, u8"Hello, World!");
+    GameObject* uiText = UiFactory::CreateUiText(this, u8"Hello, World!");
+    UiFactory::SetupUiTransform(uiText, { 300.0f, 100.0f }, { 200.0f, 50.0f });
 
-    GameObject* uiImage = this->CreateGameObject();
-    Factory::CreateUiImage(uiImage, { 300.0f, 300.0f }, { 100.0f, 100.0f }, L"asset\\Texture\\test.jpg");
+    GameObject* uiImage = UiFactory::CreateUiImage(this, L"asset\\Texture\\test.jpg");
+    UiFactory::SetupUiTransform(uiImage, { 300.0f, 300.0f }, { 100.0f, 100.0f });
 
-    GameObject* uiSlider = this->CreateGameObject();
-    Factory::CreateUiSlider(uiSlider, { 300.0f, 500.0f }, { 200.0f, 20.0f }, 0.5f);
+    GameObject* uiSlider = UiFactory::CreateUiSlider(this, { 0.2f, 0.2f, 0.2f, 1.0f }, { 0.8f, 0.8f, 0.8f, 1.0f }, 0.5f);
+    UiFactory::SetupUiTransform(uiSlider, { 300.0f, 500.0f }, { 200.0f, 20.0f });
 
     // model
     GameObject* model = this->CreateGameObject();
@@ -80,6 +82,12 @@ void GameScene::Initialize()
         Factory::CreateModel(field, "asset\\Model\\field.fbx", { 0.0f, -1.0f, 10.0f }, { 40.0f, 40.0f, 40.0f });
         field->GetComponent<ModelComponent>()->GetMaterialSlots()[0].isOverrideBaseColor = true;
         field->GetComponent<ModelComponent>()->GetMaterialSlots()[0].overrideBaseColor = { 0.5f, 0.5f, 0.5f, 1.0f };
+    }
+
+    // decal
+    {
+        GameObject* decal = RenderEffectFactory::CreateDecalEffect(this, {0.0f, 5.0f, 0.5f}, L"asset\\Texture\\test.jpg");
+        
     }
 }
 

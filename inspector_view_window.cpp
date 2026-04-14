@@ -117,8 +117,10 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             if (ImGui::DragFloat3("Position", &position.x, 0.1f)) {
                 transform->SetPosition(position);
             }
-            auto eulerRotation = transform->GetEulerAngle();
+            XMFLOAT3 eulerRotation = transform->GetEulerAngle();
+            eulerRotation = MiMath::Multiply(eulerRotation, 360.0f / XM_2PI);
             if (ImGui::DragFloat3("Rotation", &eulerRotation.x, 0.1f)) {
+                eulerRotation = MiMath::Multiply(eulerRotation, XM_2PI / 360.0f);
                 transform->SetEulerAngle(eulerRotation);
             }
             auto scaling = transform->GetScaling();

@@ -39,7 +39,7 @@ public:
     void    SetPrevPosition(const XMFLOAT3& prevPosition){ m_prevPosition = prevPosition; }
     XMFLOAT3   GetPrevPosition()const { return m_prevPosition; }
 
-    // Euler角での設定・取得
+    // Euler角での設定・取得（ラジアン角で扱う）
     void    SetEulerAngle(const XMFLOAT3& euler) {
         XMVECTOR q = XMQuaternionRotationRollPitchYaw(
             euler.x, euler.y, euler.z
@@ -61,7 +61,7 @@ public:
         float x = std::asinf(-sinX);
 
         // ジンバルロック（X軸の回転が±90度付近）を回避するための処理
-        if (x == NAN || std::abs(std::abs(x) - XM_PI / 2.0f) < e) {
+        /*if (std::isnan(x) || std::abs(std::abs(x) - XM_PI / 2.0f) < e) {
             x = -sinX > 0.0f ? XM_PI / 2.0f : -XM_PI / 2.0f;
             float y = 0.0f;
             if (x > 0.0f) {
@@ -71,9 +71,7 @@ public:
                 y = std::atan2f(-(2.0f * q.x * q.y - 2.0f * q.z * q.w), 2.0f * MiMath::Pow(q.w, 2) + 2.0f * MiMath::Pow(q.x, 2) - 1.0f);
             }
             XMFLOAT3 zimbalLockEuler = { x, y, 0.0f };
-            zimbalLockEuler = MiMath::Multiply(zimbalLockEuler, 180.0f / XM_PI);
-            return MiMath::Normalize(zimbalLockEuler);
-        }
+        }*/
 
         float cosX = std::cosf(x);
 
@@ -86,9 +84,7 @@ public:
         float z = std::atan2f(sinZ, cosZ);
 
         XMFLOAT3 euler = { x, y, z };
-        euler = MiMath::Multiply(euler, 180.0f / XM_PI);
-
-        return MiMath::Normalize(euler);
+        return euler;
     }
 
     // XMVECTORの取得
@@ -96,47 +92,6 @@ public:
         return XMLoadFloat4(&m_rotation);
     }
 
-    //void    SetEulerRotation(DirectX::XMFLOAT3 euler) {
-    //    m_rotation = XMQuaternionRotationRollPitchYaw(
-    //        euler.x, euler.y, euler.z
-    //    );
-    //    m_rotation = XMQuaternionNormalize(m_rotation);
-    //}
-    //DirectX::XMFLOAT3   GetEulerRotation()const {
-    //    // 念のため正規化（安全策）
-    //    DirectX::XMVECTOR q = XMQuaternionNormalize(m_rotation);
-
-    //    // 成分取得
-    //    float x = XMVectorGetX(q);
-    //    float y = XMVectorGetY(q);
-    //    float z = XMVectorGetZ(q);
-    //    float w = XMVectorGetW(q);
-
-    //    DirectX::XMFLOAT3 euler;
-
-    //    // Pitch (X)
-    //    {
-    //        float sinp = 2.0f * (w * x + y * z);
-    //        float cosp = 1.0f - 2.0f * (x * x + y * y);
-    //        euler.x = std::atan2(sinp, cosp);
-    //    }
-
-    //    // Yaw (Y)
-    //    {
-    //        float siny = 2.0f * (w * y - z * x);
-    //        siny = std::clamp(siny, -1.0f, 1.0f); // 数値誤差対策
-    //        euler.y = std::asin(siny);
-    //    }
-
-    //    // Roll (Z)
-    //    {
-    //        float sinr = 2.0f * (w * z + x * y);
-    //        float cosr = 1.0f - 2.0f * (y * y + z * z);
-    //        euler.z = std::atan2(sinr, cosr);
-    //    }
-
-    //    return euler; // ラジアン
-    //}
 };
 
 

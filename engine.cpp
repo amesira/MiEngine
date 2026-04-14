@@ -107,6 +107,7 @@ bool MiEngine::RunOneFrame()
 // MiEngineの更新処理
 void MiEngine::Update()
 {
+    // シーンのリロード要求がある場合はシーンをリロード
     if (m_editorContext.triggerSceneReload) {
         m_editorContext.triggerSceneReload = false;
         m_gameWorld.GetSceneManager().ReloadScene();
@@ -114,6 +115,10 @@ void MiEngine::Update()
         m_editorContext.selectedObject = nullptr; // 選択オブジェクトをリセット
     }
 
+    // デバッグ描画のバッファリセット
+    DebugRenderer_ResetBuffer();
+
+    // PlayモードのときのみGameWorldを更新
     if (m_editorContext.currentEditorMode == EditorContext::EditorMode::Play) {
         m_gameWorld.Update();
     }

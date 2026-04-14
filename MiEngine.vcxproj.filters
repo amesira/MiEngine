@@ -37,6 +37,9 @@
     <FxCompile Include="shadowing.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
+    <FxCompile Include="decal_lit_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera_processor.cpp">
@@ -74,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="debug_renderer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="factory.cpp">
-      <Filter>Sources\Game</Filter>
     </ClCompile>
     <ClCompile Include="game.cpp">
       <Filter>Sources\Game</Filter>
@@ -198,6 +198,22 @@
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
     <ClCompile Include="camera_control_behavior.cpp" />
+    <ClCompile Include="decal_render_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="actor_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="environment_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="render_effect_factory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">
@@ -283,9 +299,6 @@
     </ClInclude>
     <ClInclude Include="mi_math.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="factory.h">
-      <Filter>Sources\Game</Filter>
     </ClInclude>
     <ClInclude Include="game.h">
       <Filter>Sources\Game</Filter>
@@ -452,6 +465,24 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="camera_control_behavior.h" />
+    <ClInclude Include="decal_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="decal_render_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="actor_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="environment_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="render_effect_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -526,10 +557,16 @@
     <Filter Include="Shader\common">
       <UniqueIdentifier>{cc3a5256-4193-4967-a000-678caecd58d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game\Factory">
+      <UniqueIdentifier>{3b348ef2-628d-4060-9707-6f89b7332e14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini">
       <Filter>External\imgui</Filter>
+    </None>
+    <None Include="ui_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
     </None>
   </ItemGroup>
 </Project>

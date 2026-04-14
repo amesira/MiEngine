@@ -28,6 +28,7 @@ public:
     void    Finalize()override;
 
     void    Process(IScene* pScene)override;
+    void    CollectDebugDraw(IScene* pScene);
 
 };
 

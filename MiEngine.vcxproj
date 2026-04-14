@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="actor_factory.cpp" />
     <ClCompile Include="animation_processor.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="behavior_processor.cpp" />
@@ -145,7 +146,9 @@
     <ClCompile Include="debug_ostream.cpp" />
     <ClCompile Include="debug_renderer.cpp" />
     <ClCompile Include="debug_view_window.cpp" />
+    <ClCompile Include="decal_render_pass.cpp" />
     <ClCompile Include="direct3d.cpp" />
+    <ClCompile Include="environment_factory.cpp" />
     <ClCompile Include="health_behavior.cpp" />
     <ClCompile Include="hierarchy_view_window.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -163,6 +166,7 @@
     <ClCompile Include="opaque_render_pass.cpp" />
     <ClCompile Include="player_attack_behavior.cpp" />
     <ClCompile Include="player_move_behavior.cpp" />
+    <ClCompile Include="render_effect_factory.cpp" />
     <ClCompile Include="render_processor.cpp" />
     <ClCompile Include="resolve_pass.cpp" />
     <ClCompile Include="engine.cpp" />
@@ -189,9 +193,11 @@
     <ClCompile Include="stb_implementation.cpp" />
     <ClCompile Include="texture_repository.cpp" />
     <ClCompile Include="tool_bar_window.cpp" />
+    <ClCompile Include="ui_factory.cpp" />
     <ClCompile Include="ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="actor_factory.h" />
     <ClInclude Include="animation_component.h" />
     <ClInclude Include="animation_processor.h" />
     <ClInclude Include="behavior_component.h" />
@@ -206,9 +212,12 @@
     <ClInclude Include="constraint_pass.h" />
     <ClInclude Include="debug_renderer.h" />
     <ClInclude Include="debug_view_window.h" />
+    <ClInclude Include="decal_component.h" />
+    <ClInclude Include="decal_render_pass.h" />
     <ClInclude Include="draw_command.h" />
     <ClInclude Include="editor_context.h" />
     <ClInclude Include="engine_service_locator.h" />
+    <ClInclude Include="environment_factory.h" />
     <ClInclude Include="health_behavior.h" />
     <ClInclude Include="hierarchy_view_window.h" />
     <ClInclude Include="imconfig.h" />
@@ -232,6 +241,7 @@
     <ClInclude Include="opaque_render_pass.h" />
     <ClInclude Include="player_attack_behavior.h" />
     <ClInclude Include="player_move_behavior.h" />
+    <ClInclude Include="render_effect_factory.h" />
     <ClInclude Include="render_processor.h" />
     <ClInclude Include="render_view.h" />
     <ClInclude Include="resolve_pass.h" />
@@ -282,6 +292,14 @@
   <ItemGroup>
     <FxCompile Include="camera.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="decal_lit_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="lighting.hlsl">
@@ -359,6 +377,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="ui_factory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

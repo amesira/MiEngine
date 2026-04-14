@@ -61,3 +61,9 @@ void PhysicsProcessor::Process(IScene* pScene)
     m_constraintPass.Process(pScene);
 
 }
+
+void PhysicsProcessor::CollectDebugDraw(IScene* pScene)
+{
+    // CollisionPassのデバッグ描画
+    m_collisionPass.CollectDebugDraw(pScene);
+}

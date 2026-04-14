@@ -26,11 +26,11 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     {
         i = static_cast<size_t>(ShaderType::Lit);
 
-        if (!LoadVertexShader("lit_vs.cso", &m_shaderContainer[i].vertexShader, vbData)) {
+        if (!LoadVertexShader("lit_vs.cso", m_shaderContainer[i].vertexShader.GetAddressOf(), vbData)) {
             hal::dout << "ShaderManager::Initialize() : LitShaderの頂点シェーダーの作成に失敗しました" << std::endl;
             return false;
         }
-        if (!LoadPixelShader("lit_ps.cso", &m_shaderContainer[i].pixelShader)) {
+        if (!LoadPixelShader("lit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
             hal::dout << "ShaderManager::Initialize() : LitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
             return false;
         }
@@ -42,7 +42,7 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
-        hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, &m_shaderContainer[i].inputLayout);
+        hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, m_shaderContainer[i].inputLayout.GetAddressOf());
         delete[] vbData.vsBinaryPointer;
         if (FAILED(hr)) {
             hal::dout << "ShaderManager::Initialize() : LitShaderの頂点レイアウトの作成に失敗しました" << std::endl;
@@ -54,14 +54,13 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     {
         i = static_cast<size_t>(ShaderType::SkinnedLit);
 
-        if (!LoadVertexShader("skinned_lit_vs.cso", &m_shaderContainer[i].vertexShader, vbData)) {
+        if (!LoadVertexShader("skinned_lit_vs.cso", m_shaderContainer[i].vertexShader.GetAddressOf(), vbData)) {
             hal::dout << "ShaderManager::Initialize() : SkinnedLitShaderの頂点シェーダーの作成に失敗しました" << std::endl;
             return false;
         }
-        if (!LoadPixelShader("lit_ps.cso", &m_shaderContainer[i].pixelShader)) {
-            hal::dout << "ShaderManager::Initialize() : SkinnedLitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
-            return false;
-        }
+
+        // SkinnedLitShaderのピクセルシェーダーはLitShaderと同じものを使用する
+        m_shaderContainer[i].pixelShader = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].pixelShader;
         
         D3D11_INPUT_ELEMENT_DESC layout[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -73,7 +72,7 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         { "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
-        hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, &m_shaderContainer[i].inputLayout);
+        hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, m_shaderContainer[i].inputLayout.GetAddressOf());
         delete[] vbData.vsBinaryPointer;
         if (FAILED(hr)) {
             hal::dout << "ShaderManager::Initialize() : SkinnedLitShaderの頂点レイアウトの作成に失敗しました" << std::endl;
@@ -81,15 +80,31 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         }
     }
 
+    // DecalLitShaderの読み込み
+    {
+        i = static_cast<size_t>(ShaderType::DecalLit);
+
+        // DecalLitShaderの頂点シェーダーはLitShaderと同じものを使用する
+        m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].vertexShader;
+
+        if (!LoadPixelShader("decal_lit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
+            hal::dout << "ShaderManager::Initialize() : DecalLitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
+            return false;
+        }
+
+        // DecalLitShaderの頂点レイアウトはLitShaderと同じものを使用する
+        m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].inputLayout;
+    }
+
     // UnlitShaderの読み込み
     {
         i = static_cast<size_t>(ShaderType::Unlit);
 
-        if (!LoadVertexShader("unlit_vs.cso", &m_shaderContainer[i].vertexShader, vbData)) {
+        if (!LoadVertexShader("unlit_vs.cso", m_shaderContainer[i].vertexShader.GetAddressOf(), vbData)) {
             hal::dout << "ShaderManager::Initialize() : UnlitShaderの頂点シェーダーの作成に失敗しました" << std::endl;
             return false;
         }
-        if (!LoadPixelShader("unlit_ps.cso", &m_shaderContainer[i].pixelShader)) {
+        if (!LoadPixelShader("unlit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
             hal::dout << "ShaderManager::Initialize() : UnlitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
             return false;
         }
@@ -113,29 +128,16 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     {
         i = static_cast<size_t>(ShaderType::TlueTypeFontUnlit);
 
-        if (!LoadVertexShader("unlit_vs.cso", &m_shaderContainer[i].vertexShader, vbData)) {
-            hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderの頂点シェーダーの作成に失敗しました" << std::endl;
-            return false;
-        }
-        if (!LoadPixelShader("ttf_unlit_ps.cso", &m_shaderContainer[i].pixelShader)) {
+        // TrueTypeFontUnlitShaderの頂点シェーダーはUnlitShaderと同じものを使用する
+        m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Unlit)].vertexShader;
+
+        if (!LoadPixelShader("ttf_unlit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
             hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
             return false;
         }
 
-        D3D11_INPUT_ELEMENT_DESC layout[] = {
-       { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        };
-
-        UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
-        hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, &m_shaderContainer[i].inputLayout);
-        delete[] vbData.vsBinaryPointer;
-        if (FAILED(hr)) {
-            hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderの頂点レイアウトの作成に失敗しました" << std::endl;
-            return false;
-        }
+        // TrueTypeFontUnlitShaderの頂点レイアウトはUnlitShaderと同じものを使用する
+        m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Unlit)].inputLayout;
     }
 
 #pragma endregion
@@ -194,12 +196,7 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 // シェーダー管理の終了処理
 void ShaderManager::Finalize()
 {
-    // シェーダーの解放
-    for (size_t i = 0; i < static_cast<size_t>(ShaderType::MAX); ++i) {
-        SAFE_RELEASE(m_shaderContainer[i].vertexShader);
-        SAFE_RELEASE(m_shaderContainer[i].pixelShader);
-        SAFE_RELEASE(m_shaderContainer[i].inputLayout);
-    }
+    
 }
 
 // 定数バッファをシェーダーコンテナに登録する関数
@@ -216,9 +213,9 @@ void ShaderManager::BindShader(ShaderType shaderType)
 {
     size_t index = static_cast<size_t>(shaderType);
 
-    m_pContext->VSSetShader(m_shaderContainer[index].vertexShader, nullptr, 0);
-    m_pContext->PSSetShader(m_shaderContainer[index].pixelShader, nullptr, 0);
-    m_pContext->IASetInputLayout(m_shaderContainer[index].inputLayout);
+    m_pContext->VSSetShader(m_shaderContainer[index].vertexShader.Get(), nullptr, 0);
+    m_pContext->PSSetShader(m_shaderContainer[index].pixelShader.Get(), nullptr, 0);
+    m_pContext->IASetInputLayout(m_shaderContainer[index].inputLayout.Get());
 
     for (UINT slot = 0; slot < 15; slot++) {
         if (m_shaderContainer[index].constantBuffers[slot]) {

@@ -29,6 +29,7 @@ public:
     void    Finalize()override;
 
     void    Process(IScene* pScene)override;
+    void    CollectDebugDraw(IScene* pScene);
 
 private:
     // 連続衝突判定の速度閾値

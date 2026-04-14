@@ -17,6 +17,7 @@
 #include "skybox_pass.h"
 #include "opaque_render_pass.h"
 #include "ui_render_pass.h"
+#include "decal_render_pass.h"
 
 #include "direct3d.h"
 #include "Windows.h"
@@ -35,8 +36,11 @@ private:
     LightingPass m_lightingPass;
     ShadowMapPass m_shadowMapPass;
     SkyboxPass m_skyboxPass;
+
     OpaqueRenderPass m_opaqueRenderPass;
+    DecalRenderPass m_decalRenderPass;
     // TransparentPass
+
     UIRenderPass m_uiRenderPass;
 
 public:

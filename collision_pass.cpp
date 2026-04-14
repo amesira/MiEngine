@@ -260,10 +260,15 @@ void CollisionPass::Process(IScene* pScene)
     }
 
 #pragma endregion
+}
 
-    //----------------------------------------------------
-    // デバッグ用コライダー描画
-	//----------------------------------------------------
+// デバッグ用コライダー描画
+void CollisionPass::CollectDebugDraw(IScene* pScene)
+{
+    auto* transformPool = pScene->GetComponentPool<TransformComponent>();
+    auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
+    auto* sphereColliderPool = pScene->GetComponentPool<SphereColliderComponent>();
+
     if (boxColliderPool) {
         auto& boxColliderList = boxColliderPool->GetList();
         for (BoxColliderComponent& c : boxColliderList) {
@@ -273,6 +278,7 @@ void CollisionPass::Process(IScene* pScene)
             DrawDebug_ColliderLine(transform, &c);
         }
     }
+
     if (sphereColliderPool) {
         auto& sphereColliderList = sphereColliderPool->GetList();
         for (SphereColliderComponent& c : sphereColliderList) {
@@ -282,7 +288,6 @@ void CollisionPass::Process(IScene* pScene)
             DrawDebug_ColliderLine(transform, &c);
         }
     }
-
 }
 
 // レイヤーマスクによる当たり判定スキップ

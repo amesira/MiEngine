@@ -63,9 +63,6 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     if (depthInLightSpace > depthInShadowMap + bias){
         col.rgb *= 0.5f; // シャドウマップで影になると判断された場合、色を暗くする
     }
-    else{
-        
-    }
     
     return col;
 }

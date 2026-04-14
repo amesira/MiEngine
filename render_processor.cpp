@@ -25,6 +25,7 @@ void RenderProcessor::Initialize()
     m_skyboxPass.Initialize(m_pDevice, m_pContext);
     m_opaqueRenderPass.Initialize(m_pDevice, m_pContext);
     m_uiRenderPass.Initialize(m_pDevice, m_pContext);
+    m_decalRenderPass.Initialize(m_pDevice, m_pContext);
 }
 
 // 描画制御プロセッサーの終了処理
@@ -33,6 +34,9 @@ void RenderProcessor::Finalize()
     m_lightingPass.Finalize();
     m_opaqueRenderPass.Finalize();
     m_uiRenderPass.Finalize();
+    m_decalRenderPass.Finalize();
+    m_shadowMapPass.Finalize();
+    m_skyboxPass.Finalize();
 }
 
 // 描画制御プロセッサーの処理
@@ -70,10 +74,13 @@ void RenderProcessor::Process(IScene* pScene)
     // 不透明物体
     m_opaqueRenderPass.Process(pScene);
 
+    // Overlay物体（デカール、ライン、トレイルなど）
+    {
+        m_decalRenderPass.Process(pScene);
+    }
+
     // 透明物体
     // m_transparentRenderPass.Process(pScene);
-
-    //m_lightingPass.SetLightEnable(false);
 
     //-----------------
 

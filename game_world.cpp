@@ -45,9 +45,6 @@ void GameWorld::Finalize()
 // GameWorldの更新処理
 void GameWorld::Update()
 {
-    // デバッグ描画のバッファリセット
-    DebugRenderer_ResetBuffer();
-
     // Scene管理の更新
     m_sceneManager.Update();
     IScene* scene = m_sceneManager.GetCurrentScene();
@@ -62,6 +59,9 @@ void GameWorld::Update()
 void GameWorld::Render()
 {
     IScene* scene = m_sceneManager.GetCurrentScene();
+
+    // デバッグ描画の収集
+    m_physicsProcessor.CollectDebugDraw(scene);
 
     // カメラ設定・描画情報の取得
     m_cameraProcessor.Process(scene);

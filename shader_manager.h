@@ -12,6 +12,8 @@
 using namespace DirectX;
 #include <array>
 #include <fstream>
+#include <wrl/client.h>
+using namespace Microsoft::WRL;
 
 // 頂点構造体
 struct LitVertex {
@@ -37,6 +39,7 @@ public:
     enum class ShaderType {
         Lit,
         SkinnedLit,
+        DecalLit,
 
         Unlit,
         TlueTypeFontUnlit,
@@ -45,10 +48,10 @@ public:
     };
     // シェーダーコンテナ構造体
     struct ShaderContainer {
-        ID3D11VertexShader* vertexShader;  // 頂点シェーダー
-        ID3D11PixelShader*  pixelShader;   // ピクセルシェーダー
+        ComPtr<ID3D11VertexShader> vertexShader;  // 頂点シェーダー
+        ComPtr<ID3D11PixelShader>  pixelShader;   // ピクセルシェーダー
 
-        ID3D11InputLayout*  inputLayout;   // 頂点レイアウト
+        ComPtr<ID3D11InputLayout>  inputLayout;   // 頂点レイアウト
         std::array<ID3D11Buffer**, 15> constantBuffers; // 定数バッファの配列（b0~b14まで対応）
     };
 
