@@ -52,9 +52,7 @@ void ShadowMapPass::Process(IScene* pScene)
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
     if (!transformPool || !modelPool)return;
 
-    // シャドウマップ用のレンダーターゲットとデプスステンシルをセット
-    Direct3D_SetSceneTarget(nullptr, depthBufferDSV.Get());
-
+    
     // 描画ステートのセット
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);

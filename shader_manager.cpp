@@ -240,6 +240,7 @@ void ShaderManager::BindTransformCB(const TransformBuffer& transformData)
     TransformBuffer* tb = (TransformBuffer*)msr.pData;
     tb->world = transposedWorld;
     tb->normal = transposedNormal;
+    tb->invWorld = XMMatrixInverse(nullptr, transposedWorld);
     m_pContext->Unmap(m_transformCB, 0);
 }
 // CameraBufferを更新する関数
@@ -256,6 +257,8 @@ void ShaderManager::BindCameraCB(const CameraBuffer& cameraData)
     cb->view = transposedView;
     cb->projection = transposedProjection;
     cb->eyePos = cameraData.eyePos;
+    cb->invView = XMMatrixInverse(nullptr, transposedView);
+    cb->invProjection = XMMatrixInverse(nullptr, transposedProjection);
     m_pContext->Unmap(m_cameraCB, 0);
 }
 

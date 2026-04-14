@@ -3,7 +3,6 @@
 // ・マテリアルを定義するシェーダーファイル
 // ・-b9-にマテリアル定数バッファを割り当てる
 // ・-t0- ~ -t3-にテクスチャを割り当てる
-// ・-s1-にサンプラーステートを割り当てる
 // 
 // Author：Miu Kitamura
 // Date  ：2026/03/30
@@ -31,7 +30,6 @@ cbuffer MaterialBuffer : register(b9)
 
 // アルベドテクスチャ
 Texture2D g_AlbedoTexture : register(t0);
-SamplerState g_SamplerState : register(s0);
 // 法線マップ
 Texture2D g_NormalTexture : register(t1);
 // 金属度・粗さテクスチャ

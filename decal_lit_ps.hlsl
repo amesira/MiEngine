@@ -4,10 +4,13 @@
 // Author：Miu Kitamura
 // Date  ：2026/04/14
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
+#include "transform.hlsl"
 #include "camera.hlsl"
-#include "lighting.hlsl"
-#include "material.hlsl"
-#include "shadowing.hlsl"
+
+SamplerState g_SamplerState : register(s0);
+
+Texture2D g_Texture : register(t0);
+Texture2D g_DepthTexture : register(t5);
 
 // ピクセルシェーダーの入力構造体
 struct PS_INPUT // VS_OUTPUTと同じ内容
@@ -23,46 +26,34 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
 {
     float4 col = float4(0, 0, 0, 1);
     
-    // テクスチャの色を取得・乗算
-    //col = g_Material.baseColor * g_AlbedoTexture.Sample(g_SamplerState, ps_in.texcoord);
-    //if (col.a <= 0.01f) discard;
+    // スクリーン座標をNDC空間に変換
+    float2 screenUV = ps_in.posH.xy / float2(1920.0f, 1080.0f); // 画面解像度で割る
+    screenUV = clamp(screenUV, 0.0f, 1.0f);
+    screenUV.x = screenUV.x * 2.0f - 1.0f;          // [0,1] -> [-1,1]
+    screenUV.y = 1.0f - screenUV.y * 2.0f + 1.0f;   // [0,1] -> [1,-1]
     
-    // 法線マップを使用して法線を変換
+    // 深度テクスチャから深度値を取得
+    float depth = g_DepthTexture.Sample(g_SamplerState, screenUV).r;
     
-    // ライトの影響を加算
-    //if (g_EnableLighting != 0)
-    //{
-    //    // ディフューズ光の計算
-    //    float3 diffuseLight = g_DirectionalLights[0].Ambient;
-    //    diffuseLight += CalcDiffuse_DirectionalLights(ps_in.normal.xyz) * (1.0f - g_Material.metallic);
-    //    diffuseLight += CalcDiffuse_PointLights(ps_in.normal.xyz, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
-    //    diffuseLight += CalcDiffuse_SpotLights(ps_in.normal.xyz, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
+    // スクリーン座標と深度値を使ってワールド座標を復元
+    float4 worldPosFromDepth;
+    {
+        // クリップ空間座標を計算
+        float4 clipPos = float4(screenUV, depth, 1.0f);
         
-    //    // スペキュラ光の計算
-    //    float3 specularLight = float3(0, 0, 0);
-    //    float shininess = lerp(256.0f, 2.0f, g_Material.roughness);
-    //    specularLight += CalcSpecular_DirectionalLights(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
-    //    specularLight += CalcSpecular_PointLights(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
-    //    specularLight += CalcSpecular_SpotLights(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
+        // View空間へ
+        float4 viewPos = mul(clipPos, g_InvProjectionMatrix);
+        viewPos /= viewPos.w;
         
-    //    col.rgb *= diffuseLight; // ディフューズ光を乗算
-    //    col.rgb += specularLight; // スペキュラ光を加算
-    //}
+        // ワールド空間へ
+        worldPosFromDepth = mul(viewPos, g_InvViewMatrix);
+    }
     
-    // エミッシブカラーを加算
-    //col.rgb += g_Material.emissiveColor;
+    // ワールド座標をデカールローカル空間に変換
+    float4 localPos = mul(worldPosFromDepth, g_InvWorldMatrix);
     
-    //// シャドウマッピングの影響を減算
-    //float4 lightSpacePos = WorldToLightSpace(ps_in.posW);
-    //float2 shadowUV = CalcShadowUV(lightSpacePos);
+    depth -= 0.5f;
     
-    //float depthInLightSpace = lightSpacePos.z / lightSpacePos.w;
-    //float depthInShadowMap = g_ShadowMap.Sample(g_SamplerState, shadowUV).r;
-    
-    //float bias = 0.001f;
-    //if (depthInLightSpace > depthInShadowMap + bias){
-    //    col.rgb *= 0.5f; // シャドウマップで影になると判断された場合、色を暗くする
-    //}
-    
-    return col;
+    //return col;
+    return float4(depth, depth, depth, 1.0f); // デバッグ用：深度値をグレースケールで表示)
 }

@@ -50,6 +50,9 @@ void RenderProcessor::Process(IScene* pScene)
     m_lightingPass.Process(pScene);
 
     // 2.シャドウマップパス
+    Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
+    Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
+
     m_lightingPass.BindLightCB(false);
 
     m_shadowMapPass.SetEyePosition(m_renderView->eyePosition);
@@ -58,15 +61,16 @@ void RenderProcessor::Process(IScene* pScene)
     m_shadowMapPass.Process(pScene);
 
     //----------------------------------- Scene描画開始
+    Direct3D_ClearSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
     Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
 
-    // 3.スカイボックスパス
-    m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
-    m_skyboxPass.Process(pScene);
-
-    //----------------------------------- 3Dオブジェクト描画
     Bind3DCameraCB(m_renderView);
 
+    // 3.スカイボックスパス
+    /*m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
+    m_skyboxPass.Process(pScene);*/
+
+    //----------------------------------- 3Dオブジェクト描画
     m_lightingPass.BindLightCB(m_renderView->enableLighting);
     m_shadowMapPass.BindShadowLightCB();
     m_shadowMapPass.BindShadowMapSRV();
@@ -76,6 +80,8 @@ void RenderProcessor::Process(IScene* pScene)
 
     // Overlay物体（デカール、ライン、トレイルなど）
     {
+        Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), nullptr);
+        m_decalRenderPass.SetDepthSRV(m_renderView->depthBufferSRV.Get());
         m_decalRenderPass.Process(pScene);
     }
 

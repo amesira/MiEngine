@@ -45,6 +45,9 @@ public:
     // 描画処理
     void Process(IScene* pScene) override;
 
+    // DepthStencilViewの取得
+    ID3D11DepthStencilView* GetDepthStencilView() const { return depthBufferDSV.Get(); }
+
     // 視点位置のセット
     void SetEyePosition(const XMFLOAT3& eyePos) { m_eyePosition = eyePos; }
     // ライト方向のセット

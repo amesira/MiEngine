@@ -38,11 +38,14 @@ void DecalRenderPass::Process(IScene* pScene)
     if (!transformPool || !decalPool)return;
 
     // 描画ステートのセット
-    SetBlendState(BLENDSTATE_NONE);
+    SetBlendState(BLENDSTATE_ALFA);
     SetDepthState(DEPTHSTATE_ENABLE);
 
     // シェーダーの初期セット
     EngineServiceLocator::BindShader(ShaderManager::ShaderType::DecalLit);
+    if (m_depthSRV) {
+        m_pContext->PSSetShaderResources(5, 1, m_depthSRV.GetAddressOf());
+    }
 
     // デカール描画
     auto& decalPoolList = decalPool->GetList();
@@ -63,9 +66,9 @@ void DecalRenderPass::Process(IScene* pScene)
             XMMATRIX translation = XMMatrixTranslation(t->GetPosition().x, t->GetPosition().y, t->GetPosition().z);
             XMMATRIX rotation = XMMatrixRotationQuaternion(t->GetRotationVector());
             XMMATRIX scaling = XMMatrixScaling(d.GetProjectionSize().x, d.GetProjectionSize().y, d.GetProjectionDepth());
-            XMMATRIX offset = XMMatrixTranslation(0.0f, 0.0f, -d.GetProjectionDepth() / 2.0f);
+            XMMATRIX offset = XMMatrixTranslation(0.0f, 0.0f, d.GetProjectionDepth() / 2.0f);
 
-            world = scaling * rotation * offset * translation;
+            world = offset * scaling * rotation * translation;
         }
 
         // ワールド行列をTransformCBにセット

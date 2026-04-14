@@ -59,12 +59,17 @@ public:
     struct TransformBuffer {
         XMMATRIX world; // ワールド行列
         XMMATRIX normal;// 法線行列
+
+        XMMATRIX invWorld; // ワールド行列の逆行列
     };
     // CameraBuffer構造体
     struct CameraBuffer {
         XMMATRIX view;       // ビュー行列
         XMMATRIX projection; // プロジェクション行列
         XMFLOAT4 eyePos;     // カメラの位置
+
+        XMMATRIX invView; // ビュー行列の逆行列
+        XMMATRIX invProjection; // プロジェクション行列の逆行列
     };
 
 private:

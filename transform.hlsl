@@ -12,4 +12,6 @@ cbuffer TransformBuffer : register(b0)
 {
     float4x4 g_WorldMatrix; // ワールド行列
     float4x4 g_NormalMatrix;// 法線変換行列
+    
+    float4x4 g_InvWorldMatrix; // ワールド行列の逆行列
 };

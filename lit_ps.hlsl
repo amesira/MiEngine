@@ -9,6 +9,9 @@
 #include "material.hlsl"
 #include "shadowing.hlsl"
 
+SamplerState g_SamplerState : register(s0);
+Texture2D g_Texture : register(t0);
+
 // ピクセルシェーダーの入力構造体
 struct PS_INPUT // VS_OUTPUTと同じ内容
 {

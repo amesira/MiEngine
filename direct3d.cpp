@@ -374,8 +374,7 @@ void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3
     snapshot->Release();
 }
 
-// シーンのレンダーターゲットを切り替える関数
-void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
+void Direct3D_ClearSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
 {
     if (rtv) {
         float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
@@ -384,11 +383,13 @@ void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView
     if (dsv) {
         g_pDeviceContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH, 1.0f, 0);
     }
+}
 
+// シーンのレンダーターゲットを切り替える関数
+void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
+{
     // シーンバッファをレンダーターゲットに設定
     g_pDeviceContext->OMSetRenderTargets(1, &rtv, dsv);
-
-    Direct3D_ResetViewport();
 }
 
 // シーンテクスチャの生成と関連ビューの作成

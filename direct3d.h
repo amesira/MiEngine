@@ -62,6 +62,8 @@ void SetDepthState(DEPTHSTATE depth);
 // スナップショット用シーンテクスチャSRVの作成
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);
 
+// シーンクリア
+void Direct3D_ClearSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
 // シーンセット
 void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
 
