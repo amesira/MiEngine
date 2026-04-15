@@ -34,7 +34,7 @@ void SceneViewWindow::Draw()
 
         if (ImGui::BeginTabItem("GameView")) {
             const RenderView* renderView = m_editorContext->sceneRenderView;
-            ImGui::Image((ImTextureID)(renderView->colorBufferSRV.Get()), avail);
+            ImGui::Image((ImTextureID)(renderView->depthBufferSRV.Get()), avail);
             ImGui::EndTabItem();
         }
 

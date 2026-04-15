@@ -23,6 +23,9 @@ void GameWorld::Initialize()
 
     // RenderViewの初期化
     m_renderViews.resize(8);
+    for (RenderView& view : m_renderViews) {
+        view.Initialize();
+    }
 }
 
 // GameWorldの終了処理

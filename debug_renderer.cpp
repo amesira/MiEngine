@@ -16,6 +16,8 @@ static constexpr int NUM_VERTEX = 10000 * 2; // 最大頂点数（ライン10000
 static ID3D11Buffer* g_pLineVertexBuffer = nullptr;
 static std::vector<LitVertex> g_LineVertices;
 
+static TextureResource* g_pDefaultWhiteTexture = nullptr;
+
 void DebugRenderer_Initialize()
 {
     g_pDevice = Direct3D_GetDevice();
@@ -31,6 +33,8 @@ void DebugRenderer_Initialize()
 
     // ライン頂点バッファの初期容量を設定
     g_LineVertices.reserve(NUM_VERTEX);
+
+    g_pDefaultWhiteTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
 }
 
 void DebugRenderer_Finalize()
@@ -42,12 +46,17 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
 {
     if (g_LineVertices.empty()) return;
 
+    SetBlendState(BLENDSTATE_NONE);
+    SetDepthState(DEPTHSTATE_DISABLE);
+
     // シェーダーをバインド
     EngineServiceLocator::BindShader(ShaderManager::ShaderType::Unlit);
 
     // 定数バッファを更新
     EngineServiceLocator::UpdateTransformCB({ XMMatrixIdentity(), XMMatrixIdentity() });
     EngineServiceLocator::UpdateCameraCB({ view, projection, {0.0f, 0.0f, 0.0f, 1.0f} });
+
+    g_pContext->PSSetShaderResources(0, 1, g_pDefaultWhiteTexture->texture.GetAddressOf());
 
     //----------------------------------------------------
     // 頂点バッファを更新
@@ -62,7 +71,9 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
 
         for (int i = 0; i < g_LineVertices.size(); i++) {
             v[i].position = g_LineVertices[i].position;
+            v[i].normal = g_LineVertices[i].normal;
             v[i].color = g_LineVertices[i].color;
+            v[i].texCoord = g_LineVertices[i].texCoord;
         }
 
         // 頂点バッファのロックを解除

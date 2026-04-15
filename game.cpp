@@ -86,7 +86,7 @@ void GameScene::Initialize()
 
     // decal
     {
-        GameObject* decal = RenderEffectFactory::CreateDecalEffect(this, {0.0f, 5.0f, 0.5f}, L"asset\\Texture\\test.jpg");
+        GameObject* decal = RenderEffectFactory::CreateDecalEffect(this, {0.0f, 5.0f, 0.5f}, L"asset\\Texture\\test_2.png");
         
     }
 }

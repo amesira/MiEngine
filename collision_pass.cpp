@@ -695,15 +695,16 @@ void CollisionPass::DrawDebug_ColliderLine(TransformComponent* transform, BoxCol
     if (!t->GetEnable() || !c->GetEnable()) return;
 
     // 頂点座標を算出
+    XMFLOAT3 halfScale = MiMath::Multiply(c->GetScale(), 0.5f);
     XMFLOAT3 verts[8] = {
-        { -c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
-        {  c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
-        {  c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
-        { -c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f, -c->GetScale().z * 0.5f },
-        { -c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
-        {  c->GetScale().x * 0.5f, -c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
-        {  c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
-        { -c->GetScale().x * 0.5f,  c->GetScale().y * 0.5f,  c->GetScale().z * 0.5f },
+        { -halfScale.x, -halfScale.y, -halfScale.z },
+        {  halfScale.x, -halfScale.y, -halfScale.z },
+        {  halfScale.x,  halfScale.y, -halfScale.z },
+        { -halfScale.x,  halfScale.y, -halfScale.z },
+        { -halfScale.x, -halfScale.y,  halfScale.z },
+        {  halfScale.x, -halfScale.y,  halfScale.z },
+        {  halfScale.x,  halfScale.y,  halfScale.z },
+        { -halfScale.x,  halfScale.y,  halfScale.z },
     };
 
     // 回転させる

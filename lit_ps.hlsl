@@ -68,4 +68,5 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     }
     
     return col;
+    //return float4(ps_in.posH.z / ps_in.posH.w, 0.0f, 0.0f, 1.0f);
 }

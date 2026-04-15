@@ -40,7 +40,7 @@ static ID3D11DepthStencilState* g_pDepthState[DEPTHSTATE_MAX];
 //===================================================
 bool Direct3D_Initialize(HWND hWnd)
 {
-    /* デバイス、スワップチェーン、コンテキスト生成 */
+    // スワップチェーンの設定
     DXGI_SWAP_CHAIN_DESC swap_chain_desc{};
     swap_chain_desc.Windowed = TRUE;
     swap_chain_desc.BufferCount = 2;
@@ -93,9 +93,9 @@ bool Direct3D_Initialize(HWND hWnd)
 	//----------------------------------------------------
     D3D11_SAMPLER_DESC samplerDesc;
     ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; // フィルター
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP; // 横の座標範囲外は画像繰り返し
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP; // 縦の座標範囲外は画像繰り返し
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; // リニアもある
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.MipLODBias = 0;
     samplerDesc.MaxAnisotropy = 16;

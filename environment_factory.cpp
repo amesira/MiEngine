@@ -34,7 +34,7 @@ GameObject* EnvironmentFactory::CreateCamera(SceneBase* scene, const XMFLOAT3& p
     cameraComp->SetFov(60.0f);
     cameraComp->SetAspect(16.0f / 9.0f);
     cameraComp->SetNearClip(0.1f);
-    cameraComp->SetFarClip(300.0f);
+    cameraComp->SetFarClip(100.0f);
 
     return camera;
 }

@@ -50,6 +50,7 @@ void RenderProcessor::Process(IScene* pScene)
     m_lightingPass.Process(pScene);
 
     // 2.シャドウマップパス
+    m_shadowMapPass.UnbindShadowTexture();
     Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
     Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
 
@@ -72,8 +73,9 @@ void RenderProcessor::Process(IScene* pScene)
 
     //----------------------------------- 3Dオブジェクト描画
     m_lightingPass.BindLightCB(m_renderView->enableLighting);
-    m_shadowMapPass.BindShadowLightCB();
-    m_shadowMapPass.BindShadowMapSRV();
+
+    m_shadowMapPass.BindShadowCB();
+    m_shadowMapPass.BindShadowTexture();
 
     // 不透明物体
     m_opaqueRenderPass.Process(pScene);
@@ -81,17 +83,22 @@ void RenderProcessor::Process(IScene* pScene)
     // Overlay物体（デカール、ライン、トレイルなど）
     {
         Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), nullptr);
-        m_decalRenderPass.SetDepthSRV(m_renderView->depthBufferSRV.Get());
+
+        m_decalRenderPass.SetDepthTexture(m_renderView->depthBufferSRV.Get());
         m_decalRenderPass.Process(pScene);
+
+        m_decalRenderPass.UnbindDepthTexture();
     }
 
     // 透明物体
+    Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
     // m_transparentRenderPass.Process(pScene);
 
     //-----------------
-
+        
     // デバッグ描画
     m_lightingPass.BindLightCB(false);
+    m_decalRenderPass.CollectDebugDraw(pScene);
     DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
 
     //----------------------------------- 2Dオブジェクト描画

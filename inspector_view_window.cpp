@@ -18,22 +18,17 @@
 // 主要なComponentのヘッダをインクルード
 #include "transform_component.h"
 #include "rect_transform_component.h"
-
 #include "camera_component.h"
 #include "light_component.h"
-
 #include "rigidbody_component.h"
 #include "collider_component.h"
-
 #include "text_component.h"
 #include "image_component.h"
 #include "slider_component.h"
-
 #include "model_component.h"
-
 #include "joint_group_component.h"
 #include "joint_component.h"
-
+#include "decal_component.h"
 
 void InspectorViewWindow::Draw()
 {
@@ -471,6 +466,40 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                 }
 
                 ImGui::PopID();
+            }
+        }
+
+        if (!prevEnable) {
+            ImGui::PopStyleVar();
+        }
+
+        ImGui::PopID();
+    }
+
+    // DecalComponentのプロパティ表示
+    auto* decal = gameObject->GetComponent<DecalComponent>();
+    if (decal) {
+        ImGui::PushID(decal);
+        ImGui::Separator();
+
+        bool enable = decal->GetEnable();
+        if (!enable) {
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
+        }
+        bool prevEnable = enable;
+
+        if (ImGui::CollapsingHeader("Decal", ImGuiTreeNodeFlags_DefaultOpen)) {
+            if (ImGui::Checkbox("Enable", &enable)) {
+                decal->SetEnable(enable);
+            }
+
+            auto projSize = decal->GetProjectionSize();
+            if (ImGui::DragFloat2("Projection Size", &projSize.x, 0.1f)) {
+                decal->SetProjectionSize(projSize);
+            }
+            auto projDepth = decal->GetProjectionDepth();
+            if (ImGui::DragFloat("Projection Depth", &projDepth, 0.1f, 0.0f, 100.0f)) {
+                decal->SetProjectionDepth(projDepth);
             }
         }
 

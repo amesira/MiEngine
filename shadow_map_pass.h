@@ -38,11 +38,9 @@ private:
     XMFLOAT3 m_lightDirection;
 
 public:
-    // 初期化
+    ~ShadowMapPass() override = default;
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-    // 終了処理
     void Finalize() override;
-    // 描画処理
     void Process(IScene* pScene) override;
 
     // DepthStencilViewの取得
@@ -53,10 +51,11 @@ public:
     // ライト方向のセット
     void SetLightDirection(const XMFLOAT3& lightDir) { m_lightDirection = lightDir; }
 
-    // シャドウライトCBのバインド
-    void BindShadowLightCB();
-    // シャドウマップのSRVのバインド
-    void BindShadowMapSRV();
+    // シャドウマップ用のバインド
+    void BindShadowCB();
+    void BindShadowTexture();
+    // シャドウマップ用テクスチャを外す
+    void UnbindShadowTexture();
 
 };
 

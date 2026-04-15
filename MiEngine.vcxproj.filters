@@ -213,7 +213,9 @@
     <ClCompile Include="ui_factory.cpp">
       <Filter>Sources\Game\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="render_effect_factory.cpp" />
+    <ClCompile Include="render_effect_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image_component.h">

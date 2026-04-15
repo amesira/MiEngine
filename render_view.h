@@ -50,6 +50,9 @@ struct RenderView {
         enableShadowMap(true),
         enablePostEffect(true),
         enableUI(true) {
+    }
+
+    void Initialize() {
         Direct3D_CreateColorBuffer(colorBufferTexture.GetAddressOf(), colorBufferRTV.GetAddressOf(), colorBufferSRV.GetAddressOf());
         Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
         Direct3D_CreateColorBuffer(postEffectTexture.GetAddressOf(), postEffectRTV.GetAddressOf(), postEffectSRV.GetAddressOf());

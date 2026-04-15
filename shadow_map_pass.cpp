@@ -159,8 +159,10 @@ void ShadowMapPass::Process(IScene* pScene)
     }
 }
 
+// ----------------------------------- Bind
+
 // シャドウライトCBのバインド
-void ShadowMapPass::BindShadowLightCB()
+void ShadowMapPass::BindShadowCB()
 {
     XMMATRIX transposedMatrix = XMMatrixTranspose(m_shadowLightMatrix);
 
@@ -169,8 +171,14 @@ void ShadowMapPass::BindShadowLightCB()
 }
 
 // シャドウマップのSRVのバインド
-void ShadowMapPass::BindShadowMapSRV()
+void ShadowMapPass::BindShadowTexture()
 {
-    // シャドウマップをピクセルシェーダーのリソーススロット10にバインド
     m_pContext->PSSetShaderResources(10, 1, depthBufferSRV.GetAddressOf());
+}
+
+// シャドウマップのSRVを外す
+void ShadowMapPass::UnbindShadowTexture()
+{
+    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+    m_pContext->PSSetShaderResources(10, 1, nullSRV);
 }

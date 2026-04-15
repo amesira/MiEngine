@@ -12,6 +12,7 @@
 #include "decal_component.h"
 
 #include "engine_service_locator.h"
+#include "debug_renderer.h"
 
 // DecalRenderPassの初期化
 void DecalRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -44,7 +45,7 @@ void DecalRenderPass::Process(IScene* pScene)
     // シェーダーの初期セット
     EngineServiceLocator::BindShader(ShaderManager::ShaderType::DecalLit);
     if (m_depthSRV) {
-        m_pContext->PSSetShaderResources(5, 1, m_depthSRV.GetAddressOf());
+        m_pContext->PSSetShaderResources(5, 1, &m_depthSRV);
     }
 
     // デカール描画
@@ -66,9 +67,9 @@ void DecalRenderPass::Process(IScene* pScene)
             XMMATRIX translation = XMMatrixTranslation(t->GetPosition().x, t->GetPosition().y, t->GetPosition().z);
             XMMATRIX rotation = XMMatrixRotationQuaternion(t->GetRotationVector());
             XMMATRIX scaling = XMMatrixScaling(d.GetProjectionSize().x, d.GetProjectionSize().y, d.GetProjectionDepth());
-            XMMATRIX offset = XMMatrixTranslation(0.0f, 0.0f, d.GetProjectionDepth() / 2.0f);
+           // XMMATRIX offset = XMMatrixTranslation(0.0f, 0.0f, d.GetProjectionDepth() / 2.0f);
 
-            world = offset * scaling * rotation * translation;
+            world = scaling * rotation * translation;
         }
 
         // ワールド行列をTransformCBにセット
@@ -95,4 +96,75 @@ void DecalRenderPass::Process(IScene* pScene)
             m_pContext->DrawIndexed(mesh.numIndices, 0, 0);
         }
     }
+}
+
+// デカール範囲のデバッグ描画
+void DecalRenderPass::CollectDebugDraw(IScene* pScene)
+{
+    auto* transformPool = pScene->GetComponentPool<TransformComponent>();
+    auto* decalPool = pScene->GetComponentPool<DecalComponent>();
+    if (!transformPool || !decalPool)return;
+
+    const DirectX::XMFLOAT4 debugColor = { 1.0f,1.0f,0.0f,1.0f };
+
+    auto& decalPoolList = decalPool->GetList();
+    for (DecalComponent& d : decalPoolList) {
+        TransformComponent* t = transformPool->GetByGameObjectID(d.GetOwner()->GetID());
+        
+        // component無効チェック
+        if (!t)continue;
+        if (!d.GetEnable() || !t->GetEnable())continue;
+
+        // 頂点座標を算出
+        XMFLOAT3 halfScale = XMFLOAT3(d.GetProjectionSize().x, d.GetProjectionSize().y, d.GetProjectionDepth());
+        //halfScale = MiMath::Multiply(halfScale, 0.5f);
+        XMFLOAT3 verts[8] = {
+            { -halfScale.x, -halfScale.y, -halfScale.z },
+            {  halfScale.x, -halfScale.y, -halfScale.z },
+            {  halfScale.x,  halfScale.y, -halfScale.z },
+            { -halfScale.x,  halfScale.y, -halfScale.z },
+            { -halfScale.x, -halfScale.y,  halfScale.z },
+            {  halfScale.x, -halfScale.y,  halfScale.z },
+            {  halfScale.x,  halfScale.y,  halfScale.z },
+            { -halfScale.x,  halfScale.y,  halfScale.z },
+        };
+
+        //  回転させる
+        for (int i = 0; i < 8; i++) {
+            verts[i] = MiMath::RotateVector(t->GetRotation(), verts[i]);
+            verts[i].x += t->GetPosition().x;
+            verts[i].y += t->GetPosition().y;
+            verts[i].z += t->GetPosition().z;
+        }
+
+        DebugRenderer_DrawLine(verts[0], verts[1], debugColor);
+        DebugRenderer_DrawLine(verts[1], verts[2], debugColor);
+        DebugRenderer_DrawLine(verts[2], verts[3], debugColor);
+        DebugRenderer_DrawLine(verts[3], verts[0], debugColor);
+        DebugRenderer_DrawLine(verts[4], verts[5], debugColor);
+        DebugRenderer_DrawLine(verts[5], verts[6], debugColor);
+        DebugRenderer_DrawLine(verts[6], verts[7], debugColor);
+        DebugRenderer_DrawLine(verts[7], verts[4], debugColor);
+        DebugRenderer_DrawLine(verts[0], verts[4], debugColor);
+        DebugRenderer_DrawLine(verts[1], verts[5], debugColor);
+        DebugRenderer_DrawLine(verts[2], verts[6], debugColor);
+        DebugRenderer_DrawLine(verts[3], verts[7], debugColor);
+    }
+}
+
+// -------------------------------- bind
+
+// 深度テクスチャのセット
+void DecalRenderPass::SetDepthTexture(ID3D11ShaderResourceView* depthSRV)
+{
+    m_depthSRV = depthSRV;
+}
+
+// 深度テクスチャのアンバインド
+void DecalRenderPass::UnbindDepthTexture()
+{
+    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+    m_pContext->PSSetShaderResources(5, 1, nullSRV);
+
+    m_depthSRV = nullptr;
 }
