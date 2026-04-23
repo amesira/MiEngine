@@ -108,6 +108,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,6 +127,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ShowIncludes>false</ShowIncludes>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,166 +137,171 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="actor_factory.cpp" />
-    <ClCompile Include="animation_processor.cpp" />
-    <ClCompile Include="audio.cpp" />
-    <ClCompile Include="behavior_processor.cpp" />
-    <ClCompile Include="camera_control_behavior.cpp" />
-    <ClCompile Include="camera_processor.cpp" />
-    <ClCompile Include="collision_pass.cpp" />
-    <ClCompile Include="constraint_pass.cpp" />
-    <ClCompile Include="debug_ostream.cpp" />
-    <ClCompile Include="debug_renderer.cpp" />
-    <ClCompile Include="debug_view_window.cpp" />
-    <ClCompile Include="decal_render_pass.cpp" />
-    <ClCompile Include="direct3d.cpp" />
-    <ClCompile Include="environment_factory.cpp" />
-    <ClCompile Include="health_behavior.cpp" />
-    <ClCompile Include="hierarchy_view_window.cpp" />
-    <ClCompile Include="imgui.cpp" />
-    <ClCompile Include="imgui_demo.cpp" />
-    <ClCompile Include="imgui_draw.cpp" />
-    <ClCompile Include="imgui_impl_dx11.cpp" />
-    <ClCompile Include="imgui_impl_win32.cpp" />
-    <ClCompile Include="imgui_tables.cpp" />
-    <ClCompile Include="imgui_widgets.cpp" />
-    <ClCompile Include="inspector_view_window.cpp" />
-    <ClCompile Include="integrate_pass.cpp" />
-    <ClCompile Include="material_repository.cpp" />
-    <ClCompile Include="mi_imgui_manager.cpp" />
-    <ClCompile Include="model_repository.cpp" />
-    <ClCompile Include="opaque_render_pass.cpp" />
-    <ClCompile Include="player_attack_behavior.cpp" />
-    <ClCompile Include="player_move_behavior.cpp" />
-    <ClCompile Include="render_effect_factory.cpp" />
-    <ClCompile Include="render_processor.cpp" />
-    <ClCompile Include="resolve_pass.cpp" />
-    <ClCompile Include="engine.cpp" />
-    <ClCompile Include="factory.cpp" />
-    <ClCompile Include="game_world.cpp" />
-    <ClCompile Include="mi_fps.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="game_object.h" />
-    <ClCompile Include="keyboard.cpp" />
-    <ClCompile Include="lighting_pass.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="mouse.cpp" />
-    <ClCompile Include="physics_processor.cpp" />
-    <ClCompile Include="player_behavior.cpp" />
-    <ClCompile Include="collector_font.cpp" />
-    <ClCompile Include="collector_image.cpp" />
-    <ClCompile Include="collector_slider.cpp" />
-    <ClCompile Include="resource_manager.cpp" />
-    <ClCompile Include="scene_manager.cpp" />
-    <ClCompile Include="scene_view_window.cpp" />
-    <ClCompile Include="shader_manager.cpp" />
-    <ClCompile Include="shadow_map_pass.cpp" />
-    <ClCompile Include="skybox_pass.cpp" />
-    <ClCompile Include="stb_implementation.cpp" />
-    <ClCompile Include="texture_repository.cpp" />
-    <ClCompile Include="tool_bar_window.cpp" />
-    <ClCompile Include="ui_factory.cpp" />
-    <ClCompile Include="ui_render_pass.cpp" />
+    <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp" />
+    <ClCompile Include="Source\Engine\System\Device\audio.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\behavior_processor.cpp" />
+    <ClCompile Include="Source\Game\Behavior\camera_control_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.cpp" />
+    <ClCompile Include="Utility\debug_ostream.cpp" />
+    <ClCompile Include="Utility\debug_renderer.cpp" />
+    <ClCompile Include="Source\Engine\Editor\debug_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\System\Device\direct3d.cpp" />
+    <ClCompile Include="Source\Game\Factory\environment_factory.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Editor\hierarchy_view_window.cpp" />
+    <ClCompile Include="External\ImGui\imgui.cpp" />
+    <ClCompile Include="External\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="External\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="External\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="External\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="External\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\Engine\Editor\inspector_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.cpp" />
+    <ClCompile Include="Source\Engine\System\Graphics\material_repository.cpp" />
+    <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp" />
+    <ClCompile Include="Source\Engine\System\Graphics\model_repository.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.cpp" />
+    <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\render_processor.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.cpp" />
+    <ClCompile Include="Source\Engine\engine.cpp" />
+    <ClCompile Include="Source\Game\Factory\factory.cpp" />
+    <ClCompile Include="Source\Engine\game_world.cpp" />
+    <ClCompile Include="Source\Engine\System\Device\mi_fps.cpp" />
+    <ClCompile Include="Source\Game\game.cpp" />
+    <ClCompile Include="Source\Engine\Core\game_object.h" />
+    <ClCompile Include="Source\Engine\System\Device\keyboard.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Engine\System\Device\mouse.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\physics_processor.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.cpp" />
+    <ClCompile Include="Source\Engine\resource_manager.cpp" />
+    <ClCompile Include="Source\Engine\scene_manager.cpp" />
+    <ClCompile Include="Source\Engine\Editor\scene_view_window.cpp" />
+    <ClCompile Include="Source\Engine\shader_manager.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp" />
+    <ClCompile Include="External\stb_implementation.cpp" />
+    <ClCompile Include="Source\Engine\System\Graphics\texture_repository.cpp" />
+    <ClCompile Include="Source\Engine\Editor\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Game\Factory\ui_factory.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="actor_factory.h" />
-    <ClInclude Include="animation_component.h" />
-    <ClInclude Include="animation_processor.h" />
-    <ClInclude Include="behavior_component.h" />
-    <ClInclude Include="behavior_processor.h" />
-    <ClInclude Include="camera_component.h" />
-    <ClInclude Include="camera_control_behavior.h" />
-    <ClInclude Include="camera_processor.h" />
-    <ClInclude Include="collider_component.h" />
-    <ClInclude Include="collision_pass.h" />
-    <ClInclude Include="component_pool.h" />
-    <ClInclude Include="component_pool_interface.h" />
-    <ClInclude Include="constraint_pass.h" />
-    <ClInclude Include="debug_renderer.h" />
-    <ClInclude Include="debug_view_window.h" />
-    <ClInclude Include="decal_component.h" />
-    <ClInclude Include="decal_render_pass.h" />
-    <ClInclude Include="draw_command.h" />
-    <ClInclude Include="editor_context.h" />
-    <ClInclude Include="engine_service_locator.h" />
-    <ClInclude Include="environment_factory.h" />
-    <ClInclude Include="health_behavior.h" />
-    <ClInclude Include="hierarchy_view_window.h" />
-    <ClInclude Include="imconfig.h" />
-    <ClInclude Include="imgui.h" />
-    <ClInclude Include="imgui_impl_dx11.h" />
-    <ClInclude Include="imgui_impl_win32.h" />
-    <ClInclude Include="imgui_internal.h" />
-    <ClInclude Include="imstb_rectpack.h" />
-    <ClInclude Include="imstb_textedit.h" />
-    <ClInclude Include="imstb_truetype.h" />
-    <ClInclude Include="inspector_view_window.h" />
-    <ClInclude Include="integrate_pass.h" />
-    <ClInclude Include="joint_component.h" />
-    <ClInclude Include="joint_group_component.h" />
-    <ClInclude Include="material_repository.h" />
-    <ClInclude Include="material_resource.h" />
-    <ClInclude Include="mi_imgui_manager.h" />
-    <ClInclude Include="imgui_window_interface.h" />
-    <ClInclude Include="mi_string.h" />
-    <ClInclude Include="model_repository.h" />
-    <ClInclude Include="opaque_render_pass.h" />
-    <ClInclude Include="player_attack_behavior.h" />
-    <ClInclude Include="player_move_behavior.h" />
-    <ClInclude Include="render_effect_factory.h" />
-    <ClInclude Include="render_processor.h" />
-    <ClInclude Include="render_view.h" />
-    <ClInclude Include="resolve_pass.h" />
-    <ClInclude Include="engine.h" />
-    <ClInclude Include="factory.h" />
-    <ClInclude Include="game_world.h" />
-    <ClInclude Include="mi_fps.h" />
-    <ClInclude Include="image_component.h" />
-    <ClInclude Include="light_component.h" />
-    <ClInclude Include="lighting_pass.h" />
-    <ClInclude Include="mi_math.h" />
-    <ClInclude Include="model_resource.h" />
-    <ClInclude Include="model_component.h" />
-    <ClInclude Include="pass.h" />
-    <ClInclude Include="physics_processor.h" />
-    <ClInclude Include="player_behavior.h" />
-    <ClInclude Include="rect_transform_component.h" />
-    <ClInclude Include="audio.h" />
-    <ClInclude Include="component.h" />
-    <ClInclude Include="debug_ostream.h" />
-    <ClInclude Include="direct3d.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="keyboard.h" />
-    <ClInclude Include="mouse.h" />
-    <ClInclude Include="processor.h" />
-    <ClInclude Include="collector_font.h" />
-    <ClInclude Include="collector_image.h" />
-    <ClInclude Include="collector_slider.h" />
-    <ClInclude Include="resource_manager.h" />
-    <ClInclude Include="rigidbody_component.h" />
-    <ClInclude Include="scene_base.h" />
-    <ClInclude Include="scene_interface.h" />
-    <ClInclude Include="scene_manager.h" />
-    <ClInclude Include="scene_view_window.h" />
-    <ClInclude Include="shader_manager.h" />
-    <ClInclude Include="shadow_map_pass.h" />
-    <ClInclude Include="skybox_pass.h" />
-    <ClInclude Include="slider_component.h" />
-    <ClInclude Include="stb_truetype.h" />
-    <ClInclude Include="texture_repository.h" />
-    <ClInclude Include="texture_resource.h" />
-    <ClInclude Include="text_component.h" />
-    <ClInclude Include="tool_bar_window.h" />
-    <ClInclude Include="transform_component.h" />
-    <ClInclude Include="component_type_id.h" />
-    <ClInclude Include="ui_render_pass.h" />
+    <ClInclude Include="Source\Game\Factory\actor_factory.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\animation_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\animation_processor.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\behavior_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\camera_component.h" />
+    <ClInclude Include="Source\Game\Behavior\camera_control_behavior.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\collider_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.h" />
+    <ClInclude Include="Source\Engine\Core\component_pool.h" />
+    <ClInclude Include="Source\Engine\Core\component_pool_interface.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.h" />
+    <ClInclude Include="Utility\debug_renderer.h" />
+    <ClInclude Include="Source\Engine\Editor\debug_view_window.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\decal_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\draw_command.h" />
+    <ClInclude Include="Source\Engine\Editor\editor_context.h" />
+    <ClInclude Include="Source\Engine\engine_service_locator.h" />
+    <ClInclude Include="Source\Game\Factory\environment_factory.h" />
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h" />
+    <ClInclude Include="Source\Engine\Editor\hierarchy_view_window.h" />
+    <ClInclude Include="External\ImGui\imconfig.h" />
+    <ClInclude Include="External\ImGui\imgui.h" />
+    <ClInclude Include="External\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="External\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="External\ImGui\imgui_internal.h" />
+    <ClInclude Include="External\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="External\ImGui\imstb_textedit.h" />
+    <ClInclude Include="External\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\Engine\Editor\inspector_view_window.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\joint_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\joint_group_component.h" />
+    <ClInclude Include="Source\Engine\System\Graphics\material_repository.h" />
+    <ClInclude Include="Source\Engine\System\Graphics\material_resource.h" />
+    <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h" />
+    <ClInclude Include="Source\Engine\Editor\imgui_window_interface.h" />
+    <ClInclude Include="Utility\mi_string.h" />
+    <ClInclude Include="Source\Engine\System\Graphics\model_repository.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.h" />
+    <ClInclude Include="Source\Game\Factory\render_effect_factory.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\render_processor.h" />
+    <ClInclude Include="Source\Engine\render_view.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.h" />
+    <ClInclude Include="Source\Engine\engine.h" />
+    <ClInclude Include="Source\Game\Factory\factory.h" />
+    <ClInclude Include="Source\Engine\game_world.h" />
+    <ClInclude Include="Source\Engine\System\Device\mi_fps.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\image_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\light_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h" />
+    <ClInclude Include="Utility\mi_math.h" />
+    <ClInclude Include="Source\Engine\System\Graphics\model_resource.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\model_component.h" />
+    <ClInclude Include="Source\Engine\Core\pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\physics_processor.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_behavior.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\rect_transform_component.h" />
+    <ClInclude Include="Source\Engine\System\Device\audio.h" />
+    <ClInclude Include="Source\Engine\Core\component.h" />
+    <ClInclude Include="Utility\debug_ostream.h" />
+    <ClInclude Include="Source\Engine\System\Device\direct3d.h" />
+    <ClInclude Include="Source\Game\game.h" />
+    <ClInclude Include="Source\Engine\System\Device\keyboard.h" />
+    <ClInclude Include="Source\Engine\System\Device\mouse.h" />
+    <ClInclude Include="Source\Engine\Core\processor.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.h" />
+    <ClInclude Include="Source\Engine\resource_manager.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\rigidbody_component.h" />
+    <ClInclude Include="Source\Engine\Core\scene_base.h" />
+    <ClInclude Include="Source\Engine\Core\scene_interface.h" />
+    <ClInclude Include="Source\Engine\scene_manager.h" />
+    <ClInclude Include="Source\Engine\Editor\scene_view_window.h" />
+    <ClInclude Include="Source\Engine\shader_manager.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\slider_component.h" />
+    <ClInclude Include="External\stb_truetype.h" />
+    <ClInclude Include="Source\Engine\System\Graphics\texture_repository.h" />
+    <ClInclude Include="Source\Engine\System\Graphics\texture_resource.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\text_component.h" />
+    <ClInclude Include="Source\Engine\Editor\tool_bar_window.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\transform_component.h" />
+    <ClInclude Include="Source\Engine\Core\component_type_id.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="camera.hlsl">
+    <FxCompile Include="Shader\Common\camera.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="decal_lit_ps.hlsl">
+    <FxCompile Include="Shader\decal_lit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -302,11 +309,11 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="lighting.hlsl">
+    <FxCompile Include="Shader\Common\lighting.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="lit_ps.hlsl">
+    <FxCompile Include="Shader\lit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -314,7 +321,7 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="lit_vs.hlsl">
+    <FxCompile Include="Shader\lit_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -322,19 +329,19 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="material.hlsl">
+    <FxCompile Include="Shader\Common\material.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="shadowing.hlsl">
+    <FxCompile Include="Shader\Common\shadowing.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="skinning.hlsl">
+    <FxCompile Include="Shader\Common\skinning.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="ttf_unlit_ps.hlsl">
+    <FxCompile Include="Shader\ttf_unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -342,7 +349,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="skinned_lit_vs.hlsl">
+    <FxCompile Include="Shader\skinned_lit_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -350,7 +357,7 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="transform.hlsl">
+    <FxCompile Include="Shader\Common\transform.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -358,7 +365,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="unlit_ps.hlsl">
+    <FxCompile Include="Shader\unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -366,7 +373,7 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="unlit_vs.hlsl">
+    <FxCompile Include="Shader\unlit_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -376,8 +383,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="imgui.ini" />
-    <None Include="ui_factory.h" />
+    <None Include="External\ImGui\imgui.ini" />
+    <None Include="Source\Game\Factory\ui_factory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

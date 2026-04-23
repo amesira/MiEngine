@@ -1,0 +1,25 @@
+//---------------------------------------------------
+// texture_resource.h
+// 
+// Author：Miu Kitamura
+// Date  ：2026/03/28
+//---------------------------------------------------
+#ifndef TEXTURE_RESOURCE_H
+#define TEXTURE_RESOURCE_H
+
+#include "Engine/System/Device/direct3d.h"
+using namespace DirectX;
+
+#include <wrl/client.h>
+using Microsoft::WRL::ComPtr;
+
+#include <string>
+
+// テクスチャリソース
+class TextureResource {
+public:
+    std::wstring name;
+    ComPtr<ID3D11ShaderResourceView> texture;
+};
+
+#endif // TEXTURE_RESOURCE_H
