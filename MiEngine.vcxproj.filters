@@ -1,454 +1,516 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="ttf_unlit_ps.hlsl">
+    <FxCompile Include="Shader\ttf_unlit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="lit_ps.hlsl">
+    <FxCompile Include="Shader\lit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="lighting.hlsl">
+    <FxCompile Include="Shader\Common\lighting.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
-    <FxCompile Include="material.hlsl">
+    <FxCompile Include="Shader\Common\material.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
-    <FxCompile Include="transform.hlsl">
+    <FxCompile Include="Shader\Common\transform.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
-    <FxCompile Include="camera.hlsl">
+    <FxCompile Include="Shader\Common\camera.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
-    <FxCompile Include="lit_vs.hlsl">
+    <FxCompile Include="Shader\lit_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="unlit_vs.hlsl">
+    <FxCompile Include="Shader\unlit_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="skinned_lit_vs.hlsl">
+    <FxCompile Include="Shader\skinned_lit_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="unlit_ps.hlsl">
+    <FxCompile Include="Shader\unlit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="skinning.hlsl">
+    <FxCompile Include="Shader\Common\skinning.hlsl">
       <Filter>Shader\common</Filter>
     </FxCompile>
-    <FxCompile Include="shadowing.hlsl">
+    <FxCompile Include="Shader\Common\shadowing.hlsl">
       <Filter>Shader\common</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\decal_lit_ps.hlsl">
+      <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="camera_processor.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="physics_processor.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\physics_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="direct3d.cpp">
+    <ClCompile Include="Source\Engine\System\Device\direct3d.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="keyboard.cpp">
+    <ClCompile Include="Source\Engine\System\Device\keyboard.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="audio.cpp">
+    <ClCompile Include="Source\Engine\System\Device\audio.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Source\main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="mouse.cpp">
+    <ClCompile Include="Source\Engine\System\Device\mouse.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="game_object.h">
+    <ClCompile Include="Source\Engine\Core\game_object.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="stb_implementation.cpp">
+    <ClCompile Include="External\stb_implementation.cpp">
       <Filter>External</Filter>
     </ClCompile>
-    <ClCompile Include="mi_fps.cpp">
+    <ClCompile Include="Source\Engine\System\Device\mi_fps.cpp">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClCompile>
-    <ClCompile Include="debug_ostream.cpp">
+    <ClCompile Include="Utility\debug_ostream.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="debug_renderer.cpp">
+    <ClCompile Include="Utility\debug_renderer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="factory.cpp">
+    <ClCompile Include="Source\Game\game.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Sources\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="engine.cpp">
+    <ClCompile Include="Source\Engine\engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="game_world.cpp">
+    <ClCompile Include="Source\Engine\game_world.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="scene_manager.cpp">
+    <ClCompile Include="Source\Engine\scene_manager.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="behavior_processor.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\behavior_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="collision_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="integrate_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="resolve_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="render_processor.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\render_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="ui_render_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="opaque_render_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="lighting_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="collector_image.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClCompile>
-    <ClCompile Include="collector_slider.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClCompile>
-    <ClCompile Include="collector_font.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_tables.cpp">
+    <ClCompile Include="External\ImGui\imgui_tables.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
+    <ClCompile Include="External\ImGui\imgui_widgets.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui.cpp">
+    <ClCompile Include="External\ImGui\imgui.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
+    <ClCompile Include="External\ImGui\imgui_demo.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
+    <ClCompile Include="External\ImGui\imgui_draw.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_impl_dx11.cpp">
+    <ClCompile Include="External\ImGui\imgui_impl_dx11.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_impl_win32.cpp">
+    <ClCompile Include="External\ImGui\imgui_impl_win32.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="mi_imgui_manager.cpp">
+    <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="scene_view_window.cpp">
+    <ClCompile Include="Source\Engine\Editor\scene_view_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="inspector_view_window.cpp">
+    <ClCompile Include="Source\Engine\Editor\inspector_view_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="tool_bar_window.cpp">
+    <ClCompile Include="Source\Engine\Editor\tool_bar_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="hierarchy_view_window.cpp">
+    <ClCompile Include="Source\Engine\Editor\hierarchy_view_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="debug_view_window.cpp">
+    <ClCompile Include="Source\Engine\Editor\debug_view_window.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="model_repository.cpp">
+    <ClCompile Include="Source\Engine\System\Graphics\model_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="resource_manager.cpp">
+    <ClCompile Include="Source\Engine\resource_manager.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="player_attack_behavior.cpp">
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="player_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="player_move_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="constraint_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="health_behavior.cpp">
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="texture_repository.cpp">
+    <ClCompile Include="Source\Engine\System\Graphics\texture_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="shader_manager.cpp">
+    <ClCompile Include="Source\Engine\shader_manager.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="material_repository.cpp">
+    <ClCompile Include="Source\Engine\System\Graphics\material_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="shadow_map_pass.cpp" />
-    <ClCompile Include="skybox_pass.cpp" />
-    <ClCompile Include="animation_processor.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Factory\factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Factory\actor_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Factory\environment_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Factory\ui_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\camera_control_behavior.cpp">
+      <Filter>Sources\Game\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="image_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="light_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\light_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="model_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\model_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="rect_transform_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\rect_transform_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="rigidbody_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\rigidbody_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="slider_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\slider_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="text_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\text_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="transform_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\transform_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="collider_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\collider_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="camera_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\camera_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="camera_processor.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="physics_processor.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\physics_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="component_pool_interface.h">
+    <ClInclude Include="Source\Engine\Core\component_pool_interface.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="component.h">
+    <ClInclude Include="Source\Engine\Core\component.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="component_pool.h">
+    <ClInclude Include="Source\Engine\Core\component_pool.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="direct3d.h">
+    <ClInclude Include="Source\Engine\System\Device\direct3d.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="keyboard.h">
+    <ClInclude Include="Source\Engine\System\Device\keyboard.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="audio.h">
+    <ClInclude Include="Source\Engine\System\Device\audio.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="component_type_id.h">
+    <ClInclude Include="Source\Engine\Core\component_type_id.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="mouse.h">
+    <ClInclude Include="Source\Engine\System\Device\mouse.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="stb_truetype.h">
+    <ClInclude Include="External\stb_truetype.h">
       <Filter>External</Filter>
     </ClInclude>
-    <ClInclude Include="processor.h">
+    <ClInclude Include="Source\Engine\Core\processor.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="scene_interface.h">
+    <ClInclude Include="Source\Engine\Core\scene_interface.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="scene_base.h">
+    <ClInclude Include="Source\Engine\Core\scene_base.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="mi_fps.h">
+    <ClInclude Include="Source\Engine\System\Device\mi_fps.h">
       <Filter>Sources\Engine\System\Device</Filter>
     </ClInclude>
-    <ClInclude Include="debug_ostream.h">
+    <ClInclude Include="Utility\debug_ostream.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="debug_renderer.h">
+    <ClInclude Include="Utility\debug_renderer.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="mi_math.h">
+    <ClInclude Include="Utility\mi_math.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="factory.h">
+    <ClInclude Include="Source\Game\game.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Sources\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="behavior_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\behavior_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="engine.h">
+    <ClInclude Include="Source\Engine\engine.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="game_world.h">
+    <ClInclude Include="Source\Engine\game_world.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="scene_manager.h">
+    <ClInclude Include="Source\Engine\scene_manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="behavior_processor.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="pass.h">
+    <ClInclude Include="Source\Engine\Core\pass.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="resolve_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="collision_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="integrate_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="render_processor.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\render_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="ui_render_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="opaque_render_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="lighting_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="draw_command.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\draw_command.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
-    <ClInclude Include="render_view.h">
+    <ClInclude Include="Source\Engine\render_view.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
-    <ClInclude Include="collector_image.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
-    <ClInclude Include="collector_slider.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
-    <ClInclude Include="collector_font.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_internal.h">
+    <ClInclude Include="External\ImGui\imgui_internal.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
+    <ClInclude Include="External\ImGui\imstb_rectpack.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
+    <ClInclude Include="External\ImGui\imstb_textedit.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imstb_truetype.h">
+    <ClInclude Include="External\ImGui\imstb_truetype.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imconfig.h">
+    <ClInclude Include="External\ImGui\imconfig.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui.h">
+    <ClInclude Include="External\ImGui\imgui.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_impl_dx11.h">
+    <ClInclude Include="External\ImGui\imgui_impl_dx11.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_impl_win32.h">
+    <ClInclude Include="External\ImGui\imgui_impl_win32.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_window_interface.h">
+    <ClInclude Include="Source\Engine\Editor\imgui_window_interface.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="mi_imgui_manager.h">
+    <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="scene_view_window.h">
+    <ClInclude Include="Source\Engine\Editor\scene_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="editor_context.h">
+    <ClInclude Include="Source\Engine\Editor\editor_context.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="inspector_view_window.h">
+    <ClInclude Include="Source\Engine\Editor\inspector_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="tool_bar_window.h">
+    <ClInclude Include="Source\Engine\Editor\tool_bar_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="hierarchy_view_window.h">
+    <ClInclude Include="Source\Engine\Editor\hierarchy_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="debug_view_window.h">
+    <ClInclude Include="Source\Engine\Editor\debug_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
-    <ClInclude Include="model_repository.h">
+    <ClInclude Include="Source\Engine\System\Graphics\model_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="resource_manager.h">
+    <ClInclude Include="Source\Engine\resource_manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="player_move_behavior.h">
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_behavior.h">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="player_attack_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="player_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="constraint_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="joint_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\joint_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="joint_group_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\joint_group_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="health_behavior.h">
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="model_resource.h">
+    <ClInclude Include="Source\Engine\System\Graphics\model_resource.h">
       <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
     </ClInclude>
-    <ClInclude Include="texture_resource.h">
+    <ClInclude Include="Source\Engine\System\Graphics\texture_resource.h">
       <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
     </ClInclude>
-    <ClInclude Include="material_resource.h">
+    <ClInclude Include="Source\Engine\System\Graphics\material_resource.h">
       <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
     </ClInclude>
-    <ClInclude Include="engine_service_locator.h">
+    <ClInclude Include="Source\Engine\engine_service_locator.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="texture_repository.h">
+    <ClInclude Include="Source\Engine\System\Graphics\texture_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="shader_manager.h">
+    <ClInclude Include="Source\Engine\shader_manager.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="material_repository.h">
+    <ClInclude Include="Source\Engine\System\Graphics\material_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="mi_string.h">
+    <ClInclude Include="Utility\mi_string.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="shadow_map_pass.h" />
-    <ClInclude Include="skybox_pass.h" />
-    <ClInclude Include="animation_processor.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\animation_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="animation_component.h">
+    <ClInclude Include="Source\Engine\Framework\Component\animation_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Component\decal_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Factory\factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Factory\environment_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Factory\render_effect_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\camera_control_behavior.h">
+      <Filter>Sources\Game\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h">
+      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Factory\actor_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -524,10 +586,22 @@
     <Filter Include="Shader\common">
       <UniqueIdentifier>{cc3a5256-4193-4967-a000-678caecd58d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game\Factory">
+      <UniqueIdentifier>{3b348ef2-628d-4060-9707-6f89b7332e14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Behavior\PlayerBehavior\PlayerState">
+      <UniqueIdentifier>{3919c7c5-7f30-44d1-8eb3-3af03f074c5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Behavior\PlayerBehavior\PlayerResource">
+      <UniqueIdentifier>{72526588-c41a-4258-90e6-3b1cc5a20850}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="imgui.ini">
+    <None Include="External\ImGui\imgui.ini">
       <Filter>External\imgui</Filter>
+    </None>
+    <None Include="Source\Game\Factory\ui_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
     </None>
   </ItemGroup>
 </Project>
