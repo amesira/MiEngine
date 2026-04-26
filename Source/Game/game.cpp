@@ -36,9 +36,10 @@ void GameScene::Initialize()
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
     EnvironmentFactory::AttachCameraControl(camera);
+    camera->SetName("MainCamera");
 
     GameObject* cube = this->CreateGameObject();
-    Factory::CreateBox(cube, { 0.0f,-0.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
+    Factory::CreateBox(cube, { 0.0f,-1.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
     cube->GetComponent<ModelComponent>()->SetEnable(false);
 
     cube = this->CreateGameObject();

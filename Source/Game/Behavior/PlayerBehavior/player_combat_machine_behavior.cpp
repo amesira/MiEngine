@@ -6,24 +6,24 @@
 //===================================================
 #include "player_combat_machine_behavior.h"
 
+#include <windows.h>
+
 void PlayerCombatMachineBehavior::Start()
 {
-
 }
 
 void PlayerCombatMachineBehavior::Update()
 {
-
 }
 
 void PlayerCombatMachineBehavior::DrawComponentInspector()
 {
-
 }
 
-// ------------------------------- private
+//------------------------------- public
 
+// プレイヤーの戦闘状態更新処理
 void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, float deltaTime)
 {
-
+    
 }

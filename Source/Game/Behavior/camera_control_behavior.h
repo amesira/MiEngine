@@ -28,14 +28,14 @@ private:
     //-----------------
 
     // カメラの回転角度
-    float m_pitch = XMConvertToRadians(30.0f); // カメラのピッチ角
+    float m_pitch = XMConvertToRadians(40.0f); // カメラのピッチ角
     float m_yaw = 0.0f;   // カメラのヨー角
 
-    float m_maxPitch = XMConvertToRadians(40.0f); // ピッチの最大角度
+    float m_maxPitch = XMConvertToRadians(50.0f); // ピッチの最大角度
     float m_minPitch = XMConvertToRadians(-5.0f); // ピッチの最小角度
 
     // カメラの距離と高さ
-    float m_followDistance = 15.0f; // ターゲットからの距離
+    float m_followDistance = 20.0f; // ターゲットからの距離
     float m_followHeight = 2.0f;   // ターゲットからの高さ
 
     // カメラ追従のスムージングパラメーター

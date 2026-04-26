@@ -11,17 +11,7 @@
 
 class PlayerStateMachineBehavior : public BehaviorComponent {
 private:
-    // プレイヤーの状態型
-    enum class PlayerState {
-        Idle,
-        Move,
-        Attack,
-        Dodge,
-        Stunned,
-    };
-
-    PlayerState m_currentState = PlayerState::Idle; // 現在の状態
-    bool    m_isEnterState = true;                  // 状態に入ったばかりかどうかのフラグ
+    bool    m_isEnterState = true;  // 状態に入ったばかりかどうかのフラグ
 
 public:
     PlayerStateMachineBehavior() = default;
@@ -35,7 +25,7 @@ public:
 
 private:
     // 状態切り替え
-    void ChangeState(PlayerState newState);
+    void ChangeState(PlayerContext& context, PlayerState newState);
 
 };
 

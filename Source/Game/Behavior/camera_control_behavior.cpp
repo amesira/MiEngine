@@ -23,6 +23,8 @@ void CameraControlBehavior::Start()
     m_transform = GetOwner()->GetComponent<TransformComponent>();
     m_camera = GetOwner()->GetComponent<CameraComponent>();
 
+    m_camera->SetFov(80.0f);
+
     // 追従ターゲットのTransformComponentとRigidbodyComponentを取得
     IScene* scene = GetOwner()->GetScene();
     if (scene) {
@@ -45,15 +47,26 @@ void CameraControlBehavior::Update()
     XMFLOAT3 targetVelocity = m_targetRigidbody->GetVelocity();
     float targetSpeed = MiMath::Length(targetVelocity);
 
+    XMFLOAT4 cameraQuaternion = MiMath::QuaternionFromEuler({ m_pitch, m_yaw, 0.0f });
+    XMFLOAT3 cameraForward = MiMath::RotateVector(cameraQuaternion, { 0.0f, 0.0f, 1.0f });
+    XMFLOAT3 cameraRight = MiMath::RotateVector(cameraQuaternion, { 1.0f, 0.0f, 0.0f });
+
     // 速度に応じたスムージングの調整
     float speedLerp = std::clamp(targetSpeed / 15.0f, 0.0f, 1.0f);
 
     // 自動回転ウェイト
     float autoWeight = std::clamp(targetSpeed / 10.0f, 0.0f, 1.0f);
+    XMFLOAT3 flatCameraForward = MiMath::Normalize(XMFLOAT3(cameraForward.x, 0.0f, cameraForward.z));
+    XMFLOAT3 flatTargetVelocity = MiMath::Normalize(XMFLOAT3(targetVelocity.x, 0.0f, targetVelocity.z));
 
-    XMFLOAT4 cameraQuaternion = MiMath::QuaternionFromEuler({ m_pitch, m_yaw, 0.0f });
-    XMFLOAT3 cameraForward = MiMath::RotateVector(cameraQuaternion, {0.0f, 0.0f, 1.0f});
-    XMFLOAT3 cameraRight = MiMath::RotateVector(cameraQuaternion, { 1.0f, 0.0f, 0.0f });
+    if (autoWeight > 0.01f && MiMath::Length(flatTargetVelocity) > 1.0f) {
+        float yawDiffAngle = MiMath::Angle(flatCameraForward, flatTargetVelocity);
+        if (yawDiffAngle > XMConvertToRadians(1.0f) && yawDiffAngle < XMConvertToRadians(120.0f)) 
+        {
+            float sign = (MiMath::Cross(flatCameraForward, flatTargetVelocity).y < 0.0f) ? 1.0f : -1.0f; // クロスのY成分で回転方向を決定
+            m_yaw += -yawDiffAngle * deltaTime * autoWeight * 0.5f * sign;
+        }
+    }
 
     // 注視点の目標位置を計算
     XMFLOAT3 desiredAtPosition = MiMath::Add(targetPosition, XMFLOAT3{ 0.0f, m_followHeight, 0.0f });
@@ -78,7 +91,18 @@ void CameraControlBehavior::DrawComponentInspector()
     if (ImGui::SliderFloat("Follow Distance", &followDistance, 5.0f, 30.0f)) {
         m_followDistance = followDistance;
     }
+
+    float pitch = MiMath::RadToDeg(m_pitch);
+    if (ImGui::SliderFloat("Pitch", &pitch, MiMath::RadToDeg(m_minPitch), MiMath::RadToDeg(m_maxPitch))) {
+        m_pitch = XMConvertToRadians(pitch);
+    }
+    float yaw = MiMath::RadToDeg(m_yaw);
+    if (ImGui::SliderFloat("Yaw", &yaw, -180.0f, 180.0f)) {
+        m_yaw = XMConvertToRadians(yaw);
+    }
 }
+
+// ------------------------------- private
 
 // スムーズダンパーの実装（CameraSmoothState版）
 CameraControlBehavior::CameraSmoothState CameraControlBehavior::SmoothDamp(

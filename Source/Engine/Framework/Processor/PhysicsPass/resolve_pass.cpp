@@ -18,7 +18,7 @@
 #include "Utility/mi_math.h"
 
 // 接地判定の閾値
-#define ON_GROUND_THRESHOLD (0.03f)
+#define ON_GROUND_THRESHOLD (0.01f)
 
 // 速度変化の最大値
 #define REV_VELOCITY_MAX (400.0f)
@@ -98,7 +98,6 @@ void ResolvePass::ApplyResolve(
     {
         XMFLOAT3 min = { 0.0f, 0.0f, 0.0f };
         XMFLOAT3 max = { 0.0f, 0.0f, 0.0f };
-        float minMtvY = 0.0f;
 
         // 衝突情報から最小移動ベクトルの最大値と最小値を算出
         auto collisionDataList = ColliderComponent::Internal::GetCollisionData(collider);
@@ -115,7 +114,10 @@ void ResolvePass::ApplyResolve(
             if (data.m_correction.y > max.y)max.y = data.m_correction.y;
             if (data.m_correction.z > max.z)max.z = data.m_correction.z;
             
-            if (data.m_mtv.y < minMtvY)minMtvY = data.m_mtv.y;
+            // 接地判定
+            if (data.m_mtv.y > ON_GROUND_THRESHOLD) {
+                isGrounded = true;
+            }
         }
 
         // 補正値へ統合
@@ -128,11 +130,6 @@ void ResolvePass::ApplyResolve(
         revVelocity.x += correction.x / deltaTime;
         revVelocity.y += correction.y / deltaTime;
         revVelocity.z += correction.z / deltaTime;
-
-        // 接地判定
-        if (minMtvY < 0.03f) {
-            isGrounded = true;
-        }
     }
 
     // 急激な反発を防止

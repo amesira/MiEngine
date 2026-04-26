@@ -37,7 +37,7 @@ void PlayerMoveBehavior::DrawComponentInspector()
 
 //-----------------------------------------------
 
-// 移動更新処理
+// 動き更新処理
 void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTime)
 {
     const PlayerInput& input = context.input;
@@ -45,14 +45,23 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTim
     XMFLOAT3 velocity = m_rigidbody->GetVelocity();
 
     // 移動更新処理
-    XMFLOAT3 moveDirection = { input.moveX , 0.0f, input.moveZ };
-    moveDirection = MiMath::Multiply(MiMath::Normalize(moveDirection), m_moveSpeed);
+    {
+        XMFLOAT3 moveDirection = { input.moveInput.x, 0.0f, input.moveInput.z };
+        moveDirection = MiMath::Multiply(MiMath::Normalize(moveDirection), m_moveSpeed);
 
-    velocity.x += moveDirection.x * deltaTime * 10.0f; // 加速度的に速度を増加させるために10倍する
-    velocity.z += moveDirection.z * deltaTime * 10.0f;
+        velocity.x += moveDirection.x * deltaTime * 10.0f; // 加速度的に速度を増加させるために10倍する
+        velocity.z += moveDirection.z * deltaTime * 10.0f;
 
-    velocity.x = MiMath::Clamp(velocity.x, -m_moveSpeed, m_moveSpeed);
-    velocity.z = MiMath::Clamp(velocity.z, -m_moveSpeed, m_moveSpeed);
+        velocity.x = MiMath::Clamp(velocity.x, -m_moveSpeed, m_moveSpeed);
+        velocity.z = MiMath::Clamp(velocity.z, -m_moveSpeed, m_moveSpeed);
+    }
+
+    // ジャンプ処理
+    if (input.triggerJumpCommand && m_rigidbody->GetIsGrounded()) {
+        velocity.y = m_jumpForce;
+    }
+
+    m_rigidbody->SetVelocity(velocity);
 }
 
 // 回転更新処理

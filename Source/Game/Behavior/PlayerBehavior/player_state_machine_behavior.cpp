@@ -40,15 +40,14 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
     m_isEnterState = false;
 
     // 状態ごとの処理
-    switch (m_currentState) {
-
+    switch (context.state) {
     case PlayerState::Idle: case PlayerState::Move: {
         // IdleとMoveの状態切り替え
-        if (context.input.moveX != 0.0f || context.input.moveZ != 0.0f) {
-            ChangeState(PlayerState::Move);
+        if (MiMath::Length(context.input.moveInput) > 0.01f) {
+            ChangeState(context, PlayerState::Move);
         }
         else {
-            ChangeState(PlayerState::Idle);
+            ChangeState(context, PlayerState::Idle);
         }
 
         // 移動と回転の更新
@@ -74,10 +73,10 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
 }
 
 // 状態切り替え
-void PlayerStateMachineBehavior::ChangeState(PlayerState newState)
+void PlayerStateMachineBehavior::ChangeState(PlayerContext& context, PlayerState newState)
 {
-    if (m_currentState == newState) return;
+    if (context.state == newState) return;
 
-    m_currentState = newState;
+    context.state = newState;
     m_isEnterState = true;
 }
