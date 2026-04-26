@@ -29,18 +29,20 @@
 
 #include "./PlayerState/player_move_behavior.h"
 #include "./PlayerState/player_attack_behavior.h"
+#include "./PlayerState/player_dodge_behavior.h"
 
 void PlayerBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
     if (!owner) return;
     
-    m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
-    m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
-
     m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
     m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
     m_visualMachine = owner->GetComponent<PlayerVisualMachineBehavior>();
+
+    m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
+    m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
+    m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
 
     IScene* scene = owner->GetScene();
 
@@ -85,6 +87,18 @@ void PlayerBehavior::DrawComponentInspector()
     if (!enable) {
         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
     }
+
+    if (ImGui::Checkbox("Enable", &enable)) {
+        this->SetEnable(enable);
+    }
+    
+    // 参照状態の表示
+    ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
+    ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
+    ImGui::Text("VisualMachine: %s", m_visualMachine ? "OK" : "None");
+
+
+
     bool prevEnable = enable;
 
     if (!prevEnable) {
@@ -129,6 +143,17 @@ PlayerInput PlayerBehavior::UpdateInput()
     // ジャンプ入力
     if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
         input.triggerJumpCommand = true;
+    }
+
+    // エイム入力
+    if (Mouse_IsButtonDownTrigger(Mouse_Button::RIGHT)) {
+        input.triggerAimCommand = true;
+    }
+    if (Mouse_IsButtonDown(Mouse_Button::RIGHT)) {
+        input.holdAimCommand = true;
+    }
+    if (Mouse_IsButtonUpTrigger(Mouse_Button::RIGHT)) {
+        input.releaseAimCommand = true;
     }
     
     // 攻撃入力

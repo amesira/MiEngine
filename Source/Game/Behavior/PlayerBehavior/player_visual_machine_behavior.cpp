@@ -12,6 +12,11 @@
 
 #include "Engine/Framework/Component/transform_component.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/game_effect_controller.h"
+
+#define GAME_EFFECT_CONTROLLER GameControllerLocator::GetGameEffectController()
+
 void PlayerVisualMachineBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
@@ -34,6 +39,7 @@ void PlayerVisualMachineBehavior::DrawComponentInspector()
 
 void PlayerVisualMachineBehavior::UpdateVisualMachine(PlayerContext& context, float deltaTime)
 {
+    // Move：移動中は向きと傾きを更新
     if (context.state == PlayerState::Move) {
         UpdateFacingDirection(context, deltaTime);
         UpdateTilt(context, deltaTime);

@@ -5,6 +5,7 @@ using namespace DirectX;
 
 class PlayerMoveBehavior;
 class PlayerAttackBehavior;
+class PlayerDodgeBehavior;
 
 // プレイヤーの状態型
 enum class PlayerState {
@@ -15,10 +16,12 @@ enum class PlayerState {
     Stunned,
 };
 enum class PlayerCombatState {
-
+    Idle,
+    Aim,
+    Shoot,
 };
 enum class PlayerVisualState {
-
+    Idle,
 };
 
 // プレイヤー入力構造体
@@ -30,6 +33,14 @@ struct PlayerInput {
     // ジャンプ入力
     bool    triggerJumpCommand;
 
+    // ダッシュ入力
+    bool    triggerDashCommand;
+
+    // エイム入力
+    bool    triggerAimCommand;
+    bool    holdAimCommand;
+    bool    releaseAimCommand;
+
     // 攻撃入力
     bool    triggerAttackCommand;
     bool    holdAttackCommand;
@@ -39,7 +50,11 @@ struct PlayerInput {
         horizontal(0.0f), 
         vertical(0.0f), 
         moveInput(0.0f, 0.0f, 0.0f),
-        triggerJumpCommand(false), 
+        triggerJumpCommand(false),
+        triggerDashCommand(false),
+        triggerAimCommand(false),
+        holdAimCommand(false),
+        releaseAimCommand(false),
         triggerAttackCommand(false),
         holdAttackCommand(false), 
         releaseAttackCommand(false) {
@@ -59,6 +74,7 @@ struct PlayerContext {
     // StateMachineから利用するプレイヤー機能
     PlayerMoveBehavior* moveBehavior = nullptr;
     PlayerAttackBehavior* attackBehavior = nullptr;
+    PlayerDodgeBehavior* dodgeBehavior = nullptr;
 
     // CombatMachineから利用する武器
 

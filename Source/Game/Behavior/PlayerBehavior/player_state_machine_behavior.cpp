@@ -55,16 +55,32 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
         context.moveBehavior->UpdateRotation(context, deltaTime);
 
         // 入力による状態切り替え
-
+        if (context.input.triggerDashCommand) {
+            ChangeState(context, PlayerState::Dodge);
+        }
+        else if (context.input.triggerAimCommand) {
+            ChangeState(context, PlayerState::Attack);
+        }
 
         break;
     }
 
     case PlayerState::Attack: {
+
+        // 攻撃終了条件
+        if (context.input.releaseAimCommand) {
+            ChangeState(context, PlayerState::Idle);
+        }
+
         break;
     }
 
     case PlayerState::Dodge: {
+        if (entered) {
+
+        }
+
+
         break;
     }
 

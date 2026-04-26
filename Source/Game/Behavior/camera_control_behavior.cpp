@@ -1,8 +1,8 @@
 //===================================================
 // camera_control_behavior.cpp
 // 
-// Author：Miu Kitamura
-// Date  ：2026/04/08
+// Author・Miu Kitamura
+// Date  ・ 2026/04/08
 //===================================================
 #include "camera_control_behavior.h"
 #include "Engine/Core/scene_interface.h"
@@ -17,7 +17,6 @@
 #include "Engine/Framework/Component/camera_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
 
-// カメラ制御の初期化処理
 void CameraControlBehavior::Start()
 {
     m_transform = GetOwner()->GetComponent<TransformComponent>();
@@ -25,18 +24,9 @@ void CameraControlBehavior::Start()
 
     m_camera->SetFov(80.0f);
 
-    // 追従ターゲットのTransformComponentとRigidbodyComponentを取得
-    IScene* scene = GetOwner()->GetScene();
-    if (scene) {
-        GameObject* target = scene->GetGameObjectByName("Player"); // 追従ターゲットの名前を指定
-        if (target) {
-            m_targetTransform = target->GetComponent<TransformComponent>();
-            m_targetRigidbody = target->GetComponent<RigidbodyComponent>();
-        }
-    }
+    FindTarget();
 }
 
-// カメラ制御の更新処理
 void CameraControlBehavior::Update()
 {
     if (!m_targetTransform || !m_targetRigidbody) return;
@@ -47,44 +37,26 @@ void CameraControlBehavior::Update()
     XMFLOAT3 targetVelocity = m_targetRigidbody->GetVelocity();
     float targetSpeed = MiMath::Length(targetVelocity);
 
-    XMFLOAT4 cameraQuaternion = MiMath::QuaternionFromEuler({ m_pitch, m_yaw, 0.0f });
-    XMFLOAT3 cameraForward = MiMath::RotateVector(cameraQuaternion, { 0.0f, 0.0f, 1.0f });
-    XMFLOAT3 cameraRight = MiMath::RotateVector(cameraQuaternion, { 1.0f, 0.0f, 0.0f });
+    CameraBasis basis = BuildCameraBasis();
 
-    // 速度に応じたスムージングの調整
     float speedLerp = std::clamp(targetSpeed / 15.0f, 0.0f, 1.0f);
 
-    // 自動回転ウェイト
-    float autoWeight = std::clamp(targetSpeed / 10.0f, 0.0f, 1.0f);
-    XMFLOAT3 flatCameraForward = MiMath::Normalize(XMFLOAT3(cameraForward.x, 0.0f, cameraForward.z));
-    XMFLOAT3 flatTargetVelocity = MiMath::Normalize(XMFLOAT3(targetVelocity.x, 0.0f, targetVelocity.z));
+    // ターゲットの速度に基づいてカメラの自動回転を更新
+    UpdateAutoYaw(targetVelocity, targetSpeed, deltaTime, basis);
+    basis = BuildCameraBasis();
 
-    if (autoWeight > 0.01f && MiMath::Length(flatTargetVelocity) > 1.0f) {
-        float yawDiffAngle = MiMath::Angle(flatCameraForward, flatTargetVelocity);
-        if (yawDiffAngle > XMConvertToRadians(1.0f) && yawDiffAngle < XMConvertToRadians(120.0f)) 
-        {
-            float sign = (MiMath::Cross(flatCameraForward, flatTargetVelocity).y < 0.0f) ? 1.0f : -1.0f; // クロスのY成分で回転方向を決定
-            m_yaw += -yawDiffAngle * deltaTime * autoWeight * 0.5f * sign;
-        }
-    }
+    // ターゲットの位置とカメラの基底ベクトルに基づいて、カメラの注視点と位置の目標値を計算
+    CameraDesiredPositions desiredPositions = CalculateDesiredPositions(targetPosition, basis);
 
-    // 注視点の目標位置を計算
-    XMFLOAT3 desiredAtPosition = MiMath::Add(targetPosition, XMFLOAT3{ 0.0f, m_followHeight, 0.0f });
-    
-    // カメラ位置の目標位置を計算
-    XMFLOAT3 desiredEyePosition = MiMath::Subtract(desiredAtPosition, MiMath::Multiply(cameraForward, m_followDistance));
-    desiredEyePosition = MiMath::Add(desiredEyePosition, MiMath::Multiply(cameraRight, 0.6f)); // 少し右にオフセット（マジックナンバー要修正）
+    float smoothTime = 0.3f + 0.7f * (1.0f - speedLerp);
+    m_atSmoothState = SmoothDamp(m_atSmoothState, desiredPositions.atPosition, smoothTime, deltaTime);
+    m_eyeSmoothState = SmoothDamp(m_eyeSmoothState, desiredPositions.eyePosition, smoothTime, deltaTime);
 
-    // 注視点とカメラ位置をスムーズダンパーで更新
-    m_atSmoothState = SmoothDamp(m_atSmoothState, desiredAtPosition, 0.3f + 0.7f * (1.0f - speedLerp), deltaTime);
-    m_eyeSmoothState = SmoothDamp(m_eyeSmoothState, desiredEyePosition, 0.3f + 0.7f * (1.0f - speedLerp), deltaTime);
-
-    // カメラコンポーネントに位置と注視点を設定
+    // スムーズに追従した位置をカメラのTransformとCameraComponentに適用
     m_transform->SetPosition(m_eyeSmoothState.position);
     m_camera->SetAtPosition(m_atSmoothState.position);
 }
 
-// カメラ制御のインスペクタ表示処理
 void CameraControlBehavior::DrawComponentInspector()
 {
     float followDistance = m_followDistance;
@@ -96,6 +68,7 @@ void CameraControlBehavior::DrawComponentInspector()
     if (ImGui::SliderFloat("Pitch", &pitch, MiMath::RadToDeg(m_minPitch), MiMath::RadToDeg(m_maxPitch))) {
         m_pitch = XMConvertToRadians(pitch);
     }
+
     float yaw = MiMath::RadToDeg(m_yaw);
     if (ImGui::SliderFloat("Yaw", &yaw, -180.0f, 180.0f)) {
         m_yaw = XMConvertToRadians(yaw);
@@ -104,7 +77,68 @@ void CameraControlBehavior::DrawComponentInspector()
 
 // ------------------------------- private
 
-// スムーズダンパーの実装（CameraSmoothState版）
+// ターゲットの探索
+void CameraControlBehavior::FindTarget()
+{
+    IScene* scene = GetOwner()->GetScene();
+    if (!scene) return;
+
+    GameObject* target = scene->GetGameObjectByName("Player");
+    if (!target) return;
+
+    m_targetTransform = target->GetComponent<TransformComponent>();
+    m_targetRigidbody = target->GetComponent<RigidbodyComponent>();
+}
+
+// ---------- 
+
+// カメラの前方と右方向のベクトルを構築
+CameraControlBehavior::CameraBasis CameraControlBehavior::BuildCameraBasis() const
+{
+    XMFLOAT4 cameraQuaternion = MiMath::QuaternionFromEuler({ m_pitch, m_yaw, 0.0f });
+
+    CameraBasis basis{};
+    basis.forward = MiMath::RotateVector(cameraQuaternion, { 0.0f, 0.0f, 1.0f });
+    basis.right = MiMath::RotateVector(cameraQuaternion, { 1.0f, 0.0f, 0.0f });
+    return basis;
+}
+
+// ターゲットの速度に基づいてカメラの自動回転を更新
+void CameraControlBehavior::UpdateAutoYaw(const XMFLOAT3& targetVelocity, float targetSpeed, float deltaTime, const CameraBasis& basis)
+{
+    float autoWeight = std::clamp(targetSpeed / 10.0f, 0.0f, 1.0f);
+    XMFLOAT3 flatCameraForward = MiMath::Normalize(XMFLOAT3(basis.forward.x, 0.0f, basis.forward.z));
+    XMFLOAT3 flatTargetVelocity = MiMath::Normalize(XMFLOAT3(targetVelocity.x, 0.0f, targetVelocity.z));
+
+    if (autoWeight > 0.01f && MiMath::Length(flatTargetVelocity) > 0.1f) {
+        float yawDiffAngle = MiMath::Angle(flatCameraForward, flatTargetVelocity);
+        if (yawDiffAngle > XMConvertToRadians(1.0f) && yawDiffAngle < XMConvertToRadians(120.0f)) {
+            float sign = (MiMath::Cross(flatCameraForward, flatTargetVelocity).y < 0.0f) ? 1.0f : -1.0f;
+            m_yaw += -yawDiffAngle * deltaTime * autoWeight * 0.5f * sign;
+        }
+    }
+}
+
+// カメラの注視点と位置の目標値を計算
+CameraControlBehavior::CameraDesiredPositions CameraControlBehavior::CalculateDesiredPositions(const XMFLOAT3& targetPosition, const CameraBasis& basis) const
+{
+    CameraDesiredPositions desiredPositions{};
+
+    desiredPositions.atPosition = MiMath::Add(targetPosition, XMFLOAT3{ 0.0f, m_followHeight, 0.0f });
+
+    desiredPositions.eyePosition = MiMath::Subtract(
+        desiredPositions.atPosition,
+        MiMath::Multiply(basis.forward, m_followDistance));
+    desiredPositions.eyePosition = MiMath::Add(
+        desiredPositions.eyePosition,
+        MiMath::Multiply(basis.right, 0.6f));
+
+    return desiredPositions;
+}
+
+// -----------------
+
+// スムーズダンピング関数の実装
 CameraControlBehavior::CameraSmoothState CameraControlBehavior::SmoothDamp(
     const CameraSmoothState& current, const XMFLOAT3& targetPosition, float smoothTime, float deltaTime)
 {
@@ -113,16 +147,13 @@ CameraControlBehavior::CameraSmoothState CameraControlBehavior::SmoothDamp(
     }
     float omega = 2.0f / smoothTime;
 
-    // オイラー法で近似的に減衰を計算
     float x = omega * deltaTime;
     float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
 
-    // 目標位置と現在位置の差分を計算
     XMFLOAT3 change = MiMath::Subtract(current.position, targetPosition);
     XMFLOAT3 temp = MiMath::Add(current.velocity, MiMath::Multiply(change, omega));
     temp = MiMath::Multiply(temp, deltaTime);
 
-    // 新しい位置と速度を計算
     CameraSmoothState result;
     result.position = MiMath::Multiply(MiMath::Add(change, temp), exp);
     result.position = MiMath::Add(result.position, targetPosition);

@@ -229,6 +229,8 @@
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -514,6 +516,9 @@
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
