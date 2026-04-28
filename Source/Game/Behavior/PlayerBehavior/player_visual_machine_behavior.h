@@ -15,8 +15,9 @@ class PlayerVisualMachineBehavior : public BehaviorComponent {
 private:
     TransformComponent* m_transform = nullptr;
 
-    // 向き更新用の変数
-    float   m_currentAngleY = 0.0f;
+    // 傾きの最大値（ラジアン）
+    XMFLOAT3 m_forwardTilt = { XMConvertToRadians(15.0f), 0.0f, 0.0f};
+    XMFLOAT3 m_rightTilt = { 0.0f, 0.0f, XMConvertToRadians(10.0f) };
 
 public:
     PlayerVisualMachineBehavior() = default;
@@ -29,8 +30,6 @@ public:
     void UpdateVisualMachine(PlayerContext& context, float deltaTime);
 
 private:
-    // 向き更新処理
-    void UpdateFacingDirection(const PlayerContext& context, float deltaTime);
     // 傾き更新処理
     void UpdateTilt(const PlayerContext& context, float deltaTime);
 

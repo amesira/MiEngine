@@ -14,6 +14,7 @@
 #include "Engine/System/Device/mouse.h"
 
 #include "Engine/Editor/imgui_window_interface.h"
+#include "Engine/Editor/inspector_view_window.h"
 
 // コンポーネント
 #include "Engine/Framework/Component/transform_component.h"
@@ -82,28 +83,18 @@ void PlayerBehavior::Update()
 // PlayerBehaviorのインスペクタ表示
 void PlayerBehavior::DrawComponentInspector()
 {
-    // Enableの表示
-    bool enable = this->GetEnable();
-    if (!enable) {
-        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
+    if(InspectorViewWindow::BeginComponentSection(this, "Player Behavior")) {
+        // 参照状態の表示
+        ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
+        ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
+        ImGui::Text("VisualMachine: %s", m_visualMachine ? "OK" : "None");
+
+        // 入力状態の表示
+        ImGui::Text("MoveInputCameraLocal: (%.2f, %.2f, %.2f)", m_context.input.moveInputCameraLocal.x, m_context.input.moveInputCameraLocal.y, m_context.input.moveInputCameraLocal.z);
+
     }
 
-    if (ImGui::Checkbox("Enable", &enable)) {
-        this->SetEnable(enable);
-    }
-    
-    // 参照状態の表示
-    ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
-    ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
-    ImGui::Text("VisualMachine: %s", m_visualMachine ? "OK" : "None");
-
-
-
-    bool prevEnable = enable;
-
-    if (!prevEnable) {
-        ImGui::PopStyleVar();
-    }
+    InspectorViewWindow::EndComponentSection();
 }
 
 // --------------------------------------------------
@@ -133,7 +124,7 @@ PlayerInput PlayerBehavior::UpdateInput()
         XMFLOAT3 cameraRight = MiMath::Normalize(MiMath::Cross(cameraForward, m_mainCamera->GetUpVector()));
         cameraRight = MiMath::Multiply(cameraRight, -1.0f);
 
-        input.moveInput = MiMath::Add(
+        input.moveInputCameraLocal = MiMath::Add(
             MiMath::Multiply(cameraRight, input.horizontal),
             MiMath::Multiply(cameraForward, input.vertical)
         );
@@ -143,6 +134,11 @@ PlayerInput PlayerBehavior::UpdateInput()
     // ジャンプ入力
     if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
         input.triggerJumpCommand = true;
+    }
+
+    // ダッシュ入力
+    if (Keyboard_IsKeyDownTrigger(KK_LEFTSHIFT)) {
+        input.triggerDashCommand = true;
     }
 
     // エイム入力

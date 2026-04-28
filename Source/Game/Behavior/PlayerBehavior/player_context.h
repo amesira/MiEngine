@@ -28,7 +28,7 @@ enum class PlayerVisualState {
 struct PlayerInput {
     float horizontal;   // 水平方向の入力
     float vertical;     // 垂直方向の入力
-    XMFLOAT3 moveInput; // 移動入力（horizontal, verticalをカメラから変換）
+    XMFLOAT3 moveInputCameraLocal; // 移動入力（horizontal, verticalをカメラから変換）
 
     // ジャンプ入力
     bool    triggerJumpCommand;
@@ -49,7 +49,7 @@ struct PlayerInput {
     PlayerInput() : 
         horizontal(0.0f), 
         vertical(0.0f), 
-        moveInput(0.0f, 0.0f, 0.0f),
+        moveInputCameraLocal(0.0f, 0.0f, 0.0f),
         triggerJumpCommand(false),
         triggerDashCommand(false),
         triggerAimCommand(false),

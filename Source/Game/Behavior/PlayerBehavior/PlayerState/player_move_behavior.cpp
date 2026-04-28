@@ -12,6 +12,7 @@
 #include "Engine/System/Device/mi_fps.h"
 
 #include "Engine/Editor/imgui_window_interface.h"
+#include "Engine/Editor/inspector_view_window.h"
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
@@ -32,13 +33,17 @@ void PlayerMoveBehavior::Update()
 
 void PlayerMoveBehavior::DrawComponentInspector()
 {
+    if (InspectorViewWindow::BeginComponentSection(this, "Player Move")) {
+        ImGui::Text("CurrentAngleY: %.2f", XMConvertToDegrees(m_currentAngleY));
+    }
 
+    InspectorViewWindow::EndComponentSection();
 }
 
 //-----------------------------------------------
 
 // 動き更新処理
-void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTime)
+void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTime, float speedMultipler)
 {
     const PlayerInput& input = context.input;
 
@@ -46,14 +51,14 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTim
 
     // 移動更新処理
     {
-        XMFLOAT3 moveDirection = { input.moveInput.x, 0.0f, input.moveInput.z };
+        XMFLOAT3 moveDirection = { input.moveInputCameraLocal.x, 0.0f, input.moveInputCameraLocal.z };
         moveDirection = MiMath::Multiply(MiMath::Normalize(moveDirection), m_moveSpeed);
 
-        velocity.x += moveDirection.x * deltaTime * 10.0f; // 加速度的に速度を増加させるために10倍する
-        velocity.z += moveDirection.z * deltaTime * 10.0f;
+        velocity.x += moveDirection.x * deltaTime * 10.0f * speedMultipler;
+        velocity.z += moveDirection.z * deltaTime * 10.0f * speedMultipler;
 
-        velocity.x = MiMath::Clamp(velocity.x, -m_moveSpeed, m_moveSpeed);
-        velocity.z = MiMath::Clamp(velocity.z, -m_moveSpeed, m_moveSpeed);
+        velocity.x = MiMath::Clamp(velocity.x, -m_moveSpeed * speedMultipler, m_moveSpeed * speedMultipler);
+        velocity.z = MiMath::Clamp(velocity.z, -m_moveSpeed * speedMultipler, m_moveSpeed * speedMultipler);
     }
 
     // ジャンプ処理
@@ -65,20 +70,22 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTim
 }
 
 // 回転更新処理
+// ・基本の回転を行う。装飾的な回転はPlayerVisualMachineBehaviorで行う
 void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, float deltaTime)
 {
-    XMFLOAT3 velocity = m_rigidbody->GetVelocity();
-    
-    // 速度方向に応じてプレイヤーの向きを変える
-    if (MiMath::Length(XMFLOAT3(velocity.x, 0.0f, velocity.z)) > 0.2f) {
-        float angle = atan2f(velocity.x, velocity.z) + XM_PI;
-        float newAngleY = MiMath::Lerp(m_currentAngleY, angle, std::clamp(deltaTime * 10.0f, 0.0f, 1.0f));
-    
-        m_transform->SetEulerAngle({ 0.0f, newAngleY, 0.0f });
-    
-        m_currentAngleY = newAngleY;
+    const XMFLOAT3& move = context.input.moveInputCameraLocal;
+
+    // 入力がほぼない時は向きを変えない
+    if (MiMath::Length(XMFLOAT3(move.x, 0.0f, move.z)) < 0.01f) {
+        return;
     }
-    else {
-        // 入力がないときはアニメーションをIdleにするなどの処理をここで行う
-    }
+
+    // XZ平面の向きをそのまま角度にする
+    float targetAngleY = atan2f(-move.x, -move.z);
+
+    // 補完
+    targetAngleY = MiMath::Lerp(m_currentAngleY, targetAngleY, deltaTime * 10.0f);
+
+    m_transform->SetEulerAngle({ 0.0f, targetAngleY, 0.0f });
+    m_currentAngleY = targetAngleY;
 }

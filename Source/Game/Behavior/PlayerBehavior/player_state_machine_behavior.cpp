@@ -14,6 +14,8 @@
 #include "Engine/Editor/imgui_window_interface.h"
 
 #include "./PlayerState/player_move_behavior.h"
+#include "./PlayerState/player_attack_behavior.h"
+#include "./PlayerState/player_dodge_behavior.h"
 
 void PlayerStateMachineBehavior::Start()
 {
@@ -43,7 +45,7 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
     switch (context.state) {
     case PlayerState::Idle: case PlayerState::Move: {
         // IdleとMoveの状態切り替え
-        if (MiMath::Length(context.input.moveInput) > 0.01f) {
+        if (MiMath::Length(context.input.moveInputCameraLocal) > 0.01f) {
             ChangeState(context, PlayerState::Move);
         }
         else {
@@ -76,10 +78,22 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
     }
 
     case PlayerState::Dodge: {
+        // 回避開始処理
         if (entered) {
-
+            context.dodgeBehavior->StartDodge(context);
         }
 
+        // 移動と回転の更新（回避中は移動速度を上げる）
+        context.moveBehavior->UpdateMove(context, deltaTime, 1.5f);
+        context.moveBehavior->UpdateRotation(context, deltaTime);
+
+        // 回避の更新
+        context.dodgeBehavior->UpdateDodge(context, deltaTime);
+
+        // 回避終了条件
+        if (context.dodgeBehavior->IsDodgeFinished()) {
+            ChangeState(context, PlayerState::Idle);
+        }
 
         break;
     }

@@ -24,7 +24,7 @@ private:
     bool m_isJustDodge = false;
 
     // 回避時間
-    float m_dodgeDuration = 2.0f;
+    float m_dodgeDuration = 0.8f;
     float m_dodgeTimer = 0.0f;
 
 public:

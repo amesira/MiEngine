@@ -37,6 +37,23 @@ public:
     void    SetPrevPosition(const XMFLOAT3& prevPosition){ m_prevPosition = prevPosition; }
     XMFLOAT3   GetPrevPosition()const { return m_prevPosition; }
 
+    // Forward、Right、Upの取得
+    XMFLOAT3   GetForward() const {
+        XMFLOAT3 forward = { 0.0f, 0.0f, 1.0f };
+        forward = MiMath::RotateVector(m_rotation, forward);
+        return forward;
+    }
+    XMFLOAT3   GetRight() const {
+        XMFLOAT3 right = { 1.0f, 0.0f, 0.0f };
+        right = MiMath::RotateVector(m_rotation, right);
+        return right;
+    }
+    XMFLOAT3   GetUp() const {
+        XMFLOAT3 up = { 0.0f, 1.0f, 0.0f };
+        up = MiMath::RotateVector(m_rotation, up);
+        return up;
+    }
+
     // Euler角での設定・取得（ラジアン角で扱う）
     void    SetEulerAngle(const XMFLOAT3& euler) {
         XMVECTOR q = XMQuaternionRotationRollPitchYaw(
@@ -57,20 +74,6 @@ public:
         }
 
         float x = std::asinf(-sinX);
-
-        // ジンバルロック（X軸の回転が±90度付近）を回避するための処理
-        /*if (std::isnan(x) || std::abs(std::abs(x) - XM_PI / 2.0f) < e) {
-            x = -sinX > 0.0f ? XM_PI / 2.0f : -XM_PI / 2.0f;
-            float y = 0.0f;
-            if (x > 0.0f) {
-                y = std::atan2f(2.0f * q.x * q.y - 2.0f * q.z * q.w, 2.0f * MiMath::Pow(q.w, 2) + 2.0f * MiMath::Pow(q.x, 2) - 1.0f);
-            }
-            else {
-                y = std::atan2f(-(2.0f * q.x * q.y - 2.0f * q.z * q.w), 2.0f * MiMath::Pow(q.w, 2) + 2.0f * MiMath::Pow(q.x, 2) - 1.0f);
-            }
-            XMFLOAT3 zimbalLockEuler = { x, y, 0.0f };
-        }*/
-
         float cosX = std::cosf(x);
 
         float sinY = (2.0f * q.x * q.z + 2.0f * q.y * q.w) / cosX;

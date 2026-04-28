@@ -9,6 +9,8 @@
 #include "Engine/Core/game_object.h"
 
 #include "Utility/mi_math.h"
+#include "Engine/Editor/imgui_window_interface.h"
+#include "Engine/Editor/inspector_view_window.h"
 
 #include "Engine/Framework/Component/transform_component.h"
 
@@ -32,7 +34,10 @@ void PlayerVisualMachineBehavior::Update()
 
 void PlayerVisualMachineBehavior::DrawComponentInspector()
 {
-
+    if (InspectorViewWindow::BeginComponentSection(this, "Player Visual Machine")) {
+        
+    }
+    InspectorViewWindow::EndComponentSection();
 }
 
 // ------------------------------- public
@@ -41,36 +46,38 @@ void PlayerVisualMachineBehavior::UpdateVisualMachine(PlayerContext& context, fl
 {
     // Move：移動中は向きと傾きを更新
     if (context.state == PlayerState::Move) {
-        UpdateFacingDirection(context, deltaTime);
         UpdateTilt(context, deltaTime);
     }
 }
 
 // ------------------------------- private
 
-// 向き更新処理
-void PlayerVisualMachineBehavior::UpdateFacingDirection(const PlayerContext& context, float deltaTime)
-{
-    float angle = MiMath::Angle({ 0.0f, 0.0f, 1.0f }, context.input.moveInput);
-
-    // 現在角度から目標角度への差分を -PI ～ PI に収めて、最短方向へ補間する
-    float deltaAngle = angle - m_currentAngleY;
-    while (deltaAngle > XM_PI) {
-        deltaAngle -= XM_2PI;
-    }
-    while (deltaAngle < -XM_PI) {
-        deltaAngle += XM_2PI;
-    }
-
-    float t = std::clamp(deltaTime * 10.0f, 0.0f, 1.0f);
-    float newAngleY = m_currentAngleY + deltaAngle * t;
-
-    m_transform->SetEulerAngle({ 0.0f, newAngleY, 0.0f });
-    m_currentAngleY = newAngleY;
-}
-
 // 傾き更新処理
 void PlayerVisualMachineBehavior::UpdateTilt(const PlayerContext& context, float deltaTime)
 {
+    float angleDiff = MiMath::Angle(
+        m_transform->GetForward(),
+        context.input.moveInputCameraLocal
+    );
+
+    if(MiMath::Length(context.input.moveInputCameraLocal) > 0.01f) {
+        XMFLOAT3 targetEuler = {
+            m_forwardTilt.x,
+            m_transform->GetEulerAngle().y,
+            0.0f,
+        };
+        XMFLOAT3 currentEuler = m_transform->GetEulerAngle();
+
+        // スムーズに傾きを更新
+        currentEuler = MiMath::Lerp(currentEuler, targetEuler, deltaTime * 10.0f);
+
+        m_transform->SetEulerAngle(currentEuler);
+    }
+     else {
+        // 入力がないときは傾きを元に戻す
+        XMFLOAT3 currentEuler = m_transform->GetEulerAngle();
+        currentEuler = MiMath::Lerp(currentEuler, XMFLOAT3{ 0.0f, 0.0f, 0.0f }, deltaTime * 10.0f);
+        m_transform->SetEulerAngle(currentEuler);
+    }
 
 }

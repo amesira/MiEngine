@@ -51,7 +51,6 @@ void PlayerDodgeBehavior::StartDodge(PlayerContext& context)
 void PlayerDodgeBehavior::UpdateDodge(PlayerContext& context, float deltaTime)
 {
     if (!m_isDodging) return;
-    float deltaTime = FPS_GetDeltaTime();
     m_dodgeTimer += deltaTime;
 
     // ジャスト回避の判定

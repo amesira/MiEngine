@@ -9,6 +9,7 @@
 #include "imgui_window_interface.h"
 class EditorContext;
 class GameObject;
+class Component;
 
 class InspectorViewWindow : public IImguiWindow {
 private:
@@ -17,6 +18,10 @@ private:
 public:
     InspectorViewWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
     void Draw() override;
+
+    // Component表示初め
+    static bool BeginComponentSection(Component* comp, const char* name, bool useEnableSetting = true);
+    static void EndComponentSection();
 
 private:
     void DrawComponentInspector(GameObject* gameObject);
