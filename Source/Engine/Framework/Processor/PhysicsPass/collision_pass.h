@@ -36,66 +36,17 @@ private:
     // 連続衝突判定の速度範囲
     static constexpr float  VELOCITY_CCB_RANGE = 70.0f;
 
-    // 衝突判定結果
-    struct CollisionResult {
-        bool        isCollision;
-        XMFLOAT3    mtv;
-    };
-
     //---------------------------------------------------
-    // 当たり判定の前段階の処理
+    // 物理的な解決のための処理群
     //---------------------------------------------------
-    // レイヤーマスクによる当たり判定スキップ
-    bool    IsIgnoreLayerPair(int layerA, int layerB);
-
     // CCBステップ数の計算
     int     CalculateCCBStep(RigidbodyComponent* rb, float deltaTime);
-
-    //----------------------------------------------------
-    // AABB境界情報の計算・判定
-	//----------------------------------------------------
-    // AABB境界情報
-    struct Bounds {
-        float   minX, maxX;
-        float   minY, maxY;
-        float   minZ, maxZ;
-    };
-
-    // AABB境界情報の計算
-    Bounds  ConvertToBounds(TransformComponent* transform, BoxColliderComponent* collider);
-    Bounds  ConvertToBounds(TransformComponent* transform, SphereColliderComponent* collider);
-
-    // AABB同士の衝突判定
-    void    CheckAABB(CollisionResult& result, Bounds a, Bounds b);
-
-    //----------------------------------------------------
-	// 当たり判定の本格チェック
-    // ・コライダーの種類別に当たり判定を行う関数群
-	//----------------------------------------------------
-    // Box - Box
-    void    CheckOBB(
-        CollisionResult& result,
-        TransformComponent* transformA, BoxColliderComponent* colliderA,
-        TransformComponent* transformB, BoxColliderComponent* colliderB);
-    // Box - Sphere
-    void    CheckOBBSphere(
-        CollisionResult& result,
-        TransformComponent* transformA, BoxColliderComponent* colliderA,
-        TransformComponent* transformB, SphereColliderComponent* colliderB);
-    // Sphere - Sphere
-    void    CheckSphere(
-        CollisionResult& result,
-        TransformComponent* transformA, SphereColliderComponent* colliderA,
-        TransformComponent* transformB, SphereColliderComponent* colliderB);
-
-    //----------------------------------------------------
-    // 当たり判定後の処理
-	//----------------------------------------------------
     // Correctionの作成
     float   CreateCorrectionRate(ColliderComponent* col, RigidbodyComponent* rb);
 
     //----------------------------------------------------
     // デバッグ用コライダー描画
+    //----------------------------------------------------
     void    DrawDebug_ColliderLine(TransformComponent* transform, BoxColliderComponent* boxCollider);
     void    DrawDebug_ColliderLine(TransformComponent* transform, SphereColliderComponent* sphereCollider);
 
