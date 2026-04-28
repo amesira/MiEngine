@@ -235,21 +235,8 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
     // RigidbodyComponentのプロパティ表示
     auto* rigidbody = gameObject->GetComponent<RigidbodyComponent>();
     if (rigidbody) {
-        ImGui::PushID(rigidbody);
-        ImGui::Separator();
-
-        // Rigidbodyが無効な場合は半透明にする
-        bool enable = rigidbody->GetEnable();
-        if (!enable) {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
-        }
-        bool prevEnable = enable;
-
-        if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen)) {
-            if (ImGui::Checkbox("Enable", &enable)) {
-                rigidbody->SetEnable(enable);
-            }
-
+        if (BeginComponentSection(rigidbody, "Rigidbody")) {
+            
             bool isKinematic = rigidbody->GetIsKinematic();
             if (ImGui::Checkbox("Is Kinematic", &isKinematic)) {
                 rigidbody->SetIsKinematic(isKinematic);
@@ -265,31 +252,13 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             }
         }
 
-        if (!prevEnable) {
-            ImGui::PopStyleVar();
-        }
-
-        ImGui::PopID();
+        EndComponentSection();
     }
 
     // ColliderComponentのプロパティ表示
     auto* boxCollider = gameObject->GetComponent<BoxColliderComponent>();
     if (boxCollider) {
-        ImGui::PushID(boxCollider);
-        ImGui::Separator();
-
-        // enable
-        bool enable = boxCollider->GetEnable();
-        if (!enable) {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
-        }
-        bool prevEnable = enable;
-
-        if (ImGui::CollapsingHeader("Box Collider", ImGuiTreeNodeFlags_DefaultOpen)) {
-            if (ImGui::Checkbox("Enable", &enable)) {
-                boxCollider->SetEnable(enable);
-            }
-
+        if (BeginComponentSection(boxCollider, "Box Collider")) {
             auto center = boxCollider->GetCenter();
             if (ImGui::DragFloat3("Center", &center.x, 0.1f)) {
                 boxCollider->SetCenter(center);
@@ -300,28 +269,13 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             }
         }
 
-        if (!prevEnable) {
-            ImGui::PopStyleVar();
-        }
-
-        ImGui::PopID();
+        EndComponentSection();
     }
+    
     auto* sphereCollider = gameObject->GetComponent<SphereColliderComponent>();
     if (sphereCollider) {
-        ImGui::PushID(sphereCollider);
-        ImGui::Separator();
-
-        bool enable = sphereCollider->GetEnable();
-        if (!enable) {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
-        }
-        bool prevEnable = enable;
-
-        if (ImGui::CollapsingHeader("Sphere Collider", ImGuiTreeNodeFlags_DefaultOpen)) {
-            if (ImGui::Checkbox("Enable", &enable)) {
-                sphereCollider->SetEnable(enable);
-            }
-
+        if (BeginComponentSection(sphereCollider, "Sphere Collider")) {
+            
             auto center = sphereCollider->GetCenter();
             if (ImGui::DragFloat3("Center", &center.x, 0.1f)) {
                 sphereCollider->SetCenter(center);
@@ -332,11 +286,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             }
         }
 
-        if (!prevEnable) {
-            ImGui::PopStyleVar();
-        }
-
-        ImGui::PopID();
+        EndComponentSection();
     }
 
     // JointGroupComponentのプロパティ表示
@@ -384,20 +334,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
     // ModelComponentのプロパティ表示
     auto* model = gameObject->GetComponent<ModelComponent>();
     if (model) {
-        ImGui::PushID(model);
-        ImGui::Separator();
-
-        bool enable = model->GetEnable();
-        if (!enable) {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
-        }
-        bool prevEnable = enable;
-
-        if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen)) {
-            if (ImGui::Checkbox("Enable", &enable)) {
-                model->SetEnable(enable);
-            }
-
+        if (BeginComponentSection(model, "Model")){
             // モデルリソースの名前を表示
             std::string modelName = model->GetModelResource()->filePath;
             ImGui::Text("Model Resource:");
@@ -469,11 +406,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             }
         }
 
-        if (!prevEnable) {
-            ImGui::PopStyleVar();
-        }
-
-        ImGui::PopID();
+        EndComponentSection();
     }
 
     // DecalComponentのプロパティ表示
@@ -575,4 +508,34 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
 #pragma endregion
     
 
+}
+
+bool InspectorViewWindow::BeginComponentSection(Component* comp,const char* name, bool useEnableSetting)
+{
+    ImGui::PushID(comp);
+    ImGui::Separator();
+
+    bool open = ImGui::CollapsingHeader(name, ImGuiTreeNodeFlags_DefaultOpen);
+    bool enable = true;
+    if (open && useEnableSetting) {
+        enable = comp->GetEnable();
+        if (ImGui::Checkbox("Enable", &enable)) {
+            comp->SetEnable(enable);
+        }
+    }
+
+    if (enable) {
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+    }
+    else {
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
+    }
+
+    return open;
+}
+
+void InspectorViewWindow::EndComponentSection()
+{
+    ImGui::PopStyleVar();
+    ImGui::PopID();
 }

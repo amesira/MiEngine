@@ -1,8 +1,8 @@
 //---------------------------------------------------
 // camera_control_behavior.h
 // 
-// Author：Miu Kitamura
-// Date  ：2026/04/08
+// Author・Miu Kitamura
+// Date  ・ 2026/04/08
 //---------------------------------------------------
 #ifndef CAMERA_CONTROL_BEHAVIOR_H
 #define CAMERA_CONTROL_BEHAVIOR_H
@@ -18,33 +18,42 @@ class RigidbodyComponent;
 // カメラ制御用のBehaviorComponent
 class CameraControlBehavior : public BehaviorComponent {
 private:
-    TransformComponent* m_transform;
-    CameraComponent*    m_camera;
+    TransformComponent* m_transform = nullptr;
+    CameraComponent* m_camera = nullptr;
 
     // 追従ターゲットのアドレス
-    TransformComponent* m_targetTransform;
-    RigidbodyComponent* m_targetRigidbody;
-
-    //-----------------
+    TransformComponent* m_targetTransform = nullptr;
+    RigidbodyComponent* m_targetRigidbody = nullptr;
 
     // カメラの回転角度
-    float m_pitch = XMConvertToRadians(30.0f); // カメラのピッチ角
-    float m_yaw = 0.0f;   // カメラのヨー角
+    float m_pitch = XMConvertToRadians(40.0f);
+    float m_yaw = 0.0f;
 
-    float m_maxPitch = XMConvertToRadians(40.0f); // ピッチの最大角度
-    float m_minPitch = XMConvertToRadians(-5.0f); // ピッチの最小角度
+    float m_maxPitch = XMConvertToRadians(50.0f);
+    float m_minPitch = XMConvertToRadians(-5.0f);
 
     // カメラの距離と高さ
-    float m_followDistance = 15.0f; // ターゲットからの距離
-    float m_followHeight = 2.0f;   // ターゲットからの高さ
+    float m_followDistance = 20.0f;
+    float m_followHeight = 2.0f;
 
-    // カメラ追従のスムージングパラメーター
+    // カメラ追従のスムージングパラメータ
     struct CameraSmoothState {
         XMFLOAT3 position;
         XMFLOAT3 velocity;
     };
-    CameraSmoothState m_atSmoothState;  // 注視点のスムーズダンパー状態
-    CameraSmoothState m_eyeSmoothState; // カメラ位置のスムーズダンパー状態
+
+    struct CameraBasis {
+        XMFLOAT3 forward;
+        XMFLOAT3 right;
+    };
+
+    struct CameraDesiredPositions {
+        XMFLOAT3 atPosition;
+        XMFLOAT3 eyePosition;
+    };
+
+    CameraSmoothState m_atSmoothState;
+    CameraSmoothState m_eyeSmoothState;
 
 public:
     ~CameraControlBehavior() = default;
@@ -53,11 +62,18 @@ public:
     void DrawComponentInspector() override;
 
 private:
-    // スムーズダンパー
+    // ターゲットの探索
+    void FindTarget();
+    // カメラの基底ベクトルの構築
+    CameraBasis BuildCameraBasis() const;
+
+    // ターゲットの速度に基づいてカメラの自動回転を更新
+    void UpdateAutoYaw(const XMFLOAT3& targetVelocity, float targetSpeed, float deltaTime, const CameraBasis& basis);
+    // ターゲットの位置とカメラの基底ベクトルに基づいて、カメラの注視点と位置の目標値を計算
+    CameraDesiredPositions CalculateDesiredPositions(const XMFLOAT3& targetPosition, const CameraBasis& basis) const;
+    
+    // スムーズダンピング関数
     CameraSmoothState SmoothDamp(const CameraSmoothState& current, const XMFLOAT3& targetPosition, float smoothTime, float deltaTime);
-
-public:
-
 };
 
 #endif // CAMERA_CONTROL_BEHAVIOR_H

@@ -137,6 +137,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp" />
     <ClCompile Include="Source\Engine\System\Device\audio.cpp" />
@@ -201,6 +204,11 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
     <ClInclude Include="Source\Game\Factory\actor_factory.h" />
     <ClInclude Include="Source\Engine\Framework\Component\animation_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\animation_processor.h" />

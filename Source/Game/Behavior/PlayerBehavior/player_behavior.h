@@ -14,6 +14,10 @@ using namespace DirectX;
 #include "player_context.h"
 class PlayerStateMachineBehavior;
 class PlayerCombatMachineBehavior;
+class PlayerVisualMachineBehavior;
+
+class TransformComponent;
+class CameraComponent;
 
 class PlayerBehavior : public BehaviorComponent {
 private:
@@ -23,6 +27,11 @@ private:
     // プレイヤー制御マシーン
     PlayerStateMachineBehavior* m_stateMachine = nullptr;
     PlayerCombatMachineBehavior* m_combatMachine = nullptr;
+    PlayerVisualMachineBehavior* m_visualMachine = nullptr;
+
+    // メインカメラの参照
+    TransformComponent* m_mainCameraTransform = nullptr;
+    CameraComponent* m_mainCamera = nullptr;
 
 public:
     ~PlayerBehavior() = default;

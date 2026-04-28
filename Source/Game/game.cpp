@@ -28,17 +28,24 @@
 
 #include "Game/Behavior/camera_control_behavior.h"
 
+#include "Game/ControllerBehavior/game_effect_controller.h"
+
 // ゲームシーン初期化処理
 void GameScene::Initialize()
 {
     this->Reset();
 
+    // GameEffectControllerの生成
+    GameObject* gameEffectControllerObj = this->CreateGameObject();
+    gameEffectControllerObj->AddComponent<GameEffectController>();
+
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
     EnvironmentFactory::AttachCameraControl(camera);
+    camera->SetName("MainCamera");
 
     GameObject* cube = this->CreateGameObject();
-    Factory::CreateBox(cube, { 0.0f,-0.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
+    Factory::CreateBox(cube, { 0.0f,-1.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
     cube->GetComponent<ModelComponent>()->SetEnable(false);
 
     cube = this->CreateGameObject();

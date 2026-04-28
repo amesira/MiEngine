@@ -17,6 +17,13 @@
 
 // behavior
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
+#include "Game/Behavior/PlayerBehavior/player_state_machine_behavior.h"
+#include "Game/Behavior/PlayerBehavior/player_combat_machine_behavior.h"
+#include "Game/Behavior/PlayerBehavior/player_visual_machine_behavior.h"
+
+#include "Game/Behavior/PlayerBehavior/PlayerState/player_move_behavior.h"
+#include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
+#include "Game/Behavior/PlayerBehavior/PlayerState/player_dodge_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -60,6 +67,14 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
+
+    player->AddComponent<PlayerStateMachineBehavior>();
+    player->AddComponent<PlayerCombatMachineBehavior>();
+    player->AddComponent<PlayerVisualMachineBehavior>();
+
+    player->AddComponent<PlayerMoveBehavior>();
+    player->AddComponent<PlayerAttackBehavior>();
+    player->AddComponent<PlayerDodgeBehavior>();
 
     return player;
 }

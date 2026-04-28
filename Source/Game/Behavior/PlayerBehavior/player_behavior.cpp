@@ -11,32 +11,50 @@
 #include "Utility/mi_math.h"
 #include "Engine/System/Device/mi_fps.h"
 #include "Engine/System/Device/keyboard.h"
+#include "Engine/System/Device/mouse.h"
 
 #include "Engine/Editor/imgui_window_interface.h"
+#include "Engine/Editor/inspector_view_window.h"
 
-// プレイヤーが依存するComponentのヘッダ
+// コンポーネント
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/animation_component.h"
+#include "Engine/Framework/Component/camera_component.h"
 
 // プレイヤーを構成する各種ビヘイビアのヘッダ
-#include "./PlayerState/player_move_behavior.h"
-#include "./PlayerState/player_attack_behavior.h"
-
 #include "player_state_machine_behavior.h"
 #include "player_combat_machine_behavior.h"
+#include "player_visual_machine_behavior.h"
+
+#include "./PlayerState/player_move_behavior.h"
+#include "./PlayerState/player_attack_behavior.h"
+#include "./PlayerState/player_dodge_behavior.h"
 
 void PlayerBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
     if (!owner) return;
     
-    m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
-    m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
-
     m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
     m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
+    m_visualMachine = owner->GetComponent<PlayerVisualMachineBehavior>();
+
+    m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
+    m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
+    m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
+
+    IScene* scene = owner->GetScene();
+
+    // メインカメラの参照取得
+    {
+        GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
+        if (mainCamera) {
+            m_mainCameraTransform = mainCamera->GetComponent<TransformComponent>();
+            m_mainCamera = mainCamera->GetComponent<CameraComponent>();
+        }
+    }
 }
 
 void PlayerBehavior::Update()
@@ -55,21 +73,28 @@ void PlayerBehavior::Update()
     if (m_combatMachine) {
         m_combatMachine->UpdateCombatMachine(m_context, deltaTime);
     }
+
+    // ビジュアルマシーンの更新
+    if (m_visualMachine) {
+        m_visualMachine->UpdateVisualMachine(m_context, deltaTime);
+    }
 }
 
 // PlayerBehaviorのインスペクタ表示
 void PlayerBehavior::DrawComponentInspector()
 {
-    // Enableの表示
-    bool enable = this->GetEnable();
-    if (!enable) {
-        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
-    }
-    bool prevEnable = enable;
+    if(InspectorViewWindow::BeginComponentSection(this, "Player Behavior")) {
+        // 参照状態の表示
+        ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
+        ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
+        ImGui::Text("VisualMachine: %s", m_visualMachine ? "OK" : "None");
 
-    if (!prevEnable) {
-        ImGui::PopStyleVar();
+        // 入力状態の表示
+        ImGui::Text("MoveInputCameraLocal: (%.2f, %.2f, %.2f)", m_context.input.moveInputCameraLocal.x, m_context.input.moveInputCameraLocal.y, m_context.input.moveInputCameraLocal.z);
+
     }
+
+    InspectorViewWindow::EndComponentSection();
 }
 
 // --------------------------------------------------
@@ -77,29 +102,66 @@ void PlayerBehavior::DrawComponentInspector()
 // プレイヤーの入力処理
 PlayerInput PlayerBehavior::UpdateInput()
 {
-    PlayerInput input;
-    input.moveX = 0.0f;
-    input.moveZ = 0.0f;
-    input.triggerJump = false;
+    PlayerInput input = PlayerInput();
 
-    // 水平方向の移動入力
-    if (Keyboard_IsKeyDown(KK_A)) {
-       input.moveX = -1.0f;
+    // 移動入力
+    if (Keyboard_IsKeyDown(KK_D)) {
+        input.horizontal = 1.0f;
     }
-    else if (Keyboard_IsKeyDown(KK_D)) {
-        input.moveX = 1.0f;
+    else if (Keyboard_IsKeyDown(KK_A)) {
+        input.horizontal = -1.0f;
     }
-
     // 前後方向の移動入力
     if (Keyboard_IsKeyDown(KK_W)) {
-        input.moveZ = 1.0f;
+        input.vertical = 1.0f;
     }
     else if (Keyboard_IsKeyDown(KK_S)) {
-        input.moveZ = -1.0f;
+        input.vertical = -1.0f;
+    }
+    // カメラから見た移動入力の変換
+    if (m_mainCamera) {
+        XMFLOAT3 cameraForward = MiMath::Normalize(MiMath::Subtract(m_mainCamera->GetAtPosition(), m_mainCamera->GetEyePosition()));
+        XMFLOAT3 cameraRight = MiMath::Normalize(MiMath::Cross(cameraForward, m_mainCamera->GetUpVector()));
+        cameraRight = MiMath::Multiply(cameraRight, -1.0f);
+
+        input.moveInputCameraLocal = MiMath::Add(
+            MiMath::Multiply(cameraRight, input.horizontal),
+            MiMath::Multiply(cameraForward, input.vertical)
+        );
     }
 
+
     // ジャンプ入力
-    input.triggerJump = Keyboard_IsKeyDownTrigger(KK_SPACE);
+    if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
+        input.triggerJumpCommand = true;
+    }
+
+    // ダッシュ入力
+    if (Keyboard_IsKeyDownTrigger(KK_LEFTSHIFT)) {
+        input.triggerDashCommand = true;
+    }
+
+    // エイム入力
+    if (Mouse_IsButtonDownTrigger(Mouse_Button::RIGHT)) {
+        input.triggerAimCommand = true;
+    }
+    if (Mouse_IsButtonDown(Mouse_Button::RIGHT)) {
+        input.holdAimCommand = true;
+    }
+    if (Mouse_IsButtonUpTrigger(Mouse_Button::RIGHT)) {
+        input.releaseAimCommand = true;
+    }
+    
+    // 攻撃入力
+    if (Mouse_IsButtonDownTrigger(Mouse_Button::LEFT)) {
+        input.triggerAttackCommand = true;
+    }
+    if (Mouse_IsButtonDown(Mouse_Button::LEFT)) {
+        input.holdAttackCommand = true;
+    }
+    if (Mouse_IsButtonUpTrigger(Mouse_Button::LEFT)) {
+        input.releaseAttackCommand = true;
+    }
 
     return input;
 }
