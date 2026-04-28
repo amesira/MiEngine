@@ -28,10 +28,16 @@
 
 #include "Game/Behavior/camera_control_behavior.h"
 
+#include "Game/ControllerBehavior/game_effect_controller.h"
+
 // ゲームシーン初期化処理
 void GameScene::Initialize()
 {
     this->Reset();
+
+    // GameEffectControllerの生成
+    GameObject* gameEffectControllerObj = this->CreateGameObject();
+    gameEffectControllerObj->AddComponent<GameEffectController>();
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });

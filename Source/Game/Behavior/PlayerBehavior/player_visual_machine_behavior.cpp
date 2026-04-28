@@ -13,6 +13,7 @@
 #include "Engine/Editor/inspector_view_window.h"
 
 #include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Framework/Component/animation_component.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_effect_controller.h"
@@ -25,6 +26,7 @@ void PlayerVisualMachineBehavior::Start()
     if (!owner) return;
 
     m_transform = owner->GetComponent<TransformComponent>();
+    m_animation = owner->GetComponent<AnimationComponent>();
 }
 
 void PlayerVisualMachineBehavior::Update()
@@ -42,11 +44,70 @@ void PlayerVisualMachineBehavior::DrawComponentInspector()
 
 // ------------------------------- public
 
+// プレイヤーの見た目状態更新処理
 void PlayerVisualMachineBehavior::UpdateVisualMachine(PlayerContext& context, float deltaTime)
 {
     // Move：移動中は向きと傾きを更新
     if (context.state == PlayerState::Move) {
         UpdateTilt(context, deltaTime);
+    }
+
+    if (context.state == PlayerState::Idle) {
+        m_animation->SetAnimationState(1, 1.0f);
+    }
+    else {
+        m_animation->SetAnimationState(0, 1.0f);
+    }
+
+    if (!GAME_EFFECT_CONTROLLER) return;
+
+    // GameEffectのTrigger処理
+    TriggerSlowMotion(context.visualRequest.slowMotionRequest);
+    TriggerEffect(context.visualRequest.effectRequest);
+    TriggerPostEffectColor(context.visualRequest.postEffectColorRequest);
+    TriggerPostEffectScreen(context.visualRequest.postEffectScreenRequest);
+
+    // GameEffectの更新処理
+    UpdateSlowMotion(deltaTime);
+}
+
+// スローモーションのトリガー
+void PlayerVisualMachineBehavior::TriggerSlowMotion(SlowMotionRequest& request)
+{
+    if (request.trigger) {
+        m_isInSlowMotion = true;
+        m_slowMotionTimer = 0.0f;
+        m_slowMotionDuration = request.duration;
+        m_slowMotionFactor = request.scale;
+
+        request.trigger = false; // トリガーは処理したらリセット
+    }
+}
+
+// エフェクトのトリガー
+void PlayerVisualMachineBehavior::TriggerEffect(EffectRequest& request)
+{
+    if (request.trigger) {
+        // ToDo：エフェクトのトリガー処理を書く
+        request.trigger = false; // トリガーは処理したらリセット
+    }
+}
+
+// ポストエフェクト（色相）のトリガー
+void PlayerVisualMachineBehavior::TriggerPostEffectColor(PostEffectColorRequest& request)
+{
+    if (request.trigger) {
+        // ToDo：ポストエフェクト（色相）のトリガー処理を書く
+        request.trigger = false; // トリガーは処理したらリセット
+    }
+}
+
+// ポストエフェクト（画面効果）のトリガー
+void PlayerVisualMachineBehavior::TriggerPostEffectScreen(PostEffectScreenRequest& request)
+{
+    if (request.trigger) {
+        // ToDo：ポストエフェクト（画面効果）のトリガー処理を書く
+        request.trigger = false; // トリガーは処理したらリセット
     }
 }
 
@@ -79,5 +140,24 @@ void PlayerVisualMachineBehavior::UpdateTilt(const PlayerContext& context, float
         currentEuler = MiMath::Lerp(currentEuler, XMFLOAT3{ 0.0f, 0.0f, 0.0f }, deltaTime * 10.0f);
         m_transform->SetEulerAngle(currentEuler);
     }
+}
 
+// スローモーション更新処理
+bool PlayerVisualMachineBehavior::UpdateSlowMotion(float deltaTime)
+{
+    if (!m_isInSlowMotion) return false;
+
+    m_slowMotionTimer += deltaTime / m_slowMotionFactor;
+
+    // スローモーション終了処理
+    if (m_slowMotionTimer >= m_slowMotionDuration) {
+        GAME_EFFECT_CONTROLLER->CancelTimeScaleChange(0);
+        m_isInSlowMotion = false;
+        return false;
+    }
+    // スローモーション継続処理
+    else {
+        GAME_EFFECT_CONTROLLER->RequestTimeScaleChange(m_slowMotionFactor, m_slowMotionDuration - m_slowMotionTimer);
+        return true;
+    }
 }

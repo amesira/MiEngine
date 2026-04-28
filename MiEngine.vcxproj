@@ -206,6 +206,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
     <ClInclude Include="Source\Game\Factory\actor_factory.h" />

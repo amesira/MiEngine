@@ -57,6 +57,19 @@ void PlayerDodgeBehavior::UpdateDodge(PlayerContext& context, float deltaTime)
     if (!m_isJustDodge) {
         // ToDo：いろいろ判定条件を書く
         m_isJustDodge = true;
+
+        SlowMotionRequest slowMotion;
+        slowMotion.trigger = true;
+        slowMotion.duration = m_dodgeDuration - m_dodgeTimer + 1.0f;
+        slowMotion.scale = 0.5f;
+        context.visualRequest.slowMotionRequest = slowMotion;
+
+        PostEffectScreenRequest screenEffect;
+        screenEffect.trigger = true;
+        screenEffect.duration = m_dodgeDuration - m_dodgeTimer + 1.0f;
+        screenEffect.effectName = "SaturateEffect";
+        screenEffect.intensity = 1.0f;
+        context.visualRequest.postEffectScreenRequest = screenEffect;
     }
 
     // 回避終了

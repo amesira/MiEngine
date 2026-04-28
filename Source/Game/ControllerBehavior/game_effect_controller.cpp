@@ -11,8 +11,10 @@
 
 #include "Utility/debug_ostream.h"
 
-void GameEffectController::Start()
+GameEffectController::GameEffectController()
 {
+    s_instanceCount++;
+
     if (s_instanceCount > 1) {
         hal::dout << "警告: GameEffectControllerのインスタンスが複数存在しています。ゲーム全体で1つだけ存在することを想定しています。" << std::endl;
         this->SetEnable(false);
@@ -20,6 +22,11 @@ void GameEffectController::Start()
     else {
         GameControllerLocator::s_gameEffectController = this;
     }
+}
+
+void GameEffectController::Start()
+{
+    
 }
 
 void GameEffectController::Update()
@@ -63,9 +70,7 @@ int GameEffectController::RequestTimeScaleChange(float targetTimeScale, float du
 // TimeScale変更のキャンセル処理
 void GameEffectController::CancelTimeScaleChange(int handleID)
 {
-    if (handleID == m_currentHandleID) {
-        m_currentTimeScale = 1.0f;
-        m_timeScaleChangeDuration = 0.0f;
-        m_timeScaleChangeTimer = 0.0f;
-    }
+    m_currentTimeScale = 1.0f;
+    m_timeScaleChangeDuration = 0.0f;
+    m_timeScaleChangeTimer = 0.0f;
 }

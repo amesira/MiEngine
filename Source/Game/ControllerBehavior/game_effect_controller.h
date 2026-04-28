@@ -22,7 +22,7 @@ private:
     int     m_handleIDCounter = 0;         // 次に発行するハンドルID
 
 public:
-    GameEffectController() { s_instanceCount++; }
+    GameEffectController();
     ~GameEffectController() { s_instanceCount--; }
     void Start() override;
     void Update() override;
