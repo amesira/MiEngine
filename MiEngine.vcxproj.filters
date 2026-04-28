@@ -111,6 +111,9 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
@@ -354,6 +357,9 @@
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h">

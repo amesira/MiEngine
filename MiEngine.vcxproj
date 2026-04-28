@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_utility.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp" />
     <ClCompile Include="Source\Engine\System\Graphics\model_repository.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp" />
@@ -204,6 +206,8 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_query.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_utility.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />
@@ -251,6 +255,7 @@
     <ClInclude Include="Utility\mi_string.h" />
     <ClInclude Include="Source\Engine\System\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h" />
