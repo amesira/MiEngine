@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_query.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_utility.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
