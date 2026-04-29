@@ -1,7 +1,7 @@
 //===================================================
 // collector_font.cpp
 // 
-// ・TrueTypeフォントをレンダリングするプロセッサー
+// ・TrueTypeフォントを集める
 // 
 // Author：Miu Kitamura (from Ushi)
 // Date  ：2025/11/18

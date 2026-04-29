@@ -8,19 +8,19 @@
 
 #include "Engine/Core/scene_interface.h"
 
-// PostEffectPass initial setup
+// ポストエフェクト初期化
 void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     m_pDevice = pDevice;
     m_pContext = pContext;
 }
 
-// PostEffectPass cleanup
+// ポストエフェクト終了
 void PostEffectPass::Finalize()
 {
 }
 
-// PostEffectPass processing
+// ポストエフェクト処理
 void PostEffectPass::Process(IScene* pScene)
 {
     (void)pScene;
