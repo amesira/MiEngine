@@ -40,8 +40,6 @@ bool MiEngine::Initialize(HWND hWnd)
     // Editorの初期化
     m_editorManager.Initialize(hWnd);
     m_editorContext = &(m_editorManager.GetEditorContext());
-    m_editorContext->displayX = 1920.0f;
-    m_editorContext->displayY = 1080.0f;
 
     return true;
 }

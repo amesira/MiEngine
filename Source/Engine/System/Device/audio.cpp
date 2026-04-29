@@ -54,7 +54,7 @@ static AUDIO g_Audio[AUDIO_MAX]{};
 
 
 
-int LoadAudio(const char *FileName)
+int LoadAudio(const wchar_t *FileName)
 {
 	int index = -1;
 
@@ -86,7 +86,7 @@ int LoadAudio(const char *FileName)
 		LONG readlen;
 
 
-		hmmio = mmioOpen((LPSTR)FileName, &mmioinfo, MMIO_READ);
+		hmmio = mmioOpen((LPWSTR)FileName, &mmioinfo, MMIO_READ);
 		assert(hmmio);
 
 		riffchunkinfo.fccType = mmioFOURCC('W', 'A', 'V', 'E');

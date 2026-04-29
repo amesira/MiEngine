@@ -57,13 +57,6 @@ bool FPS_Update()
         g_DeltaTime = (g_dwCurrentTime - g_dwExecLastTime) / 1000.0f;
         // 1/60s 経過した
         g_dwExecLastTime = g_dwCurrentTime; // 現在のタイマー値を保存
-
-        // ウィンドウキャプションへ現在のFPSを表示
-        // Unicodeで統一しているため、wchar_t型の文字列を使用する
-        wchar_t g_DebugStr[256];
-        swprintf_s(g_DebugStr, L"MiEngine だよ FPS : %d", g_CountFPS);
-        SetWindowTextW(hWnd, g_DebugStr);
-        
         return true;
     }
     return false;
