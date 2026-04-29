@@ -15,6 +15,9 @@
 #include "scene_interface.h"
 #include "game_object.h"
 
+// シーン全体のレンダリングに関する設定を保持するクラス
+#include "Engine/Settings/scene_render_settings.h"
+
 class SceneBase : public IScene {
 private:
     static constexpr int    MAX_GAMEOBJECTS = 1024;  // シーン内の最大GameObject数
@@ -30,7 +33,10 @@ private:
     // 空きスロット管理用リスト
     std::vector<size_t>         m_freeGameObjectIndices = {};
 
-protected: // IScene implementation
+    // シーン全体のレンダリング設定
+    SceneRenderSettings         m_sceneRenderSettings;
+
+protected: // ISceneのComponentPools()を実装
     std::vector<std::unique_ptr<IComponentPool>>& ComponentPools() override {
         return m_componentPools;
     }
@@ -127,6 +133,12 @@ public:
     std::vector<std::unique_ptr<IComponentPool>>& GetComponentPools() override {
         return m_componentPools;
     }
+
+    // シーン全体のレンダリング設定の取得
+    SceneRenderSettings& GetSceneRenderSettings() override {
+        return m_sceneRenderSettings;
+    }
+
 };
 
 #endif

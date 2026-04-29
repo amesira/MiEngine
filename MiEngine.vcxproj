@@ -139,6 +139,8 @@
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
@@ -194,10 +196,10 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.cpp" />
-    <ClCompile Include="Source\Engine\resource_manager.cpp" />
-    <ClCompile Include="Source\Engine\scene_manager.cpp" />
+    <ClCompile Include="Source\Engine\Manager\resource_manager.cpp" />
+    <ClCompile Include="Source\Engine\Manager\scene_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\scene_view_window.cpp" />
-    <ClCompile Include="Source\Engine\shader_manager.cpp" />
+    <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp" />
     <ClCompile Include="External\stb_implementation.cpp" />
@@ -209,6 +211,11 @@
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
+    <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
+    <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
+    <ClInclude Include="Source\Engine\Settings\scene_render_settings.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />
@@ -291,13 +298,13 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.h" />
-    <ClInclude Include="Source\Engine\resource_manager.h" />
+    <ClInclude Include="Source\Engine\Manager\resource_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Component\rigidbody_component.h" />
     <ClInclude Include="Source\Engine\Core\scene_base.h" />
     <ClInclude Include="Source\Engine\Core\scene_interface.h" />
-    <ClInclude Include="Source\Engine\scene_manager.h" />
+    <ClInclude Include="Source\Engine\Manager\scene_manager.h" />
     <ClInclude Include="Source\Engine\Editor\scene_view_window.h" />
-    <ClInclude Include="Source\Engine\shader_manager.h" />
+    <ClInclude Include="Source\Engine\Manager\shader_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Component\slider_component.h" />

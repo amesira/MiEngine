@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
-#include "scene_manager.h"
+#include "./Manager/scene_manager.h"
 
 #include "Engine/Framework/Processor/physics_processor.h"
 #include "Engine/Framework/Processor/behavior_processor.h"

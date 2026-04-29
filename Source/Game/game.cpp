@@ -15,7 +15,7 @@
 #include "Engine/System/Device/keyboard.h"
 #include "Engine/System/Device/mi_fps.h"
 
-#include "Engine/scene_manager.h"
+#include "Engine/Manager/scene_manager.h"
 
 #include "Engine/Framework/Component/text_component.h"
 #include "Engine/Framework/Component/image_component.h"

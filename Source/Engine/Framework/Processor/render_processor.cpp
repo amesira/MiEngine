@@ -9,8 +9,6 @@
 #include "render_processor.h"
 
 #include "Engine/System/Device/direct3d.h"
-#include "Engine/shader_manager.h"
-
 #include "Engine/engine_service_locator.h"
 
 #include "Utility/debug_renderer.h"

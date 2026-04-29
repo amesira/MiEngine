@@ -12,8 +12,8 @@
 #include "Engine/Editor/mi_imgui_manager.h"
 
 #include "Engine/Editor/editor_context.h"
-#include "resource_manager.h"
-#include "shader_manager.h"
+#include "./Manager/resource_manager.h"
+#include "./Manager/shader_manager.h"
 
 class MiEngine {
 private:
