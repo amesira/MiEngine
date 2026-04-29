@@ -11,7 +11,8 @@
 #include "Utility/mi_math.h"
 #include "Engine/System/Device/mi_fps.h"
 
-#include "Engine/Editor/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
 #include "./PlayerState/player_move_behavior.h"
 #include "./PlayerState/player_attack_behavior.h"

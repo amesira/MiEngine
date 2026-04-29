@@ -9,6 +9,8 @@
 #include "mi_imgui_manager.h"
 #include "Engine/System/Device/direct3d.h"
 
+#include "./EditorWindow/imgui_window_interface.h"
+
 // Imguiの初期化
 void MiImguiManager::Initialize(HWND hwnd)
 {
@@ -16,21 +18,18 @@ void MiImguiManager::Initialize(HWND hwnd)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
-    // 2. IO設定など（省略可）
+    // 2. IO設定
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    SetupEditorImguiStyle();
 
     // 3. プラットフォーム用初期化（Win32）
     ImGui_ImplWin32_Init(hwnd);
 
-    // 4. DirectX11用初期化（ここが重要！）
+    // 4. DirectX11用初期化
     ImGui_ImplDX11_Init(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
 
-    // 5. スタイル設定など
+    // 5. スタイル設定
+    SetupEditorImguiStyle();
 
-    // 6. ウィンドウリストの初期化（必要に応じて）
-    m_imguiWindowList.clear();
 }
 
 // Imguiの終了処理
@@ -40,23 +39,20 @@ void MiImguiManager::Finalize()
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
-
-    // ウィンドウリストの解放
-    m_imguiWindowList.clear();
 }
 
-// imguiウィンドウ一括描画処理
-void MiImguiManager::RenderProcess()
+// フレーム開始の処理
+void MiImguiManager::BeginFrame()
 {
     ImGui_ImplWin32_NewFrame();
     ImGui_ImplDX11_NewFrame();
 
     ImGui::NewFrame();
+}
 
-    for (auto& window : m_imguiWindowList) {
-        window->Draw();
-    }
-
+// フレーム終了の処理
+void MiImguiManager::EndFrame()
+{
     // フレーム終了（描画コマンドの準備）
     ImGui::Render();
 
@@ -64,6 +60,9 @@ void MiImguiManager::RenderProcess()
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+// -------------------------------- private
+
+// エディタ用のImguiスタイル設定
 void MiImguiManager::SetupEditorImguiStyle()
 {
     ImGui::StyleColorsDark();

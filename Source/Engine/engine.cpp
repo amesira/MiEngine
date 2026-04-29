@@ -12,12 +12,6 @@
 
 #include "Utility/debug_renderer.h"
 
-#include "Engine/Editor/scene_view_window.h"
-#include "Engine/Editor/inspector_view_window.h"
-#include "Engine/Editor/hierarchy_view_window.h"
-#include "Engine/Editor/tool_bar_window.h"
-#include "Engine/Editor/debug_view_window.h"
-
 #include "Engine/engine_service_locator.h"
 
 // MiEngineの初期化処理
@@ -28,44 +22,26 @@ bool MiEngine::Initialize(HWND hWnd)
     // サービスロケーターにエンジンインスタンスをセット
     EngineServiceLocator::s_engineInstance = this;
 
+    // Direct3Dの初期化
     Direct3D_Initialize(hWnd);
-
     ID3D11Device* pDevice = Direct3D_GetDevice();
     ID3D11DeviceContext* pContext = Direct3D_GetDeviceContext();
 
+    // マネージャー・システムの初期化
     m_shaderManager.Initialize(pDevice, pContext);
-
     InitAudio();
     FPS_Initialize(hWnd);
-
     m_resourceManager.Initialize();
-
     DebugRenderer_Initialize();
 
     // GameWorldの初期化
     m_gameWorld.Initialize();
 
-    // ImGuiの初期化
-    m_imguiManager.Initialize(hWnd);
-    {
-        m_editorContext.displayX = 1920.0f;
-        m_editorContext.displayY = 1080.0f;
-
-        SceneViewWindow sceneViewWindow(&m_editorContext);
-        m_imguiManager.AddWindow(std::make_unique<SceneViewWindow>(sceneViewWindow));
-
-        InspectorViewWindow inspectorViewWindow(&m_editorContext);
-        m_imguiManager.AddWindow(std::make_unique<InspectorViewWindow>(inspectorViewWindow));
-
-        HierarchyViewWindow hierarchyViewWindow(&m_editorContext);
-        m_imguiManager.AddWindow(std::make_unique<HierarchyViewWindow>(hierarchyViewWindow));
-
-        DebugViewWindow debugViewWindow(&m_editorContext);
-        m_imguiManager.AddWindow(std::make_unique<DebugViewWindow>(debugViewWindow));
-
-        ToolBarWindow toolBarWindow(&m_editorContext);
-        m_imguiManager.AddWindow(std::make_unique<ToolBarWindow>(toolBarWindow));
-    }
+    // Editorの初期化
+    m_editorManager.Initialize(hWnd);
+    m_editorContext = &(m_editorManager.GetEditorContext());
+    m_editorContext->displayX = 1920.0f;
+    m_editorContext->displayY = 1080.0f;
 
     return true;
 }
@@ -78,10 +54,8 @@ void MiEngine::Finalize()
 
     m_resourceManager.Finalize();
     m_shaderManager.Finalize();
-
     UninitAudio();
     Direct3D_Finalize();
-
     DebugRenderer_Finalize();
 
     // サービスロケーターのエンジンインスタンスをクリア
@@ -108,18 +82,18 @@ bool MiEngine::RunOneFrame()
 void MiEngine::Update()
 {
     // シーンのリロード要求がある場合はシーンをリロード
-    if (m_editorContext.triggerSceneReload) {
-        m_editorContext.triggerSceneReload = false;
+    // （SceneManager内の切り替え処理とは別に、エディタから強制的にシーンをリロードしたい場合に使用）
+    if (m_editorContext->triggerSceneReload) {
+        m_editorContext->triggerSceneReload = false;
         m_gameWorld.GetSceneManager().ReloadScene();
-
-        m_editorContext.selectedObject = nullptr; // 選択オブジェクトをリセット
+        m_editorContext->selectedObject = nullptr; // 選択オブジェクトをリセット
     }
 
     // デバッグ描画のバッファリセット
     DebugRenderer_ResetBuffer();
 
     // PlayモードのときのみGameWorldを更新
-    if (m_editorContext.currentEditorMode == EditorContext::EditorMode::Play) {
+    if (m_editorContext->currentEditorMode == EditorContext::EditorMode::Play) {
         m_gameWorld.Update();
     }
 }
@@ -132,10 +106,10 @@ void MiEngine::Render()
 
     Direct3D_Clear();
 
-    // ImGuiの描画
-    m_editorContext.scene = m_gameWorld.GetSceneManager().GetCurrentScene();
-    m_editorContext.sceneRenderView = &m_gameWorld.GetRenderViews()[0];
-    m_imguiManager.RenderProcess();
+    // Editorの描画処理
+    m_editorContext->scene = m_gameWorld.GetSceneManager().GetCurrentScene();
+    m_editorContext->sceneRenderView = &m_gameWorld.GetRenderViews()[0];
+    m_editorManager.Render();
 
     Direct3D_Present();
 }

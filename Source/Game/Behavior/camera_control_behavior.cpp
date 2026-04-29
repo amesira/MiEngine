@@ -11,7 +11,8 @@
 #include "Utility/mi_math.h"
 #include "Engine/System/Device/mi_fps.h"
 
-#include "Engine/Editor/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/camera_component.h"

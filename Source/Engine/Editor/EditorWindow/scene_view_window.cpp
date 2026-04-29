@@ -7,7 +7,7 @@
 #include "scene_view_window.h"
 #include "Engine/engine.h"
 
-#include "editor_context.h"
+#include "Engine/Editor/editor_context.h"
 #include "Engine/render_view.h"
 
 void SceneViewWindow::Draw()

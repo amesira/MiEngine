@@ -8,23 +8,21 @@
 #define MI_ENGINE_H
 #include <windows.h>
 
-#include "game_world.h"
-#include "Engine/Editor/mi_imgui_manager.h"
-
-#include "Engine/Editor/editor_context.h"
-#include "./Manager/resource_manager.h"
-#include "./Manager/shader_manager.h"
+#include "Engine/game_world.h"
+#include "Engine/Editor/editor_manager.h"
+#include "Engine/Manager/resource_manager.h"
+#include "Engine/Manager/shader_manager.h"
 
 class MiEngine {
 private:
     bool m_isRunning = false;
-    EditorContext m_editorContext;
 
-    MiImguiManager  m_imguiManager;
+    EditorManager   m_editorManager;
+    EditorContext*  m_editorContext;
+
     ResourceManager m_resourceManager;
     ShaderManager   m_shaderManager;
 
-    // AssetManager* m_pAssetManager;
     // Renderer* m_pRenderer;
     // InputSystem* m_pInputSystem;
     // AudioSystem* m_pAudioSystem;
@@ -59,13 +57,10 @@ public:
 
     // EditorContextへのアクセス
     void AddLogMessage(const std::string& message) {
-        m_editorContext.logMessages.push_back(message);
-
         // 最大ログ数制限
         const size_t MAX_LOG = 1024;
-        if (m_editorContext.logMessages.size() > MAX_LOG){
-            m_editorContext.logMessages.erase(
-                m_editorContext.logMessages.begin());
+        if (m_editorContext->logMessages.size() > MAX_LOG){
+            m_editorContext->logMessages.erase(m_editorContext->logMessages.begin());
         }
     }
 

@@ -14,9 +14,14 @@
 #include "External/ImGui/imgui_impl_dx11.h"
 #include "External/ImGui/imgui_impl_win32.h"
 
+class EditorContext;
+
 class IImguiWindow {
+protected:
+    EditorContext* m_editorContext;
+
 public:
-    IImguiWindow() = default;
+    IImguiWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
     virtual ~IImguiWindow() = default;
     virtual void Draw() = 0;
 };

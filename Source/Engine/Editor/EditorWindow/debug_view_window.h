@@ -7,14 +7,10 @@
 #ifndef DEBUG_VIEW_WINDOW_H
 #define DEBUG_VIEW_WINDOW_H
 #include "imgui_window_interface.h"
-class EditorContext;
 
 class DebugViewWindow : public IImguiWindow {
-private:
-    EditorContext* m_editorContext;
-
 public:
-    DebugViewWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
+    DebugViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
     void Draw() override;
 };
 

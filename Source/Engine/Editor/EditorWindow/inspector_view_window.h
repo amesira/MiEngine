@@ -7,16 +7,12 @@
 #ifndef INSPECTOR_VIEW_WINDOW_H
 #define INSPECTOR_VIEW_WINDOW_H
 #include "imgui_window_interface.h"
-class EditorContext;
 class GameObject;
 class Component;
 
 class InspectorViewWindow : public IImguiWindow {
-private:
-    EditorContext* m_editorContext;
-
 public:
-    InspectorViewWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
+    InspectorViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
     void Draw() override;
 
     // Component表示初め

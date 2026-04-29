@@ -7,14 +7,10 @@
 #ifndef HIERARCHY_VIEW_WINDOW_H
 #define HIERARCHY_VIEW_WINDOW_H
 #include "imgui_window_interface.h"
-class EditorContext;
 
 class HierarchyViewWindow : public IImguiWindow {
-private:
-    EditorContext* m_editorContext;
-
 public:
-    HierarchyViewWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
+    HierarchyViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
     void Draw() override;
 };
 

@@ -7,14 +7,10 @@
 #ifndef SCENE_VIEW_WINDOW_H
 #define SCENE_VIEW_WINDOW_H
 #include "imgui_window_interface.h"
-class EditorContext;
 
 class SceneViewWindow : public IImguiWindow {
-private:
-    EditorContext* m_editorContext;
-
 public:
-    SceneViewWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
+    SceneViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
     void Draw() override;
 };
 
