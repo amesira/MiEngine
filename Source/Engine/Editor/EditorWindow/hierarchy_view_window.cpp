@@ -16,17 +16,17 @@
 void HierarchyViewWindow::Draw()
 {
     // Hierarchy View ウィンドウの位置とサイズを設定
-    ImGui::SetNextWindowPos({ m_editorContext->displayX - m_editorContext->hierarchyWidth - m_editorContext->inspectorWidth,
+   /* ImGui::SetNextWindowPos({ m_editorContext->displayX - m_editorContext->hierarchyWidth - m_editorContext->inspectorWidth,
         m_editorContext->toolbarHeight });
     float width = m_editorContext->hierarchyWidth;
     float height = m_editorContext->displayY - m_editorContext->toolbarHeight;
-    ImGui::SetNextWindowSize({ width, height });
+    ImGui::SetNextWindowSize({ width, height });*/
 
     // Hierarchy View ウィンドウの描画
-    ImGui::Begin("Hierarchy View", nullptr,
+   /* ImGui::Begin("Hierarchy View", nullptr,
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse);
+        ImGuiWindowFlags_NoCollapse);*/
 
     // シーン内のGameObjectをリスト表示
     GameObject* selected = m_editorContext->selectedObject;
@@ -62,5 +62,5 @@ void HierarchyViewWindow::Draw()
         }
     }
 
-    ImGui::End();
+  //  ImGui::End();
 }

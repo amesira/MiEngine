@@ -15,20 +15,20 @@
 void DebugViewWindow::Draw()
 {
     // sceneViewの大きさを計算（16:9のアスペクト比を維持）
-    float sceneWidth = m_editorContext->displayX - m_editorContext->hierarchyWidth - m_editorContext->inspectorWidth;
-    float sceneHeight = sceneWidth * 9.0f / 16.0f; // 16:9のアスペクト比を維持
+    //float sceneWidth = m_editorContext->displayX - m_editorContext->hierarchyWidth - m_editorContext->inspectorWidth;
+    //float sceneHeight = sceneWidth * 9.0f / 16.0f; // 16:9のアスペクト比を維持
 
-    // Debug View ウィンドウの位置とサイズを設定
-    ImGui::SetNextWindowPos({ 0.0f, m_editorContext->toolbarHeight + sceneHeight });
-    float width = sceneWidth;
-    float height = m_editorContext->displayY - (m_editorContext->toolbarHeight + sceneHeight);
-    ImGui::SetNextWindowSize({ width, height });
+    //// Debug View ウィンドウの位置とサイズを設定
+    //ImGui::SetNextWindowPos({ 0.0f, m_editorContext->toolbarHeight + sceneHeight });
+    //float width = sceneWidth;
+    //float height = m_editorContext->displayY - (m_editorContext->toolbarHeight + sceneHeight);
+    //ImGui::SetNextWindowSize({ width, height });
 
     // Debug View ウィンドウの描画
-    ImGui::Begin("Debug View", nullptr,
+   /* ImGui::Begin("Debug View", nullptr,
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse);
+        ImGuiWindowFlags_NoCollapse);*/
 
     {
         if (ImGui::Button("Clear")) {
@@ -53,5 +53,5 @@ void DebugViewWindow::Draw()
         ImGui::EndChild();
     }
 
-    ImGui::End();
+    //ImGui::End();
 }

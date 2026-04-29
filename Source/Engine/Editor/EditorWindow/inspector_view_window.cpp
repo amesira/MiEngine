@@ -32,15 +32,15 @@
 
 void InspectorViewWindow::Draw()
 {
-    ImGui::SetNextWindowPos({ m_editorContext->displayX - m_editorContext->inspectorWidth , m_editorContext->toolbarHeight });
+    /*ImGui::SetNextWindowPos({ m_editorContext->displayX - m_editorContext->inspectorWidth , m_editorContext->toolbarHeight });
     float width = m_editorContext->inspectorWidth;
     float height = m_editorContext->displayY - m_editorContext->toolbarHeight;
-    ImGui::SetNextWindowSize({ width, height });
+    ImGui::SetNextWindowSize({ width, height });*/
 
-    ImGui::Begin("Inspector View", nullptr,
+    /*ImGui::Begin("Inspector View", nullptr,
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse);
+        ImGuiWindowFlags_NoCollapse);*/
 
     ImGui::Text("Selected Object: %s", m_editorContext->selectedObject ? m_editorContext->selectedObject->GetName().c_str() : "None");
     if (m_editorContext->selectedObject) {
@@ -94,7 +94,7 @@ void InspectorViewWindow::Draw()
         }
     }
 
-    ImGui::End();
+   // ImGui::End();
 }
 
 // GameObjectIDを引き渡し、各主要Componentのプロパティを表示

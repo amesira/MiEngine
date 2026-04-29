@@ -15,13 +15,6 @@
 
 void ToolBarWindow::Draw()
 {
-    ImGui::SetNextWindowPos({ 0,0 });
-    ImGui::SetNextWindowSize({ m_editorContext->displayX, m_editorContext->toolbarHeight });
-
-    ImGui::Begin("Toolbar", nullptr,
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoTitleBar);
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 8));
 
     ImGui::Text("Mi Engine v1 : ");
@@ -47,5 +40,4 @@ void ToolBarWindow::Draw()
 
     ImGui::PopStyleVar();
 
-    ImGui::End();
 }

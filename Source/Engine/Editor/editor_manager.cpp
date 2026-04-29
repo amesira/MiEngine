@@ -14,6 +14,37 @@ void EditorManager::Initialize(HWND hWnd)
     // EditorContextの初期化
     m_editorContext.displayX = 1920.0f;
     m_editorContext.displayY = 1080.0f;
+
+    // Tabエリアの初期化
+    EditorTabArea& centerArea = m_tabAreas[static_cast<int>(EditorAreaID::CenterScreen)];
+    centerArea.areaName = "CenterArea";
+    centerArea.areaRect = { 0.0f, 0.04f, 0.6f, 0.6f };
+    centerArea.AddWindow(&m_inspectorViewWindow, "Inspector");
+
+    EditorTabArea& rightArea1 = m_tabAreas[static_cast<int>(EditorAreaID::Right01)];
+    rightArea1.areaName = "Right1";
+    rightArea1.areaRect = { 0.6f, 0.04f, 0.2f, 0.96f };
+    rightArea1.tabs.push_back(&m_hierarchyViewWindow);
+    rightArea1.tabNames.push_back("Hierarchy");
+
+    EditorTabArea& rightArea2 = m_tabAreas[static_cast<int>(EditorAreaID::Right02)];
+    rightArea2.areaName = "Right2";
+    rightArea2.areaRect = { 0.8f, 0.04f, 0.2f, 0.96f };
+    rightArea2.tabs.push_back(&m_inspectorViewWindow);
+    rightArea2.tabNames.push_back("Inspector");
+
+    EditorTabArea& bottomArea = m_tabAreas[static_cast<int>(EditorAreaID::Bottom)];
+    bottomArea.areaName = "Bottom";
+    bottomArea.areaRect = { 0.0f, 0.64f, 0.6f, 0.36f };
+    bottomArea.tabs.push_back(&m_debugViewWindow);
+    bottomArea.tabNames.push_back("Debug");
+
+    EditorTabArea& topArea = m_tabAreas[static_cast<int>(EditorAreaID::Top)];
+    topArea.areaName = "Top";
+    topArea.areaRect = { 0.0f, 0.0f, 1.0f, 0.04f };
+    topArea.tabs.push_back(&m_toolBarWindow);
+    topArea.tabNames.push_back("aa");
+
 }
 
 // EditorManagerの終了処理
@@ -27,11 +58,41 @@ void EditorManager::Render()
 {
     m_imguiManager.BeginFrame();
 
-    m_hierarchyViewWindow.Draw();
-    m_inspectorViewWindow.Draw();
-    m_sceneViewWindow.Draw();
-    m_toolBarWindow.Draw();
-    m_debugViewWindow.Draw();
+    // 各エリアのタブを描画
+    for (int i = 0; i < static_cast<int>(EditorAreaID::MAX); ++i) {
+        EditorTabArea& area = m_tabAreas[i];
+        if (area.tabs.empty()) continue;
+
+        // タブエリアの位置とサイズを設定
+        ImGui::SetNextWindowPos({ m_editorContext.displayX * area.areaRect[0], m_editorContext.displayY * area.areaRect[1] });
+        ImGui::SetNextWindowSize({ m_editorContext.displayX * area.areaRect[2], m_editorContext.displayY * area.areaRect[3]});
+
+        // タブエリアの描画
+        ImGui::Begin(area.areaName.c_str(), nullptr,
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoTitleBar);
+
+        // tabunobyouga
+        for (size_t tabIndex = 0; tabIndex < area.tabs.size(); tabIndex++) {
+            if (ImGui::BeginTabBar(area.tabNames[tabIndex].c_str())) {
+                ImVec2 avail = ImGui::GetContentRegionAvail();
+
+                if (ImGui::BeginTabItem(area.tabNames[tabIndex].c_str())) {
+                    IImguiWindow* window = area.tabs[tabIndex];
+                    if (window) {
+                        window->Draw();
+                    }
+                    ImGui::EndTabItem();
+                }
+
+                ImGui::EndTabBar();
+            }
+        }
+
+        ImGui::End();
+    }
 
     m_imguiManager.EndFrame();
 }

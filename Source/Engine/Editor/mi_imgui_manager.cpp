@@ -68,16 +68,34 @@ void MiImguiManager::SetupEditorImguiStyle()
     ImGui::StyleColorsDark();
 
     ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowPadding = ImVec2(5, 5);
-    style.FramePadding = ImVec2(5, 5);
-    style.ItemSpacing = ImVec2(8, 6);
-    style.ItemInnerSpacing = ImVec2(6, 4);
+    {
+        // Windowの余白
+        style.WindowPadding = ImVec2(5, 5);
+        // フレーム（タブタイトルなど）の余白
+        style.FramePadding = ImVec2(5, 5);
+        style.FrameRounding = 3.0f;
+    
+        style.ItemSpacing = ImVec2(8, 6);
+        style.ItemInnerSpacing = ImVec2(6, 4);
+
+    }
 
     ImVec4* colors = style.Colors;
-    colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.12f, 0.16f, 1.00f);
-    colors[ImGuiCol_Border] = ImVec4(0.22f, 0.24f, 0.29f, 1.00f);
+    {
+        // テキスト色
+        colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
 
-    colors[ImGuiCol_TitleBg] = ImVec4(0.50f, 0.12f, 0.26f, 1.00f);
-    colors[ImGuiCol_TitleBgActive] = ImVec4(0.36f, 0.22f, 0.35f, 1.00f);
-    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.28f, 0.10f, 0.13f, 1.00f);
+        // ウィンドウ背景色
+        colors[ImGuiCol_WindowBg] = ImVec4(0.14f, 0.14f, 0.16f, 1.00f);
+  
+        // タイトルバー背景色
+        colors[ImGuiCol_TitleBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_TitleBgActive] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+        colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+
+        // タブの背景色
+        colors[ImGuiCol_Tab] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_TabHovered] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+        colors[ImGuiCol_TabActive] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+    }
 }
