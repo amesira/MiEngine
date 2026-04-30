@@ -19,31 +19,30 @@ void EditorManager::Initialize(HWND hWnd)
     EditorTabArea& centerArea = m_tabAreas[static_cast<int>(EditorAreaID::CenterScreen)];
     centerArea.areaName = "CenterArea";
     centerArea.areaRect = { 0.0f, 0.04f, 0.6f, 0.6f };
-    centerArea.AddWindow(&m_inspectorViewWindow, "Inspector");
+    centerArea.AddWindow(&m_sceneViewWindow, "Scene");
+    centerArea.AddWindow(&m_inspectorViewWindow, "Game");
 
     EditorTabArea& rightArea1 = m_tabAreas[static_cast<int>(EditorAreaID::Right01)];
     rightArea1.areaName = "Right1";
     rightArea1.areaRect = { 0.6f, 0.04f, 0.2f, 0.96f };
-    rightArea1.tabs.push_back(&m_hierarchyViewWindow);
-    rightArea1.tabNames.push_back("Hierarchy");
+    rightArea1.AddWindow(&m_hierarchyViewWindow, "Hierarchy");
 
     EditorTabArea& rightArea2 = m_tabAreas[static_cast<int>(EditorAreaID::Right02)];
     rightArea2.areaName = "Right2";
     rightArea2.areaRect = { 0.8f, 0.04f, 0.2f, 0.96f };
-    rightArea2.tabs.push_back(&m_inspectorViewWindow);
-    rightArea2.tabNames.push_back("Inspector");
+    rightArea2.AddWindow(&m_inspectorViewWindow, "Inspector");
+    rightArea2.AddWindow(&m_hierarchyViewWindow, "Settings");
 
     EditorTabArea& bottomArea = m_tabAreas[static_cast<int>(EditorAreaID::Bottom)];
     bottomArea.areaName = "Bottom";
     bottomArea.areaRect = { 0.0f, 0.64f, 0.6f, 0.36f };
-    bottomArea.tabs.push_back(&m_debugViewWindow);
-    bottomArea.tabNames.push_back("Debug");
+    bottomArea.AddWindow(&m_debugViewWindow, "Debug");
 
     EditorTabArea& topArea = m_tabAreas[static_cast<int>(EditorAreaID::Top)];
+    topArea.singleTabMode = true;
     topArea.areaName = "Top";
     topArea.areaRect = { 0.0f, 0.0f, 1.0f, 0.04f };
-    topArea.tabs.push_back(&m_toolBarWindow);
-    topArea.tabNames.push_back("aa");
+    topArea.AddWindow(&m_toolBarWindow, "Toolbar");
 
 }
 
@@ -74,22 +73,33 @@ void EditorManager::Render()
             ImGuiWindowFlags_NoCollapse |
             ImGuiWindowFlags_NoTitleBar);
 
-        // tabunobyouga
-        for (size_t tabIndex = 0; tabIndex < area.tabs.size(); tabIndex++) {
-            if (ImGui::BeginTabBar(area.tabNames[tabIndex].c_str())) {
-                ImVec2 avail = ImGui::GetContentRegionAvail();
+        // タブが1つだけの場合はタブ表示を省略して直接ウィンドウを描画
+        if (area.singleTabMode) {
+            IImguiWindow* window = area.tabs[0];
+            if (window) {
+                window->Draw();
+            }
+            ImGui::End();
+            continue;
+        }
 
+        // タブの描画
+        if (ImGui::BeginTabBar(area.areaName.c_str())) {
+            ImVec2 avail = ImGui::GetContentRegionAvail();
+
+            for (size_t tabIndex = 0; tabIndex < area.tabs.size(); tabIndex++) {
                 if (ImGui::BeginTabItem(area.tabNames[tabIndex].c_str())) {
                     IImguiWindow* window = area.tabs[tabIndex];
                     if (window) {
+                        ImGui::BeginChild(area.tabNames[tabIndex].c_str(), avail, false);
                         window->Draw();
+                        ImGui::EndChild();
                     }
                     ImGui::EndTabItem();
                 }
-
-                ImGui::EndTabBar();
             }
         }
+        ImGui::EndTabBar();
 
         ImGui::End();
     }

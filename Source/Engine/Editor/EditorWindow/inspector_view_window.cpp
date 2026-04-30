@@ -32,16 +32,6 @@
 
 void InspectorViewWindow::Draw()
 {
-    /*ImGui::SetNextWindowPos({ m_editorContext->displayX - m_editorContext->inspectorWidth , m_editorContext->toolbarHeight });
-    float width = m_editorContext->inspectorWidth;
-    float height = m_editorContext->displayY - m_editorContext->toolbarHeight;
-    ImGui::SetNextWindowSize({ width, height });*/
-
-    /*ImGui::Begin("Inspector View", nullptr,
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse);*/
-
     ImGui::Text("Selected Object: %s", m_editorContext->selectedObject ? m_editorContext->selectedObject->GetName().c_str() : "None");
     if (m_editorContext->selectedObject) {
         auto components = m_editorContext->selectedObject->GetAllComponents();
@@ -73,8 +63,16 @@ void InspectorViewWindow::Draw()
         // GameObjectを引き渡し、各主要Componentのプロパティを表示
         {
             ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.18f, 0.18f, 0.23f, 1.0f));
-            ImGui::BeginChild("Component Inspector", ImVec2(0, 400), true);
+            ImGui::BeginChild("Component Inspector", ImVec2(0.0f, m_componentGroupSize.y), false);
+
+            // コンテンツの描画
+            ImGui::BeginGroup();
             DrawComponentInspector(m_editorContext->selectedObject);
+            ImGui::EndGroup();
+
+            // サイズ測定
+            m_componentGroupSize = ImGui::GetItemRectSize();
+
             ImGui::EndChild();
             ImGui::PopStyleColor();
         }
@@ -84,17 +82,22 @@ void InspectorViewWindow::Draw()
         // BehaviorComponentのプロパティ表示
         {
             ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.18f, 0.23f, 0.18f, 1.0f));
-            ImGui::BeginChild("Behavior Component Inspector", ImVec2(0, 0), true);
+            ImGui::BeginChild("Behavior Component Inspector", ImVec2(0.0f, m_behaviorGroupSize.y + 300.0f), false);
+
+            // コンテンツの描画
+            ImGui::BeginGroup();
             for (auto* behavior : behaviorComponents) {
-                // ここでBehaviorComponent固有のプロパティを表示するコードを追加
                 behavior->DrawComponentInspector();
             }
+            ImGui::EndGroup();
+
+            // サイズ測定
+            m_behaviorGroupSize = ImGui::GetItemRectSize();
+
             ImGui::EndChild();
             ImGui::PopStyleColor();
         }
     }
-
-   // ImGui::End();
 }
 
 // GameObjectIDを引き渡し、各主要Componentのプロパティを表示

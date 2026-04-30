@@ -21,6 +21,10 @@
 
 // タブエリアの構造体
 struct EditorTabArea {
+    // タブが１つの場合はタブ表示を省略して直接ウィンドウを表示する
+    bool singleTabMode = false;
+
+    // エリアの名前
     std::string areaName = "Default";
 
     // x, y, width, height（スクリーンサイズを基準とした割合で指定）

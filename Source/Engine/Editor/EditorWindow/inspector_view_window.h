@@ -11,6 +11,11 @@ class GameObject;
 class Component;
 
 class InspectorViewWindow : public IImguiWindow {
+private:
+    // 大きさ保持用の変数
+    ImVec2 m_componentGroupSize = ImVec2(0, 0);
+    ImVec2 m_behaviorGroupSize = ImVec2(0, 0);
+
 public:
     InspectorViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
     void Draw() override;
