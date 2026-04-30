@@ -16,7 +16,7 @@
 #include "game_object.h"
 
 // シーン全体のレンダリングに関する設定を保持するクラス
-#include "Engine/Settings/scene_render_settings.h"
+#include "Engine/Settings/scene_settings.h"
 
 class SceneBase : public IScene {
 private:
@@ -34,7 +34,7 @@ private:
     std::vector<size_t>         m_freeGameObjectIndices = {};
 
     // シーン全体のレンダリング設定
-    SceneRenderSettings         m_sceneRenderSettings;
+    SceneSettings         m_sceneSettings;
 
 protected: // ISceneのComponentPools()を実装
     std::vector<std::unique_ptr<IComponentPool>>& ComponentPools() override {
@@ -135,8 +135,8 @@ public:
     }
 
     // シーン全体のレンダリング設定の取得
-    SceneRenderSettings& GetSceneRenderSettings() override {
-        return m_sceneRenderSettings;
+    SceneSettings& GetSceneSettings() override {
+        return m_sceneSettings;
     }
 
 };

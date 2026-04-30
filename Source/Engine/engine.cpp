@@ -10,6 +10,8 @@
 #include "Engine/System/Device/Audio.h"
 #include "Engine/System/Device/mi_fps.h"
 
+#include "Engine/Core/scene_interface.h"
+
 #include "Utility/debug_renderer.h"
 
 #include "Engine/engine_service_locator.h"
@@ -105,8 +107,12 @@ void MiEngine::Render()
     Direct3D_Clear();
 
     // Editorの描画処理
-    m_editorContext->scene = m_gameWorld.GetSceneManager().GetCurrentScene();
-    m_editorContext->sceneRenderView = &m_gameWorld.GetRenderViews()[0];
+    IScene* scene = m_gameWorld.GetSceneManager().GetCurrentScene();
+    m_editorContext->scene = scene;
+    m_editorContext->sceneSettings = &(scene->GetSceneSettings());
+    m_editorContext->sceneRenderView = &m_gameWorld.GetMainSceneRenderView();
+    m_editorContext->gameRenderView = &m_gameWorld.GetMainGameRenderView();
+    m_editorContext->canvasRenderView = &m_gameWorld.GetCanvasRenderView();
     m_editorManager.Render();
 
     Direct3D_Present();

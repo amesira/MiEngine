@@ -81,17 +81,29 @@ void CameraProcessor::Process(IScene* pScene)
 }
 
 // 描画に必要な情報をまとめる構造体RenderViewのリストを取得
-void CameraProcessor::GetRenderViews(std::vector<RenderView>& outViews)
+void CameraProcessor::SetRenderViews(std::vector<RenderView>& outViews)
 {
     for (int i = 0; i < m_cameraCounter; i++) {
         CameraComponent* camera = m_cameras[i];
         if (!camera) continue;
 
-        RenderView& view = outViews[i];
-        view.viewMatrix = camera->GetViewMatrix();
-        view.projectionMatrix = camera->GetProjectionMatrix();
-        view.eyePosition = camera->GetEyePosition();
-        view.enableLighting = true; // ライトは有効にする
-        view.enableUI = true;       // UI描画も有効にする
+        for (int j = 0; j < outViews.size(); j++) {
+            if (outViews[j].enabled) continue; // すでに有効なRenderViewがある場合はスキップ
+            // RenderViewにカメラ情報を設定
+            RenderView& view = outViews[i];
+            view.enabled = true;
+
+            view.viewMatrix = camera->GetViewMatrix();
+            view.projectionMatrix = camera->GetProjectionMatrix();
+            view.eyePosition = camera->GetEyePosition();
+            view.aspectRatio = camera->GetAspect();
+
+            view.enable3D = true;
+            view.enableLighting = true;
+            view.enableUI = true;
+            view.enablePostEffect = true;
+            view.enableShadowMap = true;
+            break;
+        }
     }
 }

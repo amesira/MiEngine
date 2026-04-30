@@ -20,7 +20,8 @@ void EditorManager::Initialize(HWND hWnd)
     centerArea.areaName = "CenterArea";
     centerArea.areaRect = { 0.0f, 0.04f, 0.6f, 0.6f };
     centerArea.AddWindow(&m_sceneViewWindow, "Scene");
-    centerArea.AddWindow(&m_inspectorViewWindow, "Game");
+    centerArea.AddWindow(&m_gameViewWindow, "Game");
+    centerArea.AddWindow(&m_canvasViewWindow, "Canvas");
 
     EditorTabArea& rightArea1 = m_tabAreas[static_cast<int>(EditorAreaID::Right01)];
     rightArea1.areaName = "Right1";
@@ -31,12 +32,14 @@ void EditorManager::Initialize(HWND hWnd)
     rightArea2.areaName = "Right2";
     rightArea2.areaRect = { 0.8f, 0.04f, 0.2f, 0.96f };
     rightArea2.AddWindow(&m_inspectorViewWindow, "Inspector");
-    rightArea2.AddWindow(&m_hierarchyViewWindow, "Settings");
+    rightArea2.AddWindow(&m_settingsViewWindow, "Settings");
 
     EditorTabArea& bottomArea = m_tabAreas[static_cast<int>(EditorAreaID::Bottom)];
     bottomArea.areaName = "Bottom";
     bottomArea.areaRect = { 0.0f, 0.64f, 0.6f, 0.36f };
     bottomArea.AddWindow(&m_debugViewWindow, "Debug");
+    bottomArea.AddWindow(&m_sceneViewWindow, "Scene Mini");
+    bottomArea.AddWindow(&m_gameViewWindow, "Game Mini");
 
     EditorTabArea& topArea = m_tabAreas[static_cast<int>(EditorAreaID::Top)];
     topArea.singleTabMode = true;

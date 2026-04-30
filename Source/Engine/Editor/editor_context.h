@@ -2,13 +2,19 @@
 class IScene;
 struct RenderView;
 class GameObject;
+class SceneSettings;
 
 #include <string>
 #include <vector>
 
 struct EditorContext {
     IScene* scene = nullptr;                  // 観測対象のシーン
+    SceneSettings* sceneSettings = nullptr; // シーン全体のレンダリング設定
+
     RenderView* sceneRenderView = nullptr;   // SceneView表示用
+    RenderView* gameRenderView = nullptr;    // GameView表示用
+    RenderView* canvasRenderView = nullptr;   // CanvasView表示用（UIなどのオーバーレイ描画に使用）
+
     GameObject* selectedObject = nullptr;    // 現在選択中のオブジェクト
 
     // ディスプレイサイズ（SceneViewのサイズ計算などで使用）

@@ -17,7 +17,7 @@
 #include "component_type_id.h"
 
 class GameObject;
-class SceneRenderSettings;
+class SceneSettings;
 
 class IScene {
 protected:
@@ -87,7 +87,7 @@ public:
     virtual std::vector<GameObject>& GetGameObjects() = 0;
 
     // シーン全体のレンダリング設定の取得
-    virtual SceneRenderSettings& GetSceneRenderSettings() = 0;
+    virtual SceneSettings& GetSceneSettings() = 0;
 
 };
 

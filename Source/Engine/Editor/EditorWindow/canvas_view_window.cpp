@@ -2,15 +2,15 @@
 // scene_view_window.cpp
 // 
 // Author：Miu Kitamura
-// Date  ：2026/03/12
+// Date  ：2026/04/30
 //===================================================
-#include "scene_view_window.h"
+#include "canvas_view_window.h"
 #include "Engine/Editor/editor_context.h"
 #include "Engine/render_view.h"
 
-void SceneViewWindow::Draw()
+void CanvasViewWindow::Draw()
 {
-    const RenderView* renderView = m_editorContext->sceneRenderView;
+    const RenderView* renderView = m_editorContext->canvasRenderView;
 
     ID3D11ShaderResourceView* srv = renderView->colorBufferSRV.Get();
     float aspectRatio = renderView->aspectRatio;

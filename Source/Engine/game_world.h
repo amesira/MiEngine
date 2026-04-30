@@ -18,12 +18,6 @@
 #include "Engine/render_view.h"
 
 class GameWorld {
-public:
-    void Initialize();
-    void Finalize();
-    void Update();
-    void Render();
-
 private:
     // Scene管理
     SceneManager    m_sceneManager;
@@ -37,11 +31,28 @@ private:
     CameraProcessor    m_cameraProcessor;
     RenderProcessor    m_renderProcessor;
 
+    // RenderViewインデックス
+    int m_mainSceneRenderViewIndex = 0; // メインシーン用RenderViewのインデックス
+    int m_mainGameRenderViewIndex = 1;  // メインゲーム用RenderViewのインデックス
+    int m_canvasRenderViewIndex = 2;    // UI描画用RenderViewのインデックス
+
 public:
+    void Initialize();
+    void Finalize();
+    void Update();
+    void Render();
+
     // SceneManagerへのアクセス
     SceneManager& GetSceneManager() { return m_sceneManager; }
     // RenderViewへのアクセス
     std::vector<RenderView>& GetRenderViews() { return m_renderViews; }
+    RenderView& GetMainSceneRenderView() { return m_renderViews[m_mainSceneRenderViewIndex]; }
+    RenderView& GetMainGameRenderView() { return m_renderViews[m_mainGameRenderViewIndex]; }
+    RenderView& GetCanvasRenderView() { return m_renderViews[m_canvasRenderViewIndex]; }
+
+private:
+    // SceneRenderViewの設定
+    void SetSceneRenderView(IScene* scene, int sceneRenderViewIndex);
 
 };
 

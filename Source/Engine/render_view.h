@@ -9,12 +9,17 @@ using Microsoft::WRL::ComPtr;
 
 // 描画に必要な情報をまとめる構造体
 struct RenderView {
+    // このRenderViewが有効かどうか
+    bool enabled = false;
+
     // カメラ情報
     XMMATRIX viewMatrix;        // ビュー行列
     XMMATRIX projectionMatrix;  // プロジェクション行列
     XMFLOAT3 eyePosition;       // カメラの位置
+    float   aspectRatio;        // アスペクト比
 
     // 描画処理の有効・無効
+    bool enable3D;            // 3D描画の有効・無効
     bool enableLighting;      // ライトの有効・無効
     bool enableShadowMap;     // シャドウマップの有効・無効
     bool enablePostEffect;    // ポストエフェクトの有効・無効
@@ -43,6 +48,8 @@ struct RenderView {
         viewMatrix(XMMatrixIdentity()),
         projectionMatrix(XMMatrixIdentity()),
         eyePosition(0, 0, 0),
+        aspectRatio(16.0f / 9.0f),
+        enable3D(true),
         enableLighting(true),
         enableShadowMap(true),
         enablePostEffect(true),

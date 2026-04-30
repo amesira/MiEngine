@@ -87,9 +87,6 @@
     <ClCompile Include="Source\Engine\game_world.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\scene_manager.cpp">
-      <Filter>Sources\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\behavior_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
@@ -117,15 +114,6 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClCompile>
     <ClCompile Include="External\ImGui\imgui_tables.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
@@ -150,26 +138,8 @@
     <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\scene_view_window.cpp">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\inspector_view_window.cpp">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\tool_bar_window.cpp">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\hierarchy_view_window.cpp">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\debug_view_window.cpp">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\System\Graphics\model_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\resource_manager.cpp">
-      <Filter>Sources\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
@@ -182,9 +152,6 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\System\Graphics\texture_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\shader_manager.cpp">
-      <Filter>Sources\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\System\Graphics\material_repository.cpp">
       <Filter>Sources\Engine\System\Graphics</Filter>
@@ -234,6 +201,25 @@
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
+    <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\debug_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\inspector_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.cpp" />
+    <ClCompile Include="Source\Engine\Manager\resource_manager.cpp" />
+    <ClCompile Include="Source\Engine\Manager\scene_manager.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\scene_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -332,9 +318,6 @@
     <ClInclude Include="Source\Engine\game_world.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\scene_manager.h">
-      <Filter>Sources\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClInclude>
@@ -365,19 +348,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\draw_command.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\render_view.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
     <ClInclude Include="External\ImGui\imgui_internal.h">
@@ -404,35 +375,14 @@
     <ClInclude Include="External\ImGui\imgui_impl_win32.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\imgui_window_interface.h">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\scene_view_window.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Editor\editor_context.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\inspector_view_window.h">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\tool_bar_window.h">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\hierarchy_view_window.h">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\debug_view_window.h">
-      <Filter>Utility\ImguiWindow</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\System\Graphics\model_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\resource_manager.h">
-      <Filter>Sources\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_behavior.h">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
@@ -463,9 +413,6 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Graphics\texture_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\shader_manager.h">
-      <Filter>Sources\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Graphics\material_repository.h">
       <Filter>Sources\Engine\System\Graphics</Filter>
@@ -526,6 +473,31 @@
     <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />
+    <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
+    <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
+    <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
+    <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\debug_view_window.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\draw_command.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\inspector_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\imgui_window_interface.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.h" />
+    <ClInclude Include="Source\Engine\Manager\resource_manager.h" />
+    <ClInclude Include="Source\Engine\Manager\scene_manager.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\scene_view_window.h" />
+    <ClInclude Include="Source\Engine\Manager\shader_manager.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\tool_bar_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
+    <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

@@ -7,6 +7,8 @@
 #include "game_world.h"
 #include "Utility/debug_renderer.h"
 #include "Engine/engine_service_locator.h"
+#include "Engine/Core/scene_interface.h"
+#include "Engine/Settings/scene_settings.h"
 
 // GameWorldの初期化
 void GameWorld::Initialize()
@@ -66,16 +68,70 @@ void GameWorld::Render()
     // デバッグ描画の収集
     m_physicsProcessor.CollectDebugDraw(scene);
 
+    // RenderViewの無効化
+    for (RenderView& view : m_renderViews) {
+        view.enabled = false;
+    }
+
     // カメラ設定・描画情報の取得
     m_cameraProcessor.Process(scene);
-    m_cameraProcessor.GetRenderViews(m_renderViews);
+    m_cameraProcessor.SetRenderViews(m_renderViews);
+    m_mainGameRenderViewIndex = 0;
+
+    // シーンカメラの描画情報をRenderViewに反映
+    SetSceneRenderView(scene, m_cameraProcessor.GetCameraCounter());
     
     // 描画制御プロセッサー処理
-    int numViews = m_cameraProcessor.GetCameraCounter();
     for (int i = 0; i < m_renderViews.size(); i++) {
-        if (i >= numViews) break;
+        if (!m_renderViews[i].enabled) continue;
+
         RenderView& view = m_renderViews[i];
         m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
     }
+}
+
+// -------------------------------- private
+
+// シーンカメラの描画情報をRenderViewに反映
+void GameWorld::SetSceneRenderView(IScene* scene, int sceneRenderViewIndex)
+{
+    // シーンカメラの描画情報をRenderViewに反映
+    SceneSettings& sceneSettings = scene->GetSceneSettings();
+    sceneSettings.UpdateCameraSettings();
+    const SceneCameraSettings& sceneCameraSettings = sceneSettings.GetCameraSettings();
+
+    // シーン全体のレンダリング設定をRenderViewに反映
+    int sceneViewIndex = sceneRenderViewIndex;
+    if (sceneViewIndex >= m_renderViews.size()) {
+        return;
+    }
+
+    RenderView& view = m_renderViews[sceneViewIndex];
+    m_mainSceneRenderViewIndex = sceneViewIndex;
+    view.enabled = true;
+
+    view.viewMatrix = sceneCameraSettings.GetViewMatrix();
+    view.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
+    view.eyePosition = sceneCameraSettings.GetPosition();
+    view.aspectRatio = sceneCameraSettings.GetAspect();
+
+    view.enable3D = true;
+    view.enableLighting = true;
+    view.enablePostEffect = true;
+    view.enableUI = false;
+    sceneViewIndex++;
+    if (sceneViewIndex >= m_renderViews.size()) {
+        return;
+    }
+
+    // Canvas用のRenderViewを有効化
+    RenderView& canvasView = m_renderViews[sceneViewIndex];
+    m_canvasRenderViewIndex = sceneViewIndex;
+    canvasView.enabled = true;
+
+    canvasView.enable3D = false;
+    canvasView.enableLighting = false;
+    canvasView.enablePostEffect = false;
+    canvasView.enableUI = true;
 }

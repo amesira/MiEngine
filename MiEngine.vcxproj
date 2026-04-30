@@ -137,6 +137,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
@@ -210,6 +213,9 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
@@ -217,7 +223,8 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
     <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
     <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_render_settings.h" />
+    <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
+    <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />

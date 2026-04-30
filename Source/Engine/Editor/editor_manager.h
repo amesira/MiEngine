@@ -18,6 +18,9 @@
 #include "./EditorWindow/scene_view_window.h"
 #include "./EditorWindow/tool_bar_window.h"
 #include "./EditorWindow/debug_view_window.h"
+#include "./EditorWindow/settings_view_window.h"
+#include "./EditorWindow/game_view_window.h"
+#include "./EditorWindow/canvas_view_window.h"
 
 // タブエリアの構造体
 struct EditorTabArea {
@@ -62,6 +65,9 @@ private:
     SceneViewWindow     m_sceneViewWindow;      // シーンの3D表示ウィンドウ
     ToolBarWindow       m_toolBarWindow;        // ツールバーウィンドウ（上部のメニューやボタンなど）
     DebugViewWindow     m_debugViewWindow;      // デバッグ情報表示ウィンドウ
+    SettingsViewWindow  m_settingsViewWindow;   // 設定表示ウィンドウ
+    GameViewWindow      m_gameViewWindow;       // ゲームプレイ中の表示ウィンドウ
+    CanvasViewWindow    m_canvasViewWindow;     // UIなどのオーバーレイ表示ウィンドウ
 
     EditorTabArea m_tabAreas[static_cast<int>(EditorAreaID::MAX)]; // 各エリアのタブ管理
 
@@ -72,7 +78,11 @@ public:
         , m_sceneViewWindow(&m_editorContext)
         , m_toolBarWindow(&m_editorContext)
         , m_debugViewWindow(&m_editorContext)
+        , m_settingsViewWindow(&m_editorContext)
+        , m_gameViewWindow(&m_editorContext)
+        , m_canvasViewWindow(&m_editorContext)
     {
+
     }
     ~EditorManager() = default;
 

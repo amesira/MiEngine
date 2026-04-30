@@ -29,7 +29,7 @@ public:
     void    Process(IScene* pScene) override;
 
     // RenderViewの取得
-    void GetRenderViews(std::vector<RenderView>& outViews);
+    void SetRenderViews(std::vector<RenderView>& outViews);
 
     // CameraCounterの取得
     int GetCameraCounter() const { return m_cameraCounter; }
