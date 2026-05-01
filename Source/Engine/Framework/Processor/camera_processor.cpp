@@ -103,6 +103,7 @@ void CameraProcessor::SetRenderViews(std::vector<RenderView>& outViews)
             view.enableUI = true;
             view.enablePostEffect = true;
             view.enableShadowMap = true;
+            view.enableDebugDraw = false;
             break;
         }
     }

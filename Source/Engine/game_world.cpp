@@ -120,6 +120,7 @@ void GameWorld::SetSceneRenderView(IScene* scene, int sceneRenderViewIndex)
     view.enableLighting = true;
     view.enablePostEffect = true;
     view.enableUI = false;
+    view.enableDebugDraw = true;
     sceneViewIndex++;
     if (sceneViewIndex >= m_renderViews.size()) {
         return;

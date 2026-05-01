@@ -118,7 +118,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
             ModelMesh& mesh = model->meshes[i];
             MaterialInstance& mat = m.GetMaterialSlots()[mesh.materialIndex];
             if (!mat.materialResource)continue;
-            if (mat.materialResource->renderMode != RenderMode::Opaque)continue;
+            //if (mat.materialResource->renderMode != RenderMode::Opaque)continue;
 
             // マテリアルバインド
             MaterialBufferData materialBufferData = mat.materialResource->CreateBufferData();

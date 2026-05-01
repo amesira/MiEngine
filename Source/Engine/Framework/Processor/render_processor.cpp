@@ -25,6 +25,7 @@ void RenderProcessor::Initialize()
     m_opaqueRenderPass.Initialize(m_pDevice, m_pContext);
     m_uiRenderPass.Initialize(m_pDevice, m_pContext);
     m_decalRenderPass.Initialize(m_pDevice, m_pContext);
+    m_postEffectPass.Initialize(m_pDevice, m_pContext);
 }
 
 // 描画制御プロセッサーの終了処理
@@ -36,6 +37,7 @@ void RenderProcessor::Finalize()
     m_decalRenderPass.Finalize();
     m_shadowMapPass.Finalize();
     m_skyboxPass.Finalize();
+    m_postEffectPass.Finalize();
 }
 
 // 描画制御プロセッサーの処理
@@ -67,8 +69,8 @@ void RenderProcessor::Process(IScene* pScene)
         Bind3DCameraCB(m_renderView);
 
         // 3.スカイボックスパス
-        /*m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
-        m_skyboxPass.Process(pScene);*/
+        m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
+        m_skyboxPass.Process(pScene);
 
         //----------------------------------- 3Dオブジェクト描画
         m_lightingPass.BindLightCB(m_renderView->enableLighting);
@@ -94,11 +96,12 @@ void RenderProcessor::Process(IScene* pScene)
         // m_transparentRenderPass.Process(pScene);
 
         //-----------------
-        
-        // デバッグ描画
-        m_lightingPass.BindLightCB(false);
-        m_decalRenderPass.CollectDebugDraw(pScene);
-        DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
+        if (m_renderView->enableDebugDraw) {
+            // デバッグ描画
+            m_lightingPass.BindLightCB(false);
+            m_decalRenderPass.CollectDebugDraw(pScene);
+            DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
+        }
     }
 
     //----------------------------------- 2Dオブジェクト描画
@@ -107,7 +110,7 @@ void RenderProcessor::Process(IScene* pScene)
 
     // 5.PostEffect描画
     if (m_renderView->enablePostEffect) {
-        // m_postEffectPass.Process(pScene);
+        m_postEffectPass.Process(pScene);
     }
 
     // 6.2DScreen描画

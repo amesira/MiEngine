@@ -13,7 +13,7 @@
 #include "scene_camera_settings.h"
 
 class SceneSettings {
-private: friend class SettingsViewWindow;
+private:
     SceneCameraSettings m_cameraSettings;          // シーン全体のカメラ設定
     LightingSettings m_lightingSettings;           // ライティング設定
     PostProcessSettings m_postProcessSettings;     // ポストプロセス設定

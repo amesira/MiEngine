@@ -23,6 +23,7 @@ struct RenderView {
     bool enableLighting;      // ライトの有効・無効
     bool enableShadowMap;     // シャドウマップの有効・無効
     bool enablePostEffect;    // ポストエフェクトの有効・無効
+    bool enableDebugDraw;     // デバッグ描画の有効・無効
     bool enableUI;            // UI描画の有効・無効
 
     // カラーバッファ
@@ -53,7 +54,8 @@ struct RenderView {
         enableLighting(true),
         enableShadowMap(true),
         enablePostEffect(true),
-        enableUI(true) {
+        enableUI(true),
+        enableDebugDraw(true) {
     }
 
     void Initialize() {

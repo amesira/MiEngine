@@ -62,8 +62,8 @@ void ShadowMapPass::Process(IScene* pScene)
     m_pContext->PSSetShader(nullptr, nullptr, 0);
 
     // カメラCBの更新
-    float width = 60.0f;
-    float height = 60.0f;
+    float width = 100.0f;
+    float height = 100.0f;
 
     XMFLOAT3 center = m_eyePosition;
     XMFLOAT3 dir = MiMath::Normalize(m_lightDirection);

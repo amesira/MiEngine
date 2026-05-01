@@ -11,7 +11,7 @@ using namespace DirectX;
 
 // リムライト設定構造体
 struct RimLightSettings {
-    bool    enabled = false;               // リムライトの有効/無効
+    bool    enabled = true;               // リムライトの有効/無効
     float   intensity = 1.0f;              // リムライトの強さ
     float   threshold = 0.5f;              // リムライトの閾値（法線と視線の角度）
     XMFLOAT3 color = { 1.0f, 1.0f, 1.0f }; // リムライトの色
@@ -19,7 +19,7 @@ struct RimLightSettings {
 
 // 半球ライト設定構造体
 struct HemisphereLightSettings {
-    bool    enabled = false;                    // 半球ライトの有効/無効
+    bool    enabled = true;                    // 半球ライトの有効/無効
     float   intensity = 1.0f;                   // 半球ライトの強さ
     XMFLOAT3 skyColor = { 0.5f, 0.5f, 0.5f };   // 空の色
     XMFLOAT3 groundColor = { 0.2f, 0.2f, 0.2f };// 地面の色

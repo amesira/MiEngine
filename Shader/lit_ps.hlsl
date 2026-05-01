@@ -50,6 +50,10 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
         
         col.rgb *= diffuseLight; // ディフューズ光を乗算
         col.rgb += specularLight; // スペキュラ光を加算
+        
+        col.rgb += CalcRimLight(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz); // リムライトを加算
+        col.rgb += CalcHemiLight(ps_in.normal.xyz); // 半球ライトを加算
+        
     }
     
     // エミッシブカラーを加算

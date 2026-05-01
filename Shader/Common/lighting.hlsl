@@ -51,15 +51,42 @@ struct SpotLight {
     float   padding2;
 };
 
+// RimLight構造体
+struct RimLight {
+    bool    Enable;     // ライトの有効・無効
+    float3  padding;
+    
+    float   Intensity;  // リムライトの強さ
+    float   Threshold;  // リムライトの閾値（0~1の範囲で、値が小さいほど法線と視線が近い部分もリムライトが当たる）
+    float2  padding2;
+    
+    float4  Color;      // リムライトの色
+};
+
+// HemiLight構造体
+struct HemiLight {
+    bool    Enable;     // ライトの有効・無効
+    float3  padding;
+    
+    float   Intensity;  // ライトの強さ
+    float3  padding2;
+    
+    float4  SkyColor;   // 空からの光の色
+    float4  GroundColor;// 地面からの光の色
+};
+
 // ライト定数バッファ
 cbuffer LightBuffer : register(b10)
 {
-    bool                g_EnableLighting; // ライティング全体の有効・無効フラグ
-    float3              padding;
+    bool g_EnableLighting; // ライティング全体の有効・無効フラグ
+    float3 padding;
     
-    DirectionalLight    g_DirectionalLights[DIRECTIONAL_LIGHT_MAX];
-    PointLight          g_PointLights[POINT_LIGHT_MAX];
-    SpotLight           g_SpotLights[SPOT_LIGHT_MAX];
+    DirectionalLight g_DirectionalLights[DIRECTIONAL_LIGHT_MAX];
+    PointLight g_PointLights[POINT_LIGHT_MAX];
+    SpotLight g_SpotLights[SPOT_LIGHT_MAX];
+    
+    RimLight g_RimLight;
+    HemiLight g_HemiLight;
 }
 
 // 拡散反射の計算関数（ディレクショナルライト用）
@@ -304,5 +331,55 @@ float3 CalcSpecular_SpotLights(float3 normal, float3 posW, float3 eyePos, float 
         specular += light.Diffuse.rgb * pow(RdotV, shininess) * attenuation * light.Intensity;
     }
     
-    return specular;   
+    return specular;
+}
+
+// リムライトの計算関数
+float3 CalcRimLight(float3 normal, float3 posW, float3 eyePos)
+{
+    if (g_RimLight.Enable == 0)
+        return float3(0.0f, 0.0f, 0.0f);
+    
+    // Light方向と法線が逆行している場合 power1 = 1.0f になる
+    float power1 = 0.0f;
+    {
+        float3 N = normalize(normal);
+        float3 L = normalize(-g_DirectionalLights[0].Direction.xyz);
+        float NdotL = dot(N, L);
+        
+        power1 = max(0.0f, NdotL);
+        power1 = 1.0f - power1;
+    }
+    
+    // View方向の逆と法線が逆行している場合 power2 = 1.0f になる
+    float power2 = 0.0f;
+    {
+        float3 N = normalize(normal);
+        float3 V = normalize(posW - eyePos);
+        float VdotN = dot(-V, N);
+        
+        power2 = max(0.0f, VdotN);
+        power2 = 1.0f - power2;
+    }
+    
+    float rimPower = power1 * power2;
+    rimPower = smoothstep(g_RimLight.Threshold, 1.0f, rimPower); // 閾値以下は0、以上は1になるように補間
+    rimPower = pow(rimPower, 2.0f); // リムライトのエッジを強調するために二次関数的に強める
+    
+    return g_RimLight.Color.rgb * rimPower * g_RimLight.Intensity;
+}
+
+// 半球ライトの計算関数
+float3 CalcHemiLight(float3 normal)
+{
+    if (g_HemiLight.Enable == 0)
+        return float3(0.0f, 0.0f, 0.0f);
+    
+    float3 N = normalize(normal);
+    float3 G = float3(0.0f, 1.0f, 0.0f); // 地面法線とする
+    
+    float NdotG = dot(N, G);
+    float t = (NdotG + 1.0f) * 0.5f;
+    
+    return lerp(g_HemiLight.GroundColor.rgb, g_HemiLight.SkyColor.rgb, t) * g_HemiLight.Intensity;
 }

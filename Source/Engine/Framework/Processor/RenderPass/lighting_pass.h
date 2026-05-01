@@ -14,6 +14,14 @@ using namespace DirectX;
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
 
+class LightingSettings;
+
+template <class T>
+class ComponentPool;
+
+class LightComponent;
+class TransformComponent;
+
 #pragma region ライトの構造体定義
 // DirectionalLight構造体
 struct alignas(16) GPU_DirectionalLight {
@@ -55,6 +63,31 @@ struct alignas(16) GPU_SpotLight {
     float   spotAngle;
     float   padding2[1];
 };
+
+// RimLight構造体
+struct alignas(16) GPU_RimLight {
+    int     enable;
+    float   padding[3];
+
+    float   intensity;
+    float   threshold;
+    float   padding2[2];
+
+    XMFLOAT4 color;
+};
+
+// HemisphereLight構造体
+struct alignas(16) GPU_HemisphereLight {
+    int     enable;
+    float   padding[3];
+
+    float   intensity;
+    float   padding2[3];
+
+    XMFLOAT4 skyColor;
+    XMFLOAT4 groundColor;
+};
+
 #pragma endregion
 
 class LightingPass : public Pass {
@@ -70,14 +103,18 @@ private:
         GPU_DirectionalLight directionalLights[DIRECTIONAL_LIGHT_MAX];
         GPU_PointLight  pointLights[POINT_LIGHT_MAX];
         GPU_SpotLight   spotLights[SPOT_LIGHT_MAX];
+
+        GPU_RimLight rimLight;
+        GPU_HemisphereLight hemisphereLight;
+
     } m_lightBufferData;
 
+    // D3D11デバイスとコンテキストへのポインタ
     ID3D11Device* m_pDevice;
     ID3D11DeviceContext* m_pContext;
 
+    // ライトの定数バッファ
     ComPtr<ID3D11Buffer> m_lightBuffer;
-
-    int m_lightCount;
 
 public:
     // 初期化
@@ -98,6 +135,12 @@ public:
             m_lightBufferData.directionalLights[0].direction.z
         };
     }
+
+private:
+    // Componentからライトの情報を転送
+    void  CollectLightComponents(ComponentPool<LightComponent>* lightCompPool, ComponentPool<TransformComponent>* transformCompPool);
+    // LightSettingsからライトの情報を転送
+    void  CollectLightSettings(const LightingSettings& lightingSettings);
 
 };
 

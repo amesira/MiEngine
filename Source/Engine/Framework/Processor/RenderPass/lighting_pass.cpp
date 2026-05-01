@@ -11,6 +11,8 @@
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/light_component.h"
 
+#include "Engine/Settings/scene_settings.h"
+
 #include "Utility/debug_ostream.h"
 
 #include "Engine/engine_service_locator.h"
@@ -47,9 +49,35 @@ void LightingPass::Finalize()
 
 void LightingPass::Process(IScene* pScene)
 {
+    // Componentからライトの情報を転送
     auto* lightCompPool = pScene->GetComponentPool<LightComponent>();
     auto* transformCompPool = pScene->GetComponentPool<TransformComponent>();
-    if (!lightCompPool || !transformCompPool) return;
+    if (lightCompPool && transformCompPool) {
+        CollectLightComponents(lightCompPool, transformCompPool);
+    }
+
+    // LightSettingsからライトの情報を転送
+    const LightingSettings& lightingSettings = pScene->GetSceneSettings().GetLightingSettings();
+    CollectLightSettings(lightingSettings);
+
+    // 定数バッファにライトの情報を転送
+    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+}
+
+// ライトのバインド
+void LightingPass::BindLightCB(bool enable)
+{
+    m_lightBufferData.enableLighting = enable ? 1 : 0;
+
+    // 定数バッファにライトの情報を転送
+    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+}
+
+// ------------------------------------ private
+
+// Componentからライトの情報を転送
+void LightingPass::CollectLightComponents(ComponentPool<LightComponent>* lightCompPool, ComponentPool<TransformComponent>* transformCompPool)
+{
     auto& lightCompList = lightCompPool->GetList();
 
     // ライトの数をリセット
@@ -104,7 +132,7 @@ void LightingPass::Process(IScene* pScene)
                     1.0f
                 };
                 data.diffuse = light->GetDiffuse();
-    
+
                 data.intensity = light->GetIntensity();
                 data.range = light->GetRange();
             }
@@ -134,16 +162,22 @@ void LightingPass::Process(IScene* pScene)
         }
         }
     }
-
-    // 定数バッファにライトの情報を転送
-    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
 }
 
-// ライトのバインド
-void LightingPass::BindLightCB(bool enable)
-{
-    m_lightBufferData.enableLighting = enable ? 1 : 0;
 
-    // 定数バッファにライトの情報を転送
-    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+// LightSettingsからライトの情報を転送
+void LightingPass::CollectLightSettings(const LightingSettings& lightingSettings)
+{
+    const RimLightSettings& rimLightSettings = lightingSettings.GetRimLightSettings();
+    m_lightBufferData.rimLight.enable = rimLightSettings.enabled ? 1 : 0;
+    m_lightBufferData.rimLight.intensity = rimLightSettings.intensity;
+    m_lightBufferData.rimLight.threshold = rimLightSettings.threshold;
+    m_lightBufferData.rimLight.color = XMFLOAT4(rimLightSettings.color.x, rimLightSettings.color.y, rimLightSettings.color.z, 1.0f);
+
+    const HemisphereLightSettings& hemisphereLightSettings = lightingSettings.GetHemisphereLightSettings();
+    m_lightBufferData.hemisphereLight.enable = hemisphereLightSettings.enabled ? 1 : 0;
+    m_lightBufferData.hemisphereLight.intensity = hemisphereLightSettings.intensity;
+    m_lightBufferData.hemisphereLight.skyColor = XMFLOAT4(hemisphereLightSettings.skyColor.x, hemisphereLightSettings.skyColor.y, hemisphereLightSettings.skyColor.z, 1.0f);
+    m_lightBufferData.hemisphereLight.groundColor = XMFLOAT4(hemisphereLightSettings.groundColor.x, hemisphereLightSettings.groundColor.y, hemisphereLightSettings.groundColor.z, 1.0f);
+
 }
