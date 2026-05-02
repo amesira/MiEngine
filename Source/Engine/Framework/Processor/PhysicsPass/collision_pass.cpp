@@ -5,7 +5,6 @@
 // Date  ：2025/10/28
 //===================================================
 #include "collision_pass.h"
-#include "collision_utility.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 
@@ -17,6 +16,8 @@
 
 #include "Utility/debug_renderer.h"
 #include "Utility/mi_math.h"
+
+#include "./Collision/collision_utility.h"
 
 using namespace DirectX;
 

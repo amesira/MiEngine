@@ -137,8 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_query.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
@@ -191,9 +191,9 @@
     <ClCompile Include="Source\Engine\System\Device\mouse.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\physics_processor.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.cpp" />
     <ClCompile Include="Source\Engine\resource_manager.cpp" />
     <ClCompile Include="Source\Engine\scene_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\scene_view_window.cpp" />
@@ -207,8 +207,8 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_query.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_visual_request.h" />
@@ -231,7 +231,7 @@
     <ClInclude Include="Source\Engine\Editor\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Framework\Component\decal_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\draw_command.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\draw_command.h" />
     <ClInclude Include="Source\Engine\Editor\editor_context.h" />
     <ClInclude Include="Source\Engine\engine_service_locator.h" />
     <ClInclude Include="Source\Game\Factory\environment_factory.h" />
@@ -288,9 +288,9 @@
     <ClInclude Include="Source\Engine\System\Device\keyboard.h" />
     <ClInclude Include="Source\Engine\System\Device\mouse.h" />
     <ClInclude Include="Source\Engine\Core\processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_font.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_image.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\Context\collector_slider.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.h" />
     <ClInclude Include="Source\Engine\resource_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Component\rigidbody_component.h" />
     <ClInclude Include="Source\Engine\Core\scene_base.h" />

@@ -104,6 +104,8 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
             }
         }
     }
+
+    return !outObjects.empty();
 }
 
 // OverlapSphereクエリー
@@ -168,4 +170,6 @@ bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*
             }
         }
     }
+
+    return !outObjects.empty();
 }

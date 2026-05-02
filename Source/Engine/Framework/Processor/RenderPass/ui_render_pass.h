@@ -8,11 +8,11 @@
 #define UI_RENDER_PASS_H
 #include "Engine/Core/pass.h"
 #include <vector>
-#include "./Context/draw_command.h"
+#include "./UiRender/draw_command.h"
 
-#include "./Context/collector_image.h"
-#include "./Context/collector_slider.h"
-#include "./Context/collector_font.h"
+#include "./UiRender/collector_image.h"
+#include "./UiRender/collector_slider.h"
+#include "./UiRender/collector_font.h"
 
 class UIRenderPass : public Pass {
 private:
