@@ -16,19 +16,11 @@ class IScene;
 
 class ColliderComponent;
 
+struct RaycastHit;
+
 // 当たり判定クエリークラス
 class CollisionQuery {
 public:
-    // Raycastのヒット情報
-    struct RaycastHit {
-        bool        hit = false;
-        GameObject* hitObject = nullptr;
-
-        XMFLOAT3 hitPoint = { 0.0f, 0.0f, 0.0f };   // ヒットポイント
-        XMFLOAT3 hitNormal = { 0.0f, 0.0f, 0.0f };  // ヒット法線
-        float hitDistance = 0.0f;                   // ヒット距離
-    };
-
     // Raycastクエリー
     static bool Raycast(
         IScene* scene,

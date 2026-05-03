@@ -35,7 +35,7 @@ bool CollisionUtility::IsIgnoreLayerPair(int layerA, int layerB)
 
 #pragma region AABB境界情報の計算・判定
 // BoxColliderのAABB境界情報計算
-CollisionUtility::Bounds CollisionUtility::ConvertToBounds(
+Bounds CollisionUtility::ConvertToBounds(
     TransformComponent* t, BoxColliderComponent* c)
 {
     Bounds bounds = {};
@@ -69,7 +69,7 @@ CollisionUtility::Bounds CollisionUtility::ConvertToBounds(
 }
 
 // SphereColliderのAABB境界情報計算
-CollisionUtility::Bounds CollisionUtility::ConvertToBounds(TransformComponent* t, SphereColliderComponent* c)
+Bounds CollisionUtility::ConvertToBounds(TransformComponent* t, SphereColliderComponent* c)
 {
     Bounds bounds = {};
 
@@ -130,7 +130,7 @@ void CollisionUtility::CheckAABB(CollisionResult& result, Bounds a, Bounds b)
 #pragma region 当たり判定の本格チェック
 // Box同士の衝突判定
 void CollisionUtility::CheckOBB(
-    CollisionResult& result,
+    /*out*/ CollisionResult& result,
     TransformComponent* tA, BoxColliderComponent* cA,
     TransformComponent* tB, BoxColliderComponent* cB)
 {
@@ -249,7 +249,7 @@ void CollisionUtility::CheckOBB(
 
 // BoxとSphereの衝突判定
 void CollisionUtility::CheckOBBSphere(
-    CollisionResult& result,
+    /*out*/ CollisionResult& result,
     TransformComponent* tA, BoxColliderComponent* cA,
     TransformComponent* tB, SphereColliderComponent* cB)
 {
@@ -332,7 +332,7 @@ void CollisionUtility::CheckOBBSphere(
 
 // Sphere同士の衝突判定
 void CollisionUtility::CheckSphere(
-    CollisionResult& result,
+    /*out*/ CollisionResult& result,
     TransformComponent* tA, SphereColliderComponent* cA,
     TransformComponent* tB, SphereColliderComponent* cB)
 {
@@ -381,4 +381,194 @@ void CollisionUtility::CheckSphere(
     }
 }
 
+#pragma endregion
+
+#pragma region Rayの判定チェック
+// RayとBoxの衝突判定
+void CollisionUtility::CheckRayOBB(
+    /*out*/ RaycastHit& hitInfo,
+    const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection,float rayLength,
+    TransformComponent* transform, BoxColliderComponent* collider)
+{
+    // ワールド座標系での中心座標を計算
+    XMFLOAT3 center = MiMath::RotateVector(transform->GetRotation(), collider->GetCenter());
+    center = MiMath::Add(center, transform->GetPosition());
+
+    // レイをOBBを無回転とした時のローカル座標系に変換
+    XMFLOAT3 localRayOrigin = MiMath::RotateVector(
+        XMFLOAT4(
+            -transform->GetRotation().x,
+            -transform->GetRotation().y,
+            -transform->GetRotation().z,
+            transform->GetRotation().w
+        ),
+        MiMath::Subtract(rayOrigin, center)
+    );
+    XMFLOAT3 localRayDirection = MiMath::RotateVector(
+        XMFLOAT4(
+            -transform->GetRotation().x,
+            -transform->GetRotation().y,
+            -transform->GetRotation().z,
+            transform->GetRotation().w
+        ),
+        rayDirection
+    );
+    localRayDirection = MiMath::Normalize(localRayDirection);
+
+    // AABBとの衝突判定
+    TransformComponent localTransform = *transform;
+    localTransform.SetPosition({ 0.0f,0.0f,0.0f });
+
+    Bounds bounds = ConvertToBounds(&localTransform, collider);
+    RaycastHit localHitInfo;
+    CheckRayAABB(localHitInfo, localRayOrigin, localRayDirection, rayLength, bounds);
+
+    if (localHitInfo.hit) {
+        // 衝突している
+        hitInfo.hit = true;
+        hitInfo.hitDistance = localHitInfo.hitDistance;
+        hitInfo.hitPoint = MiMath::Add(rayOrigin, MiMath::Multiply(rayDirection, localHitInfo.hitDistance));
+        hitInfo.hitNormal = MiMath::RotateVector(transform->GetRotation(), localHitInfo.hitNormal);
+    }
+    else {
+        // 衝突していない
+        hitInfo.hit = false;
+    }
+}
+
+// RayとSphereの衝突判定
+void CollisionUtility::CheckRaySphere(
+    /*out*/ RaycastHit& hitInfo,
+    const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection,const float rayLength,
+    TransformComponent* transform, SphereColliderComponent* collider)
+{
+    XMFLOAT3 dir = MiMath::Normalize(rayDirection);
+
+    // レイの始点から球の中心へのベクトル
+    XMFLOAT3 center = MiMath::RotateVector(transform->GetRotation(), collider->GetCenter());
+    center = MiMath::Add(center, transform->GetPosition());
+    XMFLOAT3 co = MiMath::Subtract(center, rayOrigin);
+
+    float a = MiMath::Dot(dir, dir);
+    float b = MiMath::Dot(co, dir);
+    float c = MiMath::Dot(co, co) - MiMath::Pow(collider->GetRadius(), 2);
+
+    if (a == 0.0f) {
+        // レイの方向ベクトルがゼロの場合は衝突なし
+        hitInfo.hit = false;
+        return;
+    }
+
+    float s = b * b - a * c;
+    if (s < 0.0f) {
+        // 判別式が負の場合は衝突なし
+        hitInfo.hit = false;
+        return;
+    }
+
+    // 衝突点までの距離を計算
+    float sqrtS = sqrtf(s);
+    float a1 = (b - sqrtS) / a;
+    float a2 = (b + sqrtS) / a;
+
+    // レイの後方で衝突
+    if (a1 < 0.0f && a2 < 0.0f) {
+        hitInfo.hit = false;
+        return;
+    }
+
+    // レイの長さを超える距離で衝突
+    if (a1 > rayLength && a2 > rayLength) {
+        hitInfo.hit = false;
+        return;
+    }
+
+    // 衝突している
+    hitInfo.hit = true;
+    float a3 = (a1 >= 0.0f) ? a1 : a2;
+    hitInfo.hitDistance = a3;
+    hitInfo.hitPoint = MiMath::Add(rayOrigin, MiMath::Multiply(dir, a3));
+    hitInfo.hitNormal = MiMath::Normalize(MiMath::Subtract(hitInfo.hitPoint, center));
+}
+
+// RayとAABBの衝突判定
+void CollisionUtility::CheckRayAABB(
+    /*out*/ RaycastHit& hitInfo,
+    const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection, float rayLength, 
+    Bounds bounds)
+{
+    XMFLOAT3 dir = MiMath::Normalize(rayDirection);
+
+    // AABB平面の法線
+    const XMFLOAT3 normals[6] = {
+        { 1.0f, 0.0f, 0.0f },  // +X面
+        { -1.0f, 0.0f, 0.0f }, // -X面
+        { 0.0f, 1.0f, 0.0f },  // +Y面
+        { 0.0f, -1.0f, 0.0f }, // -Y面
+        { 0.0f, 0.0f, 1.0f },  // +Z面
+        { 0.0f, 0.0f, -1.0f }  // -Z面
+    };
+    // AABB平面上の1頂点
+    const XMFLOAT3 vertices[6] = {
+        { bounds.maxX, 0.0f, 0.0f }, // +X面
+        { bounds.minX, 0.0f, 0.0f }, // -X面
+        { 0.0f, bounds.maxY, 0.0f }, // +Y面
+        { 0.0f, bounds.minY, 0.0f }, // -Y面
+        { 0.0f, 0.0f, bounds.maxZ }, // +Z面
+        { 0.0f, 0.0f, bounds.minZ }  // -Z面
+    };
+
+    // レイの終点を計算
+    XMFLOAT3 rayEnd = MiMath::Add(rayOrigin, MiMath::Multiply(dir, rayLength));
+
+    float minHitDistance = rayLength;
+
+    // 各面との衝突判定
+    for (int i = 0; i < 6; i++) {
+        const XMFLOAT3& N = normals[i];
+        const XMFLOAT3& V0 = vertices[i];
+
+        // 1. 法線ベクトルとレイの平行チェック
+        XMFLOAT3 cross = MiMath::Cross(dir, N);
+        if (MiMath::Length(cross) < 0.001f) {
+            continue;
+        }
+
+        // 2. 平面までの距離から、内分比を算出し貫通点を求める
+        XMFLOAT3 v1 = MiMath::Subtract(rayOrigin, V0);
+        XMFLOAT3 v2 = MiMath::Subtract(rayEnd, V0);
+        float t = abs(MiMath::Dot(N, v1)) / (abs(MiMath::Dot(N, v1)) + abs(MiMath::Dot(N, v2)));
+        XMFLOAT3 hitPoint = {
+            rayOrigin.x + (rayEnd.x - rayOrigin.x) * t,
+            rayOrigin.y + (rayEnd.y - rayOrigin.y) * t,
+            rayOrigin.z + (rayEnd.z - rayOrigin.z) * t
+        };
+
+        // 3. 貫通点がAABBの範囲内にあるかチェック
+        const float epsilon = 0.001f;
+        if (hitPoint.x < bounds.minX - epsilon || hitPoint.x > bounds.maxX + epsilon ||
+            hitPoint.y < bounds.minY - epsilon || hitPoint.y > bounds.maxY + epsilon ||
+            hitPoint.z < bounds.minZ - epsilon || hitPoint.z > bounds.maxZ + epsilon) {
+            continue;
+        }
+
+        // 4. レイの始点から貫通点までの距離がレイの長さ以内かチェック
+        float hitDistance = MiMath::Distance(rayOrigin, hitPoint);
+        if (hitDistance > rayLength) {
+            continue;
+        }
+
+        // 5. 最も近い貫通点を採用
+        if (hitDistance > minHitDistance) {
+            continue;
+        }
+        minHitDistance = hitDistance;
+
+        // 衝突している
+        hitInfo.hit = true;
+        hitInfo.hitPoint = hitPoint;
+        hitInfo.hitNormal = N;
+        hitInfo.hitDistance = hitDistance;
+    }
+}
 #pragma endregion

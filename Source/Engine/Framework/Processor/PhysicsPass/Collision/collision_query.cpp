@@ -68,7 +68,7 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
             
             if (t == nullptr) continue;
             
-            CollisionUtility::CollisionResult result;
+            CollisionResult result;
             CollisionUtility::CheckOBB(
                 /*out*/ result,
                 t, &boxCollider,
@@ -92,7 +92,7 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
     
             if (t == nullptr) continue;
     
-            CollisionUtility::CollisionResult result;
+            CollisionResult result;
             CollisionUtility::CheckOBBSphere(
                 /*out*/ result,
                 &tempTransform, &tempBoxCollider,
@@ -135,7 +135,7 @@ bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*
             
             if (t == nullptr) continue;
             
-            CollisionUtility::CollisionResult result;
+            CollisionResult result;
             CollisionUtility::CheckOBBSphere(
                 /*out*/ result,
                 t, &boxCollider,
@@ -158,7 +158,7 @@ bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*
             
             if (t == nullptr) continue;
             
-            CollisionUtility::CollisionResult result;
+            CollisionResult result;
             CollisionUtility::CheckSphere(
                 /*out*/ result,
                 t, &sphereCollider,
