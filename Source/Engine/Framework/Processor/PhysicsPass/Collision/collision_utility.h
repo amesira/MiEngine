@@ -10,6 +10,8 @@
 #include "Engine/System/Device/direct3d.h"
 using namespace DirectX;
 
+class GameObject;
+
 class TransformComponent;
 class ColliderComponent;
 class RigidbodyComponent;

@@ -92,7 +92,7 @@ void CollisionPass::Process(IScene* pScene)
                 if (CollisionUtility::IsIgnoreLayerPair((int)colliderA->GetLayer(), (int)colliderB->GetLayer())) continue;
 
                 // 詳細な衝突判定
-                CollisionUtility::CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
+                CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
                 CollisionUtility::CheckOBB(outResult, transformA, colliderA,transformB, colliderB);
 
                 // 衝突している場合
@@ -153,7 +153,7 @@ void CollisionPass::Process(IScene* pScene)
                 if (CollisionUtility::IsIgnoreLayerPair((int)colliderA->GetLayer(), (int)colliderB->GetLayer())) continue;
 
                 // 詳細な衝突判定
-                CollisionUtility::CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
+                CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
                 CollisionUtility::CheckSphere(outResult, transformA, colliderA, transformB, colliderB);
 
                 // 衝突している場合
@@ -211,7 +211,7 @@ void CollisionPass::Process(IScene* pScene)
                 // レイヤーマスクによる当たり判定スキップ
                 if (CollisionUtility::IsIgnoreLayerPair((int)colliderA->GetLayer(), (int)colliderB->GetLayer())) continue;
 
-                CollisionUtility::CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
+                CollisionResult outResult = { false, {0.0f, 0.0f, 0.0f} };
                 CollisionUtility::CheckOBBSphere(outResult, transformA, colliderA, transformB, colliderB);
 
                 // 衝突している場合

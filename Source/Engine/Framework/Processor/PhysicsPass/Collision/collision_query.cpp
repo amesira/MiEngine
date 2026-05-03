@@ -26,14 +26,146 @@
 bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit, 
     const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance, int layerMask)
 {
-    return false;
+    raycastHit = RaycastHit{};
+
+    auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
+    auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
+    auto* transformPool = scene->GetComponentPool<TransformComponent>();
+
+    float closestHitDistance = maxDistance;
+
+    if (boxColliderPools) {
+        auto& boxColliders = boxColliderPools->GetList();
+
+        for (BoxColliderComponent& boxCollider : boxColliders) {
+            if (!boxCollider.GetEnable()) continue;
+            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)boxCollider.GetLayer())) continue;
+            
+            TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
+            if (t == nullptr) continue;
+            
+            // Ray - OBBの当たり判定
+            RaycastHit tempHit;
+            CollisionUtility::CheckRayOBB(
+                /*out*/ tempHit,
+                origin, direction, maxDistance,
+                t, &boxCollider
+            );
+
+            // 最も近いヒットを記録
+            if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                closestHitDistance = tempHit.hitDistance;
+                raycastHit = tempHit;
+            }
+        }
+    }
+
+    if (sphereColliderPools) {
+        auto& sphereColliders = sphereColliderPools->GetList();
+
+        for (SphereColliderComponent& sphereCollider : sphereColliders) {
+            if (!sphereCollider.GetEnable()) continue;
+            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)sphereCollider.GetLayer())) continue;
+            
+            TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
+            if (t == nullptr) continue;
+            
+            // Ray - Sphereの当たり判定
+            RaycastHit tempHit;
+            CollisionUtility::CheckRaySphere(
+                /*out*/ tempHit,
+                origin, direction, maxDistance,
+                t, &sphereCollider
+            );
+
+            // 最も近いヒットを記録
+            if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                closestHitDistance = tempHit.hitDistance;
+                raycastHit = tempHit;
+            }
+        }
+    }
+
+    return raycastHit.hit;
 }
 
 // SphereCastクエリー
 bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit, 
     const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance, int layerMask)
 {
-    return false;
+    raycastHit = RaycastHit{};
+
+    auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
+    auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
+    auto* transformPool = scene->GetComponentPool<TransformComponent>();
+
+    float closestHitDistance = maxDistance;
+
+    if (boxColliderPools) {
+        auto& boxColliders = boxColliderPools->GetList();
+
+        for (BoxColliderComponent& boxCollider : boxColliders) {
+            if (!boxCollider.GetEnable()) continue;
+            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)boxCollider.GetLayer())) continue;
+
+            TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
+            if (t == nullptr) continue;
+
+            // SphereCast用の一時的なBoxColliderを作成
+            BoxColliderComponent tempBoxCollider = boxCollider;
+            tempBoxCollider.SetScale(XMFLOAT3(
+                boxCollider.GetScale().x + radius * 2.0f,
+                boxCollider.GetScale().y + radius * 2.0f,
+                boxCollider.GetScale().z + radius * 2.0f
+            ));
+
+            // Ray - OBBの当たり判定
+            RaycastHit tempHit;
+            CollisionUtility::CheckRayOBB(
+                /*out*/ tempHit,
+                origin, direction, maxDistance,
+                t, &tempBoxCollider
+            );
+
+            // 最も近いヒットを記録
+            if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                closestHitDistance = tempHit.hitDistance;
+                raycastHit = tempHit;
+            }
+        }
+    }
+
+    if (sphereColliderPools) {
+        auto& sphereColliders = sphereColliderPools->GetList();
+
+        for (SphereColliderComponent& sphereCollider : sphereColliders) {
+            if (!sphereCollider.GetEnable()) continue;
+            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)sphereCollider.GetLayer())) continue;
+
+            TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
+            if (t == nullptr) continue;
+
+            // SphereCast用の一時的なSphereColliderを作成
+            SphereColliderComponent tempSphereCollider = sphereCollider;
+            tempSphereCollider.SetRadius(sphereCollider.GetRadius() + radius);
+
+            // Ray - Sphereの当たり判定
+            RaycastHit tempHit;
+            CollisionUtility::CheckRaySphere(
+                /*out*/ tempHit,
+                origin, direction, maxDistance,
+                t, &tempSphereCollider
+            );
+
+            // 最も近いヒットを記録
+            if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                closestHitDistance = tempHit.hitDistance;
+                raycastHit = tempHit;
+            }
+        }
+    }
+
+    return raycastHit.hit;
 }
 
 //===================================================

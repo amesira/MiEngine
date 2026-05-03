@@ -27,6 +27,11 @@ constexpr bool COLLISION_MATRIX[(int)ColliderComponent::Layer::MAX][(int)Collide
 // レイヤーマスクによる当たり判定スキップ
 bool CollisionUtility::IsIgnoreLayerPair(int layerA, int layerB)
 {
+    if (layerA < 0 || layerA >= (int)ColliderComponent::Layer::MAX ||
+        layerB < 0 || layerB >= (int)ColliderComponent::Layer::MAX) {
+        return false; // 無効なレイヤー番号の場合はスキップしない
+    }
+
     if (!COLLISION_MATRIX[layerA][layerB]) {
         return true;
     }
@@ -390,6 +395,8 @@ void CollisionUtility::CheckRayOBB(
     const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection,float rayLength,
     TransformComponent* transform, BoxColliderComponent* collider)
 {
+    hitInfo = RaycastHit();
+
     // ワールド座標系での中心座標を計算
     XMFLOAT3 center = MiMath::RotateVector(transform->GetRotation(), collider->GetCenter());
     center = MiMath::Add(center, transform->GetPosition());
@@ -416,13 +423,13 @@ void CollisionUtility::CheckRayOBB(
     localRayDirection = MiMath::Normalize(localRayDirection);
 
     // AABBとの衝突判定
-    TransformComponent localTransform = *transform;
-    localTransform.SetPosition({ 0.0f,0.0f,0.0f });
+    Bounds bounds = {
+        -collider->GetScale().x * 0.5f, collider->GetScale().x * 0.5f,
+        -collider->GetScale().y * 0.5f, collider->GetScale().y * 0.5f,
+        -collider->GetScale().z * 0.5f, collider->GetScale().z * 0.5f
+    };
 
-    Bounds bounds = ConvertToBounds(&localTransform, collider);
     RaycastHit localHitInfo;
-    CheckRayAABB(localHitInfo, localRayOrigin, localRayDirection, rayLength, bounds);
-
     if (localHitInfo.hit) {
         // 衝突している
         hitInfo.hit = true;
@@ -442,6 +449,8 @@ void CollisionUtility::CheckRaySphere(
     const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection,const float rayLength,
     TransformComponent* transform, SphereColliderComponent* collider)
 {
+    hitInfo = RaycastHit();
+
     XMFLOAT3 dir = MiMath::Normalize(rayDirection);
 
     // レイの始点から球の中心へのベクトル
