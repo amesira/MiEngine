@@ -1,15 +1,19 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-// lit_ps.hlsl [Litピクセルシェーダー]
+// liquid_surface_lit_ps.hlsl
 // 
 // Author：Miu Kitamura
-// Date  ：2026/03/30
+// Date  ：2026/05/04
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
+#include "./Common/transform.hlsl"
 #include "./Common/camera.hlsl"
 #include "./Common/lighting.hlsl"
 #include "./Common/material.hlsl"
 #include "./Common/shadowing.hlsl"
 
 SamplerState g_SamplerState : register(s0);
+
+// 高さマップテクスチャ
+Texture2D g_HeightMapNormalTexture : register(t5);
 
 // ピクセルシェーダーの入力構造体
 struct PS_INPUT // VS_OUTPUTと同じ内容
@@ -20,10 +24,16 @@ struct PS_INPUT // VS_OUTPUTと同じ内容
     float2 texcoord : TEXCOORD0;    // テクスチャ座標
 };
 
+
 // ピクセルシェーダーのメイン関数
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
     float4 col = float4(0, 0, 0, 1);
+    
+    // 高さマップから法線を取得
+    float3 localNormal = g_HeightMapNormalTexture.Sample(g_SamplerState, ps_in.texcoord).xyz * 2.0f - 1.0f;
+    float3 worldNormal = normalize(mul(localNormal, (float3x3)g_WorldMatrix));
+    ps_in.normal.xyz = worldNormal;
     
     // テクスチャの色を取得・乗算
     col = g_Material.baseColor * g_AlbedoTexture.Sample(g_SamplerState, ps_in.texcoord);

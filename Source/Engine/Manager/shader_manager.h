@@ -40,6 +40,7 @@ public:
         Lit,
         SkinnedLit,
         DecalLit,
+        LiquidSurfaceLit,
 
         Unlit,
         TlueTypeFontUnlit,

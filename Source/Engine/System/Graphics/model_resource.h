@@ -29,6 +29,9 @@ struct ModelMesh {
 	unsigned int numVertices;
 	unsigned int numIndices;
 
+    UINT vertexStride; // 頂点のストライド（サイズ）
+    UINT vertexOffset; // 頂点バッファのオフセット
+
     // マテリアルインデックス
 	uint32_t materialIndex;
 };

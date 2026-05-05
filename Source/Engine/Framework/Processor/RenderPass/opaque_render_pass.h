@@ -28,6 +28,8 @@ public:
     void    Process(IScene* pScene) override;
 
 private:
+    // Meshリストの描画
+    void DrawMeshList(const std::vector<ModelMesh>& meshes, const std::vector<MaterialInstance>& materialSlots);
 
 };
 

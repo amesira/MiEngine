@@ -40,6 +40,9 @@
     <FxCompile Include="Shader\decal_lit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\liquid_surface_lit_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">

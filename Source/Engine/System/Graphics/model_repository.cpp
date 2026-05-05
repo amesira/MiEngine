@@ -217,6 +217,10 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
 
             m_pDevice->CreateBuffer(&bd, &sd, &modelMesh.vertexBuffer);
 
+            // strideとoffsetの設定
+            modelMesh.vertexStride = sizeof(LitVertex);
+            modelMesh.vertexOffset = 0;
+
             delete[] vertex;
         }
         else {
@@ -237,6 +241,10 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             sd.pSysMem = vertex;
 
             m_pDevice->CreateBuffer(&bd, &sd, &modelMesh.vertexBuffer);
+
+            // strideとoffsetの設定
+            modelMesh.vertexStride = sizeof(SkinnedLitVertex);
+            modelMesh.vertexOffset = 0;
 
             delete[] vertex;
         }

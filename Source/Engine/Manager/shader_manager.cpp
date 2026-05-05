@@ -96,6 +96,21 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].inputLayout;
     }
 
+    // LiquidSurfaceLitShaderの読み込み
+    {
+        i = static_cast<size_t>(ShaderType::LiquidSurfaceLit);
+
+        // LiquidSurfaceLitShaderの頂点シェーダーはLitShaderと同じものを使用する
+        m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].vertexShader;
+        if (!LoadPixelShader("liquid_surface_lit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
+            hal::dout << "ShaderManager::Initialize() : LiquidSurfaceLitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
+            return false;
+        }
+
+        // LiquidSurfaceLitShaderの頂点レイアウトはLitShaderと同じものを使用する
+        m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].inputLayout;
+    }
+
     // UnlitShaderの読み込み
     {
         i = static_cast<size_t>(ShaderType::Unlit);
