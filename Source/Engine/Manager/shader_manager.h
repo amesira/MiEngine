@@ -19,12 +19,18 @@ using namespace Microsoft::WRL;
 struct LitVertex {
     XMFLOAT3 position;  // 頂点の位置
     XMFLOAT3 normal;    // 頂点の法線
+    XMFLOAT3 tangent;   // 頂点の接線
+    XMFLOAT3 binormal; // 頂点の副接線
+
     XMFLOAT4 color;     // 頂点の色
     XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
 };
 struct SkinnedLitVertex {
     XMFLOAT3 position;  // 頂点の位置
     XMFLOAT3 normal;    // 頂点の法線
+    XMFLOAT3 tangent;   // 頂点の接線
+    XMFLOAT3 binormal; // 頂点の副接線
+
     XMFLOAT4 color;     // 頂点の色
     XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
 

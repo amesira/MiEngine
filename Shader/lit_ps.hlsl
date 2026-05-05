@@ -17,6 +17,8 @@ struct PS_INPUT // VS_OUTPUTと同じ内容
     float4 posH     : SV_Position;  // ピクセルの座標
     float4 posW     : POSITION1;    // ワールド座標
     float4 normal   : NORMAL0;      // ピクセルの法線
+    float4 tangent : TANGENT0; // ピクセルの接線
+    float4 binormal : BINORMAL0; // ピクセルの副接線
     float2 texcoord : TEXCOORD0;    // テクスチャ座標
 };
 
@@ -30,6 +32,9 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     if (col.a <= 0.01f) discard;
     
     // 法線マップを使用して法線を変換
+    float3 normalMap = g_NormalTexture.Sample(g_SamplerState, ps_in.texcoord).xyz;
+    normalMap = normalMap * 2.0f - 1.0f;
+    ps_in.normal = ps_in.tangent * normalMap.x + ps_in.binormal * normalMap.y + ps_in.normal * normalMap.z;
     
     // ライトの影響を加算
     if (g_EnableLighting != 0)

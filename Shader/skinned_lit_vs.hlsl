@@ -13,6 +13,8 @@ struct VS_INPUT
 {
     float4 posL     : POSITION0;    // 頂点座標
     float4 normal   : NORMAL0;      // 頂点法線
+    float4 tangent  : TANGENT0;     // 頂点接線
+    float4 binormal : BINORMAL0; // 頂点副接線
     float4 color    : COLOR0;       // 頂点カラー（使用しないが、構造を合わせるために定義）
     float2 texcoord : TEXCOORD0;    // テクスチャ座標（U,V）
     
@@ -27,6 +29,8 @@ struct VS_OUTPUT
     float4 posH     : SV_Position;  // 変換済み頂点座標
     float4 posW     : POSITION1;    // ワールド座標
     float4 normal   : NORMAL0;      // 頂点法線
+    float4 tangent : TANGENT0; // 頂点接線
+    float4 binormal : BINORMAL0; // 頂点副接線
     float2 texcoord : TEXCOORD0; // テクスチャ座標
 };
 
@@ -50,6 +54,8 @@ VS_OUTPUT main(VS_INPUT vs_in)
     // 法線をワールド空間に変換して正規化
     float3x3 normalMatrix = (float3x3)g_WorldMatrix;
     vs_out.normal.xyz = normalize(mul(skinnedNormal, normalMatrix));
+    vs_out.tangent.xyz = normalize(mul(mul(vs_in.tangent.xyz, skinNormalMatrix), normalMatrix));
+    vs_out.binormal.xyz = normalize(mul(mul(vs_in.binormal.xyz, skinNormalMatrix), normalMatrix));
     
     // テクスチャ座標
     vs_out.texcoord = vs_in.texcoord;

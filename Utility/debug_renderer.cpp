@@ -105,6 +105,10 @@ void DebugRenderer_DrawLine(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, Dire
     }
 
     // ライン頂点をバッファに追加
-    g_LineVertices.push_back({ start, {0.0f,0.0f,-1.0f}, color,{0.0f,0.0f} });
-    g_LineVertices.push_back({ end,{0.0f,0.0f,-1.0f}, color, {0.0f,0.0f} });
+    LitVertex v = {};
+    v.position = start;
+    v.color = color;
+    g_LineVertices.push_back(v);
+    v.position = end;
+    g_LineVertices.push_back(v);
 }

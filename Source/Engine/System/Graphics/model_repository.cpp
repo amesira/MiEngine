@@ -8,6 +8,7 @@
 
 #include <memory>
 #include "Utility/mi_string.h"
+#include "Utility/mi_math.h"
 
 #include <iostream>
 #include <algorithm>
@@ -32,6 +33,8 @@ void ModelRepository::Initialize()
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     m_pDevice->CreateBuffer(&bd, nullptr, m_skinningBuffer.GetAddressOf());
+
+    // スキニングCBをシェーダーに登録
     auto shader = EngineServiceLocator::GetShaderManager();
     if (shader) {
         shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 12, m_skinningBuffer.GetAddressOf());
@@ -350,8 +353,6 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         model->defaultPose.boneTransforms[i] = model->bones[i].offsetMatrix * model->defaultPose.globalTransforms[i];
     }
 
-    
-
     return model;
 }
 
@@ -374,7 +375,61 @@ void ModelRepository::SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh)
         vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
         vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
         vertices[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+
         vertices[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        vertices[v].tangent = XMFLOAT3(0.0f, 0.0f, 0.0f);
+        vertices[v].binormal = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    }
+
+    // 三角形ごとにTangentを計算
+    for (unsigned int f = 0; f < mesh->mNumFaces; f++)
+    {
+        const aiFace* face = &mesh->mFaces[f];
+        assert(face->mNumIndices == 3);
+
+        // 面を構成する3頂点を取得
+        LitVertex& v0 = vertices[face->mIndices[0]];
+        LitVertex& v1 = vertices[face->mIndices[1]];
+        LitVertex& v2 = vertices[face->mIndices[2]];
+
+        // 辺のベクトルを計算
+        XMFLOAT3 edge1 = MiMath::Subtract(v1.position, v0.position);
+        XMFLOAT3 edge2 = MiMath::Subtract(v2.position, v0.position);
+
+        // UVの差分ベクトルを計算
+        XMFLOAT2 duv1 = XMFLOAT2(v1.texCoord.x - v0.texCoord.x, v1.texCoord.y - v0.texCoord.y);
+        XMFLOAT2 duv2 = XMFLOAT2(v2.texCoord.x - v0.texCoord.x, v2.texCoord.y - v0.texCoord.y);
+
+        float det = duv1.x * duv2.y - duv1.y * duv2.x;
+
+        if (fabs(det) > 1e-6f) {
+            float invDet = 1.0f / det;
+
+            // タンジェントを計算
+            XMFLOAT3 tangent = MiMath::Subtract(
+                MiMath::Multiply(edge1, duv2.y),
+                MiMath::Multiply(edge2, duv1.y));
+            tangent = MiMath::Multiply(tangent, invDet);
+            tangent = MiMath::Normalize(tangent);
+
+            // 各頂点にタンジェントを加算
+            v0.tangent = MiMath::Add(v0.tangent, tangent);
+            v1.tangent = MiMath::Add(v1.tangent, tangent);
+            v2.tangent = MiMath::Add(v2.tangent, tangent);
+
+            // ビタジェントを計算
+            XMFLOAT3 biTangent = MiMath::Subtract(
+                MiMath::Multiply(edge2, duv1.x),
+                MiMath::Multiply(edge1, duv2.x));
+            biTangent = MiMath::Multiply(biTangent, invDet);
+            biTangent = MiMath::Normalize(biTangent);
+
+            // 各頂点にビタジェントを加算
+            v0.binormal = MiMath::Add(v0.binormal, biTangent);
+            v1.binormal = MiMath::Add(v1.binormal, biTangent);
+            v2.binormal = MiMath::Add(v2.binormal, biTangent);
+
+        }
     }
 
     return;
@@ -388,7 +443,10 @@ void ModelRepository::SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const 
         vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
         vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
         vertices[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+
         vertices[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        vertices[v].tangent = XMFLOAT3(0.0f, 0.0f, 0.0f);
+        vertices[v].binormal = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
         // ボーンの影響を一時バッファへ格納
         std::array<unsigned int, 4> boneIndices = { 0, 0, 0, 0 };
@@ -427,6 +485,55 @@ void ModelRepository::SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const 
         // スキニング情報を頂点構造体に格納
         vertices[v].boneIndices = XMUINT4(boneIndices[0], boneIndices[1], boneIndices[2], boneIndices[3]);
         vertices[v].boneWeights = XMFLOAT4(boneWeights[0], boneWeights[1], boneWeights[2], boneWeights[3]);
+    }
+
+    // 三角形ごとにTangentを計算
+    for (unsigned int f = 0; f < mesh->mNumFaces; f++)
+    {
+        const aiFace* face = &mesh->mFaces[f];
+        assert(face->mNumIndices == 3);
+
+        // 面を構成する3頂点を取得
+        SkinnedLitVertex& v0 = vertices[face->mIndices[0]];
+        SkinnedLitVertex& v1 = vertices[face->mIndices[1]];
+        SkinnedLitVertex& v2 = vertices[face->mIndices[2]];
+
+        // 辺のベクトルを計算
+        XMFLOAT3 edge1 = MiMath::Subtract(v1.position, v0.position);
+        XMFLOAT3 edge2 = MiMath::Subtract(v2.position, v0.position);
+
+        // UVの差分ベクトルを計算
+        XMFLOAT2 duv1 = XMFLOAT2(v1.texCoord.x - v0.texCoord.x, v1.texCoord.y - v0.texCoord.y);
+        XMFLOAT2 duv2 = XMFLOAT2(v2.texCoord.x - v0.texCoord.x, v2.texCoord.y - v0.texCoord.y);
+
+        float det = duv1.x * duv2.y - duv1.y * duv2.x;
+        if (fabs(det) > 1e-6f) {
+            float invDet = 1.0f / det;
+
+            // タンジェントを計算
+            XMFLOAT3 tangent = MiMath::Subtract(
+                MiMath::Multiply(edge1, duv2.y),
+                MiMath::Multiply(edge2, duv1.y));
+            tangent = MiMath::Multiply(tangent, invDet);
+            tangent = MiMath::Normalize(tangent);
+
+            // 各頂点にタンジェントを加算
+            v0.tangent = MiMath::Add(v0.tangent, tangent);
+            v1.tangent = MiMath::Add(v1.tangent, tangent);
+            v2.tangent = MiMath::Add(v2.tangent, tangent);
+
+            // ビタジェントを計算
+            XMFLOAT3 biTangent = MiMath::Subtract(
+                MiMath::Multiply(edge2, duv1.x),
+                MiMath::Multiply(edge1, duv2.x));
+            biTangent = MiMath::Multiply(biTangent, invDet);
+            biTangent = MiMath::Normalize(biTangent);
+
+            // 各頂点にビタジェントを加算
+            v0.binormal = MiMath::Add(v0.binormal, biTangent);
+            v1.binormal = MiMath::Add(v1.binormal, biTangent);
+            v2.binormal = MiMath::Add(v2.binormal, biTangent);
+        }
     }
 }
 

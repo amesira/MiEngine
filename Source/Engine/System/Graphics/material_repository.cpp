@@ -98,12 +98,15 @@ void MaterialRepository::BindMaterialTexture(const MaterialResource& material)
     m_pContext->PSSetShaderResources(0, 1, material.albedoTexture ?
         material.albedoTexture->texture.GetAddressOf() :
         m_defaultAlbedoTexture->texture.GetAddressOf());
+
     m_pContext->PSSetShaderResources(1, 1, material.normalTexture ?
         material.normalTexture->texture.GetAddressOf() :
         m_defaultAlbedoTexture->texture.GetAddressOf());
+
     m_pContext->PSSetShaderResources(2, 1, material.emissiveTexture ?
         material.emissiveTexture->texture.GetAddressOf() :
         m_defaultAlbedoTexture->texture.GetAddressOf());
+
     m_pContext->PSSetShaderResources(3, 1, material.aoTexture ?
         material.aoTexture->texture.GetAddressOf() :
         m_defaultAlbedoTexture->texture.GetAddressOf());
