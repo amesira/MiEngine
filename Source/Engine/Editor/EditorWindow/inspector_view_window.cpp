@@ -14,6 +14,7 @@
 #include "Engine/Framework/Component/behavior_component.h"
 
 #include "Utility/mi_string.h"
+#include "Engine/engine_service_locator.h"
 
 // 主要なComponentのヘッダをインクルード
 #include "Engine/Framework/Component/transform_component.h"
@@ -29,6 +30,8 @@
 #include "Engine/Framework/Component/joint_group_component.h"
 #include "Engine/Framework/Component/joint_component.h"
 #include "Engine/Framework/Component/decal_component.h"
+
+#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 
 void InspectorViewWindow::Draw()
 {
@@ -386,20 +389,75 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
 
                     ImGui::Separator();
 
-                    // マテリアルリソースのプロパティも表示する
-                    float metallic = materialInstance.materialResource ? materialInstance.materialResource->metallic : 0.0f;
-                    if (ImGui::DragFloat("Metallic", &metallic, 0.01f, 0.0f, 1.0f)) {
-                        if (materialInstance.materialResource) {
-                            materialInstance.materialResource->metallic = metallic;
-                        }
-                    }
-                    float roughness = materialInstance.materialResource ? materialInstance.materialResource->roughness : 1.0f;
-                    if (ImGui::DragFloat("Roughness", &roughness, 0.01f, 0.0f, 1.0f)) {
-                        if (materialInstance.materialResource) {
-                            materialInstance.materialResource->roughness = roughness;
-                        }
-                    }
+                    MaterialResource* matRes = materialInstance.materialResource;
+                    if (matRes) {
+                        // マテリアルリソースの名前を表示
+                        std::string matResName = matRes->name;
+                        ImGui::Text("Material Resource:");
+                        ImGui::Text("  %s", matResName.c_str());
 
+                        // マテリアルリソースのテクスチャ
+                        ImGui::Text("Textures:");
+                        char buffer[256];
+                        std::string newTexName;
+                        TextureResource* newTexRes = nullptr;
+
+                        std::wstring albedoTex = matRes->albedoTexture ? matRes->albedoTexture->name : L"None";
+                        strncpy(buffer, (char*)MiString::ToUTF8(albedoTex).c_str(), sizeof(buffer));
+                        if (ImGui::InputText("Albedo Texture", buffer, sizeof(buffer))) {
+                            newTexName = buffer;
+                            albedoTex = MiString::ToWString(newTexName);
+                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(albedoTex);
+                            if (newTexRes) {
+                                matRes->albedoTexture = newTexRes;
+                            }
+                        }
+
+                        std::wstring normalTex = matRes->normalTexture ? matRes->normalTexture->name : L"None";
+                        strncpy(buffer, (char*)MiString::ToUTF8(normalTex).c_str(), sizeof(buffer));
+                        if (ImGui::InputText("Normal Texture", buffer, sizeof(buffer))) {
+                            newTexName = buffer;
+                            normalTex = MiString::ToWString(newTexName);
+                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(normalTex);
+                            if (newTexRes) {
+                                matRes->normalTexture = newTexRes;
+                            }
+                        }
+
+                        std::wstring emissiveTex = matRes->emissiveTexture ? matRes->emissiveTexture->name : L"None";
+                        strncpy(buffer, (char*)MiString::ToUTF8(emissiveTex).c_str(), sizeof(buffer));
+                        if (ImGui::InputText("Emissive Texture", buffer, sizeof(buffer))) {
+                            newTexName = buffer;
+                            emissiveTex = MiString::ToWString(newTexName);
+                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(emissiveTex);
+                            if (newTexRes) {
+                                matRes->emissiveTexture = newTexRes;
+                            }
+                        }
+
+                        std::wstring aoTex = matRes->aoTexture ? matRes->aoTexture->name : L"None";
+                        strncpy(buffer, (char*)MiString::ToUTF8(aoTex).c_str(), sizeof(buffer));
+                        if (ImGui::InputText("AO Texture", buffer, sizeof(buffer))) {
+                            newTexName = buffer;
+                            aoTex = MiString::ToWString(newTexName);
+                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(aoTex);
+                            if (newTexRes) {
+                                matRes->aoTexture = newTexRes;
+                            }
+                        }
+
+                        // マテリアルリソースのプロパティ
+                        ImGui::Text("Params:");
+
+                        float metallic = matRes->metallic;
+                        if (ImGui::DragFloat("Metallic", &metallic, 0.01f, 0.0f, 1.0f)) {
+                            matRes->metallic = metallic;
+                        }
+                        float roughness = matRes->roughness;
+                        if (ImGui::DragFloat("Roughness", &roughness, 0.01f, 0.0f, 1.0f)) {
+                            matRes->roughness = roughness;
+                        }
+                    }
 
                     ImGui::EndChild();
                     ImGui::TreePop();

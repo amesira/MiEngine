@@ -542,6 +542,7 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
 {
     XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
     std::wstring albedoTexturePath;
+    std::wstring normalTexturePath;
 
     // マテリアルからベースカラーを取得
     {
@@ -565,6 +566,18 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         }
     }
 
+    // マテリアルから法線マップテクスチャパスを取得
+    if (mat->GetTextureCount(aiTextureType_NORMALS) > 0 ||
+        mat->GetTextureCount(aiTextureType_HEIGHT) > 0)
+    {
+        aiString texturePath;
+        if (AI_SUCCESS == mat->GetTexture(aiTextureType_NORMALS, 0, &texturePath) ||
+            AI_SUCCESS == mat->GetTexture(aiTextureType_HEIGHT, 0, &texturePath))
+        {
+            normalTexturePath = MiString::ToWString(texturePath.C_Str());
+        }
+    }
+
     // 標準マテリアルを生成
     MaterialResource material;
     {
@@ -574,6 +587,9 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
 
         if (!albedoTexturePath.empty()) {
             material.albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(albedoTexturePath);
+        }
+        if (!normalTexturePath.empty()) {
+            material.normalTexture = TEXTURE_REPOSITORY->GetTextureResource(normalTexturePath);
         }
     }
 
