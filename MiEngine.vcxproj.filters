@@ -43,6 +43,8 @@
     <FxCompile Include="Shader\liquid_surface_lit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\PostProcess\brightness_extract_ps.hlsl" />
+    <FxCompile Include="Shader\PostProcess\gaussian_blur_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">

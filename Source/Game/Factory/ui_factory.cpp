@@ -46,6 +46,7 @@ GameObject* UiFactory::CreateUiText(SceneBase* scene, const std::u8string& text)
     textComp->SetFontSize(32.0f);
     textComp->SetColor({ 1.0f, 0.5f, 0.5f, 1.0f });
     textComp->SetCenter(true);
+    textComp->SetFontType(TextComponent::Font::Nami);
 
     return uiText;
 }

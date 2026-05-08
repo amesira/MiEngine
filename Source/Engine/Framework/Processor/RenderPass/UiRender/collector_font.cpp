@@ -27,6 +27,7 @@ static ID3D11DeviceContext* g_pContext = nullptr;
 
 static const char* fontPath[(int)TextComponent::Font::MAX] = {
 	"asset/Font/PixelMplus12-Regular.ttf",
+	"asset/Font/nagino.otf",
 };
 
 void CollectorFont::Initialize()
