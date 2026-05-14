@@ -4,8 +4,8 @@
 // Author：Miu Kitamura
 // Date  ：2026/04/14
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-#include "./Common/transform.hlsl"
-#include "./Common/camera.hlsl"
+#include "../Common/transform.hlsl"
+#include "../Common/camera.hlsl"
 
 SamplerState g_SamplerState : register(s0);
 

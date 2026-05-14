@@ -4,11 +4,11 @@
 // Author：Miu Kitamura
 // Date  ：2026/05/04
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-#include "./Common/transform.hlsl"
-#include "./Common/camera.hlsl"
-#include "./Common/lighting.hlsl"
-#include "./Common/material.hlsl"
-#include "./Common/shadowing.hlsl"
+#include "../Common/transform.hlsl"
+#include "../Common/camera.hlsl"
+#include "../Common/lighting.hlsl"
+#include "../Common/material.hlsl"
+#include "../Common/shadowing.hlsl"
 
 SamplerState g_SamplerState : register(s0);
 

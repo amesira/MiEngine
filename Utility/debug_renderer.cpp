@@ -14,7 +14,7 @@ static ID3D11DeviceContext* g_pContext = nullptr;
 
 static constexpr int NUM_VERTEX = 10000 * 2; // 最大頂点数（ライン10000本分）
 static ID3D11Buffer* g_pLineVertexBuffer = nullptr;
-static std::vector<UnlitVertex> g_LineVertices;
+static std::vector<SpriteVertex> g_LineVertices;
 
 static TextureResource* g_pDefaultWhiteTexture = nullptr;
 
@@ -26,7 +26,7 @@ void DebugRenderer_Initialize()
     // ライン頂点バッファ生成
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(UnlitVertex) * NUM_VERTEX; // 格納する最大頂点数
+    bd.ByteWidth = sizeof(SpriteVertex) * NUM_VERTEX; // 格納する最大頂点数
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     g_pDevice->CreateBuffer(&bd, NULL, &g_pLineVertexBuffer);
@@ -50,7 +50,7 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
     SetDepthState(DEPTHSTATE_DISABLE);
 
     // シェーダーをバインド
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Unlit);
+    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Sprite);
 
     // 定数バッファを更新
     EngineServiceLocator::UpdateTransformCB({ XMMatrixIdentity(), XMMatrixIdentity() });
@@ -67,11 +67,10 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
         g_pContext->Map(g_pLineVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
 
         // 頂点バッファへの仮想ポインタを取得
-        LitVertex* v = (LitVertex*)msr.pData;
+        SpriteVertex* v = (SpriteVertex*)msr.pData;
 
         for (int i = 0; i < g_LineVertices.size(); i++) {
             v[i].position = g_LineVertices[i].position;
-            v[i].normal = g_LineVertices[i].normal;
             v[i].color = g_LineVertices[i].color;
             v[i].texCoord = g_LineVertices[i].texCoord;
         }
@@ -81,7 +80,7 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
     }
 
     // 頂点バッファを描画パイプラインに設定
-    UINT stride = sizeof(UnlitVertex);
+    UINT stride = sizeof(SpriteVertex);
     UINT offset = 0;
     g_pContext->IASetVertexBuffers(0, 1, &g_pLineVertexBuffer, &stride, &offset);
 
@@ -105,10 +104,12 @@ void DebugRenderer_DrawLine(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, Dire
     }
 
     // ライン頂点をバッファに追加
-    UnlitVertex v = {};
+    SpriteVertex v = {};
+
     v.position = start;
     v.color = color;
     g_LineVertices.push_back(v);
+
     v.position = end;
     g_LineVertices.push_back(v);
 }

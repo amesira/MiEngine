@@ -102,17 +102,17 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
     // LiquidSurfaceLitShaderの読み込み
     {
-        i = static_cast<size_t>(ShaderType::LiquidSurfaceLit);
+        //i = static_cast<size_t>(ShaderType::LiquidSurfaceLit);
 
-        // LiquidSurfaceLitShaderの頂点シェーダーはLitShaderと同じものを使用する
-        m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].vertexShader;
-        if (!LoadPixelShader("liquid_surface_lit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
-            hal::dout << "ShaderManager::Initialize() : LiquidSurfaceLitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
-            return false;
-        }
+        //// LiquidSurfaceLitShaderの頂点シェーダーはLitShaderと同じものを使用する
+        //m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].vertexShader;
+        //if (!LoadPixelShader("liquid_surface_lit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
+        //    hal::dout << "ShaderManager::Initialize() : LiquidSurfaceLitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
+        //    return false;
+        //}
 
-        // LiquidSurfaceLitShaderの頂点レイアウトはLitShaderと同じものを使用する
-        m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].inputLayout;
+        //// LiquidSurfaceLitShaderの頂点レイアウトはLitShaderと同じものを使用する
+        //m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Lit)].inputLayout;
     }
 
     // UnlitShaderの読み込み
@@ -143,20 +143,47 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         }
     }
 
-    // TrueTypeFontUnlitShaderの読み込み
+    // SpriteShaderの読み込み
     {
-        i = static_cast<size_t>(ShaderType::TlueTypeFontUnlit);
+        i = static_cast<size_t>(ShaderType::Sprite);
 
-        // TrueTypeFontUnlitShaderの頂点シェーダーはUnlitShaderと同じものを使用する
-        m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Unlit)].vertexShader;
+        if (!LoadVertexShader("sprite_vs.cso", m_shaderContainer[i].vertexShader.GetAddressOf(), vbData)) {
+            hal::dout << "ShaderManager::Initialize() : SpriteShaderの頂点シェーダーの作成に失敗しました" << std::endl;
+            return false;
+        }
+        if (!LoadPixelShader("sprite_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
+            hal::dout << "ShaderManager::Initialize() : SpriteShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
+            return false;
+        }
 
-        if (!LoadPixelShader("ttf_unlit_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
+        D3D11_INPUT_ELEMENT_DESC layout[] = {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        };
+        UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
+        hr = m_pDevice->CreateInputLayout(layout, num_elements, vbData.vsBinaryPointer, vbData.fileSize, &m_shaderContainer[i].inputLayout);
+        delete[] vbData.vsBinaryPointer;
+        if (FAILED(hr)) {
+            hal::dout << "ShaderManager::Initialize() : SpriteShaderの頂点レイアウトの作成に失敗しました" << std::endl;
+            return false;
+        }
+    }
+
+    // TrueTypeFontSpriteShaderの読み込み
+    {
+        i = static_cast<size_t>(ShaderType::TlueTypeFontSprite);
+
+        // TrueTypeFontSpriteShaderの頂点シェーダーはSpriteShaderと同じものを使用する
+        m_shaderContainer[i].vertexShader = m_shaderContainer[static_cast<size_t>(ShaderType::Sprite)].vertexShader;
+
+        if (!LoadPixelShader("ttf_sprite_ps.cso", m_shaderContainer[i].pixelShader.GetAddressOf())) {
             hal::dout << "ShaderManager::Initialize() : TrueTypeFontUnlitShaderのピクセルシェーダーの作成に失敗しました" << std::endl;
             return false;
         }
 
-        // TrueTypeFontUnlitShaderの頂点レイアウトはUnlitShaderと同じものを使用する
-        m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Unlit)].inputLayout;
+        // TrueTypeFontUnlitShaderの頂点レイアウトはSpriteShaderと同じものを使用する
+        m_shaderContainer[i].inputLayout = m_shaderContainer[static_cast<size_t>(ShaderType::Sprite)].inputLayout;
     }
 
 #pragma endregion
@@ -164,6 +191,7 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     //----------------------------------------------------
 	// 定数バッファの作成と登録
 	//----------------------------------------------------
+
 #pragma region CreateConstantBuffer
     D3D11_BUFFER_DESC buffer_desc{};
     buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -207,8 +235,11 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     RegisterCB(ShaderType::Unlit, 0, &m_transformCB);
     RegisterCB(ShaderType::Unlit, 1, &m_cameraCB);
 
-    RegisterCB(ShaderType::TlueTypeFontUnlit, 0, &m_transformCB);
-    RegisterCB(ShaderType::TlueTypeFontUnlit, 1, &m_cameraCB);
+    RegisterCB(ShaderType::Sprite, 0, &m_transformCB);
+    RegisterCB(ShaderType::Sprite, 1, &m_cameraCB);
+
+    RegisterCB(ShaderType::TlueTypeFontSprite, 0, &m_transformCB);
+    RegisterCB(ShaderType::TlueTypeFontSprite, 1, &m_cameraCB);
 
 }
 
