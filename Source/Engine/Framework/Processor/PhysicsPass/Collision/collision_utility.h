@@ -7,7 +7,7 @@
 #ifndef COLLISION_UTILITY_H
 #define COLLISION_UTILITY_H
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 class GameObject;

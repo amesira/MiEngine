@@ -7,7 +7,7 @@
 #ifndef DECAL_RENDER_PASS_H
 #define DECAL_RENDER_PASS_H
 #include "Engine/Core/pass.h"
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include "wrl/client.h"

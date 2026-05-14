@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef MATERIAL_RESOURCE_H
 #define MATERIAL_RESOURCE_H
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include <wrl/client.h>

@@ -8,11 +8,11 @@
 #define MODEL_COMPONENT_H
 #include "Engine/Core/component.h"
 
-#include "Engine/System/Graphics/material_resource.h"
-#include "Engine/System/Graphics/model_resource.h"
+#include "Engine/Graphics/material_resource.h"
+#include "Engine/Graphics/model_resource.h"
 #include <iostream>
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 class ModelComponent : public Component {

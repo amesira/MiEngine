@@ -8,7 +8,7 @@
 #define SLIDER_COMPONENT_H
 #include "Engine/Core/component.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 class SliderComponent : public Component {

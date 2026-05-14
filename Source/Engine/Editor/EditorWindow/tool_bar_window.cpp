@@ -11,7 +11,7 @@
 #include "Engine/render_view.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/mi_fps.h"
 
 void ToolBarWindow::Draw()
 {

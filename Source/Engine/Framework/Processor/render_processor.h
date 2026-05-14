@@ -20,7 +20,7 @@
 #include "./RenderPass/decal_render_pass.h"
 #include "./RenderPass/post_effect_pass.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 #include "Windows.h"
 #include "wrl/client.h"
 using Microsoft::WRL::ComPtr;

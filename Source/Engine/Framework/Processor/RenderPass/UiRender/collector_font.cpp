@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"

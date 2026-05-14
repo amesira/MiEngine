@@ -9,10 +9,10 @@
 #include "Engine/Core/pass.h"
 #include <vector>
 
-#include "Engine/System/Graphics/texture_resource.h"
-#include "Engine/System/Graphics/model_resource.h"
+#include "Engine/Graphics/texture_resource.h"
+#include "Engine/Graphics/model_resource.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 class OpaqueRenderPass : public Pass {

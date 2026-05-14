@@ -10,7 +10,7 @@
 
 #include <string>
 #include <vector>
-#include "Engine/System/Graphics/model_resource.h"
+#include "Engine/Graphics/model_resource.h"
 
 // アニメーションの状態を表す構造体
 struct AnimationState {

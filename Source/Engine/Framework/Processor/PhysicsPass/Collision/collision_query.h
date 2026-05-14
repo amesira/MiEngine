@@ -8,7 +8,7 @@
 #ifndef COLLISION_QUERY_H
 #define COLLISION_QUERY_H
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 class GameObject;

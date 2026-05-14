@@ -7,7 +7,7 @@
 #ifndef DEBUG_RENDERER_H
 #define DEBUG_RENDERER_H
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 void DebugRenderer_Initialize();

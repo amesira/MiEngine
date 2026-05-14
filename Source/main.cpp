@@ -11,9 +11,9 @@
 #include <algorithm>
 #include "Utility/debug_ostream.h"
 
-#include "Engine/System/Device/direct3d.h"
-#include "Engine/System/Device/keyboard.h"
-#include "Engine/System/Device/mouse.h"
+#include "Engine/Device/direct3d.h"
+#include "Engine/Device/keyboard.h"
+#include "Engine/Device/mouse.h"
 
 #include "Engine/engine.h"
 

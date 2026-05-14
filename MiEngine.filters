@@ -24,13 +24,10 @@
     <Filter Include="Sources\GameParts\Behavior">
       <UniqueIdentifier>{16b221ec-3abb-4fce-83ab-543bf12c9798}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\System">
+    <Filter Include="Sources\Device">
       <UniqueIdentifier>{f10c7e38-6a60-4d3a-94d4-3796eb553087}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\System\Device">
-      <UniqueIdentifier>{d4d93932-e359-4aaf-968a-1e9e716d9902}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\System\Graphic">
+    <Filter Include="Sources\Graphics">
       <UniqueIdentifier>{6dcfa6b8-52e4-42e8-9489-d50e80c2644e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Manager">
@@ -63,16 +60,16 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="keyboard.cpp">
-      <Filter>Sources\System\Device</Filter>
+      <Filter>Sources\Device</Filter>
     </ClCompile>
     <ClCompile Include="mouse.cpp">
-      <Filter>Sources\System\Device</Filter>
+      <Filter>Sources\Device</Filter>
     </ClCompile>
     <ClCompile Include="manager.cpp">
       <Filter>Sources\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Audio.cpp">
-      <Filter>Sources\System\Device</Filter>
+      <Filter>Sources\Device</Filter>
     </ClCompile>
     <ClCompile Include="game_object.h">
       <Filter>Sources\Core</Filter>
@@ -90,13 +87,13 @@
       <Filter>Sources\GameParts\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="shader.cpp">
-      <Filter>Sources\System\Graphic</Filter>
+      <Filter>Sources\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="sprite.cpp">
-      <Filter>Sources\System\Graphic</Filter>
+      <Filter>Sources\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="direct3d.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>Sources\Device</Filter>
     </ClCompile>
     <ClCompile Include="game.cpp">
       <Filter>Sources\Scene</Filter>
@@ -123,7 +120,7 @@
       <Filter>リソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="mi_fps.cpp">
-      <Filter>Sources\System</Filter>
+      <Filter>Sources\Device</Filter>
     </ClCompile>
     <ClCompile Include="fade.cpp">
       <Filter>Sources\Content</Filter>
@@ -194,16 +191,16 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="keyboard.h">
-      <Filter>Sources\System\Device</Filter>
+      <Filter>Sources\Device</Filter>
     </ClInclude>
     <ClInclude Include="mouse.h">
-      <Filter>Sources\System\Device</Filter>
+      <Filter>Sources\Device</Filter>
     </ClInclude>
     <ClInclude Include="manager.h">
       <Filter>Sources\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Audio.h">
-      <Filter>Sources\System\Device</Filter>
+      <Filter>Sources\Device</Filter>
     </ClInclude>
     <ClInclude Include="component.h">
       <Filter>Sources\Core</Filter>
@@ -233,13 +230,13 @@
       <Filter>Sources\GameParts\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="shader.h">
-      <Filter>Sources\System\Graphic</Filter>
+      <Filter>Sources\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="sprite.h">
-      <Filter>Sources\System\Graphic</Filter>
+      <Filter>Sources\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="direct3d.h">
-      <Filter>Sources\System</Filter>
+      <Filter>Sources\Device</Filter>
     </ClInclude>
     <ClInclude Include="game.h">
       <Filter>Sources\Scene</Filter>
@@ -284,7 +281,7 @@
       <Filter>リソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="mi_fps.h">
-      <Filter>Sources\System</Filter>
+      <Filter>Sources\Device</Filter>
     </ClInclude>
     <ClInclude Include="component_pool.h">
       <Filter>Sources\Core</Filter>

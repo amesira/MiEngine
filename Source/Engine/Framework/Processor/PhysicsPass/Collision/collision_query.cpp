@@ -10,7 +10,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/mi_fps.h"
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/collider_component.h"

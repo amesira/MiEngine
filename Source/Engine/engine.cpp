@@ -6,9 +6,9 @@
 //===================================================
 #include "engine.h"
 
-#include "Engine/System/Device/direct3d.h"
-#include "Engine/System/Device/Audio.h"
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/direct3d.h"
+#include "Engine/Device/Audio.h"
+#include "Engine/Device/mi_fps.h"
 
 #include "Engine/Core/scene_interface.h"
 

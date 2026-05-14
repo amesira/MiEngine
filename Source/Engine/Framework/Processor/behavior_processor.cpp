@@ -8,7 +8,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/mi_fps.h"
 #include "Utility/mi_math.h"
 
 #include "Engine/Framework/Component/behavior_component.h"

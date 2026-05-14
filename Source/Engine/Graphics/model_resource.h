@@ -8,7 +8,7 @@
 #define MODEL_RESOURCE_H
 #include <string>
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include <wrl/client.h>

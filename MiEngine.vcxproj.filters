@@ -58,20 +58,20 @@
     <ClCompile Include="Source\Engine\Framework\Processor\physics_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Device\direct3d.cpp">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClCompile Include="Source\Engine\Device\direct3d.cpp">
+      <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Device\keyboard.cpp">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClCompile Include="Source\Engine\Device\keyboard.cpp">
+      <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Device\audio.cpp">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClCompile Include="Source\Engine\Device\audio.cpp">
+      <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
     <ClCompile Include="Source\main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Device\mouse.cpp">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClCompile Include="Source\Engine\Device\mouse.cpp">
+      <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\game_object.h">
       <Filter>Sources\Engine\Core</Filter>
@@ -79,8 +79,8 @@
     <ClCompile Include="External\stb_implementation.cpp">
       <Filter>External</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Device\mi_fps.cpp">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClCompile Include="Source\Engine\Device\mi_fps.cpp">
+      <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
     <ClCompile Include="Utility\debug_ostream.cpp">
       <Filter>Utility</Filter>
@@ -148,8 +148,8 @@
     <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Graphics\model_repository.cpp">
-      <Filter>Sources\Engine\System\Graphics</Filter>
+    <ClCompile Include="Source\Engine\Graphics\model_repository.cpp">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
@@ -160,11 +160,11 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Graphics\texture_repository.cpp">
-      <Filter>Sources\Engine\System\Graphics</Filter>
+    <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Graphics\material_repository.cpp">
-      <Filter>Sources\Engine\System\Graphics</Filter>
+    <ClCompile Include="Source\Engine\Graphics\material_repository.cpp">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp">
       <Filter>Sources\Engine\Framework\Processor</Filter>
@@ -277,20 +277,20 @@
     <ClInclude Include="Source\Engine\Core\component_pool.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Device\direct3d.h">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClInclude Include="Source\Engine\Device\direct3d.h">
+      <Filter>Sources\Engine\Device</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Device\keyboard.h">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClInclude Include="Source\Engine\Device\keyboard.h">
+      <Filter>Sources\Engine\Device</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Device\audio.h">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClInclude Include="Source\Engine\Device\audio.h">
+      <Filter>Sources\Engine\Device</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\component_type_id.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Device\mouse.h">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClInclude Include="Source\Engine\Device\mouse.h">
+      <Filter>Sources\Engine\Device</Filter>
     </ClInclude>
     <ClInclude Include="External\stb_truetype.h">
       <Filter>External</Filter>
@@ -304,8 +304,8 @@
     <ClInclude Include="Source\Engine\Core\scene_base.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Device\mi_fps.h">
-      <Filter>Sources\Engine\System\Device</Filter>
+    <ClInclude Include="Source\Engine\Device\mi_fps.h">
+      <Filter>Sources\Engine\Device</Filter>
     </ClInclude>
     <ClInclude Include="Utility\debug_ostream.h">
       <Filter>Utility</Filter>
@@ -391,8 +391,8 @@
     <ClInclude Include="Source\Engine\Editor\editor_context.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Graphics\model_repository.h">
-      <Filter>Sources\Engine\System\Graphics</Filter>
+    <ClInclude Include="Source\Engine\Graphics\model_repository.h">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_behavior.h">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
@@ -409,23 +409,23 @@
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Graphics\model_resource.h">
-      <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
+    <ClInclude Include="Source\Engine\Graphics\model_resource.h">
+      <Filter>Sources\Engine\Graphics\GraphicsResource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Graphics\texture_resource.h">
-      <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
+    <ClInclude Include="Source\Engine\Graphics\texture_resource.h">
+      <Filter>Sources\Engine\Graphics\GraphicsResource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Graphics\material_resource.h">
-      <Filter>Sources\Engine\System\Graphics\GraphicsResource</Filter>
+    <ClInclude Include="Source\Engine\Graphics\material_resource.h">
+      <Filter>Sources\Engine\Graphics\GraphicsResource</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\engine_service_locator.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Graphics\texture_repository.h">
-      <Filter>Sources\Engine\System\Graphics</Filter>
+    <ClInclude Include="Source\Engine\Graphics\texture_repository.h">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Graphics\material_repository.h">
-      <Filter>Sources\Engine\System\Graphics</Filter>
+    <ClInclude Include="Source\Engine\Graphics\material_repository.h">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Utility\mi_string.h">
       <Filter>Utility</Filter>
@@ -525,13 +525,10 @@
     <Filter Include="Sources\Engine\Framework">
       <UniqueIdentifier>{a4147d6a-f5d4-46b1-80ca-6253be70fd37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\System">
-      <UniqueIdentifier>{1b10de83-559d-43ac-9818-ecdb91b65e1a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Engine\System\Device">
+    <Filter Include="Sources\Engine\Device">
       <UniqueIdentifier>{4ddefe8c-9f05-4979-9f85-a5c40b8dafe0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\System\Graphics">
+    <Filter Include="Sources\Engine\Graphics">
       <UniqueIdentifier>{41afa458-92b2-4d1c-af5f-b684f0b7d6cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Engine\Framework\Component">
@@ -576,7 +573,7 @@
     <Filter Include="Sources\Game\Behavior\BaseBehavior">
       <UniqueIdentifier>{21317434-64d7-48b9-8676-91420017e91f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\System\Graphics\GraphicsResource">
+    <Filter Include="Sources\Engine\Graphics\GraphicsResource">
       <UniqueIdentifier>{b2d9e375-8123-4c2d-b1e6-f7a883b59809}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shader\common">

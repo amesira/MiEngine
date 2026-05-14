@@ -9,7 +9,7 @@
 #include "Engine/Core/game_object.h"
 
 #include "Utility/mi_math.h"
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/mi_fps.h"
 
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"

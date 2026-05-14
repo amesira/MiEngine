@@ -7,7 +7,7 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include "Engine/Core/game_object.h"

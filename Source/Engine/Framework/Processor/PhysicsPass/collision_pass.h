@@ -11,7 +11,7 @@
 #define COLLISION_PASS_H
 #include "Engine/Core/pass.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 class TransformComponent;

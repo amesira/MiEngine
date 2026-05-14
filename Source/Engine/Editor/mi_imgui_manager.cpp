@@ -7,7 +7,7 @@
 // Date  ：2025/07/01
 //===================================================
 #include "mi_imgui_manager.h"
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 
 #include "./EditorWindow/imgui_window_interface.h"
 

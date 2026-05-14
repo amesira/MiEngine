@@ -8,8 +8,8 @@
 #define DECAL_COMPONENT_H
 #include "Engine/Core/component.h"
 
-#include "Engine/System/Graphics/texture_resource.h"
-#include "Engine/System/Graphics/material_resource.h"
+#include "Engine/Graphics/texture_resource.h"
+#include "Engine/Graphics/material_resource.h"
 
 #include <DirectXMath.h>
 using namespace DirectX;

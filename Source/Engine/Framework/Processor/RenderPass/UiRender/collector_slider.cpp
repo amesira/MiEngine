@@ -8,7 +8,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 
 #include "Engine/Framework/Component/rect_transform_component.h"
 #include "Engine/Framework/Component/slider_component.h"

@@ -7,7 +7,7 @@
 #ifndef ANIMATION_PROCESSOR_H
 #define ANIMATION_PROCESSOR_H
 #include "Engine/Core/processor.h"
-#include "Engine/System/Graphics/model_resource.h"
+#include "Engine/Graphics/model_resource.h"
 
 class AnimationProcessor : public Processor {
 private:

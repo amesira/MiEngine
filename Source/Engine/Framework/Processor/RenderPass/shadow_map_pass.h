@@ -8,14 +8,14 @@
 #define SHADOW_MAP_PASS_H
 #include "Engine/Core/pass.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include "Windows.h"
 #include "wrl/client.h"
 using Microsoft::WRL::ComPtr;
 
-#include "Engine/System/Graphics/texture_resource.h"
+#include "Engine/Graphics/texture_resource.h"
 
 class ShadowMapPass : public Pass {
 private:

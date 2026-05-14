@@ -8,9 +8,9 @@
 #define SKYBOX_PASS_H
 #include "Engine/Core/pass.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
-#include "Engine/System/Graphics/model_resource.h"
+#include "Engine/Graphics/model_resource.h"
 
 class SkyboxPass : public Pass {
 private:

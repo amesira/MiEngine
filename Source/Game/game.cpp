@@ -12,8 +12,8 @@
 #include "Game/Factory/ui_factory.h"
 #include "Game/Factory/render_effect_factory.h"
 
-#include "Engine/System/Device/keyboard.h"
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/keyboard.h"
+#include "Engine/Device/mi_fps.h"
 
 #include "Engine/Manager/scene_manager.h"
 

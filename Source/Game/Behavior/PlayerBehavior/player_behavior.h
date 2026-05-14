@@ -8,7 +8,7 @@
 #define PLAYER_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include "player_context.h"

@@ -6,9 +6,9 @@
 //---------------------------------------------------
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
-#include "Engine/System/Graphics/texture_repository.h"
-#include "Engine/System/Graphics/model_repository.h"
-#include "Engine/System/Graphics/material_repository.h"
+#include "Engine/Graphics/texture_repository.h"
+#include "Engine/Graphics/model_repository.h"
+#include "Engine/Graphics/material_repository.h"
 
 class ResourceManager {
 private:

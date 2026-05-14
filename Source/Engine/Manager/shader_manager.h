@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef SHADER_MANAGER_H
 #define SHADER_MANAGER_H
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
 #include <array>

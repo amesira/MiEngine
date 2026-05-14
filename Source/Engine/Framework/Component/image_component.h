@@ -8,10 +8,10 @@
 #define IMAGE_COMPONENT_H
 #include "Engine/Core/component.h"
 
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
-#include "Engine/System/Graphics/texture_resource.h"
+#include "Engine/Graphics/texture_resource.h"
 
 enum class WorldSpaceType {
     None,       // 通常表示

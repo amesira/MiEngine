@@ -7,7 +7,7 @@
 #include "material_repository.h"
 
 #include <memory>
-#include "Engine/System/Device/direct3d.h"
+#include "Engine/Device/direct3d.h"
 
 #include "Utility/debug_ostream.h"
 #include "Engine/engine_service_locator.h"

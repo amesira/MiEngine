@@ -6,7 +6,7 @@
 //===================================================
 #include "game_effect_controller.h"
 
-#include "Engine/System/Device/mi_fps.h"
+#include "Engine/Device/mi_fps.h"
 #include "game_controller_locator.h"
 
 #include "Utility/debug_ostream.h"
