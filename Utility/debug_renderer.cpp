@@ -14,7 +14,7 @@ static ID3D11DeviceContext* g_pContext = nullptr;
 
 static constexpr int NUM_VERTEX = 10000 * 2; // 最大頂点数（ライン10000本分）
 static ID3D11Buffer* g_pLineVertexBuffer = nullptr;
-static std::vector<LitVertex> g_LineVertices;
+static std::vector<UnlitVertex> g_LineVertices;
 
 static TextureResource* g_pDefaultWhiteTexture = nullptr;
 
@@ -26,7 +26,7 @@ void DebugRenderer_Initialize()
     // ライン頂点バッファ生成
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(LitVertex) * NUM_VERTEX; // 格納する最大頂点数
+    bd.ByteWidth = sizeof(UnlitVertex) * NUM_VERTEX; // 格納する最大頂点数
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     g_pDevice->CreateBuffer(&bd, NULL, &g_pLineVertexBuffer);
@@ -81,7 +81,7 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
     }
 
     // 頂点バッファを描画パイプラインに設定
-    UINT stride = sizeof(LitVertex);
+    UINT stride = sizeof(UnlitVertex);
     UINT offset = 0;
     g_pContext->IASetVertexBuffers(0, 1, &g_pLineVertexBuffer, &stride, &offset);
 
@@ -105,7 +105,7 @@ void DebugRenderer_DrawLine(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, Dire
     }
 
     // ライン頂点をバッファに追加
-    LitVertex v = {};
+    UnlitVertex v = {};
     v.position = start;
     v.color = color;
     g_LineVertices.push_back(v);

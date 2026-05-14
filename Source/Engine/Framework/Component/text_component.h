@@ -18,6 +18,7 @@ public:
     enum class Font {
         Default,
         // 追加のフォントタイプがあればここに列挙する。
+        Nami,
 
         MAX,
     };
