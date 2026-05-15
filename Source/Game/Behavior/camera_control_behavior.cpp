@@ -43,7 +43,7 @@ void CameraControlBehavior::Update()
     float speedLerp = std::clamp(targetSpeed / 15.0f, 0.0f, 1.0f);
 
     // ターゲットの速度に基づいてカメラの自動回転を更新
-    UpdateAutoYaw(targetVelocity, targetSpeed, deltaTime, basis);
+   // UpdateAutoYaw(targetVelocity, targetSpeed, deltaTime, basis);
     basis = BuildCameraBasis();
 
     // ターゲットの位置とカメラの基底ベクトルに基づいて、カメラの注視点と位置の目標値を計算

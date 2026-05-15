@@ -15,6 +15,7 @@
 #include "Engine/engine_service_locator.h"
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_MANAGER EngineServiceLocator::GetShaderManager()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -22,18 +23,15 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     m_pContext = pContext;
 
     // シャドウマップ用のライト定数バッファ作成
-    D3D11_BUFFER_DESC buffer_desc{};
-    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    buffer_desc.ByteWidth = sizeof(XMMATRIX);
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.CPUAccessFlags = 0;
-    buffer_desc.MiscFlags = 0;
-    buffer_desc.StructureByteStride = 0;
-    m_pDevice->CreateBuffer(&buffer_desc, nullptr, m_shadowLightCB.GetAddressOf());
-
-    // シェーダーにライト定数バッファを登録
-    SHADER_MANAGER->RegisterCB(ShaderManager::ShaderType::Lit, 11, m_shadowLightCB.GetAddressOf());
-    SHADER_MANAGER->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 11, m_shadowLightCB.GetAddressOf());
+    m_shadowLightCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
+        "ShadowLightBuffer",
+        11,
+        sizeof(XMMATRIX),
+        true,
+        true,
+        ConstantBufferUsage::Default);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_shadowLightCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_shadowLightCB);
 
     // シャドウマップ用のリソース作成
     Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
@@ -58,7 +56,7 @@ void ShadowMapPass::Process(IScene* pScene)
 
     // シェーダーの初期セット
     ModelResource::VertexType currentVertexType = ModelResource::VertexType::Lit;
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+    EngineServiceLocator::BindShader(ShaderBase::Lit);
     m_pContext->PSSetShader(nullptr, nullptr, 0);
 
     // カメラCBの更新
@@ -95,10 +93,10 @@ void ShadowMapPass::Process(IScene* pScene)
         if (currentVertexType != model->vertexType) {
             switch (model->vertexType) {
             case ModelResource::VertexType::Lit:
-                EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+                EngineServiceLocator::BindShader(ShaderBase::Lit);
                 break;
             case ModelResource::VertexType::SkinnedLit:
-                EngineServiceLocator::BindShader(ShaderManager::ShaderType::SkinnedLit);
+                EngineServiceLocator::BindShader(ShaderBase::SkinnedLit);
                 break;
             }
             currentVertexType = model->vertexType;
@@ -166,7 +164,7 @@ void ShadowMapPass::BindShadowCB()
     XMMATRIX transposedMatrix = XMMatrixTranspose(m_shadowLightMatrix);
 
     // シャドウマップ用のライト行列を定数バッファに更新
-    m_pContext->UpdateSubresource(m_shadowLightCB.Get(), 0, nullptr, &transposedMatrix, 0, 0);
+    m_pContext->UpdateSubresource(m_shadowLightCB->buffer.Get(), 0, nullptr, &transposedMatrix, 0, 0);
 }
 
 // シャドウマップのSRVのバインド

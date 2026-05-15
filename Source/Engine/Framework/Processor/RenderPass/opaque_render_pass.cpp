@@ -17,6 +17,7 @@ using namespace DirectX;
 #include "Engine/engine_service_locator.h"
 
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 static TextureResource* s_testNormalTexture = nullptr;
 
@@ -52,7 +53,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
     auto& modelPoolList = modelPool->GetList();
 
     // 通常モデル描画
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::Lit);
+    EngineServiceLocator::BindShader(ShaderBase::Lit);
 
     for (ModelComponent& m : modelPoolList) {
         ModelResource* model = m.GetModelResource();
@@ -92,7 +93,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
     }
 
     // SkinnedModel描画
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::SkinnedLit);
+    EngineServiceLocator::BindShader(ShaderBase::SkinnedLit);
     
     for (ModelComponent& m : modelPoolList) {
         ModelResource* model = m.GetModelResource();

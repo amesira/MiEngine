@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <memory>
 
+class ConstantBufferResource;
+
 class MaterialRepository {
 private:
     ID3D11Device* m_pDevice = nullptr;
@@ -26,7 +28,7 @@ private:
     std::unordered_map<std::string, std::unique_ptr<MaterialResource>> m_materialCache;
 
     // マテリアルの定数バッファ
-    ComPtr<ID3D11Buffer> m_materialBuffer;
+    ConstantBufferResource* m_materialCB = nullptr;
 
 public:
     // 初期化

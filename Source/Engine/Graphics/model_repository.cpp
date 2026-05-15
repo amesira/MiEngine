@@ -15,8 +15,10 @@
 
 #include "Engine/engine_service_locator.h"
 
+
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 // モデルリポジトリの初期化
 void ModelRepository::Initialize() 
@@ -27,18 +29,17 @@ void ModelRepository::Initialize()
     m_modelCache.clear();
 
     // スキニングCBの作成
-    D3D11_BUFFER_DESC bd = {};
-    bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(XMMATRIX) * 256;
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    m_pDevice->CreateBuffer(&bd, nullptr, m_skinningBuffer.GetAddressOf());
+    m_skinningCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
+        "SkinningBuffer",
+        12,
+        sizeof(XMMATRIX) * 256, // 最大256ボーン分の行列を格納
+        true,
+        false,
+        ConstantBufferUsage::Dynamic);
 
-    // スキニングCBをシェーダーに登録
-    auto shader = EngineServiceLocator::GetShaderManager();
-    if (shader) {
-        shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 12, m_skinningBuffer.GetAddressOf());
-    }
+    // スキニングCBをスキンメッシュ用シェーダーに登録
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_skinningCB);
+
 }
 
 // モデルリポジトリの終了処理
@@ -135,14 +136,14 @@ int ModelRepository::LoadAnimation(ModelResource* model, const std::string& file
 void ModelRepository::BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix)
 {
     D3D11_MAPPED_SUBRESOURCE msr = {};
-    m_pContext->Map(m_skinningBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    m_pContext->Map(m_skinningCB->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
     XMMATRIX* skinningData = reinterpret_cast<XMMATRIX*>(msr.pData);
     for (size_t i = 0; i < boneMatrix.size(); i++)
     {
         XMMATRIX finalTransformTransposed = XMMatrixTranspose(boneMatrix[i]);
         skinningData[i] = finalTransformTransposed;
     }
-    m_pContext->Unmap(m_skinningBuffer.Get(), 0);
+    m_pContext->Unmap(m_skinningCB->buffer.Get(), 0);
 }
 
 //------------------------------------

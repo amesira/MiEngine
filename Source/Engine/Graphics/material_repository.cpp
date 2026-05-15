@@ -13,6 +13,7 @@
 #include "Engine/engine_service_locator.h"
 
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 // マテリアルリポジトリの初期化
 void MaterialRepository::Initialize()
@@ -23,18 +24,15 @@ void MaterialRepository::Initialize()
     m_materialCache.clear();
 
     // 定数バッファの作成
-    D3D11_BUFFER_DESC bufferDesc = {};
-    bufferDesc.Usage = D3D11_USAGE_DYNAMIC; // 頻繁に更新する予定なのでDynamicにする
-    bufferDesc.ByteWidth = sizeof(MaterialBufferData);
-    bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    m_pDevice->CreateBuffer(&bufferDesc, nullptr, m_materialBuffer.GetAddressOf());
-
-    auto shader = EngineServiceLocator::GetShaderManager();
-    if (shader) {
-        shader->RegisterCB(ShaderManager::ShaderType::Lit, 9, m_materialBuffer.GetAddressOf());
-        shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 9, m_materialBuffer.GetAddressOf());
-    }
+    m_materialCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
+        "MaterialBuffer",
+        9,
+        sizeof(MaterialBufferData),
+        true,
+        true,
+        ConstantBufferUsage::Dynamic);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_materialCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_materialCB);
 
     // デフォルトテクスチャの作成
     m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
@@ -93,10 +91,10 @@ void MaterialRepository::BindMaterialCB(const MaterialBufferData& material)
 {
     // MaterialBuffferDataとしてGPUにデータ転送
     D3D11_MAPPED_SUBRESOURCE msr = {};
-    m_pContext->Map(m_materialBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    m_pContext->Map(m_materialCB->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
     MaterialBufferData* bufferData = reinterpret_cast<MaterialBufferData*>(msr.pData);
     *bufferData = material;
-    m_pContext->Unmap(m_materialBuffer.Get(), 0);
+    m_pContext->Unmap(m_materialCB->buffer.Get(), 0);
 }
 
 // マテリアルのバインド（テクスチャ）

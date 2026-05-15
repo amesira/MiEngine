@@ -9,11 +9,14 @@
 #include "Engine/Graphics/texture_repository.h"
 #include "Engine/Graphics/model_repository.h"
 #include "Engine/Graphics/material_repository.h"
+#include "Engine/Graphics/shader_repository.h"
 
 class ResourceManager {
 private:
     // テクスチャリポジトリ
     TextureRepository m_textureRepository;
+    // シェーダーリポジトリ
+    ShaderRepository m_shaderRepository;
     // モデルリポジトリ
     ModelRepository m_modelRepository;
     // マテリアルリポジトリ
@@ -27,6 +30,8 @@ public:
 
     // テクスチャリポジトリへのアクセス
     TextureRepository* GetTextureRepository() { return &m_textureRepository; }
+    // シェーダーリポジトリへのアクセス
+    ShaderRepository* GetShaderRepository() { return &m_shaderRepository; }
     // モデルリポジトリへのアクセス
     ModelRepository* GetModelRepository() { return &m_modelRepository; }
     // マテリアルリポジトリへのアクセス

@@ -35,14 +35,22 @@ public:
     static MaterialRepository* GetMaterialRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetMaterialRepository() : nullptr;
     }
+    static ShaderRepository* GetShaderRepository() {
+        return s_engineInstance ? s_engineInstance->GetResourceManager().GetShaderRepository() : nullptr;
+    }
 
     // ShaderManagerへのアクセス
     static ShaderManager* GetShaderManager() {
         return s_engineInstance ? &s_engineInstance->GetShaderManager() : nullptr;
     }
-    static void BindShader(ShaderManager::ShaderType shaderType) {
+    static void BindShader(ShaderBase shaderBase) {
         if (s_engineInstance) {
-            s_engineInstance->GetShaderManager().BindShader(shaderType);
+            s_engineInstance->GetShaderManager().BindShader(shaderBase);
+        }
+    }
+    static void BindShader(const std::string& shaderName) {
+        if (s_engineInstance) {
+            s_engineInstance->GetShaderManager().BindShader(shaderName);
         }
     }
     static void UpdateTransformCB(const ShaderManager::TransformBuffer& transformData) {

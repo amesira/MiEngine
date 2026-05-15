@@ -34,6 +34,8 @@ void DecalRenderPass::Finalize()
 // DecalRenderPassの処理
 void DecalRenderPass::Process(IScene* pScene)
 {
+    return;
+
     // コンポーネントプール取得
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* decalPool = pScene->GetComponentPool<DecalComponent>();
@@ -44,10 +46,10 @@ void DecalRenderPass::Process(IScene* pScene)
     SetDepthState(DEPTHSTATE_ENABLE);
 
     // シェーダーの初期セット
-    EngineServiceLocator::BindShader(ShaderManager::ShaderType::DecalLit);
+    /*EngineServiceLocator::BindShader(ShaderManager::ShaderType::DecalLit);
     if (m_depthSRV) {
         m_pContext->PSSetShaderResources(5, 1, &m_depthSRV);
-    }
+    }*/
 
     // デカール描画
     auto& decalPoolList = decalPool->GetList();

@@ -22,6 +22,8 @@ class ComponentPool;
 class LightComponent;
 class TransformComponent;
 
+class ConstantBufferResource;
+
 #pragma region ライトの構造体定義
 // DirectionalLight構造体
 struct alignas(16) GPU_DirectionalLight {
@@ -114,7 +116,7 @@ private:
     ID3D11DeviceContext* m_pContext;
 
     // ライトの定数バッファ
-    ComPtr<ID3D11Buffer> m_lightBuffer;
+    ConstantBufferResource* m_lightCB;
 
 public:
     // 初期化

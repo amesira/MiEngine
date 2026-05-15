@@ -145,6 +145,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_visual_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
@@ -221,6 +222,9 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
+    <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
+    <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
+    <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
     <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
     <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />

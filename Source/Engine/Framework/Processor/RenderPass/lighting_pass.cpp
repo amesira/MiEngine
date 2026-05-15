@@ -17,29 +17,26 @@
 
 #include "Engine/engine_service_locator.h"
 
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+
 void LightingPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     m_pDevice = pDevice;
     m_pContext = pContext;
 
-    // 定数バッファの作成
-    D3D11_BUFFER_DESC buffer_desc{};
-    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    buffer_desc.ByteWidth = sizeof(LightBufferData);
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.CPUAccessFlags = 0;
-    buffer_desc.MiscFlags = 0;
-    buffer_desc.StructureByteStride = 0;
-    m_pDevice->CreateBuffer(&buffer_desc, nullptr, m_lightBuffer.GetAddressOf());
+    // ライト用の定数バッファ作成
+    m_lightCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
+        "LightBuffer",
+        10,
+        sizeof(LightBufferData),
+        true,
+        true,
+        ConstantBufferUsage::Default);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_lightCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_lightCB);
 
     // ライティング全体を有効にしておく
     m_lightBufferData.enableLighting = 1;
-
-    // シェーダーにライトバッファを登録
-    auto* shader = EngineServiceLocator::GetShaderManager();
-    shader->RegisterCB(ShaderManager::ShaderType::Lit, 10, m_lightBuffer.GetAddressOf());
-    shader->RegisterCB(ShaderManager::ShaderType::SkinnedLit, 10, m_lightBuffer.GetAddressOf());
 }
 
 void LightingPass::Finalize()
@@ -61,7 +58,7 @@ void LightingPass::Process(IScene* pScene)
     CollectLightSettings(lightingSettings);
 
     // 定数バッファにライトの情報を転送
-    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+    m_pContext->UpdateSubresource(m_lightCB->buffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
 }
 
 // ライトのバインド
@@ -70,7 +67,7 @@ void LightingPass::BindLightCB(bool enable)
     m_lightBufferData.enableLighting = enable ? 1 : 0;
 
     // 定数バッファにライトの情報を転送
-    m_pContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
+    m_pContext->UpdateSubresource(m_lightCB->buffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
 }
 
 // ------------------------------------ private

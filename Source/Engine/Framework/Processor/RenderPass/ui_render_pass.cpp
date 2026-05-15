@@ -77,10 +77,10 @@ void UIRenderPass::Process(IScene* pScene)
             // シェーダーの切り替え
             switch (batch.shaderType) {
             case DrawBatch2D::ShaderType::Default:
-                EngineServiceLocator::BindShader(ShaderManager::ShaderType::Sprite);
+                EngineServiceLocator::BindShader(ShaderBase::Sprite);
                 break;
             case DrawBatch2D::ShaderType::Font:
-                EngineServiceLocator::BindShader(ShaderManager::ShaderType::TlueTypeFontSprite);
+                //EngineServiceLocator::BindShader(ShaderManager::ShaderType::TlueTypeFontSprite);
                 break;
             }
             currentShaderType = static_cast<int>(batch.shaderType);

@@ -17,13 +17,16 @@ using Microsoft::WRL::ComPtr;
 
 #include "Engine/Graphics/texture_resource.h"
 
+class ConstantBufferResource;
+
 class ShadowMapPass : public Pass {
 private:
     ID3D11Device* m_pDevice;
     ID3D11DeviceContext* m_pContext;
 
     // シャドウマップ用のライト定数バッファ
-    ComPtr<ID3D11Buffer> m_shadowLightCB;
+    //ComPtr<ID3D11Buffer> m_shadowLightCB;
+    ConstantBufferResource* m_shadowLightCB;
     XMMATRIX m_shadowLightMatrix;
 
     // シャドウマップ用のリソース

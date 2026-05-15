@@ -30,10 +30,10 @@ bool MiEngine::Initialize(HWND hWnd)
     ID3D11DeviceContext* pContext = Direct3D_GetDeviceContext();
 
     // マネージャー・システムの初期化
-    m_shaderManager.Initialize(pDevice, pContext);
     InitAudio();
     FPS_Initialize(hWnd);
     m_resourceManager.Initialize();
+    m_shaderManager.Initialize(pDevice, pContext);
     DebugRenderer_Initialize();
 
     // GameWorldの初期化

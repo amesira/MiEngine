@@ -22,8 +22,10 @@ using namespace DirectX;
 #include "assimp/postprocess.h"
 #pragma comment (lib, "assimp-vc143-mt.lib")
 
-struct LitVertex;
-struct SkinnedLitVertex;
+#include "shader_definitions.h"
+using namespace ShaderDefinitions;
+
+class ConstantBufferResource;
 
 class ModelRepository {
 private:
@@ -34,7 +36,7 @@ private:
     std::unordered_map<std::string, std::unique_ptr<ModelResource>> m_modelCache;
 
     // スキニングバッファ
-    ComPtr<ID3D11Buffer> m_skinningBuffer;
+    ConstantBufferResource* m_skinningCB = nullptr;
 
 public:
     // 初期化

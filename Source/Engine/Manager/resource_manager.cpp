@@ -10,6 +10,8 @@
 void ResourceManager::Initialize() 
 {
     m_textureRepository.Initialize();
+
+    m_shaderRepository.Initialize();
     m_materialRepository.Initialize();
 
     m_modelRepository.Initialize();
@@ -19,6 +21,8 @@ void ResourceManager::Initialize()
 void ResourceManager::Finalize() 
 {
     m_textureRepository.Finalize();
+
+    m_shaderRepository.Finalize();
     m_materialRepository.Finalize();
 
     m_modelRepository.Finalize();
