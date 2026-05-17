@@ -29,6 +29,8 @@ private:
 
     // マテリアルの定数バッファ
     ConstantBufferResource* m_materialCB = nullptr;
+    // カスタムプロパティ用の定数バッファ
+    ConstantBufferResource* m_customPropertyCB = nullptr;
 
 public:
     // 初期化
@@ -44,6 +46,8 @@ public:
     // マテリアルのバインド
     void BindMaterialCB(const MaterialBufferData& material);
     void BindMaterialTexture(const MaterialResource& material);
+    // カスタムプロパティのバインド
+    void BindCustomProperties(XMFLOAT4* customPropaties);
 
 private:
     // マテリアルの読み込み

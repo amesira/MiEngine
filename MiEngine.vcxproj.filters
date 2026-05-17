@@ -50,6 +50,10 @@
     <FxCompile Include="Shader\sprite_ps.hlsl" />
     <FxCompile Include="Shader\sprite_vs.hlsl" />
     <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUnlitShader\hologram_unlit_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -230,6 +234,7 @@
     <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -508,6 +513,9 @@
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
+    <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
+    <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
+    <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

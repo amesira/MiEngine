@@ -95,7 +95,7 @@ void DecalRenderPass::Process(IScene* pScene)
         ModelMesh& mesh = m_decalCubeResource->meshes[0];
         {
             // 頂点バッファ設定
-            UINT stride = sizeof(LitVertex);
+            UINT stride = sizeof(ModelVertex);
             UINT offset = 0;
             m_pContext->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
 

@@ -7,15 +7,14 @@ using namespace DirectX;
 namespace ShaderDefinitions {
     // 頂点の種類
     enum class VertexType {
-        Lit,
-        SkinnedLit,
-        Unlit,
-        Sprite,
+        Model,          // モデル用頂点
+        SkinnedModel,   // スキンメッシュ用頂点
+        Sprite,         // スプライト用頂点
 
         MAX,
     };
 #pragma region 頂点構造体
-    struct LitVertex {
+    struct ModelVertex {
         XMFLOAT3 position;  // 頂点の位置
         XMFLOAT3 normal;    // 頂点の法線
         XMFLOAT3 tangent;   // 頂点の接線
@@ -24,7 +23,7 @@ namespace ShaderDefinitions {
         XMFLOAT4 color;     // 頂点の色
         XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
     };
-    struct SkinnedLitVertex {
+    struct SkinnedModelVertex {
         XMFLOAT3 position;  // 頂点の位置
         XMFLOAT3 normal;    // 頂点の法線
         XMFLOAT3 tangent;   // 頂点の接線
@@ -36,12 +35,12 @@ namespace ShaderDefinitions {
         XMUINT4  boneIndices; // ボーンのインデックス
         XMFLOAT4 boneWeights; // ボーンの重み
     };
-    struct UnlitVertex {
-        XMFLOAT3 position;  // 頂点の位置
-        XMFLOAT3 normal;    // 頂点の法線
-        XMFLOAT4 color;     // 頂点の色
-        XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
-    };
+    //struct UnlitVertex {
+    //    XMFLOAT3 position;  // 頂点の位置
+    //    XMFLOAT3 normal;    // 頂点の法線
+    //    XMFLOAT4 color;     // 頂点の色
+    //    XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
+    //};
     struct SpriteVertex {
         XMFLOAT3 position;  // 頂点の位置
         XMFLOAT4 color;     // 頂点の色

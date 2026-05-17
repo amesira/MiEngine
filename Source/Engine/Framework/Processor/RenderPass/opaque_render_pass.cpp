@@ -21,6 +21,11 @@ using namespace DirectX;
 
 static TextureResource* s_testNormalTexture = nullptr;
 
+// ホログラムシェーダーテスト
+static ShaderProgramResource* s_hologramShader = nullptr;
+static TextureResource* s_hologramNoiseTexture = nullptr;
+static XMFLOAT4* s_hologramBuffer = new XMFLOAT4[8];
+
 // OpaqueRenderPassの初期化
 void OpaqueRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -30,6 +35,17 @@ void OpaqueRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
     m_defaultTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
 
     s_testNormalTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\normal.png");
+
+    // ホログラムシェーダーテスト
+    ShaderProgramResource hologramShader;
+    hologramShader.name = "HologramUnlit";
+    hologramShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Unlit);
+    hologramShader.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("hologram_unlit_ps.cso");
+    s_hologramShader = SHADER_REPOSITORY->GenerateShaderProgramResource(hologramShader);
+    s_hologramNoiseTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\hologram_noise.png");
+    
+    s_hologramBuffer[0] = XMFLOAT4(0, 1, 1, 1);
+    s_hologramBuffer[1] = XMFLOAT4(1, 0, 0, 0);
 }
 
 // OpaqueRenderPassの終了処理
@@ -53,12 +69,15 @@ void OpaqueRenderPass::Process(IScene* pScene)
     auto& modelPoolList = modelPool->GetList();
 
     // 通常モデル描画
-    EngineServiceLocator::BindShader(ShaderBase::Lit);
+    EngineServiceLocator::BindShader(s_hologramShader);
+    m_pContext->PSSetShaderResources(5, 1, s_hologramNoiseTexture->texture.GetAddressOf());
+    s_hologramBuffer[1].y += 0.016f;
+    MATERIAL_REPOSITORY->BindCustomProperties(s_hologramBuffer);
 
     for (ModelComponent& m : modelPoolList) {
         ModelResource* model = m.GetModelResource();
         if (!model)continue;
-        if (model->vertexType != ModelResource::VertexType::Lit) continue;
+        if (model->vertexType != ModelResource::VertexType::Static) continue;
 
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
 
@@ -98,7 +117,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
     for (ModelComponent& m : modelPoolList) {
         ModelResource* model = m.GetModelResource();
         if (!model)continue;
-        if (model->vertexType != ModelResource::VertexType::SkinnedLit) continue;
+        if (model->vertexType != ModelResource::VertexType::Skinned) continue;
 
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
 

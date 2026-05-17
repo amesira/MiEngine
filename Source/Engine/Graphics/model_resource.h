@@ -98,9 +98,9 @@ public:
 
     // 頂点の種類
     enum class VertexType {
-        Lit,
-        SkinnedLit
-    } vertexType = VertexType::Lit;
+        Static,     // 静的メッシュ
+        Skinned     // スキニングメッシュ
+    } vertexType = VertexType::Static;
 
     // メッシュのリスト
 	std::vector<ModelMesh> meshes;

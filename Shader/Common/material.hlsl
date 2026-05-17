@@ -1,7 +1,7 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 // material.hlsl
 // ・マテリアルを定義するシェーダーファイル
-// ・-b9-にマテリアル定数バッファを割り当てる
+// ・-b8-にマテリアル定数バッファを割り当てる
 // ・-t0- ~ -t3-にテクスチャを割り当てる
 // 
 // Author：Miu Kitamura
@@ -23,7 +23,7 @@ struct Material {
 };
 
 // マテリアル定数バッファ
-cbuffer MaterialBuffer : register(b9)
+cbuffer MaterialBuffer : register(b8)
 {
     Material g_Material;
 };

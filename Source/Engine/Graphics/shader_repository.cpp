@@ -24,20 +24,20 @@ void ShaderRepository::Initialize()
     {
         ShaderProgramResource litShader;
         litShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Lit)];
-        litShader.vertexShader = GenerateVertexShaderResource("lit_vs.cso", VertexType::Lit);
+        litShader.vertexShader = GenerateVertexShaderResource("lit_vs.cso", VertexType::Model);
         litShader.pixelShader = GeneratePixelShaderResource("lit_ps.cso");
         GenerateShaderProgramResource(litShader);
 
         ShaderProgramResource skinnedLitShader;
         skinnedLitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::SkinnedLit)];
-        skinnedLitShader.vertexShader = GenerateVertexShaderResource("skinned_lit_vs.cso", VertexType::SkinnedLit);
+        skinnedLitShader.vertexShader = GenerateVertexShaderResource("skinned_lit_vs.cso", VertexType::SkinnedModel);
         skinnedLitShader.pixelShader = litShader.pixelShader; // ライト付きシェーダーと同じピクセルシェーダーを使用
         GenerateShaderProgramResource(skinnedLitShader);
 
 
         ShaderProgramResource unlitShader;
         unlitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Unlit)];
-        unlitShader.vertexShader = GenerateVertexShaderResource("unlit_vs.cso", VertexType::Unlit);
+        unlitShader.vertexShader = GenerateVertexShaderResource("unlit_vs.cso", VertexType::Model);
         unlitShader.pixelShader = GeneratePixelShaderResource("unlit_ps.cso");
         GenerateShaderProgramResource(unlitShader);
 
@@ -53,6 +53,9 @@ void ShaderRepository::Initialize()
 void ShaderRepository::Finalize()
 {
     m_shaderCache.clear();
+    m_vertexShaderCache.clear();
+    m_pixelShaderCache.clear();
+    m_constantBufferCache.clear();
 }
 
 // ----------------------------- public リソース生成
@@ -240,7 +243,7 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
     std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
     
     switch (vertexType) {
-    case VertexType::Lit:
+    case VertexType::Model:
         layout.resize(6);
         layout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[1] = { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
@@ -249,7 +252,7 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
         layout[4] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[5] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         break;
-    case VertexType::SkinnedLit:
+    case VertexType::SkinnedModel:
         layout.resize(8);
         layout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[1] = { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
@@ -259,13 +262,6 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
         layout[5] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[6] = { "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[7] = { "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-        break;
-    case VertexType::Unlit:
-        layout.resize(4);
-        layout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-        layout[1] = { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-        layout[2] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-        layout[3] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         break;
     case VertexType::Sprite:
         layout.resize(3);

@@ -68,6 +68,10 @@ public:
     // === 描画設定 ===
     bool cullBackFace = true;   // 背面カリングするか（未実装）
 
+    // === Custom ===
+    static constexpr int CUSTOM_PROPERTY_COUNT = 8;
+    XMFLOAT4 customProperties[CUSTOM_PROPERTY_COUNT]; // カスタムプロパティ（シェーダーで自由に使用可能）
+
     // マテリアルバッファ生成
     MaterialBufferData CreateBufferData() const {
         MaterialBufferData data;
@@ -92,6 +96,10 @@ public:
     XMFLOAT4 overrideBaseColor = { 1,1,1,1 };
     bool isOverrideEmissiveColor = false;
     XMFLOAT3 overrideEmissiveColor = { 0,0,0 };
+
+    // カスタムプロパティのオーバーライド設定
+    bool isOverrideCustomProperties[MaterialResource::CUSTOM_PROPERTY_COUNT] = { false };
+    XMFLOAT4 overrideCustomProperties[MaterialResource::CUSTOM_PROPERTY_COUNT] = { {0,0,0,0} };
 };
 
 #endif // MATERIAL_H

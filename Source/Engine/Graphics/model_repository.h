@@ -59,9 +59,9 @@ private:
     XMMATRIX AssimpMatToXMMatrix(const aiMatrix4x4& m);
 
     // aiMeshから頂点バッファを作成
-    void SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh);
+    void SetModelVertexInfo(ModelVertex* vertices, const aiMesh* mesh);
     // aiMeshからスキニング頂点バッファを作成
-    void SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex);
+    void SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex);
 
     // aiMaterialからMaterialResourceを作成
     MaterialResource CreateMaterialResource(aiMaterial* mat);

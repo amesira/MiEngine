@@ -203,16 +203,16 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         // 頂点バッファ生成
         bool isSkinnedMesh = mesh->mNumBones > 0;
         if (!isSkinnedMesh) {
-            LitVertex* vertex = new LitVertex[mesh->mNumVertices];
-            model->vertexType = ModelResource::VertexType::Lit;
+            ModelVertex* vertex = new ModelVertex[mesh->mNumVertices];
+            model->vertexType = ModelResource::VertexType::Static;
 
             // 頂点データを構造体に格納
-            SetLitVertexInfo(vertex, mesh);
+            SetModelVertexInfo(vertex, mesh);
 
             // 頂点バッファの作成
             D3D11_BUFFER_DESC bd = {};
             bd.Usage = D3D11_USAGE_DYNAMIC;
-            bd.ByteWidth = sizeof(LitVertex) * mesh->mNumVertices;
+            bd.ByteWidth = sizeof(ModelVertex) * mesh->mNumVertices;
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -222,22 +222,22 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             m_pDevice->CreateBuffer(&bd, &sd, &modelMesh.vertexBuffer);
 
             // strideとoffsetの設定
-            modelMesh.vertexStride = sizeof(LitVertex);
+            modelMesh.vertexStride = sizeof(ModelVertex);
             modelMesh.vertexOffset = 0;
 
             delete[] vertex;
         }
         else {
-            SkinnedLitVertex* vertex = new SkinnedLitVertex[mesh->mNumVertices];
-            model->vertexType = ModelResource::VertexType::SkinnedLit;
+            SkinnedModelVertex* vertex = new SkinnedModelVertex[mesh->mNumVertices];
+            model->vertexType = ModelResource::VertexType::Skinned;
 
             // 頂点データを構造体に格納
-            SetSkinnedLitVertexInfo(vertex, mesh, model->boneNameToIndex);
+            SetSkinnedModelVertexInfo(vertex, mesh, model->boneNameToIndex);
 
             // 頂点バッファの作成
             D3D11_BUFFER_DESC bd = {};
             bd.Usage = D3D11_USAGE_DYNAMIC;
-            bd.ByteWidth = sizeof(SkinnedLitVertex) * mesh->mNumVertices;
+            bd.ByteWidth = sizeof(SkinnedModelVertex) * mesh->mNumVertices;
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -247,7 +247,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
             m_pDevice->CreateBuffer(&bd, &sd, &modelMesh.vertexBuffer);
 
             // strideとoffsetの設定
-            modelMesh.vertexStride = sizeof(SkinnedLitVertex);
+            modelMesh.vertexStride = sizeof(SkinnedModelVertex);
             modelMesh.vertexOffset = 0;
 
             delete[] vertex;
@@ -369,7 +369,7 @@ XMMATRIX ModelRepository::AssimpMatToXMMatrix(const aiMatrix4x4& m)
 }
 
 // aiMeshから頂点バッファを作成
-void ModelRepository::SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh)
+void ModelRepository::SetModelVertexInfo(ModelVertex* vertices, const aiMesh* mesh)
 {
     for (unsigned int v = 0; v < mesh->mNumVertices; v++)
     {
@@ -389,9 +389,9 @@ void ModelRepository::SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh)
         assert(face->mNumIndices == 3);
 
         // 面を構成する3頂点を取得
-        LitVertex& v0 = vertices[face->mIndices[0]];
-        LitVertex& v1 = vertices[face->mIndices[1]];
-        LitVertex& v2 = vertices[face->mIndices[2]];
+        ModelVertex& v0 = vertices[face->mIndices[0]];
+        ModelVertex& v1 = vertices[face->mIndices[1]];
+        ModelVertex& v2 = vertices[face->mIndices[2]];
 
         // 辺のベクトルを計算
         XMFLOAT3 edge1 = MiMath::Subtract(v1.position, v0.position);
@@ -437,7 +437,7 @@ void ModelRepository::SetLitVertexInfo(LitVertex* vertices, const aiMesh* mesh)
 }
 
 // aiMeshからスキニング頂点バッファを作成
-void ModelRepository::SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex)
+void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex)
 {
     for (unsigned int v = 0; v < mesh->mNumVertices; v++)
     {
@@ -495,9 +495,9 @@ void ModelRepository::SetSkinnedLitVertexInfo(SkinnedLitVertex* vertices, const 
         assert(face->mNumIndices == 3);
 
         // 面を構成する3頂点を取得
-        SkinnedLitVertex& v0 = vertices[face->mIndices[0]];
-        SkinnedLitVertex& v1 = vertices[face->mIndices[1]];
-        SkinnedLitVertex& v2 = vertices[face->mIndices[2]];
+        SkinnedModelVertex& v0 = vertices[face->mIndices[0]];
+        SkinnedModelVertex& v1 = vertices[face->mIndices[1]];
+        SkinnedModelVertex& v2 = vertices[face->mIndices[2]];
 
         // 辺のベクトルを計算
         XMFLOAT3 edge1 = MiMath::Subtract(v1.position, v0.position);

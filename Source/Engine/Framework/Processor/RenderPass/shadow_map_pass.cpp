@@ -55,7 +55,7 @@ void ShadowMapPass::Process(IScene* pScene)
     SetDepthState(DEPTHSTATE_ENABLE);
 
     // シェーダーの初期セット
-    ModelResource::VertexType currentVertexType = ModelResource::VertexType::Lit;
+    ModelResource::VertexType currentVertexType = ModelResource::VertexType::Static;
     EngineServiceLocator::BindShader(ShaderBase::Lit);
     m_pContext->PSSetShader(nullptr, nullptr, 0);
 
@@ -92,10 +92,10 @@ void ShadowMapPass::Process(IScene* pScene)
         // シェーダー切替
         if (currentVertexType != model->vertexType) {
             switch (model->vertexType) {
-            case ModelResource::VertexType::Lit:
+            case ModelResource::VertexType::Static:
                 EngineServiceLocator::BindShader(ShaderBase::Lit);
                 break;
-            case ModelResource::VertexType::SkinnedLit:
+            case ModelResource::VertexType::Skinned:
                 EngineServiceLocator::BindShader(ShaderBase::SkinnedLit);
                 break;
             }
@@ -122,18 +122,18 @@ void ShadowMapPass::Process(IScene* pScene)
         EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
 
         // スキニングCBバインド
-        if (currentVertexType == ModelResource::VertexType::SkinnedLit) {
+        if (currentVertexType == ModelResource::VertexType::Skinned) {
             EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
         }
 
         UINT stride = 0;
         UINT offset = 0;
         switch (model->vertexType) {
-        case ModelResource::VertexType::Lit:
-            stride = sizeof(LitVertex);
+        case ModelResource::VertexType::Static:
+            stride = sizeof(ModelVertex);
             break;
-        case ModelResource::VertexType::SkinnedLit:
-            stride = sizeof(SkinnedLitVertex);
+        case ModelResource::VertexType::Skinned:
+            stride = sizeof(SkinnedModelVertex);
             break;
         }
 

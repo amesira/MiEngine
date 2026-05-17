@@ -10,6 +10,8 @@ SamplerState g_SamplerState : register(s0);
 struct PS_INPUT
 {
     float4 posH     : SV_Position;  // 変換済み頂点座標
+    float4 posW     : POSITION1;    // ワールド座標
+    float4 normal   : NORMAL0;      // 頂点法線
     float4 color    : COLOR0;       // 頂点カラー
     float2 texcoord : TEXCOORD0;    // テクスチャ座標
 };

@@ -26,13 +26,25 @@ void MaterialRepository::Initialize()
     // 定数バッファの作成
     m_materialCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
         "MaterialBuffer",
-        9,
+        8,
         sizeof(MaterialBufferData),
         true,
         true,
         ConstantBufferUsage::Dynamic);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_materialCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_materialCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Unlit)], m_materialCB);
+
+    m_customPropertyCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
+        "CustomPropertyBuffer",
+        9,
+        sizeof(XMFLOAT4) * MaterialResource::CUSTOM_PROPERTY_COUNT,
+        true,
+        true,
+        ConstantBufferUsage::Dynamic);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_customPropertyCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_customPropertyCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Unlit)], m_customPropertyCB);
 
     // デフォルトテクスチャの作成
     m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
@@ -116,6 +128,19 @@ void MaterialRepository::BindMaterialTexture(const MaterialResource& material)
     m_pContext->PSSetShaderResources(3, 1, material.aoTexture ?
         material.aoTexture->texture.GetAddressOf() :
         m_defaultAOTexture->texture.GetAddressOf());
+}
+
+void MaterialRepository::BindCustomProperties(XMFLOAT4* customPropaties)
+{
+    // カスタムプロパティをGPUに転送
+    D3D11_MAPPED_SUBRESOURCE msr = {};
+    m_pContext->Map(m_customPropertyCB->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    XMFLOAT4* cbData = reinterpret_cast<XMFLOAT4*>(msr.pData);
+    for (int i = 0; i < MaterialResource::CUSTOM_PROPERTY_COUNT; i++)
+    {
+        cbData[i] = customPropaties[i];
+    }
+    m_pContext->Unmap(m_customPropertyCB->buffer.Get(), 0);
 }
 
 //-------------------------------------
