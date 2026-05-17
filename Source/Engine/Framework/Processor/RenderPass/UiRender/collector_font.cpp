@@ -3,12 +3,11 @@
 // 
 // ・TrueTypeフォントを集める
 // 
-// Author：Miu Kitamura (from Ushi)
+// Author：Miu Kitamura
 // Date  ：2025/11/18
 //===================================================
 #define NOMINMAX
 #include "collector_font.h"
-#include "Utility/debug_ostream.h"
 
 #include <algorithm>
 #include <fstream>
@@ -18,12 +17,15 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
+#include "Engine/Graphics/shader_resource.h"
 #include "Engine/Framework/Component/rect_transform_component.h"
 
 #include "Utility/mi_math.h"
+#include "Utility/debug_ostream.h"
 
-static ID3D11Device* g_pDevice = nullptr;
-static ID3D11DeviceContext* g_pContext = nullptr;
+#include "Engine/engine_service_locator.h"
+
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 static const char* fontPath[(int)TextComponent::Font::MAX] = {
 	"asset/Font/PixelMplus12-Regular.ttf",
@@ -32,23 +34,28 @@ static const char* fontPath[(int)TextComponent::Font::MAX] = {
 
 void CollectorFont::Initialize()
 {
-	g_pDevice = Direct3D_GetDevice();
-	g_pContext = Direct3D_GetDeviceContext();
+	m_pDevice = Direct3D_GetDevice();
+	m_pContext = Direct3D_GetDeviceContext();
 
 	//----------------------------------------------------
 	// フォントデータの読み込みとテクスチャアトラス作成
 	//----------------------------------------------------
 	for (int i = 0; i < (int)TextComponent::Font::MAX; i++) {
+        stbtt_fontinfo& fontInfo = m_fonts[i].fontInfo;
+        std::vector<unsigned char>& fontBuffer = m_fonts[i].fontBuffer;
+        ComPtr<ID3D11Texture2D>& fontTexture = m_fonts[i].fontTexture;
+        ComPtr<ID3D11ShaderResourceView>& fontSRV = m_fonts[i].fontSRV;
+
 		// ファイルパスから読み込み
 		std::ifstream file(fontPath[i], std::ios::binary);
 		if (!file)return;
 		file.seekg(0, std::ios::end);
 		std::streamsize size = file.tellg();
 		file.seekg(0, std::ios::beg);
-		m_fontBuffer[i].resize(size);
-		file.read((char*)m_fontBuffer[i].data(), size);
+		fontBuffer.resize(size);
+		file.read((char*)fontBuffer.data(), size);
 
-		if (!stbtt_InitFont(&m_fontInfo[i], m_fontBuffer[i].data(), 0)) {
+		if (!stbtt_InitFont(&fontInfo, fontBuffer.data(), 0)) {
 			return;
 		}
 
@@ -62,7 +69,7 @@ void CollectorFont::Initialize()
 		texDesc.SampleDesc.Count = 1;
 		texDesc.Usage = D3D11_USAGE_DEFAULT;
 		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		g_pDevice->CreateTexture2D(&texDesc, nullptr, m_pFontTexture[i].GetAddressOf());
+		m_pDevice->CreateTexture2D(&texDesc, nullptr, fontTexture.GetAddressOf());
 
 		// 2. シェーダーリソースビューの作成
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -70,8 +77,15 @@ void CollectorFont::Initialize()
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
-		g_pDevice->CreateShaderResourceView(m_pFontTexture[i].Get(), &srvDesc, m_pFontSRV[i].GetAddressOf());
+		m_pDevice->CreateShaderResourceView(fontTexture.Get(), &srvDesc, fontSRV.GetAddressOf());
 	}
+
+	// TTF用シェーダープログラム作成
+    ShaderProgramResource ttfShader;
+    ttfShader.name = "TTFSprite";
+    ttfShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
+    ttfShader.overridePixelShader = SHADER_REPOSITORY->GeneratePixelShaderResource("ttf_sprite_ps.cso");
+    m_pFontShader = SHADER_REPOSITORY->GenerateShaderProgramResource(ttfShader);
 }
 
 void CollectorFont::Finalize()
@@ -98,18 +112,18 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
 		if (!rect->GetEnable()) continue;
 
         int fontType = (int)text->GetFontType();
-        if (!m_pFontSRV[fontType]) continue;
+        ComPtr<ID3D11ShaderResourceView>& fontSRV = m_fonts[fontType].fontSRV;
+        if (!fontSRV) continue;
 
 		// 描画スケール計算
-		float render_scale = (float)text->GetFontSize() / BASE_FONT_SIZE;
+        float render_scale = (float)text->GetFontSize() / BASE_FONT_SIZE;
         const char8_t* current_char = text->GetText().c_str();
 
-        
 		// 描画コマンドに追加
 		DrawBatch2D batch;
 		batch.orderInLayer = rect->GetPosition().z;
-		batch.texture = m_pFontSRV[fontType].Get();
-        batch.shaderType = DrawBatch2D::ShaderType::Font;
+		batch.texture = fontSRV.Get();
+        batch.shaderProgram = m_pFontShader;
 
 		DrawCommand2DInstance instance;
 		instance.angleZ = rect->GetRotation().z;
@@ -235,22 +249,29 @@ int CollectorFont::DecodeUtf8(const char8_t** text_ptr)
 // グリフ情報を取得する関数
 const CollectorFont::GlyphInfo* CollectorFont::GetGlyph(int fontType, int codepoint)
 {
-	auto it = m_glyphCache[fontType].find(codepoint);
-	if (it != m_glyphCache[fontType].end()) {
+    if (fontType < 0 || fontType >= (int)TextComponent::Font::MAX) return nullptr;
+
+    stbtt_fontinfo& fontInfo = m_fonts[fontType].fontInfo;
+    std::map<int, GlyphInfo>& glyphCache = m_fonts[fontType].glyphCache;
+    ComPtr<ID3D11Texture2D>& pFontTexture = m_fonts[fontType].fontTexture;
+
+    // --- 1. まずはキャッシュを確認 ---
+	auto it = glyphCache.find(codepoint);
+	if (it != glyphCache.end()) {
 		return &it->second;
 	}
 
 	// --- 2. キャッシュになければ、ベースサイズで新しいグリフを生成 ---
 
 	// ★ ベースサイズに対応するスケールを計算
-	float base_scale = stbtt_ScaleForPixelHeight(&m_fontInfo[fontType], BASE_FONT_SIZE);
+	float base_scale = stbtt_ScaleForPixelHeight(&fontInfo, BASE_FONT_SIZE);
 
-	int glyphIndex = stbtt_FindGlyphIndex(&m_fontInfo[fontType], codepoint);
+	int glyphIndex = stbtt_FindGlyphIndex(&fontInfo, codepoint);
 	if (glyphIndex == 0) return nullptr;
 
 	// グリフのビットマップ矩形をベーススケールで取得
 	int x0, y0, x1, y1;
-	stbtt_GetGlyphBitmapBox(&m_fontInfo[fontType], glyphIndex, base_scale, base_scale, &x0, &y0, &x1, &y1);
+	stbtt_GetGlyphBitmapBox(&fontInfo, glyphIndex, base_scale, base_scale, &x0, &y0, &x1, &y1);
 
 	int glyphWidth = x1 - x0;
 	int glyphHeight = y1 - y0;
@@ -276,7 +297,7 @@ const CollectorFont::GlyphInfo* CollectorFont::GetGlyph(int fontType, int codepo
 
 	// 3. グリフを一時的なビットマップにレンダリング
 	std::vector<unsigned char> glyphBitmap(glyphWidth * glyphHeight);
-	stbtt_MakeGlyphBitmap(&m_fontInfo[fontType], glyphBitmap.data(), glyphWidth, glyphHeight, glyphWidth, base_scale, base_scale, glyphIndex);
+	stbtt_MakeGlyphBitmap(&fontInfo, glyphBitmap.data(), glyphWidth, glyphHeight, glyphWidth, base_scale, base_scale, glyphIndex);
 
 	// --- ★変更: テクスチャアトラスへの転送を UpdateSubresource で行う ---
 	D3D11_BOX destBox;
@@ -287,8 +308,8 @@ const CollectorFont::GlyphInfo* CollectorFont::GetGlyph(int fontType, int codepo
 	destBox.front = 0;
 	destBox.back = 1;
 
-	g_pContext->UpdateSubresource(
-		m_pFontTexture[fontType].Get(), // 更新先テクスチャ
+	m_pContext->UpdateSubresource(
+		pFontTexture.Get(), // 更新先テクスチャ
 		0,                    // Mipレベル
 		&destBox,             // 更新先の矩形領域
 		glyphBitmap.data(),   // 送信するデータ
@@ -311,7 +332,7 @@ const CollectorFont::GlyphInfo* CollectorFont::GetGlyph(int fontType, int codepo
 
 	// 文字送り幅をベーススケールで取得
 	int advanceWidth;
-	stbtt_GetGlyphHMetrics(&m_fontInfo[fontType], glyphIndex, &advanceWidth, nullptr);
+	stbtt_GetGlyphHMetrics(&fontInfo, glyphIndex, &advanceWidth, nullptr);
 	newGlyph.x_advance = static_cast<float>(advanceWidth) * base_scale;
 
 	// アトラスカーソル位置を更新
@@ -319,6 +340,6 @@ const CollectorFont::GlyphInfo* CollectorFont::GetGlyph(int fontType, int codepo
 	m_currentLineHeight = std::max(m_currentLineHeight, glyphHeight + 1);
 
 	// 作成したグリフをキャッシュして、その参照を返す
-	auto [inserted_it, success] = m_glyphCache[fontType].emplace(codepoint, newGlyph);
+	auto [inserted_it, success] = glyphCache.emplace(codepoint, newGlyph);
 	return &inserted_it->second;
 }

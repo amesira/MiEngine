@@ -15,15 +15,13 @@
 #include "Engine/Framework/Component/transform_component.h"
 
 #include "Engine/engine_service_locator.h"
-
-static ID3D11ShaderResourceView* g_pTexture = nullptr;
+#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 void CollectorSlider::Initialize()
 {
-    auto resource = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\white.bmp");
-    if (resource) {
-        g_pTexture = resource->texture.Get();
-    }
+    m_pDefaultTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset/Texture/white.bmp");
+    m_pDefaultSpriteShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
 }
 
 void CollectorSlider::Finalize()
@@ -52,7 +50,8 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch
         // 描画コマンドに追加
         DrawBatch2D batch;
         batch.orderInLayer = rect->GetPosition().z;
-        batch.texture = g_pTexture;
+        batch.texture = m_pDefaultTexture->texture.Get();
+        batch.shaderProgram = m_pDefaultSpriteShader;
 
         // BG描画コマンド
         DrawCommand2DInstance instance;

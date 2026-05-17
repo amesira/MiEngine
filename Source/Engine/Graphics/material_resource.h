@@ -15,6 +15,7 @@ using Microsoft::WRL::ComPtr;
 #include <string>
 
 #include "texture_resource.h"
+#include "shader_resource.h"
 
 // レンダリングモード
 enum class RenderMode {
@@ -42,6 +43,9 @@ class MaterialResource {
 public:
     std::string name;
     RenderMode  renderMode = RenderMode::Opaque;
+
+    // 使用するシェーダープログラムリソースへのポインタ
+    ShaderProgramResource* shaderProgram = nullptr;
 
     // === PBR基本 ===
     XMFLOAT4    baseColor = { 1,1,1,1 };    // ベースカラー（アルベド）

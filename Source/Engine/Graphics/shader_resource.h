@@ -56,13 +56,20 @@ public:
 // シェーダープログラムリソース
 class ShaderProgramResource {
 public:
-    std::string name;   // シェーダーの名前
-    ShaderBase shaderBase;// シェーダーベース
+    std::string name; // シェーダーの名前
+    ShaderProgramResource* baseShader = nullptr; // ベースシェーダー
 
-    VertexShaderResource* vertexShader; // 頂点シェーダーリソースへのポインタ
-    PixelShaderResource* pixelShader;   // ピクセルシェーダーリソースへのポインタ
+    // == 上書き・追加リソース ==
+    VertexShaderResource* overrideVertexShader = nullptr;  // 上書き頂点シェーダー
+    PixelShaderResource* overridePixelShader = nullptr;    // 上書きピクセルシェーダー
 
-    std::vector<ConstantBufferResource*> constantBuffers; // 定数バッファリソースへのポインタの配列
+    std::vector<ConstantBufferResource*> additionalConstantBuffers; // 追加定数バッファ
+
+    // == 最終的に使用するリソース ==
+    VertexShaderResource* vertexShader = nullptr;  // 最終頂点シェーダー
+    PixelShaderResource* pixelShader = nullptr;    // 最終ピクセルシェーダー
+
+    std::vector<ConstantBufferResource*> constantBuffers;   // 最終定数バッファ
 
 };
 

@@ -9,9 +9,11 @@
 #include <vector>
 #include "draw_command.h"
 class IScene;
+class ShaderProgramResource;
 
 class CollectorImage {
 private:
+    ShaderProgramResource* m_pDefaultSpriteShader = nullptr;
     
 public:
     void Initialize();

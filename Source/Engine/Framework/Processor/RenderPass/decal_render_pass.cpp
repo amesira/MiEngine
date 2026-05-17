@@ -15,6 +15,8 @@
 #include "Utility/debug_renderer.h"
 #include "Utility/debug_ostream.h"
 
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+
 // DecalRenderPassの初期化
 void DecalRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -23,6 +25,13 @@ void DecalRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
     // デカール描画用のモデルリソース取得
     m_decalCubeResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+
+    // デカール描画用のシェーダープログラムリソース取得
+    ShaderProgramResource decalShader;
+    decalShader.name = "DecalLit";
+    decalShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Lit);
+    decalShader.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("decal_lit_ps.cso");
+    m_decalShader = SHADER_REPOSITORY->GenerateShaderProgramResource(decalShader);
 }
 
 // DecalRenderPassの終了処理
@@ -34,8 +43,6 @@ void DecalRenderPass::Finalize()
 // DecalRenderPassの処理
 void DecalRenderPass::Process(IScene* pScene)
 {
-    return;
-
     // コンポーネントプール取得
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* decalPool = pScene->GetComponentPool<DecalComponent>();
@@ -46,10 +53,10 @@ void DecalRenderPass::Process(IScene* pScene)
     SetDepthState(DEPTHSTATE_ENABLE);
 
     // シェーダーの初期セット
-    /*EngineServiceLocator::BindShader(ShaderManager::ShaderType::DecalLit);
+    EngineServiceLocator::BindShader(m_decalShader);
     if (m_depthSRV) {
         m_pContext->PSSetShaderResources(5, 1, &m_depthSRV);
-    }*/
+    }
 
     // デカール描画
     auto& decalPoolList = decalPool->GetList();

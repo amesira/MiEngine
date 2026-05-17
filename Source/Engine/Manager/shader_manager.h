@@ -60,6 +60,7 @@ public:
     // シェーダーをバインドする関数
     void    BindShader(ShaderBase shaderBase);
     void    BindShader(const std::string& shaderName);
+    void    BindShader(const ShaderProgramResource* shaderProgram);
 
     // TransformBufferをバインドする関数
     void    BindTransformCB(const TransformBuffer& transformData);

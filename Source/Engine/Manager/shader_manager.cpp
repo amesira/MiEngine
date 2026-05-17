@@ -61,11 +61,16 @@ void ShaderManager::Finalize()
 void ShaderManager::BindShader(ShaderBase shaderBase)
 {
     const std::string shaderBaseName = SHADER_BASE_NAMES[static_cast<size_t>(shaderBase)];
-    BindShader(shaderBaseName);
+    ShaderProgramResource* shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(shaderBaseName);
+    BindShader(shaderProgram);
 }
 void ShaderManager::BindShader(const std::string& shaderName)
 {
     ShaderProgramResource* shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(shaderName);
+    BindShader(shaderProgram);
+}
+void ShaderManager::BindShader(const ShaderProgramResource* shaderProgram)
+{
     if (shaderProgram) {
         m_pContext->VSSetShader(shaderProgram->vertexShader->vertexShader.Get(), nullptr, 0);
         m_pContext->PSSetShader(shaderProgram->pixelShader->pixelShader.Get(), nullptr, 0);

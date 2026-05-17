@@ -45,6 +45,9 @@ public:
         if (it != m_shaderCache.end()) return it->second.get();
         return nullptr;
     }
+    ShaderProgramResource* GetShaderProgramResource(ShaderBase shaderBase) {
+        return GetShaderProgramResource(SHADER_BASE_NAMES[static_cast<size_t>(shaderBase)]);
+    }
     // シェーダープログラムリソースへの定数バッファの追加
     bool AddConstantBufferToShaderProgram(const std::string& shaderName, ConstantBufferResource* cbResource) {
         auto shaderIt = m_shaderCache.find(shaderName);
@@ -67,7 +70,7 @@ public:
     PixelShaderResource* GetPixelShaderResource(const std::string& filePath) {
         auto it = m_pixelShaderCache.find(filePath);
         if (it != m_pixelShaderCache.end()) return it->second.get();
-        return nullptr;
+        return GeneratePixelShaderResource(filePath); // キャッシュにない場合は生成して返す
     }
 
     // 定数バッファリソースの生成・取得

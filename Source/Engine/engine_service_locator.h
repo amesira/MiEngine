@@ -53,6 +53,11 @@ public:
             s_engineInstance->GetShaderManager().BindShader(shaderName);
         }
     }
+    static void BindShader(const ShaderProgramResource* shaderProgram) {
+        if (s_engineInstance) {
+            s_engineInstance->GetShaderManager().BindShader(shaderProgram);
+        }
+    }
     static void UpdateTransformCB(const ShaderManager::TransformBuffer& transformData) {
         if (s_engineInstance) {
             s_engineInstance->GetShaderManager().BindTransformCB(transformData);

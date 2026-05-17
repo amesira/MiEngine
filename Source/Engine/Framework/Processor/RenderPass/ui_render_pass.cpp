@@ -69,21 +69,13 @@ void UIRenderPass::Process(IScene* pScene)
     //----------------------------------------------------
     // UI描画コマンドの実行
     //----------------------------------------------------
-    int currentShaderType = -1;
+    std::string currentShaderName = "";
     for (const DrawBatch2D& batch : m_batches) {
 
-        // シェーダーの切り替えが必要なら切り替える
-        if (batch.shaderType != static_cast<DrawBatch2D::ShaderType>(currentShaderType)) {
-            // シェーダーの切り替え
-            switch (batch.shaderType) {
-            case DrawBatch2D::ShaderType::Default:
-                EngineServiceLocator::BindShader(ShaderBase::Sprite);
-                break;
-            case DrawBatch2D::ShaderType::Font:
-                //EngineServiceLocator::BindShader(ShaderManager::ShaderType::TlueTypeFontSprite);
-                break;
-            }
-            currentShaderType = static_cast<int>(batch.shaderType);
+        // シェーダー切替
+        if (currentShaderName != batch.shaderProgram->name) {
+            currentShaderName = batch.shaderProgram->name;
+            EngineServiceLocator::BindShader(batch.shaderProgram);
         }
 
         // テクスチャのセット

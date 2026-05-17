@@ -24,14 +24,12 @@ void ShaderRepository::Initialize()
     {
         ShaderProgramResource litShader;
         litShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Lit)];
-        litShader.shaderBase = ShaderBase::Lit;
         litShader.vertexShader = GenerateVertexShaderResource("lit_vs.cso", VertexType::Lit);
         litShader.pixelShader = GeneratePixelShaderResource("lit_ps.cso");
         GenerateShaderProgramResource(litShader);
 
         ShaderProgramResource skinnedLitShader;
         skinnedLitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::SkinnedLit)];
-        skinnedLitShader.shaderBase = ShaderBase::SkinnedLit;
         skinnedLitShader.vertexShader = GenerateVertexShaderResource("skinned_lit_vs.cso", VertexType::SkinnedLit);
         skinnedLitShader.pixelShader = litShader.pixelShader; // ライト付きシェーダーと同じピクセルシェーダーを使用
         GenerateShaderProgramResource(skinnedLitShader);
@@ -39,14 +37,12 @@ void ShaderRepository::Initialize()
 
         ShaderProgramResource unlitShader;
         unlitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Unlit)];
-        unlitShader.shaderBase = ShaderBase::Unlit;
         unlitShader.vertexShader = GenerateVertexShaderResource("unlit_vs.cso", VertexType::Unlit);
         unlitShader.pixelShader = GeneratePixelShaderResource("unlit_ps.cso");
         GenerateShaderProgramResource(unlitShader);
 
         ShaderProgramResource spriteShader;
         spriteShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Sprite)];
-        spriteShader.shaderBase = ShaderBase::Sprite;
         spriteShader.vertexShader = GenerateVertexShaderResource("sprite_vs.cso", VertexType::Sprite);
         spriteShader.pixelShader = GeneratePixelShaderResource("sprite_ps.cso");
         GenerateShaderProgramResource(spriteShader);
@@ -64,17 +60,36 @@ void ShaderRepository::Finalize()
 // シェーダープログラムリソースの生成
 ShaderProgramResource* ShaderRepository::GenerateShaderProgramResource(const ShaderProgramResource& shader)
 {
+    ShaderProgramResource newShader = shader;
+    if (newShader.baseShader)
+    {
+        auto baseIt = m_shaderCache.find(newShader.baseShader->name);
+        if (baseIt != m_shaderCache.end())
+        {
+            ShaderProgramResource* baseResource = baseIt->second.get();
+            newShader.vertexShader = newShader.overrideVertexShader ? newShader.overrideVertexShader : baseResource->vertexShader;
+            newShader.pixelShader = newShader.overridePixelShader ? newShader.overridePixelShader : baseResource->pixelShader;
+            newShader.constantBuffers = baseResource->constantBuffers;
+            for(int i = 0; i < newShader.additionalConstantBuffers.size(); i++) {
+                if (std::find(newShader.constantBuffers.begin(), newShader.constantBuffers.end(), newShader.additionalConstantBuffers[i]) 
+                    == newShader.constantBuffers.end()) {
+                    newShader.constantBuffers.push_back(newShader.additionalConstantBuffers[i]);
+                }
+            }
+        }
+    }
+
     // キャッシュを確認し、既に存在する場合は上書きする
-    auto it = m_shaderCache.find(shader.name);
+    auto it = m_shaderCache.find(newShader.name);
     if (it != m_shaderCache.end())
     {
-        it->second = std::make_unique<ShaderProgramResource>(shader);
+        it->second = std::make_unique<ShaderProgramResource>(newShader);
         return it->second.get();
     }
 
     // キャッシュに存在しない場合は新規に追加する
-    m_shaderCache[shader.name] = std::make_unique<ShaderProgramResource>(shader);
-    return m_shaderCache[shader.name].get();
+    m_shaderCache[newShader.name] = std::make_unique<ShaderProgramResource>(newShader);
+    return m_shaderCache[newShader.name].get();
 }
 
 // 頂点シェーダーリソースの生成

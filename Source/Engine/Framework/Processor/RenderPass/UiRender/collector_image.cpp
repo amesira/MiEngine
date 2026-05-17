@@ -11,10 +11,13 @@
 #include "Engine/Framework/Component/rect_transform_component.h"
 #include "Engine/Framework/Component/image_component.h"
 
+#include "Engine/engine_service_locator.h"
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+
 // 初期化
 void CollectorImage::Initialize()
 {
-
+    m_pDefaultSpriteShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
 }
 
 // 終了処理
@@ -44,6 +47,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2
         DrawBatch2D batch;
         batch.orderInLayer = rect->GetPosition().z;
         batch.texture = image->GetTextureResource()->texture.Get();
+        batch.shaderProgram = m_pDefaultSpriteShader;
 
         DrawCommand2DInstance instance;
         instance.position = { rect->GetPosition().x, rect->GetPosition().y };

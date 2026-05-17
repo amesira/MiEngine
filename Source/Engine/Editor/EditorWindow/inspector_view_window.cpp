@@ -523,7 +523,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                 text->SetColor(color);
             }
             int fontSize = text->GetFontSize();
-            if (ImGui::DragInt("Font Size", &fontSize, 1.0f, 1, 256)) {
+            if (ImGui::DragInt("Font Size", &fontSize, 1.0f, 1, 512)) {
                 text->SetFontSize(fontSize);
             }
             bool center = text->IsCenter();

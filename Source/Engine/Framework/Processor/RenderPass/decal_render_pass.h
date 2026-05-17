@@ -14,6 +14,7 @@ using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 class ModelResource;
+class ShaderProgramResource;
 
 // デカールレンダリングパス
 class DecalRenderPass : public Pass {
@@ -26,6 +27,9 @@ private:
 
     // デプステクスチャのSRV
     ID3D11ShaderResourceView* m_depthSRV = nullptr;
+
+    // デカール描画用のシェーダープログラムリソース
+    ShaderProgramResource* m_decalShader = nullptr;
 
 public:
     ~DecalRenderPass() override = default;

@@ -8,8 +8,14 @@
 #define COLLECTOR_SLIDER_H
 #include "draw_command.h"
 class IScene;
+class TextureResource;
+class ShaderProgramResource;
 
 class CollectorSlider  {
+private:
+    TextureResource* m_pDefaultTexture = nullptr;
+    ShaderProgramResource* m_pDefaultSpriteShader = nullptr;
+
 public:
     void Initialize();
     void Finalize();

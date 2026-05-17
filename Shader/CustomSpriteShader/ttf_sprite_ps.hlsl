@@ -22,8 +22,9 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     // テクスチャの色を取得・乗算
     // ・文字のテクスチャはグレースケールなので、R成分をアルファ値として使用
-    col *= float4(1.0, 1.0, 1.0, g_Texture.Sample(g_SamplerState, ps_in.texcoord).r);
+    float ttfRed = g_Texture.Sample(g_SamplerState, ps_in.texcoord).r;
+    if (ttfRed <= 0.8f) discard;
+    col *= float4(1.0, 1.0, 1.0, ttfRed);
     
-    if (col.a <= 0.01f) discard;
     return col;
 }

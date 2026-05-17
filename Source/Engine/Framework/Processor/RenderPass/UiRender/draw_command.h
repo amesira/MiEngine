@@ -5,6 +5,7 @@
 using namespace DirectX;
 
 #include <vector>
+class ShaderProgramResource;
 
 // 2D描画コマンドのインスタンス情報
 struct DrawCommand2DInstance {
@@ -21,16 +22,13 @@ struct DrawBatch2D {
     int orderInLayer;
     // 描画に使用するテクスチャ
     ID3D11ShaderResourceView* texture;
-    // 使用するシェーダーの種類
-    enum class ShaderType {
-        Default,
-        Font,
-    } shaderType;
+    // 使用するシェーダープログラムリソース
+    ShaderProgramResource* shaderProgram;
 
     // 描画コマンドのインスタンス情報のリスト
     std::vector<DrawCommand2DInstance> instances;
     
-    DrawBatch2D() : orderInLayer(0), texture(nullptr), shaderType(ShaderType::Default) {
+    DrawBatch2D() : orderInLayer(0), texture(nullptr), shaderProgram(nullptr) {
         instances.reserve(1024);
     }
 };
