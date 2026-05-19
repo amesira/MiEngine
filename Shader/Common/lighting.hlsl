@@ -6,6 +6,7 @@
 // Author：Miu Kitamura
 // Date  ：2026/03/18
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
+#define USE_HALF_VECTOR (false) // Blinn-Phongモデルの半分ベクトルを使用するかどうか)
 
 // DirectionalLight構造体
 #define DIRECTIONAL_LIGHT_MAX (1)
@@ -134,19 +135,24 @@ float3 CalcSpecular_DirectionalLights(float3 normal, float3 posW, float3 eyePos,
         // ライトの方向を正規化
         float3 L = normalize(-light.Direction.xyz);
         
-        // 鏡面反射ベクトルを計算
-        //float3 R = 2.0f * N * dot(N, L) - L;
-        float3 R = reflect(-L, N);
-        
         // 視点方向を計算
         float3 V = normalize(eyePos - posW);
         
-        // スペキュラー成分を計算
-        float RdotV = dot(R, V);
-        if (RdotV <= 0.0f) continue;
+        // 鏡面反射ベクトルを計算
+        #if USE_HALF_VECTOR
+        float3 R = (-L + V) / 2.0f; // Blinn-Phongモデルの半分ベクトルを使用
+        float specRate = dot(R, N);
+        #else
+        //float3 R = 2.0f * N * dot(N, L) - L;
+        float3 R = reflect(-L, N);
+        float specRate = dot(R, V);
+        #endif
+        
+        if (specRate <= 0.0f)
+            continue;
         
         // スペキュラーの色を加算
-        specular += light.Diffuse.rgb * pow(RdotV, shininess) * light.Intensity;
+        specular += light.Diffuse.rgb * pow(specRate, shininess) * light.Intensity;
     }
     
     return specular;
@@ -215,11 +221,16 @@ float3 CalcSpecular_PointLights(float3 normal, float3 posW, float3 eyePos, float
         
         L = normalize(L); // 正規化
         
-        // 鏡面反射ベクトルを計算
-        float3 R = reflect(-L, N);
-        
         // 視点方向を計算
         float3 V = normalize(eyePos - posW);
+        
+        // 鏡面反射ベクトルを計算
+        #if USE_HALF_VECTOR
+        float3 R = (-L + V) / 2.0f; // Blinn-Phongモデルの半分ベクトルを使用
+        #else
+        //float3 R = 2.0f * N * dot(N, L) - L;
+        float3 R = reflect(-L, N);
+        #endif
         
         // スペキュラー成分を計算
         float RdotV = dot(R, V);
@@ -314,11 +325,16 @@ float3 CalcSpecular_SpotLights(float3 normal, float3 posW, float3 eyePos, float 
         if (DdotL < cos(light.SpotAngle))
             continue; // 光源範囲外
         
-        // 鏡面反射ベクトルを計算
-        float3 R = reflect(-L, N);
-        
         // 視点方向を計算
         float3 V = normalize(eyePos - posW);
+        
+        // 鏡面反射ベクトルを計算
+        #if USE_HALF_VECTOR
+        float3 R = (-L + V) / 2.0f; // Blinn-Phongモデルの半分ベクトルを使用
+        #else
+        //float3 R = 2.0f * N * dot(N, L) - L;
+        float3 R = reflect(-L, N);
+        #endif
         
         // スペキュラー成分を計算（0~1の範囲にclamp）
         float RdotV = saturate(dot(R, V));

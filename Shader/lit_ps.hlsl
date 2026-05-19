@@ -32,9 +32,10 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     if (col.a <= 0.01f) discard;
     
     // 法線マップを使用して法線を変換
-    float3 normalMap = g_NormalTexture.Sample(g_SamplerState, ps_in.texcoord).xyz;
-    normalMap = normalMap * 2.0f - 1.0f;
-    ps_in.normal = ps_in.tangent * normalMap.x + ps_in.binormal * normalMap.y + ps_in.normal * normalMap.z;
+    //float3 normalMap = g_NormalTexture.Sample(g_SamplerState, ps_in.texcoord).xyz;
+    //normalMap = normalMap * 2.0f - 1.0f;
+    //ps_in.normal = ps_in.tangent * normalMap.x + ps_in.binormal * normalMap.y + ps_in.normal * normalMap.z;
+    
     
     // ライトの影響を加算
     if (g_EnableLighting != 0)
@@ -60,7 +61,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     }
     
     // エミッシブカラーを加算
-    col.rgb += g_Material.emissiveColor;
+    col.rgb += g_Material.emissiveColor * g_Material.emissiveIntensity;
     
     // シャドウマッピングの影響を減算
     float4 lightSpacePos = WorldToLightSpace(ps_in.posW);
@@ -71,7 +72,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     float bias = 0.001f;
     if (depthInLightSpace > depthInShadowMap + bias){
-        col.rgb *= 0.5f;
+       col.rgb *= 0.5f;
     }
     
     return col;

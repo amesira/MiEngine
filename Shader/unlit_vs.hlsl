@@ -10,10 +10,6 @@
 // 入力用頂点構造体 [Sprite Vertex]
 struct VS_INPUT
 {
-    //float4 posL     : POSITION0;    // 頂点座標
-    //float4 normal   : NORMAL0;      // 頂点法線
-    //float4 color    : COLOR0;       // 頂点カラー
-    //float2 texcoord : TEXCOORD0;    // テクスチャ座標（U,V）
     float4 posL     : POSITION0;    // 頂点座標
     float4 normal   : NORMAL0;      // 頂点法線
     float4 tangent  : TANGENT0;     // 頂点接線

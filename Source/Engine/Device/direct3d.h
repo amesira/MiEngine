@@ -30,6 +30,7 @@ void Direct3D_Clear();  // バックバッファのクリア
 void Direct3D_Present();// バックバッファの表示
 
 void Direct3D_ResetViewport(); // ビューポートをリセット
+void Direct3D_SetViewport(unsigned int width, unsigned int height);
 
 /* ゲッター */
 ID3D11Device* Direct3D_GetDevice();
@@ -63,14 +64,22 @@ void SetDepthState(DEPTHSTATE depth);
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);
 
 // シーンクリア
-void Direct3D_ClearSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
+void Direct3D_ClearSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv, float alpha = 1.0f);
 // シーンセット
 void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);
 
 // シーン用RTV・SRVの作成・解放
-void Direct3D_CreateColorBuffer(ID3D11Texture2D** tex, ID3D11RenderTargetView** rtv, ID3D11ShaderResourceView** srv);
+void Direct3D_CreateColorBuffer(
+    ID3D11Texture2D** tex, 
+    ID3D11RenderTargetView** rtv, 
+    ID3D11ShaderResourceView** srv,
+    unsigned int width = 1920,
+    unsigned int height = 1080);
 
 // シーン用デプステンシルの作成・解放
-void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv);
+void Direct3D_CreateDepthBuffer(
+    ID3D11Texture2D** tex, 
+    ID3D11DepthStencilView** dsv, 
+    ID3D11ShaderResourceView** srv);
 
 #endif

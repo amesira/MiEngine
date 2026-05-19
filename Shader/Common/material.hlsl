@@ -15,8 +15,8 @@ struct Material {
     float   roughness;  // 粗さ（0.0 = 滑らか, 1.0 = 粗い）
     float2 padding;
     
-    float3  emissiveColor; // 自己発光色（R,G,B）
-    float padding2;
+    float3  emissiveColor;      // 自己発光色（R,G,B）
+    float   emissiveIntensity;  // 自己発光の強さ
     
     float2  uvTiling;   // UVのループ数
     float2  uvOffset;   // UVのオフセット

@@ -11,6 +11,8 @@ namespace ShaderDefinitions {
         SkinnedModel,   // スキンメッシュ用頂点
         Sprite,         // スプライト用頂点
 
+        None,           // 頂点情報なし
+
         MAX,
     };
 #pragma region 頂点構造体
@@ -55,15 +57,17 @@ namespace ShaderDefinitions {
         SkinnedLit, // スキンメッシュ用ライト付きシェーダー
         Unlit,      // ライトなしシェーダー
         Sprite,     // スプライトシェーダー
+        FullScreen, // フルスクリーンクワッドシェーダー
         MAX
     };
 
-    static const char* SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::MAX)] = {
+    static const std::string SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::MAX)] = {
         "None",
         "Lit",
         "SkinnedLit",
         "Unlit",
-        "Sprite"
+        "Sprite",
+        "FullScreen",
     };
 
 }

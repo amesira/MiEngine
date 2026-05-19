@@ -13,15 +13,19 @@ void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
 {
     m_pDevice = pDevice;
     m_pContext = pContext;
+
+    m_postProcess.Initialize(m_pDevice, m_pContext);
 }
 
 // ポストエフェクト終了
 void PostEffectPass::Finalize()
 {
+    m_postProcess.Finalize();
 }
 
 // ポストエフェクト処理
 void PostEffectPass::Process(IScene* pScene)
 {
-    (void)pScene;
+    // PostProcess
+    m_postProcess.Process(m_inputSRV, m_outputRTV);
 }

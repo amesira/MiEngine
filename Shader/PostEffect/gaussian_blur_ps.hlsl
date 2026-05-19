@@ -8,12 +8,11 @@
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
 
-// 入力用構造体（Unlitと同様）
+// 入力用構造体
 struct PS_INPUT
 {
-    float4 posH     : SV_Position;  // 変換済み頂点座標
-    float4 color    : COLOR0;       // 頂点カラー
-    float2 texcoord : TEXCOORD0;    // テクスチャ座標
+    float4 posH : SV_Position;
+    float2 texcoord   : TEXCOORD;
 };
 
 // ガウシアンブラー構造体
@@ -24,10 +23,10 @@ struct GaussianBlur
     float  blur;        // ブラーの強さ（例：1.0f）
     float3 padding;
     
-    float4 weights;    // ブラーの重み
-    float4 offsets;    // ブラーのオフセット
+    float4 weights; // ブラーの重み
+    float4 offsets;
 };
-cbuffer GaussianBlurBuffer : register(b1) {
+cbuffer GaussianBlurBuffer : register(b0) {
     GaussianBlur g_GaussianBlur;
 }
 
@@ -44,7 +43,14 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
         
         // テクスチャからサンプリングして、重みを掛けて加算
         color += g_Texture.Sample(g_SamplerState, ps_in.texcoord + texOffset) * g_GaussianBlur.weights[i];
+        
+        if (i > 0) // 中心以外は反対方向もサンプリング
         color += g_Texture.Sample(g_SamplerState, ps_in.texcoord - texOffset) * g_GaussianBlur.weights[i];
+    }
+    
+    if (color.a <= 0.01f)
+    {
+       // discard;
     }
     
     return color * g_GaussianBlur.blur;

@@ -376,11 +376,11 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                             materialInstance.overrideBaseColor = baseColor;
                         }
                     }
-                    bool overrideEmissiveColor = materialInstance.isOverrideEmissiveColor;
+                    bool overrideEmissiveColor = materialInstance.isOverrideEmissive;
                     if (ImGui::Checkbox("Override Emissive Color", &overrideEmissiveColor)) {
-                        materialInstance.isOverrideEmissiveColor = overrideEmissiveColor;
+                        materialInstance.isOverrideEmissive = overrideEmissiveColor;
                     }
-                    if (materialInstance.isOverrideEmissiveColor) {
+                    if (materialInstance.isOverrideEmissive) {
                         auto emissiveColor = materialInstance.overrideEmissiveColor;
                         if (ImGui::ColorEdit3("Emissive Color", &emissiveColor.x)) {
                             materialInstance.overrideEmissiveColor = emissiveColor;

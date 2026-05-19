@@ -32,7 +32,7 @@ struct MaterialBufferData {
     float padding[2];
 
     XMFLOAT3    emissiveColor;
-    float padding2;
+    float       emissiveIntensity;
 
     XMFLOAT2    uvTiling;
     XMFLOAT2    uvOffset;
@@ -54,6 +54,7 @@ public:
 
     // === 発光 ===
     XMFLOAT3    emissiveColor = { 0,0,0 };  // 発光色
+    float       emissiveIntensity = 1.0f;   // 発光強度
 
     // === テクスチャ ===
     TextureResource* albedoTexture = nullptr;   // アルベドテクスチャ
@@ -79,6 +80,7 @@ public:
         data.metallic = metallic;
         data.roughness = roughness;
         data.emissiveColor = emissiveColor;
+        data.emissiveIntensity = emissiveIntensity;
         data.uvTiling = uvTiling;
         data.uvOffset = uvOffset;
         return data;
@@ -94,8 +96,9 @@ public:
     // オーバーライド設定
     bool isOverrideBaseColor = false;
     XMFLOAT4 overrideBaseColor = { 1,1,1,1 };
-    bool isOverrideEmissiveColor = false;
+    bool isOverrideEmissive = false;
     XMFLOAT3 overrideEmissiveColor = { 0,0,0 };
+    float overrideEmissiveIntensity = 1.0f;
 
     // カスタムプロパティのオーバーライド設定
     bool isOverrideCustomProperties[MaterialResource::CUSTOM_PROPERTY_COUNT] = { false };

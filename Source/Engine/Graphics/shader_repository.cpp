@@ -46,6 +46,12 @@ void ShaderRepository::Initialize()
         spriteShader.vertexShader = GenerateVertexShaderResource("sprite_vs.cso", VertexType::Sprite);
         spriteShader.pixelShader = GeneratePixelShaderResource("sprite_ps.cso");
         GenerateShaderProgramResource(spriteShader);
+
+        ShaderProgramResource fullScreenShader;
+        fullScreenShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::FullScreen)];
+        fullScreenShader.vertexShader = GenerateVertexShaderResource("full_screen_vs.cso", VertexType::None);
+        fullScreenShader.pixelShader = GeneratePixelShaderResource("full_screen_ps.cso");
+        GenerateShaderProgramResource(fullScreenShader);
     }
 }
 

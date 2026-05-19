@@ -222,6 +222,18 @@ void Direct3D_ResetViewport()
     g_pDeviceContext->RSSetViewports(1, &g_Viewport);
 }
 
+void Direct3D_SetViewport(unsigned int width, unsigned int height)
+{
+    D3D11_VIEWPORT viewport = {};
+    viewport.TopLeftX = 0.0f;
+    viewport.TopLeftY = 0.0f;
+    viewport.Width = static_cast<FLOAT>(width);
+    viewport.Height = static_cast<FLOAT>(height);
+    viewport.MinDepth = 0.0f;
+    viewport.MaxDepth = 1.0f;
+    g_pDeviceContext->RSSetViewports(1, &viewport);
+}
+
 ID3D11Device* Direct3D_GetDevice() {
     return g_pDevice;
 }
@@ -373,10 +385,10 @@ void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3
     snapshot->Release();
 }
 
-void Direct3D_ClearSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
+void Direct3D_ClearSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv, float alpha)
 {
     if (rtv) {
-        float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
+        float clear_color[4] = { 0.2f,0.4f,0.8f,alpha }; // クリア色設定
         g_pDeviceContext->ClearRenderTargetView(rtv, clear_color);
     }
     if (dsv) {
@@ -392,7 +404,11 @@ void Direct3D_SetSceneTarget(ID3D11RenderTargetView* rtv, ID3D11DepthStencilView
 }
 
 // シーンテクスチャの生成と関連ビューの作成
-void Direct3D_CreateColorBuffer(ID3D11Texture2D** tex, ID3D11RenderTargetView** rtv, ID3D11ShaderResourceView** srv)
+void Direct3D_CreateColorBuffer(
+    ID3D11Texture2D** tex, 
+    ID3D11RenderTargetView** rtv, 
+    ID3D11ShaderResourceView** srv,
+    unsigned int width, unsigned int height)
 {
     if (!tex && !srv && !rtv) return;
 
@@ -401,11 +417,12 @@ void Direct3D_CreateColorBuffer(ID3D11Texture2D** tex, ID3D11RenderTargetView** 
     ID3D11Texture2D* outTex = nullptr;
 
     D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = g_BackBufferDecs.Width;
-    desc.Height = g_BackBufferDecs.Height;
+    desc.Width = width;
+    desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    //desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // HDRレンダリング用にフォーマットを変更
     desc.SampleDesc.Count = 1;
     desc.SampleDesc.Quality = 0;
     desc.Usage = D3D11_USAGE_DEFAULT;

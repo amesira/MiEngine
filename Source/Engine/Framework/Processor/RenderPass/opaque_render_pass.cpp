@@ -69,10 +69,12 @@ void OpaqueRenderPass::Process(IScene* pScene)
     auto& modelPoolList = modelPool->GetList();
 
     // 通常モデル描画
-    EngineServiceLocator::BindShader(s_hologramShader);
+    EngineServiceLocator::BindShader(ShaderBase::Lit);
+
+   /* EngineServiceLocator::BindShader(s_hologramShader);
     m_pContext->PSSetShaderResources(5, 1, s_hologramNoiseTexture->texture.GetAddressOf());
     s_hologramBuffer[1].y += 0.016f;
-    MATERIAL_REPOSITORY->BindCustomProperties(s_hologramBuffer);
+    MATERIAL_REPOSITORY->BindCustomProperties(s_hologramBuffer);*/
 
     for (ModelComponent& m : modelPoolList) {
         ModelResource* model = m.GetModelResource();
@@ -173,7 +175,8 @@ void OpaqueRenderPass::DrawMeshList(const std::vector<ModelMesh>& meshes, const 
         // マテリアルバインド
         MaterialBufferData materialBufferData = mat.materialResource->CreateBufferData();
         materialBufferData.baseColor = mat.isOverrideBaseColor ? mat.overrideBaseColor : materialBufferData.baseColor;
-        materialBufferData.emissiveColor = mat.isOverrideEmissiveColor ? mat.overrideEmissiveColor : materialBufferData.emissiveColor;
+        materialBufferData.emissiveColor = mat.isOverrideEmissive ? mat.overrideEmissiveColor : materialBufferData.emissiveColor;
+        materialBufferData.emissiveIntensity = mat.isOverrideEmissive ? mat.overrideEmissiveIntensity : materialBufferData.emissiveIntensity;
         MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);
         MATERIAL_REPOSITORY->BindMaterialTexture(*mat.materialResource);
 
