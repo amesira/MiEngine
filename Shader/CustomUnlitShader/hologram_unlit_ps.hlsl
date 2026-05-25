@@ -34,8 +34,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     worldUV.y = frac(worldUV.y); // Y軸繰り返す
     
     // テクスチャの色を取得・乗算
-    float4 col = g_HoloColor * g_Texture.Sample(g_SamplerState, worldUV);
-    if (col.a <= 0.01f) discard;
+    float4 col = g_Texture.Sample(g_SamplerState, worldUV);
     
     float3 emission = g_HoloColor.rgb * g_HoloIntensity;
     col = float4(col.rgb + emission, col.a);
@@ -47,6 +46,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     // エッジ部分を強調
     col.rgb *= edge * edge;
+    if (col.a <= 0.01f) discard;
     
     return col;
 }

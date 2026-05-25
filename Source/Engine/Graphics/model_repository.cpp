@@ -283,6 +283,12 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         {
             MaterialResource material = CreateMaterialResource(mat);
             material.name = filePath + "_mat%" + mat->GetName().C_Str();
+            if (isSkinnedMesh) {
+                material.shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::SkinnedLit);
+            }
+            else {
+                material.shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Lit);
+            }
 
             // マテリアルセットアップ
             if (modelMesh.materialIndex < model->materialResources.size() && modelMesh.materialIndex >= 0) {

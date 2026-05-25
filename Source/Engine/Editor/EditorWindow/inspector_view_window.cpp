@@ -32,6 +32,7 @@
 #include "Engine/Framework/Component/decal_component.h"
 
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 void InspectorViewWindow::Draw()
 {
@@ -381,9 +382,13 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         materialInstance.isOverrideEmissive = overrideEmissiveColor;
                     }
                     if (materialInstance.isOverrideEmissive) {
-                        auto emissiveColor = materialInstance.overrideEmissiveColor;
+                        XMFLOAT3 emissiveColor = materialInstance.overrideEmissiveColor;
                         if (ImGui::ColorEdit3("Emissive Color", &emissiveColor.x)) {
                             materialInstance.overrideEmissiveColor = emissiveColor;
+                        }
+                        float emissiveIntensity = materialInstance.overrideEmissiveIntensity;
+                        if (ImGui::DragFloat("Emissive Intensity", &emissiveIntensity, 0.1f, 0.0f, 10.0f)) {
+                            materialInstance.overrideEmissiveIntensity = emissiveIntensity;
                         }
                     }
 
@@ -391,14 +396,26 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
 
                     MaterialResource* matRes = materialInstance.materialResource;
                     if (matRes) {
+                        char buffer[256];
+
                         // マテリアルリソースの名前を表示
                         std::string matResName = matRes->name;
                         ImGui::Text("Material Resource:");
                         ImGui::Text("  %s", matResName.c_str());
 
+                        ImGui::Text("Shader Program:");
+                        std::string shaderName = matRes->shaderProgram ? matRes->shaderProgram->name : "None";
+                        strcpy(buffer, shaderName.c_str());
+                        if (ImGui::InputText("Shader Program", buffer, sizeof(buffer))) {
+                            shaderName = buffer;
+                            ShaderProgramResource* newShaderRes = SHADER_REPOSITORY->GetShaderProgramResource(shaderName);
+                            if (newShaderRes) {
+                                matRes->shaderProgram = newShaderRes;
+                            }
+                        }
+
                         // マテリアルリソースのテクスチャ
                         ImGui::Text("Textures:");
-                        char buffer[256];
                         std::string newTexName;
                         TextureResource* newTexRes = nullptr;
 
@@ -449,6 +466,10 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         // マテリアルリソースのプロパティ
                         ImGui::Text("Params:");
 
+                        XMFLOAT4 baseColor = matRes->baseColor;
+                        if (ImGui::ColorEdit4("Base Color", &baseColor.x)) {
+                            matRes->baseColor = baseColor;
+                        }
                         float metallic = matRes->metallic;
                         if (ImGui::DragFloat("Metallic", &metallic, 0.01f, 0.0f, 1.0f)) {
                             matRes->metallic = metallic;
@@ -457,6 +478,15 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         if (ImGui::DragFloat("Roughness", &roughness, 0.01f, 0.0f, 1.0f)) {
                             matRes->roughness = roughness;
                         }
+                        XMFLOAT3 emissiveColor = matRes->emissiveColor;
+                        if (ImGui::ColorEdit3("Emissive Color", &emissiveColor.x)) {
+                            matRes->emissiveColor = emissiveColor;
+                        }
+                        float emissiveIntensity = matRes->emissiveIntensity;
+                        if (ImGui::DragFloat("Emissive Intensity", &emissiveIntensity, 0.1f, 0.0f, 10.0f)) {
+                            matRes->emissiveIntensity = emissiveIntensity;
+                        }
+
                     }
 
                     ImGui::EndChild();

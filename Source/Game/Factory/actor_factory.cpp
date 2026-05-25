@@ -62,6 +62,7 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     if (!materialSlots.empty()) {
         MaterialResource customMaterial;
         customMaterial.name = "PlayerMaterial";
+        customMaterial.shaderProgram = EngineServiceLocator::GetShaderRepository()->GetShaderProgramResource(ShaderBase::SkinnedLit);
         materialSlots[0].materialResource = EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(customMaterial);
     }
 

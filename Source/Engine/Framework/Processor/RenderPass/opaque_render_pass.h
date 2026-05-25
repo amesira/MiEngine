@@ -22,6 +22,8 @@ private:
 
     TextureResource* m_defaultTexture = nullptr;
 
+    std::string m_currentShaderName;
+
 public:
     void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void    Finalize() override;

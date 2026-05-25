@@ -18,6 +18,7 @@ using namespace DirectX;
 
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+#define SHADER_MANAGER EngineServiceLocator::GetShaderManager()
 
 static TextureResource* s_testNormalTexture = nullptr;
 
@@ -45,7 +46,7 @@ void OpaqueRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
     s_hologramNoiseTexture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\hologram_noise.png");
     
     s_hologramBuffer[0] = XMFLOAT4(0, 1, 1, 1);
-    s_hologramBuffer[1] = XMFLOAT4(1, 0, 0, 0);
+    s_hologramBuffer[1] = XMFLOAT4(10, 0, 0, 0);
 }
 
 // OpaqueRenderPassの終了処理
@@ -68,58 +69,13 @@ void OpaqueRenderPass::Process(IScene* pScene)
 
     auto& modelPoolList = modelPool->GetList();
 
-    // 通常モデル描画
-    EngineServiceLocator::BindShader(ShaderBase::Lit);
+    m_currentShaderName = "None";
 
-   /* EngineServiceLocator::BindShader(s_hologramShader);
-    m_pContext->PSSetShaderResources(5, 1, s_hologramNoiseTexture->texture.GetAddressOf());
-    s_hologramBuffer[1].y += 0.016f;
-    MATERIAL_REPOSITORY->BindCustomProperties(s_hologramBuffer);*/
+    s_hologramBuffer[1].y += 0.01f;
 
     for (ModelComponent& m : modelPoolList) {
         ModelResource* model = m.GetModelResource();
         if (!model)continue;
-        if (model->vertexType != ModelResource::VertexType::Static) continue;
-
-        TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
-
-        // component無効チェック
-        if (!t)continue;
-        if (!m.GetEnable() || !t->GetEnable())continue;
-
-        // ワールド行列計算
-        XMMATRIX worldMatrix = XMMatrixIdentity();
-        {
-            XMMATRIX scaling = XMMatrixScaling(
-                t->GetScaling().x,
-                t->GetScaling().y,
-                t->GetScaling().z);
-            XMMATRIX rotation = XMMatrixRotationQuaternion(t->GetRotationVector());
-            XMMATRIX translation = XMMatrixTranslation(
-                t->GetPosition().x,
-                t->GetPosition().y,
-                t->GetPosition().z);
-
-            worldMatrix = scaling * rotation * translation;
-        }
-
-        // Transformバッファをバインド
-        EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
-
-        // プリミティブトポロジ設定
-        m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        // メッシュリストの描画
-        DrawMeshList(model->meshes, m.GetMaterialSlots());
-    }
-
-    // SkinnedModel描画
-    EngineServiceLocator::BindShader(ShaderBase::SkinnedLit);
-    
-    for (ModelComponent& m : modelPoolList) {
-        ModelResource* model = m.GetModelResource();
-        if (!model)continue;
-        if (model->vertexType != ModelResource::VertexType::Skinned) continue;
 
         TransformComponent* t = transformPool->GetByGameObjectID(m.GetOwner()->GetID());
 
@@ -147,7 +103,9 @@ void OpaqueRenderPass::Process(IScene* pScene)
         EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
 
         // スキニングCBバインド
-        EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
+        if (model->vertexType == ModelResource::VertexType::Skinned) {
+            EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
+        }
 
         // プリミティブトポロジ設定
         m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -155,7 +113,6 @@ void OpaqueRenderPass::Process(IScene* pScene)
         // メッシュリストの描画
         DrawMeshList(model->meshes, m.GetMaterialSlots());
     }
-
 }
 
 // ------------------------------------- private
@@ -171,6 +128,22 @@ void OpaqueRenderPass::DrawMeshList(const std::vector<ModelMesh>& meshes, const 
 
         // Opeque以外は描画しない
         if (mat.materialResource->renderMode != RenderMode::Opaque)continue;
+
+        if (mat.materialResource->shaderProgram != nullptr){
+            if (m_currentShaderName != mat.materialResource->shaderProgram->name)
+            {
+                // シェーダー切り替え
+                EngineServiceLocator::BindShader(mat.materialResource->shaderProgram);
+                m_currentShaderName = mat.materialResource->shaderProgram->name;
+
+                if (m_currentShaderName == "HologramUnlit")
+                {
+                    // ホログラムシェーダー用の追加バッファをセット
+                    m_pContext->PSSetShaderResources(5, 1, s_hologramNoiseTexture->texture.GetAddressOf());
+                    MATERIAL_REPOSITORY->BindCustomProperties(s_hologramBuffer);
+                }
+            }
+        }
 
         // マテリアルバインド
         MaterialBufferData materialBufferData = mat.materialResource->CreateBufferData();

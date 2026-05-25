@@ -36,7 +36,6 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     //normalMap = normalMap * 2.0f - 1.0f;
     //ps_in.normal = ps_in.tangent * normalMap.x + ps_in.binormal * normalMap.y + ps_in.normal * normalMap.z;
     
-    
     // ライトの影響を加算
     if (g_EnableLighting != 0)
     {
