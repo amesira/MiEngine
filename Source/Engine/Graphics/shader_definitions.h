@@ -9,6 +9,7 @@ namespace ShaderDefinitions {
     enum class VertexType {
         Model,          // モデル用頂点
         SkinnedModel,   // スキンメッシュ用頂点
+        Ui,             // UI用頂点
         Sprite,         // スプライト用頂点
 
         None,           // 頂点情報なし
@@ -37,14 +38,14 @@ namespace ShaderDefinitions {
         XMUINT4  boneIndices; // ボーンのインデックス
         XMFLOAT4 boneWeights; // ボーンの重み
     };
-    //struct UnlitVertex {
-    //    XMFLOAT3 position;  // 頂点の位置
-    //    XMFLOAT3 normal;    // 頂点の法線
-    //    XMFLOAT4 color;     // 頂点の色
-    //    XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
-    //};
+    struct UiVertex {
+        XMFLOAT3 position;  // 頂点の位置
+        XMFLOAT4 color;     // 頂点の色
+        XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
+    };
     struct SpriteVertex {
         XMFLOAT3 position;  // 頂点の位置
+        XMFLOAT3 normal;    // 頂点の法線
         XMFLOAT4 color;     // 頂点の色
         XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
     };
@@ -57,6 +58,8 @@ namespace ShaderDefinitions {
         SkinnedLit, // スキンメッシュ用ライト付きシェーダー
         Unlit,      // ライトなしシェーダー
         Ui,         // UIシェーダー
+        SpriteLit,  // スプライトシェーダー
+        SpriteUnlit,// ライトなしスプライトシェーダー
         FullScreen, // フルスクリーンクワッドシェーダー
         MAX
     };
@@ -67,6 +70,8 @@ namespace ShaderDefinitions {
         "SkinnedLit",
         "Unlit",
         "Ui",
+        "SpriteLit",
+        "SpriteUnlit",
         "FullScreen",
     };
 

@@ -111,7 +111,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
         SetDepthState(DEPTHSTATE_ENABLE);
 
         // Shader設定
-        EngineServiceLocator::BindShader(ShaderBase::Ui);
+        EngineServiceLocator::BindShader(ShaderBase::SpriteLit);
 
         for (SpriteRendererComponent& s : spriteRendererPoolList) {
             TransformComponent* t = transformPool->GetByGameObjectID(s.GetOwner()->GetID());
@@ -154,17 +154,17 @@ void OpaqueRenderPass::Process(IScene* pScene)
 
             SpriteVertex* v = (SpriteVertex*)msr.pData;
             v[0].position = XMFLOAT3(-5.0f, -5.0f, 0.0f);
-            v[0].color = s.GetColor();
             v[0].texCoord = XMFLOAT2(0.0f, 1.0f);
             v[1].position = XMFLOAT3(5.0f, -5.0f, 0.0f);
-            v[1].color = s.GetColor();
             v[1].texCoord = XMFLOAT2(1.0f, 1.0f);
             v[2].position = XMFLOAT3(-5.0f, 5.0f, 0.0f);
-            v[2].color = s.GetColor();
             v[2].texCoord = XMFLOAT2(0.0f, 0.0f);
             v[3].position = XMFLOAT3(5.0f, 5.0f, 0.0f);
-            v[3].color = s.GetColor();
             v[3].texCoord = XMFLOAT2(1.0f, 0.0f);
+            for (int i = 0; i < 4; i++) {
+                v[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+                v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+            }
 
             UINT stride = sizeof(SpriteVertex);
             UINT offset = 0;

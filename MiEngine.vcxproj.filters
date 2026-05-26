@@ -49,6 +49,10 @@
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\ui_ps.hlsl" />
     <FxCompile Include="Shader\ui_vs.hlsl" />
+    <FxCompile Include="Shader\sprite_lit_ps.hlsl" />
+    <FxCompile Include="Shader\sprite_lit_vs.hlsl" />
+    <FxCompile Include="Shader\sprite_unlit_ps.hlsl" />
+    <FxCompile Include="Shader\sprite_unlit_vs.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
