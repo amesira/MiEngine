@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl">
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\lit_ps.hlsl">
@@ -47,22 +47,22 @@
     <FxCompile Include="Shader\PostEffect\brightness_extract_ps.hlsl" />
     <FxCompile Include="Shader\PostEffect\gaussian_blur_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
-    <FxCompile Include="Shader\sprite_ps.hlsl" />
-    <FxCompile Include="Shader\sprite_vs.hlsl" />
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\ui_ps.hlsl" />
+    <FxCompile Include="Shader\ui_vs.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\CustomUnlitShader\hologram_unlit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\full_screen_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\full_screen_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -70,10 +70,10 @@
     <FxCompile Include="Shader\PostEffect\tone_mapping_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
-    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">

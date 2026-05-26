@@ -14,7 +14,7 @@ class ShaderProgramResource;
 class CollectorSlider  {
 private:
     TextureResource* m_pDefaultTexture = nullptr;
-    ShaderProgramResource* m_pDefaultSpriteShader = nullptr;
+    ShaderProgramResource* m_pDefaultUiShader = nullptr;
 
 public:
     void Initialize();

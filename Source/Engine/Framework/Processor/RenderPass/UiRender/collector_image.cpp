@@ -17,7 +17,7 @@
 // 初期化
 void CollectorImage::Initialize()
 {
-    m_pDefaultSpriteShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
+    m_pDefaultUiShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Ui);
 }
 
 // 終了処理
@@ -47,7 +47,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2
         DrawBatch2D batch;
         batch.orderInLayer = rect->GetPosition().z;
         batch.texture = image->GetTextureResource()->texture.Get();
-        batch.shaderProgram = m_pDefaultSpriteShader;
+        batch.shaderProgram = m_pDefaultUiShader;
 
         DrawCommand2DInstance instance;
         instance.position = { rect->GetPosition().x, rect->GetPosition().y };

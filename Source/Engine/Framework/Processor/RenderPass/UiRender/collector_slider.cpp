@@ -21,7 +21,7 @@
 void CollectorSlider::Initialize()
 {
     m_pDefaultTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset/Texture/white.bmp");
-    m_pDefaultSpriteShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
+    m_pDefaultUiShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Ui);
 }
 
 void CollectorSlider::Finalize()
@@ -51,7 +51,7 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch
         DrawBatch2D batch;
         batch.orderInLayer = rect->GetPosition().z;
         batch.texture = m_pDefaultTexture->texture.Get();
-        batch.shaderProgram = m_pDefaultSpriteShader;
+        batch.shaderProgram = m_pDefaultUiShader;
 
         // BG描画コマンド
         DrawCommand2DInstance instance;

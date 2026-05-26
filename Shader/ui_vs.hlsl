@@ -1,5 +1,5 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
-// sprite_vs.hlsl
+// ui_vs.hlsl
 // 
 // Author：Miu Kitamura
 // Date  ：2026/04/01
@@ -7,7 +7,7 @@
 #include "./Common/transform.hlsl"
 #include "./Common/camera.hlsl"
 
-// 入力用頂点構造体 [Sprite Vertex]
+// 入力用頂点構造体 [Ui Vertex]
 struct VS_INPUT
 {
     float4 posL     : POSITION0;    // 頂点座標
@@ -15,7 +15,7 @@ struct VS_INPUT
     float2 texcoord : TEXCOORD0;    // テクスチャ座標（U,V）
 };
 
-// 出力用頂点構造体 [Sprite Vertex]
+// 出力用頂点構造体 [Ui Vertex]
 struct VS_OUTPUT
 {
     float4 posH     : SV_Position; // 変換済み頂点座標

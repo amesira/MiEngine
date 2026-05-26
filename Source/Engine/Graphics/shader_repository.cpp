@@ -41,11 +41,11 @@ void ShaderRepository::Initialize()
         unlitShader.pixelShader = GeneratePixelShaderResource("unlit_ps.cso");
         GenerateShaderProgramResource(unlitShader);
 
-        ShaderProgramResource spriteShader;
-        spriteShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Sprite)];
-        spriteShader.vertexShader = GenerateVertexShaderResource("sprite_vs.cso", VertexType::Sprite);
-        spriteShader.pixelShader = GeneratePixelShaderResource("sprite_ps.cso");
-        GenerateShaderProgramResource(spriteShader);
+        ShaderProgramResource uiShader;
+        uiShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Ui)];
+        uiShader.vertexShader = GenerateVertexShaderResource("ui_vs.cso", VertexType::Sprite);
+        uiShader.pixelShader = GeneratePixelShaderResource("ui_ps.cso");
+        GenerateShaderProgramResource(uiShader);
 
         ShaderProgramResource fullScreenShader;
         fullScreenShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::FullScreen)];
@@ -283,7 +283,7 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
     HRESULT hr = m_pDevice->CreateInputLayout(&(layout[0]), num_elements, vbData.vsBinaryPointer, vbData.fileSize, outInputLayout);
     delete[] vbData.vsBinaryPointer;
     if (FAILED(hr)) {
-        hal::dout << "ShaderManager::Initialize() : SpriteShaderの頂点レイアウトの作成に失敗しました" << std::endl;
+        hal::dout << "ShaderManager::Initialize() : UiShaderの頂点レイアウトの作成に失敗しました" << std::endl;
         return false;
     }
 

@@ -50,7 +50,7 @@ void DebugRenderer_DrawFlush(const XMMATRIX& view, const XMMATRIX& projection)
     SetDepthState(DEPTHSTATE_DISABLE);
 
     // シェーダーをバインド
-    EngineServiceLocator::BindShader(ShaderBase::Sprite);
+    EngineServiceLocator::BindShader(ShaderBase::Ui);
 
     // 定数バッファを更新
     EngineServiceLocator::UpdateTransformCB({ XMMatrixIdentity(), XMMatrixIdentity() });

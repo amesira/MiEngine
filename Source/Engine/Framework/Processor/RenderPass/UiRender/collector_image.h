@@ -13,7 +13,7 @@ class ShaderProgramResource;
 
 class CollectorImage {
 private:
-    ShaderProgramResource* m_pDefaultSpriteShader = nullptr;
+    ShaderProgramResource* m_pDefaultUiShader = nullptr;
     
 public:
     void Initialize();

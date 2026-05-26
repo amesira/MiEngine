@@ -35,13 +35,13 @@ HLSL のソースファイルを置くフォルダです。
 例:
 
 - `Shader/BaseShader/`
-- `Shader/CustomSpriteShader/`
+- `Shader/CustomUiShader/`
 
 実行時に直接読む対象ではなく、ビルドまたは手動コンパイルによって `.cso` を生成する元データです。
 
 ## ルート直下の `.cso`
 
-`lit_vs.cso`、`lit_ps.cso`、`sprite_vs.cso` などのコンパイル済みシェーダーバイナリです。
+`lit_vs.cso`、`lit_ps.cso`、`ui_vs.cso` などのコンパイル済みシェーダーバイナリです。
 
 `ShaderRepository` は現在、ファイルパスとして渡された `.cso` を `std::ifstream` で読み込み、Direct3D の `CreateVertexShader` / `CreatePixelShader` に渡して GPU リソースを作成します。
 
@@ -52,10 +52,10 @@ HLSL のソースファイルを置くフォルダです。
 - `skinned_lit_vs.cso`
 - `unlit_vs.cso`
 - `unlit_ps.cso`
-- `sprite_vs.cso`
-- `sprite_ps.cso`
+- `ui_vs.cso`
+- `ui_ps.cso`
 - `decal_lit_ps.cso`
-- `ttf_sprite_ps.cso`
+- `ttf_ui_ps.cso`
 
 ## `shader_definitions.h`
 
@@ -80,7 +80,7 @@ None
 Lit
 SkinnedLit
 Unlit
-Sprite
+Ui
 ```
 
 ## `shader_resource.h`
@@ -163,7 +163,7 @@ Direct3D の device / context を取得し、標準のベースシェーダー�
 - `Lit`
 - `SkinnedLit`
 - `Unlit`
-- `Sprite`
+- `Ui`
 
 `SkinnedLit` は、頂点シェーダーだけ `skinned_lit_vs.cso` を使い、ピクセルシェーダーは `Lit` と同じものを共有します。
 
@@ -289,9 +289,9 @@ m_decalShader = SHADER_REPOSITORY->GenerateShaderProgramResource(decalShader);
 
 ```cpp
 ShaderProgramResource ttfShader;
-ttfShader.name = "TTFSprite";
-ttfShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
-ttfShader.overridePixelShader = SHADER_REPOSITORY->GeneratePixelShaderResource("ttf_sprite_ps.cso");
+ttfShader.name = "TTFUi";
+ttfShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Ui);
+ttfShader.overridePixelShader = SHADER_REPOSITORY->GeneratePixelShaderResource("ttf_ui_ps.cso");
 m_pFontShader = SHADER_REPOSITORY->GenerateShaderProgramResource(ttfShader);
 ```
 

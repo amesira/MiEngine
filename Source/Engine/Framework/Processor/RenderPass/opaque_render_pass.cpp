@@ -111,7 +111,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
         SetDepthState(DEPTHSTATE_ENABLE);
 
         // Shader設定
-        EngineServiceLocator::BindShader(ShaderBase::Sprite);
+        EngineServiceLocator::BindShader(ShaderBase::Ui);
 
         for (SpriteRendererComponent& s : spriteRendererPoolList) {
             TransformComponent* t = transformPool->GetByGameObjectID(s.GetOwner()->GetID());

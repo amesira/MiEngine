@@ -56,7 +56,7 @@ namespace ShaderDefinitions {
         Lit,        // ライト付きシェーダー
         SkinnedLit, // スキンメッシュ用ライト付きシェーダー
         Unlit,      // ライトなしシェーダー
-        Sprite,     // スプライトシェーダー
+        Ui,         // UIシェーダー
         FullScreen, // フルスクリーンクワッドシェーダー
         MAX
     };
@@ -66,7 +66,7 @@ namespace ShaderDefinitions {
         "Lit",
         "SkinnedLit",
         "Unlit",
-        "Sprite",
+        "Ui",
         "FullScreen",
     };
 

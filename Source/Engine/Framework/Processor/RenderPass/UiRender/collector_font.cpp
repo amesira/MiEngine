@@ -82,9 +82,9 @@ void CollectorFont::Initialize()
 
 	// TTF用シェーダープログラム作成
     ShaderProgramResource ttfShader;
-    ttfShader.name = "TTFSprite";
-    ttfShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Sprite);
-    ttfShader.overridePixelShader = SHADER_REPOSITORY->GeneratePixelShaderResource("ttf_sprite_ps.cso");
+    ttfShader.name = "TTFUi";
+    ttfShader.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Ui);
+    ttfShader.overridePixelShader = SHADER_REPOSITORY->GeneratePixelShaderResource("ttf_ui_ps.cso");
     m_pFontShader = SHADER_REPOSITORY->GenerateShaderProgramResource(ttfShader);
 }
 
