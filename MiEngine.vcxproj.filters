@@ -68,6 +68,12 @@
     </FxCompile>
     <FxCompile Include="Shader\PostEffect\downsample_4_ps.hlsl" />
     <FxCompile Include="Shader\PostEffect\tone_mapping_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomSpriteShader\ttf_sprite_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -530,6 +536,8 @@
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
+    <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

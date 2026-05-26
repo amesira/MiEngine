@@ -26,7 +26,7 @@ void PlayerVisualMachineBehavior::Start()
     if (!owner) return;
 
     m_transform = owner->GetComponent<TransformComponent>();
-    m_animation = owner->GetComponent<AnimationComponent>();
+   // m_animation = owner->GetComponent<AnimationComponent>();
 }
 
 void PlayerVisualMachineBehavior::Update()
@@ -52,12 +52,12 @@ void PlayerVisualMachineBehavior::UpdateVisualMachine(PlayerContext& context, fl
         UpdateTilt(context, deltaTime);
     }
 
-    if (context.state == PlayerState::Idle) {
-        m_animation->SetAnimationState(1, 1.0f);
-    }
-    else {
-        m_animation->SetAnimationState(0, 1.0f);
-    }
+    //if (context.state == PlayerState::Idle) {
+    //    m_animation->SetAnimationState(1, 1.0f);
+    //}
+    //else {
+    //    m_animation->SetAnimationState(0, 1.0f);
+    //}
 
     if (!GAME_EFFECT_CONTROLLER) return;
 

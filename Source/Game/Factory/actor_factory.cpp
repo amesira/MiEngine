@@ -14,6 +14,7 @@
 #include "Engine/Framework/Component/rigidbody_component.h"
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/animation_component.h"
+#include "Engine/Framework/Component/sprite_renderer_component.h"
 
 // behavior
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
@@ -36,12 +37,16 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     // component生成・登録
     TransformComponent* transform = player->AddComponent<TransformComponent>();
     BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
-    ModelComponent* modelComp = player->AddComponent<ModelComponent>();
+    //ModelComponent* modelComp = player->AddComponent<ModelComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
-    AnimationComponent* animation = player->AddComponent<AnimationComponent>();
+    //AnimationComponent* animation = player->AddComponent<AnimationComponent>();
+
+    SpriteRendererComponent* spriteRenderer = player->AddComponent<SpriteRendererComponent>();
 
     // component設定
     transform->SetPosition(position);
+    transform->SetScaling({ 1.0f, 1.0f, 1.0f });
+
     rigidbody->SetMass(3.0f);
     rigidbody->SetFriction({ 0.8f, 1.0f, 0.8f });
 
@@ -54,17 +59,9 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
         });
     collider->SetCenter({ 0.0f, collider->GetScale().y / 5.0f * 3.0f, 0.0f });
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\player_model.fbx");
-    int runningAnimIndex = EngineServiceLocator::GetModelRepository()->LoadAnimation(modelResource, "asset\\Model\\player_running.anim.fbx");
-    int idleAnimIndex = EngineServiceLocator::GetModelRepository()->LoadAnimation(modelResource, "asset\\Model\\player_idle.anim.fbx");
-    modelComp->SetModelResource(modelResource);
-    auto& materialSlots = modelComp->GetMaterialSlots();
-    if (!materialSlots.empty()) {
-        MaterialResource customMaterial;
-        customMaterial.name = "PlayerMaterial";
-        customMaterial.shaderProgram = EngineServiceLocator::GetShaderRepository()->GetShaderProgramResource(ShaderBase::SkinnedLit);
-        materialSlots[0].materialResource = EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(customMaterial);
-    }
+    spriteRenderer->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+    TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\tile_0040.png");
+    spriteRenderer->SetTextureResource(texture);
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();

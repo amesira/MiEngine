@@ -44,63 +44,21 @@ void GameScene::Initialize()
     EnvironmentFactory::AttachCameraControl(camera);
     camera->SetName("MainCamera");
 
-    GameObject* cube = this->CreateGameObject();
-    Factory::CreateBox(cube, { 0.0f,-1.5f,10.0f }, {0.0f, 0.0f, 0.0f}, {40.0f, 1.0f, 40.0f}, {0.5f, 0.5f, 0.5f, 1.0f});
-    
-
-    cube = this->CreateGameObject();
-    Factory::CreateBox(cube, { -3.0f,1.0f,10.0f }, { 0.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f }, { 0.7f, 0.5f, 0.5f, 1.0f });
-    cube->AddComponent<RigidbodyComponent>();
-    
-    for (int i = 0; i < 5; i++) {
-        cube = this->CreateGameObject();
-        Factory::CreateBox(cube, { 5.0f,2.0f + i * 3.0f,10.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f + i * 0.2f, 0.2f, 0.2f, 1.0f });
-        cube->AddComponent<RigidbodyComponent>();
-    }
-    
     // light
     EnvironmentFactory::CreateDirectionalLight(this, { 0.0f,-1.0f,0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
     EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
 
+    // Field
+    GameObject* field = this->CreateGameObject();
+    Factory::CreateBox(field, { 0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.5f, 1.0f, 0.5f, 1.0f });
+
     // player
     GameObject* player = ActorFactory::CreatePlayer(this, { 0.0f,3.0f,10.0f });
-
-    // ui
-    GameObject* uiText = UiFactory::CreateUiText(this, u8"Hello, World!");
-    UiFactory::SetupUiTransform(uiText, { 300.0f, 100.0f }, { 200.0f, 50.0f });
-
-    GameObject* uiImage = UiFactory::CreateUiImage(this, L"asset\\Texture\\test.jpg");
-    UiFactory::SetupUiTransform(uiImage, { 300.0f, 300.0f }, { 100.0f, 100.0f });
-
-    GameObject* uiSlider = UiFactory::CreateUiSlider(this, { 0.2f, 0.2f, 0.2f, 1.0f }, { 0.8f, 0.8f, 0.8f, 1.0f }, 0.5f);
-    UiFactory::SetupUiTransform(uiSlider, { 300.0f, 500.0f }, { 200.0f, 20.0f });
-
-    // model
-    GameObject* model = this->CreateGameObject();
-    Factory::CreateModel(model, "asset\\Model\\character.fbx", { 3.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f });
 
     // JointGroup
     GameObject* jointGroup = this->CreateGameObject();
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
 
-    // field
-    {
-        /*GameObject* field = this->CreateGameObject();
-        Factory::CreateModel(field, "asset\\Model\\field.fbx", { 0.0f, -1.0f, 10.0f }, { 40.0f, 40.0f, 40.0f });
-        field->GetComponent<ModelComponent>()->GetMaterialSlots()[0].isOverrideBaseColor = true;
-        field->GetComponent<ModelComponent>()->GetMaterialSlots()[0].overrideBaseColor = { 0.5f, 0.5f, 0.5f, 1.0f };*/
-
-        GameObject* tree = this->CreateGameObject();
-        Factory::CreateModel(tree, "asset\\Model\\tree.fbx", { -5.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f });
-
-        GameObject* truck = this->CreateGameObject();
-        Factory::CreateModel(truck, "asset\\Model\\truck.fbx", { 5.0f, 0.0f, 10.0f }, { 1.0f, 1.0f, 1.0f });
-    }
-
-    // decal
-    {
-        GameObject* decal = RenderEffectFactory::CreateDecalEffect(this, {0.0f, 5.0f, 0.5f}, L"asset\\Texture\\test_2.png");
-    }
 
 
 }

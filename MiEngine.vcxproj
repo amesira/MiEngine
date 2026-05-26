@@ -214,10 +214,12 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />

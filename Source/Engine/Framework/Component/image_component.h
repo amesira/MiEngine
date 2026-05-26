@@ -13,13 +13,14 @@ using namespace DirectX;
 
 #include "Engine/Graphics/texture_resource.h"
 
-enum class WorldSpaceType {
-    None,       // 通常表示
-    Billboard,  // 常にカメラ方向を向く
-    HD2D,       // Y軸回りのみカメラ方向を向く
-};
-
 class ImageComponent : public Component {
+public:
+    enum class WorldSpaceType {
+        None,       // 通常表示
+        Billboard,  // 常にカメラ方向を向く
+        HD2D,       // Y軸回りのみカメラ方向を向く
+    };
+
 private:
     TextureResource*   m_pTextureResource = nullptr;
     XMFLOAT4           m_uvRect = { 0.0f,0.0f,1.0f,1.0f };

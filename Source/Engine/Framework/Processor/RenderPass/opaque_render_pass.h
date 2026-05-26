@@ -20,9 +20,11 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
+    // デフォルトテクスチャ
     TextureResource* m_defaultTexture = nullptr;
 
-    std::string m_currentShaderName;
+    // SpriteRenderer用の頂点バッファ
+    ID3D11Buffer* m_pSpriteVertexBuffer = nullptr;
 
 public:
     void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
