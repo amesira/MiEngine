@@ -33,7 +33,7 @@ private:
     float m_minPitch = XMConvertToRadians(-5.0f);
 
     // カメラの距離と高さ
-    float m_followDistance = 20.0f;
+    float m_followDistance = 5.0f;
     float m_followHeight = 2.0f;
 
     // カメラ追従のスムージングパラメータ

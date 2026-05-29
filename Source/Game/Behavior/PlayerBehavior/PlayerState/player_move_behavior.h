@@ -12,15 +12,20 @@
 class TransformComponent;
 class RigidbodyComponent;
 
+class CameraComponent;
+
 class PlayerMoveBehavior : public BehaviorComponent {
 private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
 
-    float   m_moveSpeed = 17.0f;
+    float   m_moveSpeed = 10.0f;
     float   m_jumpForce = 10.0f;
 
     float   m_currentAngleY = 0.0f;
+
+    // メインカメラの参照
+    CameraComponent* m_mainCamera = nullptr;
 
 public:
     PlayerMoveBehavior() = default;

@@ -28,23 +28,46 @@ private:
     XMFLOAT3    m_eyePosition = { 0.0f, 0.0f, -5.0f }; // カメラの位置
 
 public:
+    // カメラの位置、注視点、上方ベクトルの設定・取得
     void    SetAtPosition(XMFLOAT3 atPosition) { m_atPosition = atPosition; }
     XMFLOAT3   GetAtPosition() const { return m_atPosition; }
     XMFLOAT3   GetUpVector() const { return m_upVector; }
 
+    // カメラのFOV設定・取得
     void    SetFov(float fov) { m_fov = fov; }
+    float   GetFov() const { return m_fov; }
+    // カメラのアスペクト比設定・取得
     void    SetAspect(float aspect) { m_aspect = aspect; }
+    float   GetAspect() const { return m_aspect; }
+    // カメラのクリップ距離設定・取得
     void    SetNearClip(float nearClip) { m_nearClip = nearClip; }
     void    SetFarClip(float farClip) { m_farClip = farClip; }
-
-    float   GetFov() const { return m_fov; }
-    float   GetAspect() const { return m_aspect; }
     float   GetNearClip() const { return m_nearClip; }
     float   GetFarClip() const { return m_farClip; }
 
+    // ビュー行列の取得
     XMMATRIX    GetViewMatrix() const { return m_view; }
+    // プロジェクション行列の取得
     XMMATRIX    GetProjectionMatrix() const { return m_projection; }
+    // カメラの位置の取得
     XMFLOAT3    GetEyePosition() const { return m_eyePosition; }
+
+    // カメラ正面方向の取得
+    XMFLOAT3    GetForward() const {
+        XMVECTOR forward = XMVector3Normalize(XMVectorSubtract(XMLoadFloat3(&m_atPosition), XMLoadFloat3(&m_eyePosition)));
+        XMFLOAT3 forwardDir;
+        XMStoreFloat3(&forwardDir, forward);
+        return forwardDir;
+    }
+    // カメラ右方向の取得
+    XMFLOAT3    GetRight() const {
+        XMVECTOR forward = XMVector3Normalize(XMVectorSubtract(XMLoadFloat3(&m_atPosition), XMLoadFloat3(&m_eyePosition)));
+        XMVECTOR up = XMLoadFloat3(&m_upVector);
+        XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, forward));
+        XMFLOAT3 rightDir;
+        XMStoreFloat3(&rightDir, right);
+        return rightDir;
+    }
 
 private:
     friend CameraProcessor;
@@ -57,7 +80,6 @@ private:
 
 public:
     ID3D11ShaderResourceView* GetSnapshot() const { return m_snapshot; }
-
 };
 
 #endif // CAMERA_COMPONENT_H

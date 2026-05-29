@@ -50,7 +50,7 @@ void GameScene::Initialize()
 
     // Field
     GameObject* field = this->CreateGameObject();
-    Factory::CreateBox(field, { 0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.5f, 1.0f, 0.5f, 1.0f });
+    Factory::CreateField(field, { 0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.5f, 0.5f, 0.5f, 1.0f });
 
     // player
     GameObject* player = ActorFactory::CreatePlayer(this, { 0.0f,3.0f,10.0f });

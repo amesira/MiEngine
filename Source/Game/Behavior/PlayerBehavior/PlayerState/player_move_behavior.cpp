@@ -16,6 +16,7 @@
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
+#include "Engine/Framework/Component/camera_component.h"
 
 void PlayerMoveBehavior::Start()
 {
@@ -24,6 +25,16 @@ void PlayerMoveBehavior::Start()
 
     m_transform = owner->GetComponent<TransformComponent>();
     m_rigidbody = owner->GetComponent<RigidbodyComponent>();
+
+    IScene* scene = owner->GetScene();
+
+    // メインカメラの参照取得
+    {
+        GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
+        if (mainCamera) {
+            m_mainCamera = mainCamera->GetComponent<CameraComponent>();
+        }
+    }
 }
 
 void PlayerMoveBehavior::Update()
@@ -70,22 +81,29 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTim
 }
 
 // 回転更新処理
-// ・基本の回転を行う。装飾的な回転はPlayerVisualMachineBehaviorで行う
 void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, float deltaTime)
 {
     const XMFLOAT3& move = context.input.moveInputCameraLocal;
 
-    // 入力がほぼない時は向きを変えない
-    if (MiMath::Length(XMFLOAT3(move.x, 0.0f, move.z)) < 0.01f) {
-        return;
-    }
+    const XMFLOAT3& cameraForward = m_mainCamera->GetForward();
+    const XMFLOAT3& cameraRight = m_mainCamera->GetRight();
 
-    // XZ平面の向きをそのまま角度にする
-    float targetAngleY = atan2f(-move.x, -move.z);
+    // ビルボード回転の計算
+    float billboardAngleY = atan2f(-cameraRight.x, -cameraRight.z);
 
-    // 補完
-    targetAngleY = MiMath::Lerp(m_currentAngleY, targetAngleY, deltaTime * 10.0f);
+    m_currentAngleY = MiMath::Lerp(m_currentAngleY, billboardAngleY, deltaTime * 10.0f);
 
-    m_transform->SetEulerAngle({ 0.0f, targetAngleY, 0.0f });
-    m_currentAngleY = targetAngleY;
+    //// 入力がほぼない時は向きを変えない
+    //if (MiMath::Length(XMFLOAT3(move.x, 0.0f, move.z)) < 0.01f) {
+    //    return;
+    //}
+
+    //// XZ平面の向きをそのまま角度にする
+    //float targetAngleY = atan2f(-move.x, -move.z);
+
+    //// 補完
+    //targetAngleY = MiMath::Lerp(m_currentAngleY, targetAngleY, deltaTime * 10.0f);
+
+    //m_transform->SetEulerAngle({ 0.0f, targetAngleY, 0.0f });
+    //m_currentAngleY = targetAngleY;
 }

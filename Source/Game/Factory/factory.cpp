@@ -22,7 +22,10 @@
 #include "Engine/Framework/Component/animation_component.h"
 
 #include "Engine/engine_service_locator.h"
-
+#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
+#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
+#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)
 {
@@ -119,7 +122,7 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
         };
 
         jointTransform->SetPosition(jointPos);
-        jointModel->SetModelResource(EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\sphere.fbx"));
+        jointModel->SetModelResource(MODEL_REPOSITORY->GetModel("asset\\Model\\sphere.fbx"));
 
         jointRigidbody->SetMass(3.0f);
         if (i == 0 || i == jointCount - 1) {
@@ -130,5 +133,42 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
             jointRigidbody->SetIsKinematic(false);
             jointRigidbody->SetMass(3.0f);
         }
+    }
+}
+
+void Factory::CreateField(GameObject* field, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)
+{
+    field->SetName("Field");
+
+    // component生成・登録
+    TransformComponent* transform = field->AddComponent<TransformComponent>();
+    BoxColliderComponent* collider = field->AddComponent<BoxColliderComponent>();
+    ModelComponent* modelComp = field->AddComponent<ModelComponent>();
+
+    // component設定
+    transform->SetPosition(position);
+    transform->SetEulerAngle(rotation);
+    transform->SetScaling(scaling);
+    collider->SetScale({
+        scaling.x * 2.0f,
+        scaling.y * 2.0f,
+        scaling.z * 2.0f
+        });
+
+    // モデルはキューブを使用する
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    modelComp->SetModelResource(modelResource);
+
+    // テクスチャ設定
+    MaterialResource* fieldMat = MATERIAL_REPOSITORY->GetMaterial("FieldMaterial");
+    if (fieldMat) {
+        fieldMat->shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Lit);
+        fieldMat->baseColor = color;
+        fieldMat->albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\TestField.png");
+        fieldMat->uvTiling = { 40.0f, 40.0f };
+    }
+    auto& materialSlots = modelComp->GetMaterialSlots();
+    if (!materialSlots.empty()) {
+        materialSlots[0].materialResource = fieldMat;
     }
 }

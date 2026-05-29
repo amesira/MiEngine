@@ -135,7 +135,8 @@ void OpaqueRenderPass::Process(IScene* pScene)
                     t->GetPosition().x,
                     t->GetPosition().y,
                     t->GetPosition().z);
-                worldMatrix = scaling * rotation * translation;
+                XMMATRIX flipRotation = XMMatrixRotationY(XM_PI);
+                worldMatrix = scaling * flipRotation * rotation * translation;
             }
 
             // Transformバッファをバインド
@@ -151,15 +152,16 @@ void OpaqueRenderPass::Process(IScene* pScene)
             // 頂点バッファ設定
             D3D11_MAPPED_SUBRESOURCE msr;
             m_pContext->Map(m_pSpriteVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-
+            
+            float h = 0.5f; // スプライトの半分のサイズ
             SpriteVertex* v = (SpriteVertex*)msr.pData;
-            v[0].position = XMFLOAT3(-5.0f, -5.0f, 0.0f);
+            v[0].position = XMFLOAT3(-h, -h, 0.0f);
             v[0].texCoord = XMFLOAT2(0.0f, 1.0f);
-            v[1].position = XMFLOAT3(5.0f, -5.0f, 0.0f);
+            v[1].position = XMFLOAT3(h, -h, 0.0f);
             v[1].texCoord = XMFLOAT2(1.0f, 1.0f);
-            v[2].position = XMFLOAT3(-5.0f, 5.0f, 0.0f);
+            v[2].position = XMFLOAT3(-h, h, 0.0f);
             v[2].texCoord = XMFLOAT2(0.0f, 0.0f);
-            v[3].position = XMFLOAT3(5.0f, 5.0f, 0.0f);
+            v[3].position = XMFLOAT3(h, h, 0.0f);
             v[3].texCoord = XMFLOAT2(1.0f, 0.0f);
             for (int i = 0; i < 4; i++) {
                 v[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);

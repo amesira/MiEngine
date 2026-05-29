@@ -20,7 +20,7 @@ struct RimLightSettings {
 // 半球ライト設定構造体
 struct HemisphereLightSettings {
     bool    enabled = true;                    // 半球ライトの有効/無効
-    float   intensity = 1.0f;                   // 半球ライトの強さ
+    float   intensity = 0.5f;                   // 半球ライトの強さ
     XMFLOAT3 skyColor = { 0.5f, 0.5f, 0.5f };   // 空の色
     XMFLOAT3 groundColor = { 0.2f, 0.2f, 0.2f };// 地面の色
 };

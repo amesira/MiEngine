@@ -37,27 +37,24 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     // component生成・登録
     TransformComponent* transform = player->AddComponent<TransformComponent>();
     BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
-    //ModelComponent* modelComp = player->AddComponent<ModelComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
-    //AnimationComponent* animation = player->AddComponent<AnimationComponent>();
-
     SpriteRendererComponent* spriteRenderer = player->AddComponent<SpriteRendererComponent>();
+
+    const XMFLOAT3& playerScaling = { 2.0f, 2.0f, 2.0f };
 
     // component設定
     transform->SetPosition(position);
-    transform->SetScaling({ 1.0f, 1.0f, 1.0f });
+    transform->SetScaling(playerScaling);
 
     rigidbody->SetMass(3.0f);
     rigidbody->SetFriction({ 0.8f, 1.0f, 0.8f });
 
-    XMFLOAT3 scaling = { 0.8f, 0.8f, 0.8f };
-    transform->SetScaling(scaling);
     collider->SetScale({
-        scaling.x * 1.0f / 0.8f,
-        scaling.y * 2.5f / 0.8f,
-        scaling.z * 1.0f / 0.8f
+        playerScaling.x * 1.0f / 0.8f,
+        playerScaling.y * 1.0f / 0.8f,
+        playerScaling.z * 1.0f / 0.8f
         });
-    collider->SetCenter({ 0.0f, collider->GetScale().y / 5.0f * 3.0f, 0.0f });
+    collider->SetCenter({ 0.0f, 0.0f, 0.0f });
 
     spriteRenderer->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
     TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\tile_0040.png");

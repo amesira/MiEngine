@@ -470,6 +470,14 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         if (ImGui::ColorEdit4("Base Color", &baseColor.x)) {
                             matRes->baseColor = baseColor;
                         }
+                        XMFLOAT2 uvTiling = matRes->uvTiling;
+                        if (ImGui::DragFloat2("UV Tiling", &uvTiling.x, 0.1f)) {
+                            matRes->uvTiling = uvTiling;
+                        }
+                        XMFLOAT2 uvOffset = matRes->uvOffset;
+                        if (ImGui::DragFloat2("UV Offset", &uvOffset.x, 0.1f)) {
+                            matRes->uvOffset = uvOffset;
+                        }
                         float metallic = matRes->metallic;
                         if (ImGui::DragFloat("Metallic", &metallic, 0.01f, 0.0f, 1.0f)) {
                             matRes->metallic = metallic;

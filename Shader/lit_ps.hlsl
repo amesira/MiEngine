@@ -28,7 +28,8 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     float4 col = float4(0, 0, 0, 1);
     
     // テクスチャの色を取得・乗算
-    col = g_Material.baseColor * g_AlbedoTexture.Sample(g_SamplerState, ps_in.texcoord);
+    float2 uv = ps_in.texcoord * g_Material.uvTiling + g_Material.uvOffset;
+    col = g_Material.baseColor * g_AlbedoTexture.Sample(g_SamplerState, uv);
     if (col.a <= 0.01f) discard;
     
     // 法線マップを使用して法線を変換
