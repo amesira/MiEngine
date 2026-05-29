@@ -78,6 +78,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -259,6 +262,7 @@
     <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -542,6 +546,8 @@
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

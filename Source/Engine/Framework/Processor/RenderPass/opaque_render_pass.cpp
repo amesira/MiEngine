@@ -123,6 +123,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
             // Opeque以外は描画しない
             if (s.GetBlendMode() != SpriteRendererComponent::SpriteBlendMode::Opaque)continue;
 
+
             // ワールド行列計算
             XMMATRIX worldMatrix = XMMatrixIdentity();
             {
@@ -149,25 +150,28 @@ void OpaqueRenderPass::Process(IScene* pScene)
             TextureResource* texture = s.GetTextureResource() ? s.GetTextureResource() : m_defaultTexture;
             m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
 
+            XMFLOAT4 uvRect = s.GetUvRect();
+            XMFLOAT4 color = s.GetColor();
+
             // 頂点バッファ設定
             D3D11_MAPPED_SUBRESOURCE msr;
             m_pContext->Map(m_pSpriteVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-            
-            float h = 0.5f; // スプライトの半分のサイズ
-            SpriteVertex* v = (SpriteVertex*)msr.pData;
-            v[0].position = XMFLOAT3(-h, -h, 0.0f);
-            v[0].texCoord = XMFLOAT2(0.0f, 1.0f);
-            v[1].position = XMFLOAT3(h, -h, 0.0f);
-            v[1].texCoord = XMFLOAT2(1.0f, 1.0f);
-            v[2].position = XMFLOAT3(-h, h, 0.0f);
-            v[2].texCoord = XMFLOAT2(0.0f, 0.0f);
-            v[3].position = XMFLOAT3(h, h, 0.0f);
-            v[3].texCoord = XMFLOAT2(1.0f, 0.0f);
-            for (int i = 0; i < 4; i++) {
-                v[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-                v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+            {
+                float h = 0.5f; // スプライトの半分のサイズ
+                SpriteVertex* v = (SpriteVertex*)msr.pData;
+                v[0].position = XMFLOAT3(-h, -h, 0.0f);
+                v[1].position = XMFLOAT3(h, -h, 0.0f);
+                v[2].position = XMFLOAT3(-h, h, 0.0f);
+                v[3].position = XMFLOAT3(h, h, 0.0f);
+                v[0].texCoord = XMFLOAT2(uvRect.x, uvRect.y + uvRect.w);
+                v[1].texCoord = XMFLOAT2(uvRect.x + uvRect.z, uvRect.y + uvRect.w);
+                v[2].texCoord = XMFLOAT2(uvRect.x, uvRect.y);
+                v[3].texCoord = XMFLOAT2(uvRect.x + uvRect.z, uvRect.y);
+                for (int i = 0; i < 4; i++) {
+                    v[i].color = color;
+                    v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+                }
             }
-
             UINT stride = sizeof(SpriteVertex);
             UINT offset = 0;
             m_pContext->IASetVertexBuffers(0, 1, &m_pSpriteVertexBuffer, &stride, &offset);
