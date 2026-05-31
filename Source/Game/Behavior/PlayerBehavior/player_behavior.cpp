@@ -33,6 +33,10 @@
 #include "./PlayerState/player_attack_behavior.h"
 #include "./PlayerState/player_dodge_behavior.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/game_effect_controller.h"
+#define GAME_EFFECT GameControllerLocator::GetGameEffectController()
+
 void PlayerBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
@@ -75,6 +79,13 @@ void PlayerBehavior::Update()
     // 戦闘マシーンの更新
     if (m_combatMachine) {
         m_combatMachine->UpdateCombatMachine(m_context, deltaTime);
+    }
+
+    // テスト：GameEffectControllerのタイムスケール変更タスクをスペースキーで開始
+    if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
+        if (GAME_EFFECT) {
+            GAME_EFFECT->ChangeTimeScaleTemporary(0.5f, 0.5f, 1.0f); // タイムスケールを0.5にして、0.5秒かけて元に戻す
+        }
     }
 
     // アニメーション制御
