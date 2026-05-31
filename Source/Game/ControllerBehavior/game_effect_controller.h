@@ -26,23 +26,17 @@ public:
 private:
     // タイムスケール変更タスク
     class ChangeTimeScaleTask : public SequenceTask {
-    private:
-        float m_startTimeScale;
-        float m_targetTimeScale;
-
+    public:
+        // タイムスケールの開始値と目標値
+        float m_startTimeScale = 1.0f;
+        float m_targetTimeScale = 1.0f;
+        // 時間経過の管理
         float m_duration;
         float m_holdDuration;
 
-        bool m_isTemporary;
-    public:
-        ChangeTimeScaleTask(float targetTimeScale, float duration, float holdDuration = 0.0f):
-            m_targetTimeScale(targetTimeScale), m_duration(duration), m_holdDuration(holdDuration) {
-                m_isTemporary = holdDuration > 0.0f;
-        }
-        void Start() override;
         void Update(float deltaTime) override;
     };
-    ChangeTimeScaleTask* m_changeTimeScaleTask = nullptr;
+    ChangeTimeScaleTask m_changeTimeScaleTask;
 
 public:
     // タイムスケール変更

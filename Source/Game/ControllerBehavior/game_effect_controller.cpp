@@ -24,17 +24,15 @@ GameEffectController::GameEffectController()
     else {
         GameControllerLocator::s_gameEffectController = this;
     }
+
+    // タスクの初期化
+    m_changeTimeScaleTask.Reset();
 }
 
 GameEffectController::~GameEffectController()
 {
     if (GameControllerLocator::s_gameEffectController == this) {
         GameControllerLocator::s_gameEffectController = nullptr;
-    }
-
-    if (m_changeTimeScaleTask) {
-        delete m_changeTimeScaleTask;
-        m_changeTimeScaleTask = nullptr;
     }
 
     s_instanceCount--;
@@ -50,14 +48,7 @@ void GameEffectController::Update()
     float unscaledDeltaTime = FPS_GetUnscaledDeltaTime();
 
     // タスクの更新
-    if (m_changeTimeScaleTask && !m_changeTimeScaleTask->IsFinished()) {
-        m_changeTimeScaleTask->Update(unscaledDeltaTime);
-    }
-    else if (m_changeTimeScaleTask) {
-        delete m_changeTimeScaleTask;
-        m_changeTimeScaleTask = nullptr;
-    }
-
+    m_changeTimeScaleTask.Update(unscaledDeltaTime);
 }
 
 void GameEffectController::DrawComponentInspector()
@@ -67,25 +58,19 @@ void GameEffectController::DrawComponentInspector()
 
 //------------------------------- private
 
-void GameEffectController::ChangeTimeScaleTask::Start()
-{
-    SequenceTask::Start();
-
-    // タスク開始時に現在のタイムスケールを保存
-    m_startTimeScale = FPS_GetTimeScale();
-}
-
 // タイムスケール変更タスクの更新
 void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
 {
-    if (!m_isRunning || m_isFinished) return;
+    if (!m_isRunning) return;
     SequenceTask::Update(deltaTime);
 
     switch(m_taskStep) {
         case 0: {
             // タイムスケールを目標値に向けて変化させる
             float t = 1.0f;
-            if (m_duration > 0.0f) (std::min)(m_taskTimer / m_duration, 1.0f);
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
             float newTimeScale = MiMath::Lerp(m_startTimeScale, m_targetTimeScale, t);
             FPS_SetTimeScale(newTimeScale);
 
@@ -95,27 +80,29 @@ void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
             break;
         }
         case 1: {
-            if (m_isTemporary) {
+            if (m_holdDuration > 0.0f) {
                 // 一定時間保持
                 if (Wait(m_holdDuration, deltaTime)) {
                     AdvanceStep();
                 }
             }
             else {
-                m_isFinished = true; // タスク完了
+                Finish(); // 保持なしで完了
             }
             break;
         }
         case 2: {
             // タイムスケールを元に戻す
             float t = 1.0f;
-            if (m_duration > 0.0f) (std::min)(m_taskTimer / m_duration, 1.0f);
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
             float newTimeScale = MiMath::Lerp(m_targetTimeScale, m_startTimeScale, t);
             FPS_SetTimeScale(newTimeScale);
 
             if (t >= 1.0f) {
                 FPS_SetTimeScale(m_startTimeScale); // 確実に元のタイムスケールに戻す
-                m_isFinished = true; // タスク完了
+                Finish();
             }
             break;
         }
@@ -128,23 +115,23 @@ void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
 // タイムスケール変更
 void GameEffectController::ChangeTimeScale(float timeScale, float duration)
 {
-    if (m_changeTimeScaleTask) {
-        m_changeTimeScaleTask->Cancel();
-        delete m_changeTimeScaleTask;
-    }
+    m_changeTimeScaleTask.Reset();
 
-    m_changeTimeScaleTask = new ChangeTimeScaleTask(timeScale, duration);
-    m_changeTimeScaleTask->Start();
+    m_changeTimeScaleTask.m_startTimeScale = FPS_GetTimeScale();
+    m_changeTimeScaleTask.m_targetTimeScale = timeScale;
+    m_changeTimeScaleTask.m_duration = duration;
+    m_changeTimeScaleTask.m_holdDuration = 0.0f;
+    m_changeTimeScaleTask.Start();
 }
 void GameEffectController::ChangeTimeScaleTemporary(float timeScale, float duration, float holdDuration)
 {
-    if (m_changeTimeScaleTask) {
-        m_changeTimeScaleTask->Cancel();
-        delete m_changeTimeScaleTask;
-    }
+    m_changeTimeScaleTask.Reset();
 
-    m_changeTimeScaleTask = new ChangeTimeScaleTask(timeScale, duration, holdDuration);
-    m_changeTimeScaleTask->Start();
+    m_changeTimeScaleTask.m_startTimeScale = FPS_GetTimeScale();
+    m_changeTimeScaleTask.m_targetTimeScale = timeScale;
+    m_changeTimeScaleTask.m_duration = duration;
+    m_changeTimeScaleTask.m_holdDuration = holdDuration;
+    m_changeTimeScaleTask.Start();
 }
 // タイムスケールを元に戻す
 void GameEffectController::ResetTimeScale(float duration)

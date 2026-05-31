@@ -15,25 +15,33 @@ protected:
     int     m_taskStep = 0;
     float   m_taskTimer = 0.0f;
 
-    bool    m_isFinished = false;
-
 public:
     virtual ~SequenceTask() = default;
+    // タスクの開始（オーバーライドした際も、必ず基本のStart処理を呼び出すこと）
     virtual void Start() {
         m_taskStep = 0;
         m_taskTimer = 0.0f;
         m_isRunning = true;
-        m_isFinished = false;
     }
+    // タスクの更新（オーバーライドした際も、必ず基本のUpdate処理を呼び出すこと）
     virtual void Update(float deltaTime) {
         m_taskTimer += deltaTime;
     }
 
-    bool IsFinished() {
-        return m_isFinished;
+    // タスクのリセット
+    void Reset() {
+        m_taskStep = 0;
+        m_taskTimer = 0.0f;
+        m_isRunning = false;
     }
-    void Cancel() { 
-        m_isFinished = true;
+    // タスクの終了
+    void Finish() {
+        m_isRunning = false;
+    }
+
+    // タスクの状態確認
+    bool IsFinished() {
+        return !m_isRunning;
     }
 
     // タスクのステップを進める
@@ -49,6 +57,8 @@ public:
         }
         return false; // まだ待機中
     }
+
+    
 };
 
 #endif // SEQUENCE_TASK_H
