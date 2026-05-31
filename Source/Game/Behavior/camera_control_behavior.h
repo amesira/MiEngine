@@ -8,6 +8,7 @@
 #define CAMERA_CONTROL_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
 #include "Engine/Core/GamePlay/sequence_task.h"
+#include "Engine/Core/GamePlay/tween_task.h"
 
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -68,40 +69,12 @@ private:
     float m_defaultFollowDistance = 10.0f;
     float m_defaultFov = 80.0f;
 
-    // float値を補間する演出タスク
-    class FloatEffectTask : public SequenceTask {
-    public:
-        float m_startValue = 0.0f;
-        float m_targetValue = 0.0f;
-        float m_endValue = 0.0f;
-        float m_currentValue = 0.0f;
-        float m_duration = 0.0f;
-        float m_holdDuration = 0.0f;
-
-        void Start() override;
-        void Update(float deltaTime) override;
-    };
-
-    // XMFLOAT3値を補間する演出タスク
-    class Vector3EffectTask : public SequenceTask {
-    public:
-        XMFLOAT3 m_startValue = { 0.0f, 0.0f, 0.0f };
-        XMFLOAT3 m_targetValue = { 0.0f, 0.0f, 0.0f };
-        XMFLOAT3 m_endValue = { 0.0f, 0.0f, 0.0f };
-        XMFLOAT3 m_currentValue = { 0.0f, 0.0f, 0.0f };
-        float m_duration = 0.0f;
-        float m_holdDuration = 0.0f;
-
-        void Start() override;
-        void Update(float deltaTime) override;
-    };
-
     // FOV変更タスク
-    FloatEffectTask m_fovTask;
+    FloatTweenTask m_fovTask;
     // カメラ距離変更タスク
-    FloatEffectTask m_cameraDistanceTask;
+    FloatTweenTask m_cameraDistanceTask;
     // カメラオフセット変更タスク
-    Vector3EffectTask m_cameraOffsetTask;
+    Vector3TweenTask m_cameraOffsetTask;
 
 public:
     ~CameraControlBehavior() = default;

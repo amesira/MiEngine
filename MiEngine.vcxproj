@@ -217,6 +217,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
+    <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />

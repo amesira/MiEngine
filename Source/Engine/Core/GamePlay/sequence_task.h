@@ -6,7 +6,6 @@
 //---------------------------------------------------
 #ifndef SEQUENCE_TASK_H
 #define SEQUENCE_TASK_H
-#include "sequence_task.h"
 
 class SequenceTask {
 protected:
