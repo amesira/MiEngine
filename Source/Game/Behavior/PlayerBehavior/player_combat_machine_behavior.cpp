@@ -10,14 +10,17 @@
 
 void PlayerCombatMachineBehavior::Start()
 {
+
 }
 
 void PlayerCombatMachineBehavior::Update()
 {
+
 }
 
 void PlayerCombatMachineBehavior::DrawComponentInspector()
 {
+
 }
 
 //------------------------------- public

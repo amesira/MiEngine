@@ -22,11 +22,12 @@
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/animation_component.h"
 #include "Engine/Framework/Component/camera_component.h"
+#include "Engine/Framework/Component/sprite_animation_component.h"
+#include "Engine/Framework/Component/sprite_renderer_component.h"
 
 // プレイヤーを構成する各種ビヘイビアのヘッダ
 #include "player_state_machine_behavior.h"
 #include "player_combat_machine_behavior.h"
-#include "player_visual_machine_behavior.h"
 
 #include "./PlayerState/player_move_behavior.h"
 #include "./PlayerState/player_attack_behavior.h"
@@ -36,10 +37,12 @@ void PlayerBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
     if (!owner) return;
+
+    m_spriteRenderer = owner->GetComponent<SpriteRendererComponent>();
+    m_spriteAnimation = owner->GetComponent<SpriteAnimationComponent>();
     
     m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
     m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
-    m_visualMachine = owner->GetComponent<PlayerVisualMachineBehavior>();
 
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
     m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
@@ -74,10 +77,17 @@ void PlayerBehavior::Update()
         m_combatMachine->UpdateCombatMachine(m_context, deltaTime);
     }
 
-    // ビジュアルマシーンの更新
-    if (m_visualMachine) {
-        m_visualMachine->UpdateVisualMachine(m_context, deltaTime);
+    // アニメーション制御
+    UpdateAnimation(m_context.state, m_context.combatState);
+
+    // Flip
+    if (m_context.input.moveInputCameraLocal.x > 0.01f) {
+        m_spriteRenderer->SetFlipX(true);
     }
+    else if (m_context.input.moveInputCameraLocal.x < -0.01f) {
+        m_spriteRenderer->SetFlipX(false);
+    }
+
 }
 
 // PlayerBehaviorのインスペクタ表示
@@ -87,7 +97,18 @@ void PlayerBehavior::DrawComponentInspector()
         // 参照状態の表示
         ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
         ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
-        ImGui::Text("VisualMachine: %s", m_visualMachine ? "OK" : "None");
+
+        // 状態の表示
+        ImGui::Text("State: %s", [this]() {
+            switch (m_context.state) {
+            case PlayerState::Idle: return "Idle";
+            case PlayerState::Move: return "Move";
+            case PlayerState::Attack: return "Attack";
+            case PlayerState::Dodge: return "Dodge";
+            case PlayerState::Stunned: return "Stunned";
+            default: return "Unknown";
+            }
+            }());
 
         // 入力状態の表示
         ImGui::Text("MoveInputCameraLocal: (%.2f, %.2f, %.2f)", m_context.input.moveInputCameraLocal.x, m_context.input.moveInputCameraLocal.y, m_context.input.moveInputCameraLocal.z);
@@ -97,7 +118,7 @@ void PlayerBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
-// --------------------------------------------------
+// -------------------------------------------------- private
 
 // プレイヤーの入力処理
 PlayerInput PlayerBehavior::UpdateInput()
@@ -120,16 +141,14 @@ PlayerInput PlayerBehavior::UpdateInput()
     }
     // カメラから見た移動入力の変換
     if (m_mainCamera) {
-        XMFLOAT3 cameraForward = MiMath::Normalize(MiMath::Subtract(m_mainCamera->GetAtPosition(), m_mainCamera->GetEyePosition()));
-        XMFLOAT3 cameraRight = MiMath::Normalize(MiMath::Cross(cameraForward, m_mainCamera->GetUpVector()));
-        cameraRight = MiMath::Multiply(cameraRight, -1.0f);
+        XMFLOAT3 cameraForward = m_mainCamera->GetForward();
+        XMFLOAT3 cameraRight = m_mainCamera->GetRight();
 
         input.moveInputCameraLocal = MiMath::Add(
             MiMath::Multiply(cameraRight, input.horizontal),
             MiMath::Multiply(cameraForward, input.vertical)
         );
     }
-
 
     // ジャンプ入力
     if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
@@ -164,4 +183,40 @@ PlayerInput PlayerBehavior::UpdateInput()
     }
 
     return input;
+}
+
+// プレイヤーのアニメーション制御
+void PlayerBehavior::UpdateAnimation(PlayerState state, PlayerCombatState combatState)
+{
+    if (!m_spriteAnimation) return;
+
+    // 状態と戦闘状態に応じたアニメーションの再生
+    std::string clipName;
+    switch (state) {
+    case PlayerState::Idle:
+        clipName = "Idle";
+        break;
+    case PlayerState::Move:
+        clipName = "Run";
+        break;
+    default:
+        clipName = "Idle";
+        break;
+    }
+
+    //// 戦闘状態に応じたアニメーションの上書き
+    //if (combatState == PlayerCombatState::Aim) {
+    //    clipName = "Aim";
+    //}
+    //else if (combatState == PlayerCombatState::Charge) {
+    //    clipName = "Charge";
+    //}
+    //else if (combatState == PlayerCombatState::Attack) {
+    //    clipName = "Attack";
+    //}
+
+    if (m_spriteAnimation->GetClip(clipName) == nullptr) return;
+    if (m_spriteAnimation->GetClip(clipName) == m_spriteAnimation->GetCurrentClip()) return;
+
+    m_spriteAnimation->Play(clipName);
 }

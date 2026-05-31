@@ -19,6 +19,7 @@ void GameWorld::Initialize()
     // Processor群の初期化
     m_physicsProcessor.Initialize();
     m_animationProcessor.Initialize();
+    m_spriteAnimationProcessor.Initialize();
     m_behaviorProcessor.Initialize();
     m_cameraProcessor.Initialize();
     m_renderProcessor.Initialize();
@@ -36,6 +37,7 @@ void GameWorld::Finalize()
     // Processor群の終了処理
     m_physicsProcessor.Finalize();
     m_animationProcessor.Finalize();
+    m_spriteAnimationProcessor.Finalize();
     m_behaviorProcessor.Finalize();
     m_cameraProcessor.Finalize();
     m_renderProcessor.Finalize();
@@ -57,6 +59,7 @@ void GameWorld::Update()
     // Processor群の更新
     m_physicsProcessor.Process(scene);  // 物理演算制御プロセッサー処理
     m_animationProcessor.Process(scene); // アニメーション制御プロセッサー処理
+    m_spriteAnimationProcessor.Process(scene); // スプライトアニメーション制御プロセッサー処理
     m_behaviorProcessor.Process(scene); // Behavior制御プロセッサー処理
 }
 
@@ -109,18 +112,20 @@ void GameWorld::SetSceneRenderView(IScene* scene, int sceneRenderViewIndex)
 
     RenderView& view = m_renderViews[sceneViewIndex];
     m_mainSceneRenderViewIndex = sceneViewIndex;
-    view.enabled = true;
+    {
+        view.enabled = true;
 
-    view.viewMatrix = sceneCameraSettings.GetViewMatrix();
-    view.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
-    view.eyePosition = sceneCameraSettings.GetPosition();
-    view.aspectRatio = sceneCameraSettings.GetAspect();
+        view.viewMatrix = sceneCameraSettings.GetViewMatrix();
+        view.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
+        view.eyePosition = sceneCameraSettings.GetPosition();
+        view.aspectRatio = sceneCameraSettings.GetAspect();
 
-    view.enable3D = true;
-    view.enableLighting = true;
-    view.enablePostEffect = true;
-    view.enableUI = false;
-    view.enableDebugDraw = true;
+        view.enable3D = true;
+        view.enableLighting = true;
+        view.enablePostEffect = true;
+        view.enableUI = false;
+        view.enableDebugDraw = true;
+    }
     sceneViewIndex++;
     if (sceneViewIndex >= m_renderViews.size()) {
         return;
@@ -129,10 +134,12 @@ void GameWorld::SetSceneRenderView(IScene* scene, int sceneRenderViewIndex)
     // Canvas用のRenderViewを有効化
     RenderView& canvasView = m_renderViews[sceneViewIndex];
     m_canvasRenderViewIndex = sceneViewIndex;
-    canvasView.enabled = true;
+    {
+        canvasView.enabled = true;
 
-    canvasView.enable3D = false;
-    canvasView.enableLighting = false;
-    canvasView.enablePostEffect = false;
-    canvasView.enableUI = true;
+        canvasView.enable3D = false;
+        canvasView.enableLighting = false;
+        canvasView.enablePostEffect = false;
+        canvasView.enableUI = true;
+    }
 }

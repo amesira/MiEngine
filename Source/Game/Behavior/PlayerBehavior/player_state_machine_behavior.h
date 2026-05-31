@@ -11,6 +11,8 @@
 
 class PlayerStateMachineBehavior : public BehaviorComponent {
 private:
+
+
     bool    m_isEnterState = true;  // 状態に入ったばかりかどうかのフラグ
 
 public:

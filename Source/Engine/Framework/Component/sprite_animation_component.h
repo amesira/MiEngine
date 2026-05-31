@@ -56,6 +56,12 @@ public:
         }
         return nullptr;
     }
+    const Clip* GetCurrentClip() const {
+        if (m_currentClipIndex >= 0 && m_currentClipIndex < m_clips.size()) {
+            return &m_clips[m_currentClipIndex];
+        }
+        return nullptr;
+    }
 
     // クリップの再生
     void PlayClip(int clipIndex) {

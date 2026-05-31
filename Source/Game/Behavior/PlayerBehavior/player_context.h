@@ -3,8 +3,6 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-#include "player_visual_request.h"
-
 class PlayerMoveBehavior;
 class PlayerAttackBehavior;
 class PlayerDodgeBehavior;
@@ -16,6 +14,12 @@ enum class PlayerState {
     Attack,
     Dodge,
     Stunned,
+};
+enum class PlayerCombatState {
+    None,
+    Aim,
+    Charge,
+    Attack,
 };
 
 // プレイヤー入力構造体
@@ -62,15 +66,14 @@ struct PlayerContext {
 
     // プレイヤーの状態
     PlayerState state;
+    PlayerCombatState combatState;
 
     // StateMachineから利用するプレイヤー機能
     PlayerMoveBehavior* moveBehavior = nullptr;
     PlayerAttackBehavior* attackBehavior = nullptr;
     PlayerDodgeBehavior* dodgeBehavior = nullptr;
 
-    // CombatMachineから利用する武器
+    // CombatMachineから利用する機能
 
-    // VisualMachineから利用する見た目関連のリクエスト
-    PlayerVisualRequest visualRequest;
 
 };

@@ -13,6 +13,7 @@
 #include "Engine/Framework/Processor/camera_processor.h"
 #include "Engine/Framework/Processor/render_processor.h"
 #include "Engine/Framework/Processor/animation_processor.h"
+#include "Engine/Framework/Processor/sprite_animation_processor.h"
 
 #include <vector>
 #include "Engine/render_view.h"
@@ -25,6 +26,7 @@ private:
     // Processor群
     PhysicsProcessor   m_physicsProcessor;
     AnimationProcessor m_animationProcessor;
+    SpriteAnimationProcessor m_spriteAnimationProcessor;
     BehaviorProcessor  m_behaviorProcessor;
 
     std::vector<RenderView> m_renderViews;

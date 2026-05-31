@@ -15,12 +15,12 @@
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/animation_component.h"
 #include "Engine/Framework/Component/sprite_renderer_component.h"
+#include "Engine/Framework/Component/sprite_animation_component.h"
 
 // behavior
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
 #include "Game/Behavior/PlayerBehavior/player_state_machine_behavior.h"
 #include "Game/Behavior/PlayerBehavior/player_combat_machine_behavior.h"
-#include "Game/Behavior/PlayerBehavior/player_visual_machine_behavior.h"
 
 #include "Game/Behavior/PlayerBehavior/PlayerState/player_move_behavior.h"
 #include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
@@ -39,6 +39,7 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
     SpriteRendererComponent* spriteRenderer = player->AddComponent<SpriteRendererComponent>();
+    SpriteAnimationComponent* spriteAnimation = player->AddComponent<SpriteAnimationComponent>();
 
     const XMFLOAT3& playerScaling = { 2.0f, 2.0f, 2.0f };
 
@@ -56,16 +57,41 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
         });
     collider->SetCenter({ 0.0f, 0.0f, 0.0f });
 
-    spriteRenderer->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-    TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\tile_0040.png");
+    TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\player_sheet.png");
     spriteRenderer->SetTextureResource(texture);
+    spriteRenderer->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+    spriteRenderer->SetUvRect({ 0.0f, 0.0f, 0.5f, 0.5f });
+
+    SpriteAnimationComponent::Clip idleClip;
+    {
+        idleClip.name = "Idle";
+        idleClip.frames = {
+            { texture, {0.0f, 0.0f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
+            { texture, {0.0f, 0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
+        };
+        idleClip.speed = 1.0f;
+        idleClip.loop = true;
+    }
+    spriteAnimation->AddClip(idleClip);
+
+    SpriteAnimationComponent::Clip runClip;
+    {
+        runClip.name = "Run";
+        runClip.frames = {
+            { texture, {0.0f, 0.0f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f },
+            { texture, {0.5f, 0.0f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f },
+            { texture, {0.0f, 0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f },
+        };
+        runClip.speed = 1.0f;
+        runClip.loop = true;
+    }
+    spriteAnimation->AddClip(runClip);
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
 
     player->AddComponent<PlayerStateMachineBehavior>();
     player->AddComponent<PlayerCombatMachineBehavior>();
-    player->AddComponent<PlayerVisualMachineBehavior>();
 
     player->AddComponent<PlayerMoveBehavior>();
     player->AddComponent<PlayerAttackBehavior>();

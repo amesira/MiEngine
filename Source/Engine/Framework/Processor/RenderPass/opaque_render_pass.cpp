@@ -151,6 +151,14 @@ void OpaqueRenderPass::Process(IScene* pScene)
             m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
 
             XMFLOAT4 uvRect = s.GetUvRect();
+            if (s.GetFlipX()) {
+                uvRect.x += uvRect.z;
+                uvRect.z *= -1.0f;
+            }
+            if (s.GetFlipY()) {
+                uvRect.y += uvRect.w;
+                uvRect.w *= -1.0f;
+            }
             XMFLOAT4 color = s.GetColor();
 
             // 頂点バッファ設定
@@ -163,10 +171,12 @@ void OpaqueRenderPass::Process(IScene* pScene)
                 v[1].position = XMFLOAT3(h, -h, 0.0f);
                 v[2].position = XMFLOAT3(-h, h, 0.0f);
                 v[3].position = XMFLOAT3(h, h, 0.0f);
+
                 v[0].texCoord = XMFLOAT2(uvRect.x, uvRect.y + uvRect.w);
                 v[1].texCoord = XMFLOAT2(uvRect.x + uvRect.z, uvRect.y + uvRect.w);
                 v[2].texCoord = XMFLOAT2(uvRect.x, uvRect.y);
                 v[3].texCoord = XMFLOAT2(uvRect.x + uvRect.z, uvRect.y);
+
                 for (int i = 0; i < 4; i++) {
                     v[i].color = color;
                     v[i].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);

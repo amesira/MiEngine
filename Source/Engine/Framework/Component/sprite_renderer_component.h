@@ -15,12 +15,6 @@ using namespace DirectX;
 
 class SpriteRendererComponent : public Component {
 public:
-    enum class WorldSpaceType {
-        None,       // 通常表示
-        Billboard,  // 常にカメラ方向を向く
-        HD2D,       // Y軸回りのみカメラ方向を向く
-    };
-
     enum class SpriteBlendMode
     {
         Opaque,
@@ -34,7 +28,9 @@ private:
     XMFLOAT4    m_uvRect = { 0.0f,0.0f,1.0f,1.0f };
     XMFLOAT4    m_color = { 1.0f,1.0f,1.0f,1.0f };
 
-    WorldSpaceType  m_worldSpaceType = WorldSpaceType::None;
+    bool m_flipX = false;
+    bool m_flipY = false;
+
     SpriteBlendMode  m_blendMode = SpriteBlendMode::Opaque;
 
 public:
@@ -48,9 +44,11 @@ public:
     void    SetColor(XMFLOAT4 color) { m_color = color; }
     XMFLOAT4   GetColor()const { return m_color; }
 
-    // ワールドスペースタイプの設定・取得
-    void    SetWorldSpaceType(WorldSpaceType type) { m_worldSpaceType = type; }
-    WorldSpaceType  GetWorldSpaceType()const { return m_worldSpaceType; }
+    // 反転フラグの設定・取得
+    void    SetFlipX(bool flipX) { m_flipX = flipX; }
+    bool    GetFlipX() const { return m_flipX; }
+    void    SetFlipY(bool flipY) { m_flipY = flipY; }
+    bool    GetFlipY() const { return m_flipY; }
 
     // ブレンドモードの設定・取得
     void SetBlendMode(SpriteBlendMode blendMode) { m_blendMode = blendMode; }
