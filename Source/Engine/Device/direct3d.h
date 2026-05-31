@@ -39,7 +39,7 @@ ID3D11DeviceContext* Direct3D_GetDeviceContext();
 unsigned int Direct3D_GetBackBufferWidth();
 unsigned int Direct3D_GetBackBufferHeight();
 
-/* ブレンドステート関連 */
+// ブレンドステート設定
 enum BLENDSTATE {
     BLENDSTATE_NONE = 0,    // ブレンドしない
     BLENDSTATE_ALFA,        // 普通のαブレンド
@@ -48,17 +48,24 @@ enum BLENDSTATE {
 
     BLENDSTATE_MAX,
 };
+void SetBlendState(BLENDSTATE blend);
+
+// デプスステート設定
 enum DEPTHSTATE {
     DEPTHSTATE_ENABLE = 0,  // デプス有効
     DEPTHSTATE_DISABLE,     // デプス無効
     DEPTHSTATE_NOWRITE,     // デプス書き込み無効
     DEPTHSTATE_MAX,
 };
-
-// ブレンドステートの設定
-void SetBlendState(BLENDSTATE blend);
-// デプスステートの設定
 void SetDepthState(DEPTHSTATE depth);
+
+// ラスタライザーステート設定
+enum RASTERIZERSTATE {
+    RASTERIZERSTATE_CULL_BACK = 0,
+    RASTERIZERSTATE_CULL_NONE,
+    RASTERIZERSTATE_MAX,
+};
+void SetRasterizerState(RASTERIZERSTATE state);
 
 // スナップショット用シーンテクスチャSRVの作成
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);

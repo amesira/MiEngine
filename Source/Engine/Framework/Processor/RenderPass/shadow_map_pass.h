@@ -24,8 +24,10 @@ private:
     ID3D11Device* m_pDevice;
     ID3D11DeviceContext* m_pContext;
 
+    // デフォルトテクスチャ
+    TextureResource* m_defaultTexture = nullptr;
+
     // シャドウマップ用のライト定数バッファ
-    //ComPtr<ID3D11Buffer> m_shadowLightCB;
     ConstantBufferResource* m_shadowLightCB;
     XMMATRIX m_shadowLightMatrix;
 
@@ -33,6 +35,9 @@ private:
     ComPtr<ID3D11Texture2D>             depthBufferTexture;
     ComPtr<ID3D11DepthStencilView>      depthBufferDSV;
     ComPtr<ID3D11ShaderResourceView>    depthBufferSRV;
+
+    // スプライトをシャドウマップへ書き込むための頂点バッファ
+    ComPtr<ID3D11Buffer> m_spriteVertexBuffer;
 
     // 視点位置（シャドウマップの中心位置として使用）
     XMFLOAT3 m_eyePosition;

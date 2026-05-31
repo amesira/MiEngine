@@ -7,11 +7,9 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Graphics/model_repository.h"
-#include "Engine/engine_service_locator.h"
 
 namespace ModelRenderUtility {
-    // モデルのワールド行列を作成
+
     DirectX::XMMATRIX CreateWorldMatrix(const TransformComponent& transform)
     {
         using namespace DirectX;
@@ -32,18 +30,15 @@ namespace ModelRenderUtility {
         return scaling * rotation * translation;
     }
 
-    // メッシュのジオメトリを描画
     void DrawMeshGeometry(ID3D11DeviceContext* context, const ModelMesh& mesh)
     {
         if (!context) return;
 
         context->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &mesh.vertexStride, &mesh.vertexOffset);
         context->IASetIndexBuffer(mesh.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
         context->DrawIndexed(mesh.numIndices, 0, 0);
     }
 
-    // メッシュのリストのジオメトリを描画
     void DrawMeshListGeometry(ID3D11DeviceContext* context, const std::vector<ModelMesh>& meshes)
     {
         if (!context) return;
@@ -53,7 +48,6 @@ namespace ModelRenderUtility {
         }
     }
 
-    // シーン内の描画可能なモデルに対してコールバックを実行
     void ForEachRenderableModel(
         IScene* scene,
         const std::function<void(ModelComponent& model, TransformComponent& transform, ModelResource& modelResource)>& callback)
@@ -69,8 +63,10 @@ namespace ModelRenderUtility {
             TransformComponent* transform = transformPool->GetByGameObjectID(model.GetOwner()->GetID());
             if (!transform) continue;
             if (!model.GetEnable() || !transform->GetEnable()) continue;
+            if (!model.GetModelResource()) continue;
 
             callback(model, *transform, *model.GetModelResource());
         }
     }
+
 }

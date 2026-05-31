@@ -7,11 +7,10 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Framework/Component/sprite_renderer_component.h"
 #include "Engine/Framework/Component/transform_component.h"
-
 #include "Engine/Graphics/shader_definitions.h"
 
 namespace SpriteRenderUtility {
-    // ワールド行列の作成
+
     DirectX::XMMATRIX CreateWorldMatrix(const TransformComponent& transform, bool applyFlipRotation)
     {
         using namespace DirectX;
@@ -36,7 +35,7 @@ namespace SpriteRenderUtility {
         XMMATRIX flipRotation = XMMatrixRotationY(XM_PI);
         return scaling * flipRotation * rotation * translation;
     }
-    // フリップの適用されたUV矩形を取得
+
     DirectX::XMFLOAT4 ApplyFlipToUvRect(
         DirectX::XMFLOAT4 uvRect,
         bool flipX,
@@ -53,7 +52,7 @@ namespace SpriteRenderUtility {
 
         return uvRect;
     }
-    // スプライト頂点バッファをUV矩形と色で更新
+
     bool UpdateSpriteVertexBuffer(
         ID3D11DeviceContext* context,
         ID3D11Buffer* vertexBuffer,
@@ -67,13 +66,12 @@ namespace SpriteRenderUtility {
         if (FAILED(hr)) return false;
 
         constexpr float halfSize = 0.5f;
-
         ShaderDefinitions::SpriteVertex* vertices = static_cast<ShaderDefinitions::SpriteVertex*>(mappedResource.pData);
 
         vertices[0].position = DirectX::XMFLOAT3(-halfSize, -halfSize, 0.0f);
-        vertices[1].position = DirectX::XMFLOAT3(halfSize, -halfSize, 0.0f);
-        vertices[2].position = DirectX::XMFLOAT3(-halfSize, halfSize, 0.0f);
-        vertices[3].position = DirectX::XMFLOAT3(halfSize, halfSize, 0.0f);
+        vertices[1].position = DirectX::XMFLOAT3( halfSize, -halfSize, 0.0f);
+        vertices[2].position = DirectX::XMFLOAT3(-halfSize,  halfSize, 0.0f);
+        vertices[3].position = DirectX::XMFLOAT3( halfSize,  halfSize, 0.0f);
 
         vertices[0].texCoord = DirectX::XMFLOAT2(uvRect.x, uvRect.y + uvRect.w);
         vertices[1].texCoord = DirectX::XMFLOAT2(uvRect.x + uvRect.z, uvRect.y + uvRect.w);
@@ -89,7 +87,6 @@ namespace SpriteRenderUtility {
         return true;
     }
 
-    // シーン内の描画可能なスプライトに対してコールバックを実行
     void ForEachRenderableSprite(
         IScene* scene,
         const std::function<void(SpriteRendererComponent& sprite, TransformComponent& transform)>& callback)
@@ -104,7 +101,7 @@ namespace SpriteRenderUtility {
         for (SpriteRendererComponent& sprite : spriteList) {
             TransformComponent* transform = transformPool->GetByGameObjectID(sprite.GetOwner()->GetID());
             if (!transform) continue;
-            if (!sprite.GetEnable()) continue;
+            if (!sprite.GetEnable() || !transform->GetEnable()) continue;
 
             callback(sprite, *transform);
         }

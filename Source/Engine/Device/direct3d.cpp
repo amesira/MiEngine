@@ -32,7 +32,10 @@ static void releaseBackBuffer();    // バックバッファの解散
 // ブレンドステート関連
 static float bFactor[4] = { 0.0f,0.0f,0.0f,0.0f };
 static ID3D11BlendState* bState[BLENDSTATE_MAX];
+// デプスステート関連
 static ID3D11DepthStencilState* g_pDepthState[DEPTHSTATE_MAX];
+// ラスタライザーステート関連
+static ID3D11RasterizerState* g_pRasterizerState[RASTERIZERSTATE_MAX];
 
 //===================================================
 // Direct3D初期化処理
@@ -168,7 +171,32 @@ bool Direct3D_Initialize(HWND hWnd)
         depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
         g_pDevice->CreateDepthStencilState(&depthStencilDesc, &g_pDepthState[DEPTHSTATE_NOWRITE]);
     }
-    g_pDeviceContext->OMSetDepthStencilState(g_pDepthState[DEPTHSTATE_ENABLE], NULL);
+    SetDepthState(DEPTHSTATE_ENABLE); // デフォルト設定（深度有効）
+
+    //----------------------------------------------------
+    // ラスタライザーステート設定
+	//----------------------------------------------------
+    D3D11_RASTERIZER_DESC rasterizerDesc;
+    ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+    {
+        // カリング有効
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        rasterizerDesc.CullMode = D3D11_CULL_BACK;
+        rasterizerDesc.FrontCounterClockwise = FALSE;
+        rasterizerDesc.DepthBias = 0;
+        rasterizerDesc.DepthBiasClamp = 0.0f;
+        rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+        rasterizerDesc.DepthClipEnable = TRUE;
+        rasterizerDesc.ScissorEnable = FALSE;
+        rasterizerDesc.MultisampleEnable = FALSE;
+        rasterizerDesc.AntialiasedLineEnable = FALSE;
+        g_pDevice->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerState[RASTERIZERSTATE_CULL_BACK]);
+
+        // カリング無効
+        rasterizerDesc.CullMode = D3D11_CULL_NONE;
+        g_pDevice->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerState[RASTERIZERSTATE_CULL_NONE]);
+    }
+    SetRasterizerState(RASTERIZERSTATE_CULL_BACK); // デフォルト設定（カリング有効）
 
     return true;
 }
@@ -354,6 +382,12 @@ void SetBlendState(BLENDSTATE blend)
 void SetDepthState(DEPTHSTATE depth)
 {
     g_pDeviceContext->OMSetDepthStencilState(g_pDepthState[depth], NULL);
+}
+
+// ラスタライザーステートの切り替え関数
+void SetRasterizerState(RASTERIZERSTATE state)
+{
+    g_pDeviceContext->RSSetState(g_pRasterizerState[state]);
 }
 
 // シーンテクスチャの内容をスナップショット先へコピーし、SRVを生成する関数
