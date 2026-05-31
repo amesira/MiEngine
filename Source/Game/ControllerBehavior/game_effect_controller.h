@@ -7,31 +7,74 @@
 #ifndef GAME_EFFECT_CONTROLLER_H
 #define GAME_EFFECT_CONTROLLER_H
 #include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Device/direct3d.h"
+using namespace DirectX;
+#include "Engine/Core/GamePlay/sequence_task.h"
 
 class GameEffectController : public BehaviorComponent {
 private:
     static inline int s_instanceCount = 0;
 
-    // TimeScale関連パラメータ
-    int     m_currentHandleID = 0;      // 現在のTimeScale変更のハンドルID
-    float   m_currentTimeScale = 1.0f;  // 現在のTimeScale
-
-    float   m_timeScaleChangeDuration = 0.0f;   // TimeScale変更の予定持続時間
-    float   m_timeScaleChangeTimer = 0.0f;      // TimeScale変更の継続時間
-
-    int     m_handleIDCounter = 0;         // 次に発行するハンドルID
-
 public:
     GameEffectController();
-    ~GameEffectController() { s_instanceCount--; }
+    ~GameEffectController();
+
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
 
-    // TimeScale変更のリクエスト処理 return : handleID
-    int RequestTimeScaleChange(float targetTimeScale, float duration);
-    // TimeScale変更のキャンセル処理
-    void CancelTimeScaleChange(int handleID);
+private:
+    // タイムスケール変更タスク
+    class ChangeTimeScaleTask : public SequenceTask {
+    private:
+        float m_startTimeScale;
+        float m_targetTimeScale;
+
+        float m_duration;
+        float m_holdDuration;
+
+        bool m_isTemporary;
+    public:
+        ChangeTimeScaleTask(float targetTimeScale, float duration, float holdDuration = 0.0f):
+            m_targetTimeScale(targetTimeScale), m_duration(duration), m_holdDuration(holdDuration) {
+                m_isTemporary = holdDuration > 0.0f;
+        }
+        void Start() override;
+        void Update(float deltaTime) override;
+    };
+    ChangeTimeScaleTask* m_changeTimeScaleTask = nullptr;
+
+public:
+    // タイムスケール変更
+    void ChangeTimeScale(float timeScale, float duration);
+    void ChangeTimeScaleTemporary(float timeScale, float duration, float holdDuration);
+    // タイムスケールを元に戻す
+    void ResetTimeScale(float duration);
+
+    // カメラシェイク再生
+    void PlayCameraShake(float duration, float magnitude);
+
+    // FOV変更
+    void ChangeFOV(float fov, float duration);
+    void ChangeFOVTemporary(float fov, float duration, float holdDuration);
+    // FOVを元に戻す
+    void ResetFOV(float duration);
+
+    // カメラ距離変更
+    void ChangeCameraDistance(float distance, float duration);
+    // カメラ距離を元に戻す
+    void ResetCameraDistance(float duration);
+
+    // カメラオフセット変更
+    void ChangeCameraOffset(const XMFLOAT3& offset, float duration);
+    // カメラオフセットを元に戻す
+    void ResetCameraOffset(float duration);
+
+    //// ポストエフェクトの再生
+    //void PlayPostEffect(const std::string& effectName, float duration);
+
+    //// フラッシュエフェクトの再生
+    //void PlayFlashEffect(const XMFLOAT4& color, float duration);
 
 private:
 

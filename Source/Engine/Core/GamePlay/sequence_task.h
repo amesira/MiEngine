@@ -10,6 +10,8 @@
 
 class SequenceTask {
 protected:
+    bool    m_isRunning = false;
+
     int     m_taskStep = 0;
     float   m_taskTimer = 0.0f;
 
@@ -17,10 +19,19 @@ protected:
 
 public:
     virtual ~SequenceTask() = default;
-    virtual void Start() = 0;
-    virtual void Update(float deltaTime) = 0;
+    virtual void Start() {
+        m_taskStep = 0;
+        m_taskTimer = 0.0f;
+        m_isRunning = true;
+        m_isFinished = false;
+    }
+    virtual void Update(float deltaTime) {
+        m_taskTimer += deltaTime;
+    }
 
-    virtual bool IsFinished() const = 0;
+    bool IsFinished() {
+        return m_isFinished;
+    }
     void Cancel() { 
         m_isFinished = true;
     }
@@ -33,7 +44,6 @@ public:
 
     // n秒間待機する
     bool Wait(float seconds, float deltaTime) {
-        m_taskTimer += deltaTime;
         if (m_taskTimer >= seconds) {
             return true; // 待機完了
         }

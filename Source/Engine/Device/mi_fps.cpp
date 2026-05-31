@@ -72,6 +72,11 @@ void FPS_SetTimeScale(float timeScale)
     g_TimeScale = timeScale;
 }
 
+float FPS_GetTimeScale()
+{
+    return g_TimeScale;
+}
+
 float FPS_GetDeltaTime()
 {
     if(g_DeltaTime > MAX_DELTA_TIME){

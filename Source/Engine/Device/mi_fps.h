@@ -18,6 +18,7 @@ void FPS_UpdateFrameCount();
 // TimeScaleを設定
 // ・0.0fなどにすることで、ポーズ画面などを楽に実装できる
 void FPS_SetTimeScale(float timeScale);
+float FPS_GetTimeScale();
 
 float FPS_GetDeltaTime();
 float FPS_GetFPS();
