@@ -11,6 +11,8 @@
 #include <algorithm>
 
 #include "Utility/mi_math.h"
+#include "Utility/mi_signal.h"
+
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Device/mouse.h"
 
@@ -92,6 +94,12 @@ void CameraControlBehavior::Update()
     XMFLOAT3 currentCameraPosition = m_transform->GetPosition();
     currentCameraPosition = MiMath::SmoothDamp(currentCameraPosition, targetCameraPosition, m_cameraOffsetVelocity, m_positionSmoothTime, deltaTime);
 
+    // === カメラシェイクの適用 ===
+    if (m_isShaking) {
+        currentCameraAtPosition = MiMath::Add(currentCameraAtPosition, m_shakeOffset);
+        currentCameraPosition = MiMath::Add(currentCameraPosition, m_shakeOffset);
+    }
+
     // === カメラの適用処理 ===
     m_camera->SetAtPosition(currentCameraAtPosition);
     m_transform->SetPosition(currentCameraPosition);
@@ -126,6 +134,7 @@ void CameraControlBehavior::ChangeFOV(float fov, float duration)
     if (!m_camera) return;
 
     m_fovTask.Reset();
+
     m_fovTask.m_startValue = m_camera->GetFov();
     m_fovTask.m_targetValue = fov;
     m_fovTask.m_endValue = fov;
@@ -139,6 +148,7 @@ void CameraControlBehavior::ChangeFOVTemporary(float fov, float duration, float 
     if (!m_camera) return;
 
     m_fovTask.Reset();
+
     m_fovTask.m_startValue = m_camera->GetFov();
     m_fovTask.m_targetValue = fov;
     m_fovTask.m_endValue = m_defaultFov;
@@ -155,6 +165,7 @@ void CameraControlBehavior::ResetFOV(float duration)
 void CameraControlBehavior::ChangeCameraDistance(float distance, float duration)
 {
     m_cameraDistanceTask.Reset();
+
     m_cameraDistanceTask.m_startValue = m_followDistance;
     m_cameraDistanceTask.m_targetValue = distance;
     m_cameraDistanceTask.m_endValue = distance;
@@ -168,7 +179,7 @@ void CameraControlBehavior::ChangeCameraDistanceTemporary(float distance, float 
     m_cameraDistanceTask.Reset();
     m_cameraDistanceTask.m_startValue = m_followDistance;
     m_cameraDistanceTask.m_targetValue = distance;
-    m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;
+    m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;  // 変更後の距離からデフォルトの距離に戻るように設定
     m_cameraDistanceTask.m_duration = duration;
     m_cameraDistanceTask.m_holdDuration = holdDuration;
     m_cameraDistanceTask.Start();
@@ -182,6 +193,7 @@ void CameraControlBehavior::ResetCameraDistance(float duration)
 void CameraControlBehavior::ChangeCameraOffset(const XMFLOAT3& offset, float duration)
 {
     m_cameraOffsetTask.Reset();
+
     m_cameraOffsetTask.m_startValue = m_lookAtOffset;
     m_cameraOffsetTask.m_targetValue = offset;
     m_cameraOffsetTask.m_endValue = offset;
@@ -193,9 +205,10 @@ void CameraControlBehavior::ChangeCameraOffset(const XMFLOAT3& offset, float dur
 void CameraControlBehavior::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
 {
     m_cameraOffsetTask.Reset();
+
     m_cameraOffsetTask.m_startValue = m_lookAtOffset;
     m_cameraOffsetTask.m_targetValue = offset;
-    m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;
+    m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;  // 変更後のオフセットからデフォルトのオフセットに戻るように設定
     m_cameraOffsetTask.m_duration = duration;
     m_cameraOffsetTask.m_holdDuration = holdDuration;
     m_cameraOffsetTask.Start();
@@ -206,6 +219,15 @@ void CameraControlBehavior::ResetCameraOffset(float duration)
     ChangeCameraOffset(m_defaultLookAtOffset, duration);
 }
 
+void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
+{
+    m_cameraShakeTask.Reset();
+    m_cameraShakeTask.m_duration = duration;
+    m_cameraShakeTask.m_magnitude = magnitude;
+    m_cameraShakeTask.m_shakeFrequency = m_shakeFrequency; // シェイクの周波数はクラスの設定値を使用
+    m_cameraShakeTask.Start();
+}
+
 // ------------------------------- private
 
 void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
@@ -214,11 +236,13 @@ void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
     bool fovTaskRunning = !m_fovTask.IsFinished();
     bool distanceTaskRunning = !m_cameraDistanceTask.IsFinished();
     bool offsetTaskRunning = !m_cameraOffsetTask.IsFinished();
+    bool cameraShakeTaskRunning = !m_cameraShakeTask.IsFinished();
 
     // タスクの更新
     m_fovTask.Update(deltaTime);
     m_cameraDistanceTask.Update(deltaTime);
     m_cameraOffsetTask.Update(deltaTime);
+    m_cameraShakeTask.Update(deltaTime);
 
     // タスクの更新後に値を適用
     if (fovTaskRunning && m_camera) {
@@ -229,6 +253,13 @@ void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
     }
     if (offsetTaskRunning) {
         m_lookAtOffset = m_cameraOffsetTask.m_currentValue;
+    }
+    if (cameraShakeTaskRunning) {
+        m_isShaking = true;
+        m_shakeOffset = m_cameraShakeTask.m_shakeOffset;
+    }
+    else {
+        m_isShaking = false;
     }
 }
 
@@ -274,4 +305,36 @@ XMFLOAT3 CameraControlBehavior::CalculateTargetCameraPosition(const XMFLOAT3& ca
     targetCameraPosition = MiMath::Subtract(targetCameraPosition, MiMath::Multiply(cameraForward, m_followDistance));
 
     return targetCameraPosition;
+}
+
+// カメラシェイクタスクの更新
+void CameraControlBehavior::CameraShakeTask::Update(float deltaTime)
+{
+    SequenceTask::Update(deltaTime);
+    if (IsFinished()) return;
+
+    switch (m_taskStep) {
+        case 0: {
+            float t = 1.0f;
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
+
+            float elapsed = m_taskTimer;
+
+            // シェイクの強さを時間経過に応じて減衰させる
+            m_magnitude = MiMath::Lerp(m_magnitude, 0.0f, t * t);
+
+            // Perlinノイズを使用してシェイクのオフセットを生成
+            m_shakeOffset = { 0.0f, 0.0f, 0.0f };
+            m_shakeOffset.x = MiSignal::Perlin1D(elapsed * m_shakeFrequency) * m_magnitude;
+            m_shakeOffset.y = MiSignal::Perlin1D((elapsed + 100.0f) * m_shakeFrequency) * m_magnitude;
+
+            // タスクの終了判定
+            if (m_taskTimer >= m_duration) {
+                Finish();
+            }
+            break;
+        }
+    }
 }

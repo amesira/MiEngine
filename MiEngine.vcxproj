@@ -280,6 +280,7 @@
     <ClInclude Include="Source\Engine\Graphics\material_resource.h" />
     <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\imgui_window_interface.h" />
+    <ClInclude Include="Utility\mi_signal.h" />
     <ClInclude Include="Utility\mi_string.h" />
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />

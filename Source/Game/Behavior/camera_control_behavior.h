@@ -54,8 +54,8 @@ private:
 
     // === カメラシェイク設定 ===
     bool m_isShaking = false;
-
     float m_shakeFrequency = 35.0f; // シェイクの周波数
+    XMFLOAT3 m_shakeOffset = { 0.0f, 0.0f, 0.0f }; // シェイクによる位置のオフセット
 
     // === SmoothDampの状態 ===
     float m_pitchVelocity = 0.0f;
@@ -75,6 +75,17 @@ private:
     FloatTweenTask m_cameraDistanceTask;
     // カメラオフセット変更タスク
     Vector3TweenTask m_cameraOffsetTask;
+
+    // カメラシェイクタスク
+    class CameraShakeTask : public SequenceTask {
+    public:
+        float m_duration = 0.0f;
+        float m_magnitude = 0.0f;
+        float m_shakeFrequency = 35.0f;
+        XMFLOAT3 m_shakeOffset = { 0.0f, 0.0f, 0.0f };
+        void Update(float deltaTime) override;
+    };
+    CameraShakeTask m_cameraShakeTask;
 
 public:
     ~CameraControlBehavior() = default;
@@ -99,6 +110,9 @@ public:
     void ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
     // カメラオフセットを元に戻す
     void ResetCameraOffset(float duration);
+
+    // カメラシェイク再生
+    void PlayCameraShake(float duration, float magnitude);
 
 private:
     // エフェクトタスクの更新

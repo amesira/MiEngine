@@ -52,9 +52,6 @@ public:
     // タイムスケールを元に戻す
     void ResetTimeScale(float duration);
 
-    // カメラシェイク再生
-    //void PlayCameraShake(float duration, float magnitude);
-
     // FOV変更
     void ChangeFOV(float fov, float duration);
     void ChangeFOVTemporary(float fov, float duration, float holdDuration);
@@ -72,6 +69,9 @@ public:
     void ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
     // カメラオフセットを元に戻す
     void ResetCameraOffset(float duration);
+
+    // カメラシェイク再生
+    void PlayCameraShake(float duration, float magnitude);
 
     //// ポストエフェクトの再生
     //void PlayPostEffect(const std::string& effectName, float duration);

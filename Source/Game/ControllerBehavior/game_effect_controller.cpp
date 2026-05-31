@@ -216,3 +216,11 @@ void GameEffectController::ResetCameraOffset(float duration)
         m_cameraControl->ResetCameraOffset(duration);
     }
 }
+
+// カメラシェイク再生
+void GameEffectController::PlayCameraShake(float duration, float magnitude)
+{
+    if (m_cameraControl) {
+        m_cameraControl->PlayCameraShake(duration, magnitude);
+    }
+}
