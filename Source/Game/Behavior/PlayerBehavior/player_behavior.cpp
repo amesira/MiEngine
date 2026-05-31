@@ -85,6 +85,9 @@ void PlayerBehavior::Update()
     if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
         if (GAME_EFFECT) {
             GAME_EFFECT->ChangeTimeScaleTemporary(0.5f, 0.5f, 1.0f); // タイムスケールを0.5にして、0.5秒かけて元に戻す
+            GAME_EFFECT->ChangeFOVTemporary(90.0f, 0.5f, 1.0f); // FOVを90にして、0.5秒かけて元に戻す
+            GAME_EFFECT->ChangeCameraDistanceTemporary(5.0f, 0.5f, 1.0f); // カメラ距離を5にして、0.5秒かけて元に戻す
+            GAME_EFFECT->ChangeCameraOffsetTemporary(XMFLOAT3(0.0f, -1.0f, 0.0f), 0.5f, 1.0f); // カメラオフセットを(0,-1,0)にして、0.5秒かけて元に戻す
         }
     }
 

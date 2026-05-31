@@ -1,12 +1,14 @@
 //===================================================
 // camera_control_behavior.cpp
 // 
-// Author・Miu Kitamura
-// Date  ・ 2026/04/08
+// Author：Miu Kitamura
+// Date  ：2026/04/08
 //===================================================
 #include "camera_control_behavior.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
+
+#include <algorithm>
 
 #include "Utility/mi_math.h"
 #include "Engine/Device/mi_fps.h"
@@ -18,6 +20,108 @@
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/camera_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
+
+void CameraControlBehavior::FloatEffectTask::Start()
+{
+    SequenceTask::Start();
+    m_currentValue = m_startValue;
+}
+
+void CameraControlBehavior::FloatEffectTask::Update(float deltaTime)
+{
+    if (IsFinished()) return;
+    SequenceTask::Update(deltaTime);
+
+    switch (m_taskStep) {
+        case 0: {
+            float t = 1.0f;
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
+            m_currentValue = MiMath::Lerp(m_startValue, m_targetValue, t);
+
+            if (t >= 1.0f) {
+                AdvanceStep();
+            }
+            break;
+        }
+        case 1: {
+            if (m_holdDuration > 0.0f) {
+                if (Wait(m_holdDuration, deltaTime)) {
+                    AdvanceStep();
+                }
+            }
+            else {
+                Finish();
+            }
+            break;
+        }
+        case 2: {
+            float t = 1.0f;
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
+            m_currentValue = MiMath::Lerp(m_targetValue, m_endValue, t);
+
+            if (t >= 1.0f) {
+                m_currentValue = m_endValue;
+                Finish();
+            }
+            break;
+        }
+    }
+}
+
+void CameraControlBehavior::Vector3EffectTask::Start()
+{
+    SequenceTask::Start();
+    m_currentValue = m_startValue;
+}
+
+void CameraControlBehavior::Vector3EffectTask::Update(float deltaTime)
+{
+    if (IsFinished()) return;
+    SequenceTask::Update(deltaTime);
+
+    switch (m_taskStep) {
+        case 0: {
+            float t = 1.0f;
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
+            m_currentValue = MiMath::Lerp(m_startValue, m_targetValue, t);
+
+            if (t >= 1.0f) {
+                AdvanceStep();
+            }
+            break;
+        }
+        case 1: {
+            if (m_holdDuration > 0.0f) {
+                if (Wait(m_holdDuration, deltaTime)) {
+                    AdvanceStep();
+                }
+            }
+            else {
+                Finish();
+            }
+            break;
+        }
+        case 2: {
+            float t = 1.0f;
+            if (m_duration > 0.0f) {
+                t = (std::min)(m_taskTimer / m_duration, 1.0f);
+            }
+            m_currentValue = MiMath::Lerp(m_targetValue, m_endValue, t);
+
+            if (t >= 1.0f) {
+                m_currentValue = m_endValue;
+                Finish();
+            }
+            break;
+        }
+    }
+}
 
 void CameraControlBehavior::Start()
 {
@@ -37,12 +141,34 @@ void CameraControlBehavior::Start()
     // 初期設定
     m_targetPitch = m_pitch;
     m_targetYaw = m_yaw;
+
+    // デフォルト値の保存
+    m_defaultLookAtOffset = m_lookAtOffset;
+    m_defaultLookAtOffset = m_lookAtOffset;
+    m_defaultFollowDistance = m_followDistance;
+    if (m_camera) {
+        m_defaultFov = m_camera->GetFov();
+        m_fovTask.m_currentValue = m_defaultFov;
+    }
+
+    // タスクのリセット
+    m_cameraDistanceTask.m_currentValue = m_followDistance;
+    m_cameraOffsetTask.m_currentValue = m_lookAtOffset;
+    m_fovTask.m_endValue = m_defaultFov;
+    m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;
+    m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;
+
+    m_fovTask.Reset();
+    m_cameraDistanceTask.Reset();
+    m_cameraOffsetTask.Reset();
 }
 
 void CameraControlBehavior::Update()
 {
-    if (!m_targetTransform) return;
     float deltaTime = FPS_GetUnscaledDeltaTime();
+    UpdateCameraEffectTasks(deltaTime);
+
+    if (!m_targetTransform) return;
 
     // マウス入力から回転のターゲット値を更新
     UpdateTargetYawPitchFromInput(deltaTime);
@@ -95,7 +221,118 @@ void CameraControlBehavior::DrawComponentInspector()
     }
 }
 
+// ------------------------------- public Effect Tasks
+
+void CameraControlBehavior::ChangeFOV(float fov, float duration)
+{
+    if (!m_camera) return;
+
+    m_fovTask.Reset();
+    m_fovTask.m_startValue = m_camera->GetFov();
+    m_fovTask.m_targetValue = fov;
+    m_fovTask.m_endValue = fov;
+    m_fovTask.m_duration = duration;
+    m_fovTask.m_holdDuration = 0.0f;
+    m_fovTask.Start();
+}
+
+void CameraControlBehavior::ChangeFOVTemporary(float fov, float duration, float holdDuration)
+{
+    if (!m_camera) return;
+
+    m_fovTask.Reset();
+    m_fovTask.m_startValue = m_camera->GetFov();
+    m_fovTask.m_targetValue = fov;
+    m_fovTask.m_endValue = m_defaultFov;
+    m_fovTask.m_duration = duration;
+    m_fovTask.m_holdDuration = holdDuration;
+    m_fovTask.Start();
+}
+
+void CameraControlBehavior::ResetFOV(float duration)
+{
+    ChangeFOV(m_defaultFov, duration);
+}
+
+void CameraControlBehavior::ChangeCameraDistance(float distance, float duration)
+{
+    m_cameraDistanceTask.Reset();
+    m_cameraDistanceTask.m_startValue = m_followDistance;
+    m_cameraDistanceTask.m_targetValue = distance;
+    m_cameraDistanceTask.m_endValue = distance;
+    m_cameraDistanceTask.m_duration = duration;
+    m_cameraDistanceTask.m_holdDuration = 0.0f;
+    m_cameraDistanceTask.Start();
+}
+
+void CameraControlBehavior::ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration)
+{
+    m_cameraDistanceTask.Reset();
+    m_cameraDistanceTask.m_startValue = m_followDistance;
+    m_cameraDistanceTask.m_targetValue = distance;
+    m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;
+    m_cameraDistanceTask.m_duration = duration;
+    m_cameraDistanceTask.m_holdDuration = holdDuration;
+    m_cameraDistanceTask.Start();
+}
+
+void CameraControlBehavior::ResetCameraDistance(float duration)
+{
+    ChangeCameraDistance(m_defaultFollowDistance, duration);
+}
+
+void CameraControlBehavior::ChangeCameraOffset(const XMFLOAT3& offset, float duration)
+{
+    m_cameraOffsetTask.Reset();
+    m_cameraOffsetTask.m_startValue = m_lookAtOffset;
+    m_cameraOffsetTask.m_targetValue = offset;
+    m_cameraOffsetTask.m_endValue = offset;
+    m_cameraOffsetTask.m_duration = duration;
+    m_cameraOffsetTask.m_holdDuration = 0.0f;
+    m_cameraOffsetTask.Start();
+}
+
+void CameraControlBehavior::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
+{
+    m_cameraOffsetTask.Reset();
+    m_cameraOffsetTask.m_startValue = m_lookAtOffset;
+    m_cameraOffsetTask.m_targetValue = offset;
+    m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;
+    m_cameraOffsetTask.m_duration = duration;
+    m_cameraOffsetTask.m_holdDuration = holdDuration;
+    m_cameraOffsetTask.Start();
+}
+
+void CameraControlBehavior::ResetCameraOffset(float duration)
+{
+    ChangeCameraOffset(m_defaultLookAtOffset, duration);
+}
+
 // ------------------------------- private
+
+void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
+{
+    //タスクが実行中かどうか
+    bool fovTaskRunning = !m_fovTask.IsFinished();
+    bool distanceTaskRunning = !m_cameraDistanceTask.IsFinished();
+    bool offsetTaskRunning = !m_cameraOffsetTask.IsFinished();
+
+    // タスクの更新
+    m_fovTask.Update(deltaTime);
+    m_cameraDistanceTask.Update(deltaTime);
+    m_cameraOffsetTask.Update(deltaTime);
+
+    // タスクの更新後に値を適用
+    if (fovTaskRunning && m_camera) {
+        m_camera->SetFov(m_fovTask.m_currentValue);
+    }
+    if (distanceTaskRunning) {
+        m_followDistance = m_cameraDistanceTask.m_currentValue;
+    }
+    if (offsetTaskRunning) {
+        m_lookAtOffset = m_cameraOffsetTask.m_currentValue;
+    }
+}
 
 // カメラの前方と右方向のベクトルを構築
 void CameraControlBehavior::BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const

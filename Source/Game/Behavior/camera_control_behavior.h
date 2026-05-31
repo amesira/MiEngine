@@ -1,12 +1,13 @@
 //---------------------------------------------------
 // camera_control_behavior.h
 // 
-// Author・Miu Kitamura
-// Date  ・ 2026/04/08
+// Author：Miu Kitamura
+// Date  ：2026/04/08
 //---------------------------------------------------
 #ifndef CAMERA_CONTROL_BEHAVIOR_H
 #define CAMERA_CONTROL_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Core/GamePlay/sequence_task.h"
 
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -62,13 +63,74 @@ private:
     XMFLOAT3 m_cameraPositionVelocity = {};
     XMFLOAT3 m_cameraOffsetVelocity = {};
 
+    // === デフォルト値（リセット用）===
+    XMFLOAT3 m_defaultLookAtOffset = { 0.0f, 0.0f, 0.0f };
+    float m_defaultFollowDistance = 10.0f;
+    float m_defaultFov = 80.0f;
+
+    // float値を補間する演出タスク
+    class FloatEffectTask : public SequenceTask {
+    public:
+        float m_startValue = 0.0f;
+        float m_targetValue = 0.0f;
+        float m_endValue = 0.0f;
+        float m_currentValue = 0.0f;
+        float m_duration = 0.0f;
+        float m_holdDuration = 0.0f;
+
+        void Start() override;
+        void Update(float deltaTime) override;
+    };
+
+    // XMFLOAT3値を補間する演出タスク
+    class Vector3EffectTask : public SequenceTask {
+    public:
+        XMFLOAT3 m_startValue = { 0.0f, 0.0f, 0.0f };
+        XMFLOAT3 m_targetValue = { 0.0f, 0.0f, 0.0f };
+        XMFLOAT3 m_endValue = { 0.0f, 0.0f, 0.0f };
+        XMFLOAT3 m_currentValue = { 0.0f, 0.0f, 0.0f };
+        float m_duration = 0.0f;
+        float m_holdDuration = 0.0f;
+
+        void Start() override;
+        void Update(float deltaTime) override;
+    };
+
+    // FOV変更タスク
+    FloatEffectTask m_fovTask;
+    // カメラ距離変更タスク
+    FloatEffectTask m_cameraDistanceTask;
+    // カメラオフセット変更タスク
+    Vector3EffectTask m_cameraOffsetTask;
+
 public:
     ~CameraControlBehavior() = default;
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
 
+    // FOV変更
+    void ChangeFOV(float fov, float duration);
+    void ChangeFOVTemporary(float fov, float duration, float holdDuration);
+    // FOVを元に戻す
+    void ResetFOV(float duration);
+
+    // カメラ距離変更
+    void ChangeCameraDistance(float distance, float duration);
+    void ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration);
+    // カメラ距離を元に戻す
+    void ResetCameraDistance(float duration);
+
+    // カメラオフセット変更
+    void ChangeCameraOffset(const XMFLOAT3& offset, float duration);
+    void ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
+    // カメラオフセットを元に戻す
+    void ResetCameraOffset(float duration);
+
 private:
+    // エフェクトタスクの更新
+    void UpdateCameraEffectTasks(float deltaTime);
+
     // カメラの基底ベクトルの構築
     void BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const;
 
@@ -79,7 +141,6 @@ private:
 
     // カメラ位置を計算
     XMFLOAT3 CalculateTargetCameraPosition(const XMFLOAT3& cameraForward, const XMFLOAT3& cameraRight, const XMFLOAT3& targetAtPosition);
-
 };
 
 #endif // CAMERA_CONTROL_BEHAVIOR_H

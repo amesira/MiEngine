@@ -13,6 +13,11 @@
 
 #include "Utility/debug_ostream.h"
 
+#include "Engine/Core/scene_interface.h"
+#include "Engine/Core/game_object.h"
+
+#include "Game/Behavior/camera_control_behavior.h"
+
 GameEffectController::GameEffectController()
 {
     s_instanceCount++;
@@ -40,7 +45,15 @@ GameEffectController::~GameEffectController()
 
 void GameEffectController::Start()
 {
-    
+    IScene* scene = GetOwner()->GetScene();
+
+    // カメラコントロールビヘイビアへの参照取得
+    {
+        GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
+        if (mainCamera) {
+            m_cameraControl = mainCamera->GetComponent<CameraControlBehavior>();
+        }
+    }
 }
 
 void GameEffectController::Update()
@@ -97,11 +110,11 @@ void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
             if (m_duration > 0.0f) {
                 t = (std::min)(m_taskTimer / m_duration, 1.0f);
             }
-            float newTimeScale = MiMath::Lerp(m_targetTimeScale, m_startTimeScale, t);
+            float newTimeScale = MiMath::Lerp(m_targetTimeScale, m_defaultTimeScale, t);
             FPS_SetTimeScale(newTimeScale);
 
             if (t >= 1.0f) {
-                FPS_SetTimeScale(m_startTimeScale); // 確実に元のタイムスケールに戻す
+                FPS_SetTimeScale(m_defaultTimeScale); // 確実に元のタイムスケールに戻す
                 Finish();
             }
             break;
@@ -137,4 +150,69 @@ void GameEffectController::ChangeTimeScaleTemporary(float timeScale, float durat
 void GameEffectController::ResetTimeScale(float duration)
 {
     ChangeTimeScale(1.0f, duration);
+}
+
+// CameraControlBehaviorを介した実装の窓口
+
+// FOV変更
+void GameEffectController::ChangeFOV(float fov, float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeFOV(fov, duration);
+    }
+}
+void GameEffectController::ChangeFOVTemporary(float fov, float duration, float holdDuration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeFOVTemporary(fov, duration, holdDuration);
+    }
+}
+// FOVを元に戻す
+void GameEffectController::ResetFOV(float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ResetFOV(duration);
+    }
+}
+
+// カメラ距離変更
+void GameEffectController::ChangeCameraDistance(float distance, float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeCameraDistance(distance, duration);
+    }
+}
+void GameEffectController::ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeCameraDistanceTemporary(distance, duration, holdDuration);
+    }
+}
+// カメラ距離を元に戻す
+void GameEffectController::ResetCameraDistance(float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ResetCameraDistance(duration);
+    }
+}
+
+// カメラオフセット変更
+void GameEffectController::ChangeCameraOffset(const XMFLOAT3& offset, float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeCameraOffset(offset, duration);
+    }
+}
+void GameEffectController::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeCameraOffsetTemporary(offset, duration, holdDuration);
+    }
+}
+// カメラオフセットを元に戻す
+void GameEffectController::ResetCameraOffset(float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ResetCameraOffset(duration);
+    }
 }
