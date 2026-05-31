@@ -21,39 +21,46 @@ private:
     TransformComponent* m_transform = nullptr;
     CameraComponent* m_camera = nullptr;
 
+    // === TPSカメラのパラメータ ===
     // 追従ターゲットのアドレス
     TransformComponent* m_targetTransform = nullptr;
-    RigidbodyComponent* m_targetRigidbody = nullptr;
 
-    // カメラの回転角度
+    // 注視点のオフセット
+    XMFLOAT3 m_lookAtOffset = { 0.0f, 0.0f, 0.0f };
+    float m_lookAtHeight = 1.5f; // 注視点の高さ
+    float m_followDistance = 15.0f; // カメラと注視点の距離
+
+    // （フォーカス用）
+    TransformComponent* m_focusTarget = nullptr;
+    float m_focusWeight = 0.5f; // フォーカスの重み（0.0f～1.0f）
+
+    // === TPSカメラの操作設定 ===
+    float m_mouseSensitivity = 1.0f; // マウス感度
+
+    float m_rotationSmoothTime = 0.1f; // 回転のスムーズ時間
+    float m_positionSmoothTime = 0.1f; // 位置のスムーズ時間
+
+    // === カメラの制御設定 ===
     float m_pitch = XMConvertToRadians(40.0f);
     float m_yaw = 0.0f;
 
     float m_maxPitch = XMConvertToRadians(50.0f);
     float m_minPitch = XMConvertToRadians(-5.0f);
 
-    // カメラの距離と高さ
-    float m_followDistance = 5.0f;
-    float m_followHeight = 2.0f;
+    float m_targetPitch = 0.0f;
+    float m_targetYaw = 0.0f;
 
-    // カメラ追従のスムージングパラメータ
-    struct CameraSmoothState {
-        XMFLOAT3 position;
-        XMFLOAT3 velocity;
-    };
+    // === カメラシェイク設定 ===
+    bool m_isShaking = false;
 
-    struct CameraBasis {
-        XMFLOAT3 forward;
-        XMFLOAT3 right;
-    };
+    float m_shakeFrequency = 35.0f; // シェイクの周波数
 
-    struct CameraDesiredPositions {
-        XMFLOAT3 atPosition;
-        XMFLOAT3 eyePosition;
-    };
+    // === SmoothDampの状態 ===
+    float m_pitchVelocity = 0.0f;
+    float m_yawVelocity = 0.0f;
 
-    CameraSmoothState m_atSmoothState;
-    CameraSmoothState m_eyeSmoothState;
+    XMFLOAT3 m_cameraPositionVelocity = {};
+    XMFLOAT3 m_cameraOffsetVelocity = {};
 
 public:
     ~CameraControlBehavior() = default;
@@ -62,18 +69,17 @@ public:
     void DrawComponentInspector() override;
 
 private:
-    // ターゲットの探索
-    void FindTarget();
     // カメラの基底ベクトルの構築
-    CameraBasis BuildCameraBasis() const;
+    void BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const;
 
-    // ターゲットの速度に基づいてカメラの自動回転を更新
-    void UpdateAutoYaw(const XMFLOAT3& targetVelocity, float targetSpeed, float deltaTime, const CameraBasis& basis);
-    // ターゲットの位置とカメラの基底ベクトルに基づいて、カメラの注視点と位置の目標値を計算
-    CameraDesiredPositions CalculateDesiredPositions(const XMFLOAT3& targetPosition, const CameraBasis& basis) const;
-    
-    // スムーズダンピング関数
-    CameraSmoothState SmoothDamp(const CameraSmoothState& current, const XMFLOAT3& targetPosition, float smoothTime, float deltaTime);
+    // カメラの注視点のターゲット値を計算
+    XMFLOAT3 CalculateTargetAtPosition();
+    // カメラ回転のターゲット値の入力による更新
+    void UpdateTargetYawPitchFromInput(float deltaTime);
+
+    // カメラ位置を計算
+    XMFLOAT3 CalculateTargetCameraPosition(const XMFLOAT3& cameraForward, const XMFLOAT3& cameraRight, const XMFLOAT3& targetAtPosition);
+
 };
 
 #endif // CAMERA_CONTROL_BEHAVIOR_H

@@ -89,21 +89,8 @@ void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, float delt
     const XMFLOAT3& cameraRight = m_mainCamera->GetRight();
 
     // ビルボード回転の計算
-    float billboardAngleY = atan2f(-cameraRight.x, -cameraRight.z);
+    float billboardAngleY = atan2f(cameraForward.x, cameraForward.z);
 
     m_currentAngleY = MiMath::Lerp(m_currentAngleY, billboardAngleY, deltaTime * 10.0f);
-
-    //// 入力がほぼない時は向きを変えない
-    //if (MiMath::Length(XMFLOAT3(move.x, 0.0f, move.z)) < 0.01f) {
-    //    return;
-    //}
-
-    //// XZ平面の向きをそのまま角度にする
-    //float targetAngleY = atan2f(-move.x, -move.z);
-
-    //// 補完
-    //targetAngleY = MiMath::Lerp(m_currentAngleY, targetAngleY, deltaTime * 10.0f);
-
-    //m_transform->SetEulerAngle({ 0.0f, targetAngleY, 0.0f });
-    //m_currentAngleY = targetAngleY;
+    m_transform->SetEulerAngle({ 0.0f, m_currentAngleY, 0.0f });
 }

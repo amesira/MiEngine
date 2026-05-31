@@ -211,4 +211,41 @@ namespace MiMath
         return q;
     }
 
+    // SmoothDamp関数の実装
+    inline XMFLOAT3 SmoothDamp(const XMFLOAT3& current, const XMFLOAT3& target, XMFLOAT3& currentVelocity, float smoothTime, float deltaTime)
+    {
+        if (smoothTime < 1e-4f) {
+            smoothTime = 1e-4f;
+        }
+        float omega = 2.0f / smoothTime;
+        float x = omega * deltaTime;
+        float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+        XMFLOAT3 change = Subtract(current, target);
+        XMFLOAT3 temp = Add(currentVelocity, Multiply(change, omega));
+        temp = Multiply(temp, deltaTime);
+
+        XMFLOAT3 result = Multiply(Add(change, temp), exp);
+        result = Add(target, result);
+
+        currentVelocity = Multiply(Subtract(currentVelocity, Multiply(temp, omega)), exp);
+        return result;
+    }
+    inline float SmoothDamp(float current, float target, float& currentVelocity, float smoothTime, float deltaTime)
+    {
+        if (smoothTime < 1e-4f) {
+            smoothTime = 1e-4f;
+        }
+        float omega = 2.0f / smoothTime;
+        float x = omega * deltaTime;
+        float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+        float change = current - target;
+        float temp = (currentVelocity + omega * change) * deltaTime;
+
+        float result = target + (change + temp) * exp;
+
+        currentVelocity = (currentVelocity - temp * omega) * exp;
+        return result;
+    }
 }
