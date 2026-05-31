@@ -56,6 +56,7 @@ public:
     // シャドウマップ用のバインド
     void BindShadowCB();
     void BindShadowTexture();
+
     // シャドウマップ用テクスチャを外す
     void UnbindShadowTexture();
 

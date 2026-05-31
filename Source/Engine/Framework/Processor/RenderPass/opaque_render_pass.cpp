@@ -53,6 +53,7 @@ void OpaqueRenderPass::Process(IScene* pScene)
     // コンポーネントプール取得
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
+
     if (transformPool && modelPool){
         auto& modelPoolList = modelPool->GetList();
 

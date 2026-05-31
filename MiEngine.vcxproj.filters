@@ -249,6 +249,12 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Editor\EditorWindow\debug_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\inspector_view_window.cpp" />
@@ -521,6 +527,12 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
     <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
     <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
@@ -627,6 +639,9 @@
     </Filter>
     <Filter Include="Sources\Game\Behavior\PlayerBehavior\PlayerResource">
       <UniqueIdentifier>{72526588-c41a-4258-90e6-3b1cc5a20850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility">
+      <UniqueIdentifier>{bd6a76f8-bbf2-4cbf-851c-42403e8f67eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

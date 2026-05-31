@@ -145,6 +145,8 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
@@ -225,6 +227,8 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />

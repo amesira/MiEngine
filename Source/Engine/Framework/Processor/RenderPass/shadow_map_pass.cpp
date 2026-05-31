@@ -32,6 +32,7 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         ConstantBufferUsage::Default);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_shadowLightCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_shadowLightCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_shadowLightCB);
 
     // シャドウマップ用のリソース作成
     Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
@@ -49,7 +50,6 @@ void ShadowMapPass::Process(IScene* pScene)
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
     if (!transformPool || !modelPool)return;
 
-    
     // 描画ステートのセット
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);

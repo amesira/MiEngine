@@ -1,5 +1,6 @@
 // shader_definitions.h
 #pragma once
+#include <string>
 
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
