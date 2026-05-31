@@ -28,14 +28,14 @@ private:
     // 注視点のオフセット
     XMFLOAT3 m_lookAtOffset = { 0.0f, 0.0f, 0.0f };
     float m_lookAtHeight = 1.5f; // 注視点の高さ
-    float m_followDistance = 15.0f; // カメラと注視点の距離
+    float m_followDistance = 10.0f; // カメラと注視点の距離
 
     // （フォーカス用）
     TransformComponent* m_focusTarget = nullptr;
     float m_focusWeight = 0.5f; // フォーカスの重み（0.0f～1.0f）
 
     // === TPSカメラの操作設定 ===
-    float m_mouseSensitivity = 1.0f; // マウス感度
+    float m_mouseSensitivity = 0.6f; // マウス感度
 
     float m_rotationSmoothTime = 0.1f; // 回転のスムーズ時間
     float m_positionSmoothTime = 0.1f; // 位置のスムーズ時間

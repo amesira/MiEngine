@@ -33,6 +33,10 @@ void CameraControlBehavior::Start()
             m_targetTransform = target->GetComponent<TransformComponent>();
         }
     }
+
+    // 初期設定
+    m_targetPitch = m_pitch;
+    m_targetYaw = m_yaw;
 }
 
 void CameraControlBehavior::Update()

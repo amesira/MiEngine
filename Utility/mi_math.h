@@ -211,6 +211,17 @@ namespace MiMath
         return q;
     }
 
+    inline XMFLOAT4 Slerp(const XMFLOAT4& current, const XMFLOAT4& target, float t) {
+        t = Clamp(t, 0.0f, 1.0f);
+
+        XMVECTOR currentQuaternion = XMQuaternionNormalize(XMLoadFloat4(&current));
+        XMVECTOR targetQuaternion = XMQuaternionNormalize(XMLoadFloat4(&target));
+
+        XMFLOAT4 result;
+        XMStoreFloat4(&result, XMQuaternionNormalize(XMQuaternionSlerp(currentQuaternion, targetQuaternion, t)));
+        return result;
+    }
+
     // SmoothDamp関数の実装
     inline XMFLOAT3 SmoothDamp(const XMFLOAT3& current, const XMFLOAT3& target, XMFLOAT3& currentVelocity, float smoothTime, float deltaTime)
     {

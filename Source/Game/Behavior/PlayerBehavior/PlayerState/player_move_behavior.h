@@ -23,6 +23,7 @@ private:
     float   m_jumpForce = 10.0f;
 
     float   m_currentAngleY = 0.0f;
+    float   m_rotationSpeed = 10.0f;
 
     // メインカメラの参照
     CameraComponent* m_mainCamera = nullptr;

@@ -81,13 +81,12 @@ void PlayerBehavior::Update()
     UpdateAnimation(m_context.state, m_context.combatState);
 
     // Flip
-    if (m_context.input.moveInputCameraLocal.x > 0.01f) {
+    if (m_context.input.horizontal > 0.01f) {
         m_spriteRenderer->SetFlipX(true);
     }
-    else if (m_context.input.moveInputCameraLocal.x < -0.01f) {
+    else if (m_context.input.horizontal < -0.01f) {
         m_spriteRenderer->SetFlipX(false);
     }
-
 }
 
 // PlayerBehaviorのインスペクタ表示

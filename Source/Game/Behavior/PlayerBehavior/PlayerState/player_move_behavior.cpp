@@ -18,6 +18,8 @@
 #include "Engine/Framework/Component/rigidbody_component.h"
 #include "Engine/Framework/Component/camera_component.h"
 
+#include <cmath>
+
 void PlayerMoveBehavior::Start()
 {
     GameObject* owner = this->GetOwner();
@@ -81,16 +83,21 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, float deltaTim
 }
 
 // 回転更新処理
-void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, float deltaTime)
+void PlayerMoveBehavior::UpdateRotation(const PlayerContext&, float deltaTime)
 {
-    const XMFLOAT3& move = context.input.moveInputCameraLocal;
+    if (!m_transform || !m_mainCamera) return;
 
     const XMFLOAT3& cameraForward = m_mainCamera->GetForward();
-    const XMFLOAT3& cameraRight = m_mainCamera->GetRight();
 
     // ビルボード回転の計算
     float billboardAngleY = atan2f(cameraForward.x, cameraForward.z);
+    XMFLOAT4 targetRotation = MiMath::QuaternionFromEuler({ 0.0f, billboardAngleY, 0.0f });
 
-    m_currentAngleY = MiMath::Lerp(m_currentAngleY, billboardAngleY, deltaTime * 10.0f);
-    m_transform->SetEulerAngle({ 0.0f, m_currentAngleY, 0.0f });
+    // Slerpで回転をスムーズに追従
+    XMFLOAT4 currentRotation = m_transform->GetRotation();
+    currentRotation = MiMath::Slerp(currentRotation, targetRotation, m_rotationSpeed * deltaTime);
+
+    // 回転の適用
+    m_transform->SetRotation(currentRotation);
+    m_currentAngleY = m_transform->GetEulerAngle().y;
 }
