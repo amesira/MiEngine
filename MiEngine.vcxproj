@@ -181,6 +181,7 @@
     <ClCompile Include="Source\Engine\Graphics\model_repository.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
@@ -285,6 +287,7 @@
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h" />
@@ -594,6 +597,34 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\sprite_unlit_vs.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\particle_ps.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\particle_vs.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>

@@ -53,6 +53,8 @@
     <FxCompile Include="Shader\sprite_lit_vs.hlsl" />
     <FxCompile Include="Shader\sprite_unlit_ps.hlsl" />
     <FxCompile Include="Shader\sprite_unlit_vs.hlsl" />
+    <FxCompile Include="Shader\particle_ps.hlsl" />
+    <FxCompile Include="Shader\particle_vs.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
@@ -153,6 +155,9 @@
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp">
@@ -282,6 +287,9 @@
     <ClInclude Include="Source\Engine\Framework\Component\model_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Component\rect_transform_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
@@ -394,6 +402,9 @@
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h">

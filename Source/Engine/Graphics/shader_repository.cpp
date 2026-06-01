@@ -59,6 +59,12 @@ void ShaderRepository::Initialize()
         spriteUnlitShader.pixelShader = GeneratePixelShaderResource("sprite_unlit_ps.cso");
         GenerateShaderProgramResource(spriteUnlitShader);
 
+        ShaderProgramResource particleShader;
+        particleShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Particle)];
+        particleShader.vertexShader = GenerateVertexShaderResource("particle_vs.cso", VertexType::Particle);
+        particleShader.pixelShader = GeneratePixelShaderResource("particle_ps.cso");
+        GenerateShaderProgramResource(particleShader);
+
         ShaderProgramResource fullScreenShader;
         fullScreenShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::FullScreen)];
         fullScreenShader.vertexShader = GenerateVertexShaderResource("full_screen_vs.cso", VertexType::None);
@@ -287,6 +293,17 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
         layout[1] = { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[2] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[3] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+        break;
+    case VertexType::Particle:
+        layout.resize(8);
+        layout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 };
+        layout[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 };
+        layout[2] = { "WORLD",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[3] = { "WORLD",    1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[4] = { "WORLD",    2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[5] = { "WORLD",    3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[6] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[7] = { "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
         break;
     case VertexType::Ui:
         layout.resize(3);

@@ -6,62 +6,80 @@
 using namespace DirectX;
 
 namespace ShaderDefinitions {
-    // 頂点の種類
     enum class VertexType {
-        Model,          // モデル用頂点
-        SkinnedModel,   // スキンメッシュ用頂点
-        Ui,             // UI用頂点
-        Sprite,         // スプライト用頂点
+        Model,
+        SkinnedModel,
+        Ui,
+        Sprite,
+        Particle,
 
-        None,           // 頂点情報なし
+        None,
 
         MAX,
     };
-#pragma region 頂点構造体
+
+#pragma region Vertex structures
     struct ModelVertex {
-        XMFLOAT3 position;  // 頂点の位置
-        XMFLOAT3 normal;    // 頂点の法線
-        XMFLOAT3 tangent;   // 頂点の接線
-        XMFLOAT3 binormal;  // 頂点の副接線
+        XMFLOAT3 position;
+        XMFLOAT3 normal;
+        XMFLOAT3 tangent;
+        XMFLOAT3 binormal;
 
-        XMFLOAT4 color;     // 頂点の色
-        XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
+        XMFLOAT4 color;
+        XMFLOAT2 texCoord;
     };
+
     struct SkinnedModelVertex {
-        XMFLOAT3 position;  // 頂点の位置
-        XMFLOAT3 normal;    // 頂点の法線
-        XMFLOAT3 tangent;   // 頂点の接線
-        XMFLOAT3 binormal;  // 頂点の副接線
+        XMFLOAT3 position;
+        XMFLOAT3 normal;
+        XMFLOAT3 tangent;
+        XMFLOAT3 binormal;
 
-        XMFLOAT4 color;     // 頂点の色
-        XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
+        XMFLOAT4 color;
+        XMFLOAT2 texCoord;
 
-        XMUINT4  boneIndices; // ボーンのインデックス
-        XMFLOAT4 boneWeights; // ボーンの重み
+        XMUINT4  boneIndices;
+        XMFLOAT4 boneWeights;
     };
+
     struct UiVertex {
-        XMFLOAT3 position;  // 頂点の位置
-        XMFLOAT4 color;     // 頂点の色
-        XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
+        XMFLOAT3 position;
+        XMFLOAT4 color;
+        XMFLOAT2 texCoord;
     };
+
     struct SpriteVertex {
-        XMFLOAT3 position;  // 頂点の位置
-        XMFLOAT3 normal;    // 頂点の法線
-        XMFLOAT4 color;     // 頂点の色
-        XMFLOAT2 texCoord;  // 頂点のテクスチャ座標
+        XMFLOAT3 position;
+        XMFLOAT3 normal;
+        XMFLOAT4 color;
+        XMFLOAT2 texCoord;
+    };
+
+    struct ParticleVertex {
+        XMFLOAT3 position;
+        XMFLOAT2 texCoord;
+    };
+
+    struct ParticleInstanceData {
+        XMFLOAT4 worldRow0;
+        XMFLOAT4 worldRow1;
+        XMFLOAT4 worldRow2;
+        XMFLOAT4 worldRow3;
+        XMFLOAT4 color;
+        XMFLOAT4 uvRect;
     };
 #pragma endregion
-    
-    // シェーダーベース
+
     enum class ShaderBase {
         None,
-        Lit,        // ライト付きシェーダー
-        SkinnedLit, // スキンメッシュ用ライト付きシェーダー
-        Unlit,      // ライトなしシェーダー
-        Ui,         // UIシェーダー
-        SpriteLit,  // スプライトシェーダー
-        SpriteUnlit,// ライトなしスプライトシェーダー
-        FullScreen, // フルスクリーンクワッドシェーダー
+        Lit,
+        SkinnedLit,
+        Unlit,
+        Ui,
+        SpriteLit,
+        SpriteUnlit,
+        Particle,
+        FullScreen,
         MAX
     };
 
@@ -73,7 +91,7 @@ namespace ShaderDefinitions {
         "Ui",
         "SpriteLit",
         "SpriteUnlit",
+        "Particle",
         "FullScreen",
     };
-
 }
