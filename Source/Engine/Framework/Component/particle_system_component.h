@@ -87,8 +87,6 @@ public:
         XMFLOAT3 gravity = { 0.0f, 0.0f, 0.0f };    // 重力の影響
         float simulationSpeed = 1.0f;               // シミュレーションの速度
         SimulationSpace simulationSpace = SimulationSpace::Local; // シミュレーション空間
-
-        int maxParticles = 1000;    // 最大パーティクル数
     };
 
     // パーティクルの発生に関する設定を行うモジュール
@@ -145,6 +143,8 @@ public:
         XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };   // パーティクルの速度
         XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };// パーティクルの色
     };
+
+    static constexpr int MAX_PARTICLES = 1000; // 最大パーティクル数
 
 private:
     // メインモジュール

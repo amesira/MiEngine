@@ -25,6 +25,7 @@ void RenderProcessor::Initialize()
     m_opaqueRenderPass.Initialize(m_pDevice, m_pContext);
     m_uiRenderPass.Initialize(m_pDevice, m_pContext);
     m_decalRenderPass.Initialize(m_pDevice, m_pContext);
+    m_transparentRenderPass.Initialize(m_pDevice, m_pContext);
     m_postEffectPass.Initialize(m_pDevice, m_pContext);
 }
 
@@ -35,6 +36,7 @@ void RenderProcessor::Finalize()
     m_opaqueRenderPass.Finalize();
     m_uiRenderPass.Finalize();
     m_decalRenderPass.Finalize();
+    m_transparentRenderPass.Finalize();
     m_shadowMapPass.Finalize();
     m_skyboxPass.Finalize();
     m_postEffectPass.Finalize();
@@ -93,7 +95,7 @@ void RenderProcessor::Process(IScene* pScene)
 
         // 透明物体
         Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
-        // m_transparentRenderPass.Process(pScene);
+        m_transparentRenderPass.Process(pScene);
 
         //-----------------
         if (m_renderView->enableDebugDraw) {

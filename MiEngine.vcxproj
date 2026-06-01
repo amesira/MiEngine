@@ -148,6 +148,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.cpp" />
     <ClCompile Include="External\stb_implementation.cpp" />
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\tool_bar_window.cpp" />
@@ -233,6 +235,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\particle_system_processor.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
@@ -297,6 +300,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\render_processor.h" />
     <ClInclude Include="Source\Engine\render_view.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.h" />
     <ClInclude Include="Source\Engine\engine.h" />
     <ClInclude Include="Source\Game\Factory\factory.h" />
     <ClInclude Include="Source\Engine\game_world.h" />

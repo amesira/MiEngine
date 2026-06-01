@@ -157,6 +157,9 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
@@ -276,6 +279,7 @@
     <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -402,6 +406,9 @@
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.h">
@@ -571,6 +578,7 @@
     <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\particle_system_processor.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
