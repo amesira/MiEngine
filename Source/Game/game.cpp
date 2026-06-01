@@ -55,10 +55,12 @@ void GameScene::Initialize()
     // player
     GameObject* player = ActorFactory::CreatePlayer(this, { 0.0f,3.0f,10.0f });
 
-    // JointGroup
+    // テスト：JointGroup
     GameObject* jointGroup = this->CreateGameObject();
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
 
+    // テスト：ParticleSystem
+    RenderEffectFactory::CreateParticleEffect(this, { -2.0f, 3.0f, 0.0f }, L"asset\\Texture\\particle.png");
 
 
 }

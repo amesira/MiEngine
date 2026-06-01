@@ -137,6 +137,8 @@ public:
         bool alive = false;         // パーティクルが生存しているかどうか
         float elapsedTime = 0.0f;   // パーティクルの経過時間
         float lifetime = 1.0f;      // パーティクルの寿命
+
+        float startSize = 1.0f;     // パーティクルの初期サイズ
         float size = 1.0f;          // パーティクルのサイズ
 
         XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };   // パーティクルの位置
