@@ -145,6 +145,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\particle_system_processor.h" />

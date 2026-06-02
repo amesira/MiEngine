@@ -12,7 +12,6 @@
 #include "Engine/Graphics/texture_resource.h"
 
 #include <wrl/client.h>
-
 using Microsoft::WRL::ComPtr;
 
 class ParticleSystemComponent;
