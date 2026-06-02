@@ -11,6 +11,10 @@
 #include "Engine/Device/direct3d.h"
 #include "Engine/Graphics/texture_resource.h"
 
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
+
 class ParticleSystemComponent;
 
 class TransparentRenderPass : public Pass {
@@ -25,8 +29,8 @@ private:
     TextureResource* m_defaultTexture = nullptr;
 
     // ParticleRenderer用の頂点バッファ
-    ID3D11Buffer* m_pParticleVertexBuffer = nullptr;
-    ID3D11Buffer* m_pParticleInstanceBuffer = nullptr;
+    ComPtr<ID3D11Buffer> m_pParticleVertexBuffer;
+    ComPtr<ID3D11Buffer> m_pParticleInstanceBuffer;
 
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

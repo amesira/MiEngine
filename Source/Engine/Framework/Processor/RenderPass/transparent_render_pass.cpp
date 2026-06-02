@@ -32,7 +32,7 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
         bd.ByteWidth = sizeof(ShaderDefinitions::ParticleVertex) * 4;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        m_pDevice->CreateBuffer(&bd, NULL, &m_pParticleVertexBuffer);
+        m_pDevice->CreateBuffer(&bd, NULL, m_pParticleVertexBuffer.GetAddressOf());
     }
     {
         D3D11_BUFFER_DESC bd = {};
@@ -40,7 +40,7 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
         bd.ByteWidth = sizeof(ShaderDefinitions::ParticleInstanceData) * ParticleSystemComponent::MAX_PARTICLES;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        m_pDevice->CreateBuffer(&bd, NULL, &m_pParticleInstanceBuffer);
+        m_pDevice->CreateBuffer(&bd, NULL, m_pParticleInstanceBuffer.GetAddressOf());
     }
 
 }
@@ -97,7 +97,7 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
 {
     // === 頂点バッファの設定 ===
     D3D11_MAPPED_SUBRESOURCE msr = {};
-    m_pContext->Map(m_pParticleVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    m_pContext->Map(m_pParticleVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
     ParticleVertex* vertices = static_cast<ParticleVertex*>(msr.pData);
     {
         vertices[0].position = XMFLOAT3(-0.5f, -0.5f, 0.0f);
@@ -110,11 +110,11 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
         vertices[2].texCoord = XMFLOAT2(0.0f, 1.0f);
         vertices[3].texCoord = XMFLOAT2(1.0f, 1.0f);
     }
-    m_pContext->Unmap(m_pParticleVertexBuffer, 0);
+    m_pContext->Unmap(m_pParticleVertexBuffer.Get(), 0);
 
     // === パーティクルのインスタンスデータを更新 ===
     msr = {};
-    m_pContext->Map(m_pParticleInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+    m_pContext->Map(m_pParticleInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
     ParticleInstanceData* instanceData = static_cast<ParticleInstanceData*>(msr.pData);
 
     // ビルボード行列の計算
@@ -172,7 +172,7 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
     }
 
     // インスタンスデータの更新完了
-    m_pContext->Unmap(m_pParticleInstanceBuffer, 0);
+    m_pContext->Unmap(m_pParticleInstanceBuffer.Get(), 0);
 
     // テクスチャをバインド
     TextureResource* texture = particleSystem.Renderer().textureResource ?
@@ -184,7 +184,7 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
     // 頂点バッファのバインド
     UINT stride[2] = { sizeof(ParticleVertex), sizeof(ParticleInstanceData) };
     UINT offset[2] = { 0, 0 };
-    ID3D11Buffer* buffers[2] = { m_pParticleVertexBuffer, m_pParticleInstanceBuffer };
+    ID3D11Buffer* buffers[2] = { m_pParticleVertexBuffer.Get(), m_pParticleInstanceBuffer.Get() };
     m_pContext->IASetVertexBuffers(0, 2, buffers, stride, offset);
 
     m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
