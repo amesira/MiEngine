@@ -11,6 +11,8 @@
 #include "Engine/Device/direct3d.h"
 #include "Engine/Graphics/texture_resource.h"
 
+class ParticleSystemComponent;
+
 class TransparentRenderPass : public Pass {
 private:
     ID3D11Device* m_pDevice = nullptr;
@@ -35,6 +37,11 @@ public:
         m_view = view;
         m_projection = projection;
     }
+
+private:
+    // パーティクルシステムの描画
+    void DrawParticleSystem(ParticleSystemComponent& particleSystem);
+
 };
 
 #endif // TRANSPARENT_RENDER_PASS_H

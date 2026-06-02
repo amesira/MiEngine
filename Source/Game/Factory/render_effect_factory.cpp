@@ -56,7 +56,7 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
     main.startColor.colorMax = { 1.0f, 0.95f, 0.35f, 0.45f };
     main.gravity = { 0.0f, -0.25f, 0.0f };
     main.simulationSpeed = 1.0f;
-    main.simulationSpace = ParticleSystemComponent::SimulationSpace::Local;
+    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
 
     auto& emission = particleSystem->Emission();
     emission.enabled = true;

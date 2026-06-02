@@ -109,7 +109,7 @@ public:
             float angle = XM_PIDIV4;
             float radius = 1.0f;
             float length = 5.0f;
-            bool emitFromBase = true;
+            bool emitFromBase = true; // 未実装
         } cone = {};
 
         float randomDirectionAmount = 0.0f; // 発生方向のランダムさ
@@ -149,26 +149,24 @@ public:
     static constexpr int MAX_PARTICLES = 1000; // 最大パーティクル数
 
 private:
-    // メインモジュール
     MainModule m_main = {};
-    // エミッションモジュール
     EmissionModule m_emission = {};
-    // 発生形状モジュール
     ShapeModule m_shape = {};
-    // 寿命に応じたサイズ変化モジュール
     SizeOverLifetimeModule m_sizeOverLifetime = {};
-    // 描画モジュール
     RendererModule m_renderer = {};
 
     // パーティクルデータの配列
     std::vector<ParticleData> m_particles;
-    // シミュレーションの時間管理
-    float m_time = 0.0f;
-    // 端数の発生数を管理するためのアキュムレータ
-    float m_emitAccumulator = 0.0f;
 
     // 再生状態
     bool m_isPlaying = false;
+
+    float m_time = 0.0f;            // シミュレーション時間
+    float m_emitAccumulator = 0.0f; // 端数の発生数を蓄積するアキュムレータ
+
+    XMFLOAT3 m_previousPosition = { 0.0f, 0.0f, 0.0f }; // 前フレームの位置
+    XMFLOAT3 m_currentPosition = { 0.0f, 0.0f, 0.0f };  // 現在の位置
+    float m_distanceAccumulator = 0.0f;        // 距離あたりの発生のための距離アキュムレータ
 
 public:
     // メインモジュールへのアクセス
@@ -202,6 +200,18 @@ public:
     // 端数の発生数アキュムレータの設定・取得
     void SetEmitAccumulator(float value) { m_emitAccumulator = value; }
     float GetEmitAccumulator() const { return m_emitAccumulator; }
+
+    // 距離アキュムレータの設定・取得
+    void SetDistanceAccumulator(float value) { m_distanceAccumulator = value; }
+    float GetDistanceAccumulator() const { return m_distanceAccumulator; }
+
+    // 前フレームの位置の設定・取得
+    void SetPreviousPosition(const XMFLOAT3& position) { m_previousPosition = position; }
+    const XMFLOAT3& GetPreviousPosition() const { return m_previousPosition; }
+
+    // 現在の位置の設定・取得
+    void SetCurrentPosition(const XMFLOAT3& position) { m_currentPosition = position; }
+    const XMFLOAT3& GetCurrentPosition() const { return m_currentPosition; }
 
     // 再生
     void Play() { m_isPlaying = true; }

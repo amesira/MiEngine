@@ -17,6 +17,7 @@ using namespace MiMath;
 #include <cmath>
 #include <random>
 
+#include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
 
 namespace {
@@ -126,7 +127,7 @@ namespace {
     }
 
     // 指定した数のパーティクルを発生させる
-    void EmitParticles(ParticleSystemComponent& particleSystem, int count)
+    void EmitParticles(ParticleSystemComponent& particleSystem, XMFLOAT3 emitterPosition, int count)
     {
         if (count <= 0) return;
 
@@ -152,7 +153,7 @@ namespace {
             particle.startSize = Evaluate(main.startSize);
             particle.size = particle.startSize;
 
-            particle.position = position;
+            particle.position = Add(position, emitterPosition);
             particle.velocity = Multiply(direction, Evaluate(main.startSpeed));
             particle.color = Evaluate(main.startColor);
 
@@ -174,13 +175,16 @@ void ParticleSystemProcessor::Process(IScene* pScene)
 {
     if (!pScene) return;
 
+    auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* particlePool = pScene->GetComponentPool<ParticleSystemComponent>();
-    if (!particlePool) return;
+    if (!transformPool || !particlePool) return;
 
     const float deltaTime = FPS_GetDeltaTime();
 
     auto& particleSystems = particlePool->GetList();
     for (ParticleSystemComponent& particleSystem : particleSystems) {
+        TransformComponent* transform = transformPool->GetByGameObjectID(particleSystem.GetOwner()->GetID());
+        if (!transform) continue;
         if (!particleSystem.GetOwner()->GetActive()) continue;
         if (!particleSystem.GetEnable()) continue;
 
@@ -191,10 +195,18 @@ void ParticleSystemProcessor::Process(IScene* pScene)
         // playOnAwakeが有効で、まだ再生されていない場合は再生する
         if (main.playOnAwake && !particleSystem.IsPlaying()) {
             particleSystem.Play();
+
+            particleSystem.SetPreviousPosition(transform->GetPosition());
         }
 
         // 再生中でなければスキップ
         if (!particleSystem.IsPlaying()) continue;
+
+        // 現在位置を更新・前フレームの位置を取得
+        XMFLOAT3 currentPosition = transform->GetPosition();
+        particleSystem.SetCurrentPosition(currentPosition);
+
+        XMFLOAT3 previousPosition = particleSystem.GetPreviousPosition();
 
         // === シミュレーションの更新 ===
         const float scaledDeltaTime = deltaTime * main.simulationSpeed;
@@ -215,18 +227,6 @@ void ParticleSystemProcessor::Process(IScene* pScene)
         // パーティクルの領域確保
         particles.reserve(static_cast<size_t>(ParticleSystemComponent::MAX_PARTICLES));
 
-        // === エミッション ===
-        if (emission.enabled) {
-            float accumulator = particleSystem.GetEmitAccumulator();
-            accumulator += emission.rateOverTime * scaledDeltaTime;
-
-            // 1.0f以上溜まっている分だけパーティクルを発生させる
-            const int emitCount = static_cast<int>(accumulator);
-            accumulator -= static_cast<float>(emitCount);
-            particleSystem.SetEmitAccumulator(accumulator);
-            EmitParticles(particleSystem, emitCount);
-        }
-
         // === パーティクルの更新 ===
         for (auto& particle : particles) {
             if (!particle.alive) continue;
@@ -241,6 +241,9 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             // 速度と位置の更新
             particle.velocity = Add(particle.velocity, Multiply(main.gravity, scaledDeltaTime));
             particle.position = Add(particle.position, Multiply(particle.velocity, scaledDeltaTime));
+            if (main.simulationSpace == ParticleSystemComponent::SimulationSpace::Local) {
+                particle.position = Add(particle.position, Subtract(currentPosition, previousPosition));
+            }
 
             // サイズの更新 --- SizeOverLifeTime ---
             if (particleSystem.SizeOverLifetime().enabled) {
@@ -249,13 +252,39 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             }
         }
 
+        // === エミッション ===
+        if (emission.enabled) {
+            float accumulator = particleSystem.GetEmitAccumulator();
+            // --- 時間ベースの発生
+            accumulator += emission.rateOverTime * scaledDeltaTime;
+
+            // 1.0f以上溜まっている分だけパーティクルを発生させる
+            int emitCount = static_cast<int>(accumulator);
+            accumulator -= static_cast<float>(emitCount);
+            particleSystem.SetEmitAccumulator(accumulator);
+            EmitParticles(particleSystem, currentPosition, emitCount);
+
+            // --- 距離ベースの発生
+            accumulator = particleSystem.GetDistanceAccumulator();
+            accumulator += Length(Subtract(currentPosition, previousPosition)) * emission.rateOverDistance; 
+            
+            emitCount = int(accumulator);
+            accumulator -= static_cast<int>(emitCount);
+            EmitParticles(particleSystem, currentPosition, emitCount);
+
+            particleSystem.SetDistanceAccumulator(accumulator);
+        }
+
         particles.erase(
             std::remove_if(particles.begin(), particles.end(), [](const ParticleSystemComponent::ParticleData& particle) {
                 return !particle.alive;
-            }),
+                }),
             particles.end());
 
         // === 時間の更新 ===
         particleSystem.SetTime(currentTime);
+
+        // 前フレームの位置を更新
+        particleSystem.SetPreviousPosition(currentPosition);
     }
 }

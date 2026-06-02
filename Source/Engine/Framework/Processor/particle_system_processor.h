@@ -10,11 +10,15 @@
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
+class TransformComponent;
+class ParticleSystemComponent;
+
 class ParticleSystemProcessor : public Processor {
 public:
     void Initialize() override;
     void Finalize() override;
     void Process(IScene* pScene) override;
+
 };
 
 #endif // PARTICLE_SYSTEM_PROCESSOR_H
