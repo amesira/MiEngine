@@ -21,6 +21,44 @@
 
 using namespace DirectX;
 
+namespace
+{
+    // 速度に応じたCCBステップ数の計算用定数
+    constexpr float VELOCITY_CCB_THRESHOLD = 200.0f;
+    constexpr float VELOCITY_CCB_RANGE = 70.0f;
+
+    // 速度に応じたCCBステップ数の計算
+    int CalculateCCBStep(RigidbodyComponent* rb, float deltaTime)
+    {
+        XMFLOAT3 vel = rb->GetVelocity();
+        float velocityMag = vel.x * vel.x + vel.y * vel.y + vel.z * vel.z;
+
+        if (velocityMag > VELOCITY_CCB_THRESHOLD) {
+            return static_cast<int>((velocityMag - VELOCITY_CCB_THRESHOLD) / VELOCITY_CCB_RANGE) + 1;
+        }
+
+        return 1;
+    }
+
+    // 解決の補正値の割合を作成
+    float CreateCorrectionRate(ColliderComponent* col, RigidbodyComponent* rb)
+    {
+        if (!col->GetCreateCorrection()) {
+            return 0.0f;
+        }
+        else if (rb == nullptr) {
+            return 0.0f;
+        }
+        else {
+            if (!rb->GetEnable() || rb->GetIsKinematic()) {
+                return 0.0f;
+            }
+        }
+
+        return rb->GetMass();
+    }
+}
+
 void CollisionPass::Initialize()
 {
 
@@ -278,40 +316,6 @@ void CollisionPass::CollectDebugDraw(IScene* pScene)
             DrawDebug_ColliderLine(transform, &c);
         }
     }
-}
-
-
-// CCBステップ数の計算
-int CollisionPass::CalculateCCBStep(RigidbodyComponent* rb, float deltaTime)
-{
-    XMFLOAT3 vel = rb->GetVelocity();
-    float velocityMag = vel.x * vel.x + vel.y * vel.y + vel.z * vel.z;
-
-    if (velocityMag > VELOCITY_CCB_THRESHOLD) {
-        return static_cast<int>((velocityMag - VELOCITY_CCB_THRESHOLD) / VELOCITY_CCB_RANGE) + 1;
-    }
-
-    return 1;
-}
-
-// CorrectionRateの作成
-float CollisionPass::CreateCorrectionRate(ColliderComponent* col, RigidbodyComponent* rb)
-{
-    // 補正値を作成しない場合
-    if (!col->GetCreateCorrection()) {
-        return 0.0f;
-    }
-    else if (rb == nullptr) {
-        return 0.0f;
-    }
-    else {
-        if (!rb->GetEnable() || rb->GetIsKinematic()) {
-            return 0.0f;
-        }
-    }
-
-    // 補正値を作成する場合、質量比に応じて分配するため質量をCorrectionRateとして返す
-    return rb->GetMass();
 }
 
 #pragma region デバッグ用コライダー描画

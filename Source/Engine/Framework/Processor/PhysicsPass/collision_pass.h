@@ -31,22 +31,7 @@ public:
     void    CollectDebugDraw(IScene* pScene);
 
 private:
-    // 連続衝突判定の速度閾値
-    static constexpr float  VELOCITY_CCB_THRESHOLD = 200.0f;
-    // 連続衝突判定の速度範囲
-    static constexpr float  VELOCITY_CCB_RANGE = 70.0f;
-
-    //---------------------------------------------------
-    // 物理的な解決のための処理群
-    //---------------------------------------------------
-    // CCBステップ数の計算
-    int     CalculateCCBStep(RigidbodyComponent* rb, float deltaTime);
-    // Correctionの作成
-    float   CreateCorrectionRate(ColliderComponent* col, RigidbodyComponent* rb);
-
-    //----------------------------------------------------
     // デバッグ用コライダー描画
-    //----------------------------------------------------
     void    DrawDebug_ColliderLine(TransformComponent* transform, BoxColliderComponent* boxCollider);
     void    DrawDebug_ColliderLine(TransformComponent* transform, SphereColliderComponent* sphereCollider);
 
