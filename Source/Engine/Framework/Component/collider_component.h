@@ -7,6 +7,7 @@
 #ifndef COLLIDER_COMPONENT_H
 #define COLLIDER_COMPONENT_H
 #include "Engine/Core/component.h"
+#include "Engine/Core/game_object_layer.h"
 
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
@@ -16,16 +17,7 @@ using namespace DirectX;
 class ColliderComponent :public Component {
 public:
     // レイヤー
-    enum class Layer {
-        Default = 0,
-        Field,
-        Player,
-        PlayerOnBall,
-        Ball,
-        Enemy,
-
-        MAX,
-    };
+    using Layer = CollisionLayer;
 
     // 衝突情報構造体
     struct CollisionData {
@@ -60,7 +52,6 @@ public:
 
 private:
     // レイヤー設定
-    Layer m_layer = Layer::Default;
     // 補正値を作成するかどうかのフラグ（自分も相手も）
     bool m_createCorrection = true;
 
@@ -76,8 +67,8 @@ public:
     ~ColliderComponent() = default;
 
     // レイヤー設定・取得
-    void    SetLayer(Layer layer) { m_layer = layer; }
-    Layer   GetLayer()const { return m_layer; }
+    void    SetLayer(Layer layer);
+    Layer   GetLayer()const;
     // 補正値作成フラグ設定・取得
     void    SetCreateCorrection(bool create) { m_createCorrection = create; }
     bool    GetCreateCorrection() const { return m_createCorrection; }

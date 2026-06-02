@@ -40,6 +40,7 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
 {
     GameObject* particleEffect = scene->CreateGameObject();
     particleEffect->SetName("ParticleEffect");
+    particleEffect->SetRenderLayer(RenderLayer::Particle);
 
     TransformComponent* transform = particleEffect->AddComponent<TransformComponent>();
     ParticleSystemComponent* particleSystem = particleEffect->AddComponent<ParticleSystemComponent>();
@@ -104,6 +105,7 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
 
     GameObject* dustEffect = scene->CreateGameObject();
     dustEffect->SetName("RunDustParticle");
+    dustEffect->SetRenderLayer(RenderLayer::Particle);
 
     TransformComponent* transform = dustEffect->AddComponent<TransformComponent>();
     ParticleSystemComponent* particleSystem = dustEffect->AddComponent<ParticleSystemComponent>();

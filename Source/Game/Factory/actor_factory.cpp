@@ -33,6 +33,8 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
 {
     GameObject* player = scene->CreateGameObject();
     player->SetName("Player");
+    player->SetCollisionLayer(CollisionLayer::Player);
+    player->SetRenderLayer(RenderLayer::Player);
 
     // component生成・登録
     TransformComponent* transform = player->AddComponent<TransformComponent>();

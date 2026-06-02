@@ -16,6 +16,7 @@
 
 #include "component.h"
 #include "component_pool.h"
+#include "game_object_layer.h"
 
 #include "scene_interface.h"
 
@@ -27,6 +28,9 @@ private:
     std::string     m_name = "GameObject";    // GameObjectの名前
     bool            m_active = true;    // アクティブフラグ
     bool            m_isDestroy = false;// 破棄予約フラグ
+
+    RenderLayer     m_renderLayer = RenderLayer::Default;
+    CollisionLayer  m_collisionLayer = CollisionLayer::Default;
     
 private:
     // SceneBaseからSetScene, SetIDを呼び出せるようにする。
@@ -41,6 +45,8 @@ private:
         m_name = "GameObject";
         m_active = false;
         m_isDestroy = false;
+        m_renderLayer = RenderLayer::Default;
+        m_collisionLayer = CollisionLayer::Default;
     }
 
 public:
@@ -56,6 +62,12 @@ public:
     // アクティブの設定・取得
     void    SetActive(bool active) { m_active = active; }
     bool            GetActive() { return m_active; }
+
+    void SetRenderLayer(RenderLayer layer) { m_renderLayer = layer; }
+    RenderLayer GetRenderLayer() const { return m_renderLayer; }
+
+    void SetCollisionLayer(CollisionLayer layer) { m_collisionLayer = layer; }
+    CollisionLayer GetCollisionLayer() const { return m_collisionLayer; }
 
     // GameObjectの破棄予約
     void    Destroy() {

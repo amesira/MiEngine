@@ -8,12 +8,13 @@
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/collider_component.h"
+#include "Engine/Core/game_object_layer.h"
 
 #include "Utility/mi_math.h"
 
 using namespace DirectX;
 
-constexpr bool COLLISION_MATRIX[(int)ColliderComponent::Layer::MAX][(int)ColliderComponent::Layer::MAX] = {
+constexpr bool COLLISION_MATRIX[(int)CollisionLayer::MAX][(int)CollisionLayer::MAX] = {
     //                 Default    Field      Player     PlayerOnBall    Ball        Enemy
     /*Default   */   { true,      true,      true,      true,           true,       true},
     /*Field     */   { true,      false,     true,      true,           true,      true},
@@ -27,8 +28,8 @@ constexpr bool COLLISION_MATRIX[(int)ColliderComponent::Layer::MAX][(int)Collide
 // レイヤーマスクによる当たり判定スキップ
 bool CollisionUtility::IsIgnoreLayerPair(int layerA, int layerB)
 {
-    if (layerA < 0 || layerA >= (int)ColliderComponent::Layer::MAX ||
-        layerB < 0 || layerB >= (int)ColliderComponent::Layer::MAX) {
+    if (layerA < 0 || layerA >= (int)CollisionLayer::MAX ||
+        layerB < 0 || layerB >= (int)CollisionLayer::MAX) {
         return false; // 無効なレイヤー番号の場合はスキップしない
     }
 

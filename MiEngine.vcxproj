@@ -198,6 +198,7 @@
     <ClCompile Include="Source\Game\game.cpp" />
     <ClCompile Include="Source\Engine\Core\game_object.h" />
     <ClCompile Include="Source\Engine\Device\keyboard.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Component\collider_component.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Engine\Device\mouse.cpp" />
@@ -222,6 +223,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
+    <ClInclude Include="Source\Engine\Core\game_object_layer.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
