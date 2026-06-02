@@ -75,22 +75,37 @@ void OpaqueRenderPass::Process(IScene* pScene)
         });
 
     // スプライトの描画
-    EngineServiceLocator::BindShader(ShaderBase::SpriteLit);
     SpriteRenderUtility::ForEachRenderableSprite(
         pScene,
         [this](SpriteRendererComponent& s, TransformComponent& t)
         {
             if (s.GetBlendMode() != SpriteRendererComponent::SpriteBlendMode::Opaque) return;
+            const MaterialInstance& mat = s.GetMaterial();
+            MaterialResource* material = mat.materialResource ? mat.materialResource : MATERIAL_REPOSITORY->GetMaterial("default");
+            if (!material) return;
+            if (material->renderMode != RenderMode::Opaque) return;
+
+            if (material->shaderProgram != nullptr) {
+                EngineServiceLocator::BindShader(material->shaderProgram);
+            }
+            else {
+                EngineServiceLocator::BindShader(ShaderBase::SpriteLit);
+            }
 
             // ワールド行列の計算
             XMMATRIX worldMatrix = SpriteRenderUtility::CreateWorldMatrix(t);
             EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
 
-            // テクスチャのバインド
-            TextureResource* texture = s.GetTextureResource() ? s.GetTextureResource() : m_defaultTexture;
-            if (texture) {
-                m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
-            }
+            MaterialInstance spriteMaterial = mat;
+            spriteMaterial.materialResource = material;
+
+            MaterialBufferData materialBufferData = material->CreateBufferData();
+            materialBufferData.baseColor = spriteMaterial.isOverrideBaseColor ? spriteMaterial.overrideBaseColor : materialBufferData.baseColor;
+            materialBufferData.emissiveColor = spriteMaterial.isOverrideEmissive ? spriteMaterial.overrideEmissiveColor : materialBufferData.emissiveColor;
+            materialBufferData.emissiveIntensity = spriteMaterial.isOverrideEmissive ? spriteMaterial.overrideEmissiveIntensity : materialBufferData.emissiveIntensity;
+            MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);
+            MATERIAL_REPOSITORY->BindMaterialTexture(spriteMaterial);
+
             // UV矩形にフリップを適用
             XMFLOAT4 uvRect = SpriteRenderUtility::ApplyFlipToUvRect(s.GetUvRect(), s.GetFlipX(), s.GetFlipY());
 
@@ -131,7 +146,7 @@ void OpaqueRenderPass::DrawMeshList(const std::vector<ModelMesh>& meshes, const 
         materialBufferData.emissiveColor = mat.isOverrideEmissive ? mat.overrideEmissiveColor : materialBufferData.emissiveColor;
         materialBufferData.emissiveIntensity = mat.isOverrideEmissive ? mat.overrideEmissiveIntensity : materialBufferData.emissiveIntensity;
         MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);
-        MATERIAL_REPOSITORY->BindMaterialTexture(*mat.materialResource);
+        MATERIAL_REPOSITORY->BindMaterialTexture(mat);
 
         ModelRenderUtility::DrawMeshGeometry(m_pContext, mesh);
     }

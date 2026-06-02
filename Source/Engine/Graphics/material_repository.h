@@ -46,6 +46,7 @@ public:
     // マテリアルのバインド
     void BindMaterialCB(const MaterialBufferData& material);
     void BindMaterialTexture(const MaterialResource& material);
+    void BindMaterialTexture(const MaterialInstance& materialInstance);
     // カスタムプロパティのバインド
     void BindCustomProperties(XMFLOAT4* customPropaties);
 

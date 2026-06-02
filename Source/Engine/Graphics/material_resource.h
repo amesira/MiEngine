@@ -94,6 +94,8 @@ public:
     MaterialResource* materialResource = nullptr;
 
     // オーバーライド設定
+    bool isOverrideAlbedoTexture = false;
+    TextureResource* overrideAlbedoTexture = nullptr;
     bool isOverrideBaseColor = false;
     XMFLOAT4 overrideBaseColor = { 1,1,1,1 };
     bool isOverrideEmissive = false;

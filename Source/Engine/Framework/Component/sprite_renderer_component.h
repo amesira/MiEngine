@@ -25,7 +25,7 @@ public:
     };
 
 private:
-    TextureResource*    m_pTextureResource = nullptr;
+    MaterialInstance m_material;
     XMFLOAT4    m_uvRect = { 0.0f,0.0f,1.0f,1.0f };
     XMFLOAT4    m_color = { 1.0f,1.0f,1.0f,1.0f };
 
@@ -36,8 +36,18 @@ private:
 
 public:
     // テクスチャリソースの設定・取得
-    void    SetTextureResource(TextureResource* resource) { m_pTextureResource = resource; }
-    TextureResource* GetTextureResource()const { return m_pTextureResource; }
+    void    SetTextureResource(TextureResource* resource) {
+        m_material.isOverrideAlbedoTexture = true;
+        m_material.overrideAlbedoTexture = resource;
+    }
+    TextureResource* GetTextureResource()const {
+        if (m_material.isOverrideAlbedoTexture) return m_material.overrideAlbedoTexture;
+        return m_material.materialResource ? m_material.materialResource->albedoTexture : nullptr;
+    }
+
+    void SetMaterialResource(MaterialResource* materialResource) { m_material.materialResource = materialResource; }
+    MaterialInstance& GetMaterial() { return m_material; }
+    const MaterialInstance& GetMaterial() const { return m_material; }
     // UV矩形の設定・取得
     void    SetUvRect(XMFLOAT4 uvRect) { m_uvRect = uvRect; }
     XMFLOAT4   GetUvRect()const { return m_uvRect; }

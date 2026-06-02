@@ -57,15 +57,21 @@ public:
         return nullptr;
     }
     const Clip* GetCurrentClip() const {
-        if (m_currentClipIndex >= 0 && m_currentClipIndex < m_clips.size()) {
+        if (m_currentClipIndex >= 0 && m_currentClipIndex < static_cast<int>(m_clips.size())) {
             return &m_clips[m_currentClipIndex];
         }
         return nullptr;
     }
+    std::vector<Clip>& GetClips() { return m_clips; }
+    const std::vector<Clip>& GetClips() const { return m_clips; }
+    int GetCurrentClipIndex() const { return m_currentClipIndex; }
+    int GetCurrentFrameIndex() const { return m_currentFrameIndex; }
+    float GetFrameTimer() const { return m_frameTimer; }
+    bool IsPlaying() const { return m_isPlaying; }
 
     // クリップの再生
     void PlayClip(int clipIndex) {
-        if (clipIndex >= 0 && clipIndex < m_clips.size()) {
+        if (clipIndex >= 0 && clipIndex < static_cast<int>(m_clips.size())) {
             m_currentClipIndex = clipIndex;
             m_currentFrameIndex = 0;
             m_frameTimer = 0.0f;
@@ -75,7 +81,7 @@ public:
     void Play(const std::string& clipName) {
         for (size_t i = 0; i < m_clips.size(); i++) {
         if (m_clips[i].name != clipName) continue;
-            PlayClip(i);
+            PlayClip(static_cast<int>(i));
             return;
         }
     }

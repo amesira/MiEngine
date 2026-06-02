@@ -34,6 +34,7 @@ void MaterialRepository::Initialize()
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_materialCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_materialCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Unlit)], m_materialCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_materialCB);
 
     m_customPropertyCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
         "CustomPropertyBuffer",
@@ -45,6 +46,7 @@ void MaterialRepository::Initialize()
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Lit)], m_customPropertyCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_customPropertyCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Unlit)], m_customPropertyCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_customPropertyCB);
 
     // デフォルトテクスチャの作成
     m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
@@ -128,6 +130,18 @@ void MaterialRepository::BindMaterialTexture(const MaterialResource& material)
     m_pContext->PSSetShaderResources(3, 1, material.aoTexture ?
         material.aoTexture->texture.GetAddressOf() :
         m_defaultAOTexture->texture.GetAddressOf());
+}
+
+void MaterialRepository::BindMaterialTexture(const MaterialInstance& materialInstance)
+{
+    if (!materialInstance.materialResource) return;
+
+    MaterialResource material = *materialInstance.materialResource;
+    if (materialInstance.isOverrideAlbedoTexture) {
+        material.albedoTexture = materialInstance.overrideAlbedoTexture;
+    }
+
+    BindMaterialTexture(material);
 }
 
 void MaterialRepository::BindCustomProperties(XMFLOAT4* customPropaties)

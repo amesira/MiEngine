@@ -57,6 +57,10 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
         });
     collider->SetCenter({ 0.0f, 0.0f, 0.0f });
 
+    MaterialResource mat = {};
+    mat.name = "PlayerMaterial";
+    spriteRenderer->SetMaterialResource(EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(mat));
+
     TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\player_sheet.png");
     spriteRenderer->SetTextureResource(texture);
     spriteRenderer->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });

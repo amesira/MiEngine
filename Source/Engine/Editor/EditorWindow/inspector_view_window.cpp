@@ -31,8 +31,11 @@
 #include "Engine/Framework/Component/joint_component.h"
 #include "Engine/Framework/Component/decal_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
+#include "Engine/Framework/Component/sprite_renderer_component.h"
+#include "Engine/Framework/Component/sprite_animation_component.h"
 
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 namespace
@@ -86,6 +89,64 @@ namespace
                 curve.keys.push_back({ 1.0f, 1.0f });
             }
             ImGui::TreePop();
+        }
+    }
+
+    bool InputTextFromString(const char* label, std::string& value)
+    {
+        char buffer[256] = {};
+        strcpy_s(buffer, sizeof(buffer), value.c_str());
+        if (!ImGui::InputText(label, buffer, sizeof(buffer))) return false;
+
+        value = buffer;
+        return true;
+    }
+
+    bool InputTextureResource(const char* label, TextureResource*& textureResource)
+    {
+        std::string texturePath = textureResource ? MiString::ToUTF8(textureResource->name) : "";
+        if (!InputTextFromString(label, texturePath)) return false;
+
+        TextureResource* newTextureResource = TEXTURE_REPOSITORY->GetTextureResource(MiString::ToWString(texturePath));
+        if (!newTextureResource) return false;
+
+        textureResource = newTextureResource;
+        return true;
+    }
+
+    void DrawMaterialInstanceInspector(MaterialInstance& materialInstance)
+    {
+        std::string materialName = materialInstance.materialResource ? materialInstance.materialResource->name : "";
+        if (InputTextFromString("Material", materialName)) {
+            MaterialResource* newMaterial = MATERIAL_REPOSITORY->GetMaterial(materialName);
+            if (newMaterial) {
+                materialInstance.materialResource = newMaterial;
+            }
+        }
+
+        bool overrideAlbedoTexture = materialInstance.isOverrideAlbedoTexture;
+        if (ImGui::Checkbox("Override Albedo Texture", &overrideAlbedoTexture)) {
+            materialInstance.isOverrideAlbedoTexture = overrideAlbedoTexture;
+        }
+        if (materialInstance.isOverrideAlbedoTexture) {
+            InputTextureResource("Albedo Texture", materialInstance.overrideAlbedoTexture);
+        }
+
+        bool overrideBaseColor = materialInstance.isOverrideBaseColor;
+        if (ImGui::Checkbox("Override Base Color", &overrideBaseColor)) {
+            materialInstance.isOverrideBaseColor = overrideBaseColor;
+        }
+        if (materialInstance.isOverrideBaseColor) {
+            ImGui::ColorEdit4("Base Color", &materialInstance.overrideBaseColor.x);
+        }
+
+        bool overrideEmissive = materialInstance.isOverrideEmissive;
+        if (ImGui::Checkbox("Override Emissive", &overrideEmissive)) {
+            materialInstance.isOverrideEmissive = overrideEmissive;
+        }
+        if (materialInstance.isOverrideEmissive) {
+            ImGui::ColorEdit3("Emissive Color", &materialInstance.overrideEmissiveColor.x);
+            ImGui::DragFloat("Emissive Intensity", &materialInstance.overrideEmissiveIntensity, 0.1f, 0.0f, 10.0f);
         }
     }
 }
@@ -447,6 +508,27 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                             materialInstance.overrideEmissiveIntensity = emissiveIntensity;
                         }
                     }
+                    bool overrideAlbedoTexture = materialInstance.isOverrideAlbedoTexture;
+                    if (ImGui::Checkbox("Override Albedo Texture", &overrideAlbedoTexture)) {
+                        materialInstance.isOverrideAlbedoTexture = overrideAlbedoTexture;
+                    }
+                    if (materialInstance.isOverrideAlbedoTexture) {
+                        char buffer[256];
+
+                        std::string newTexName;
+                        TextureResource* newTexRes = nullptr;
+
+                        std::wstring albedoTex = materialInstance.overrideAlbedoTexture ? materialInstance.overrideAlbedoTexture->name : L"None";
+                        strncpy(buffer, (char*)MiString::ToUTF8(albedoTex).c_str(), sizeof(buffer));
+                        if (ImGui::InputText("Albedo Texture", buffer, sizeof(buffer))) {
+                            newTexName = buffer;
+                            albedoTex = MiString::ToWString(newTexName);
+                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(albedoTex);
+                            if (newTexRes) {
+                                materialInstance.overrideAlbedoTexture = newTexRes;
+                            }
+                        }
+                    }
 
                     ImGui::Separator();
 
@@ -558,6 +640,141 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                 }
 
                 ImGui::PopID();
+            }
+        }
+
+        EndComponentSection();
+    }
+
+    auto* spriteRenderer = gameObject->GetComponent<SpriteRendererComponent>();
+    if (spriteRenderer) {
+        if (BeginComponentSection(spriteRenderer, "Sprite Renderer")) {
+            auto& materialInstance = spriteRenderer->GetMaterial();
+            if (ImGui::TreeNode("Material")) {
+                DrawMaterialInstanceInspector(materialInstance);
+                ImGui::TreePop();
+            }
+
+            ImGui::Separator();
+
+            XMFLOAT4 uvRect = spriteRenderer->GetUvRect();
+            if (ImGui::DragFloat4("UV Rect", &uvRect.x, 0.01f)) {
+                spriteRenderer->SetUvRect(uvRect);
+            }
+
+            XMFLOAT4 color = spriteRenderer->GetColor();
+            if (ImGui::ColorEdit4("Color", &color.x)) {
+                spriteRenderer->SetColor(color);
+            }
+
+            bool flipX = spriteRenderer->GetFlipX();
+            if (ImGui::Checkbox("Flip X", &flipX)) {
+                spriteRenderer->SetFlipX(flipX);
+            }
+
+            bool flipY = spriteRenderer->GetFlipY();
+            if (ImGui::Checkbox("Flip Y", &flipY)) {
+                spriteRenderer->SetFlipY(flipY);
+            }
+
+            int blendMode = static_cast<int>(spriteRenderer->GetBlendMode());
+            const char* blendModeItems[] = { "Opaque", "Cutout", "Alpha Blend", "Additive" };
+            if (ImGui::Combo("Blend Mode", &blendMode, blendModeItems, IM_ARRAYSIZE(blendModeItems))) {
+                spriteRenderer->SetBlendMode(static_cast<SpriteRendererComponent::SpriteBlendMode>(blendMode));
+            }
+        }
+
+        EndComponentSection();
+    }
+
+    auto* spriteAnimation = gameObject->GetComponent<SpriteAnimationComponent>();
+    if (spriteAnimation) {
+        if (BeginComponentSection(spriteAnimation, "Sprite Animation")) {
+            ImGui::Text("Clips: %zu", spriteAnimation->GetClips().size());
+            ImGui::Text("Current Clip: %d", spriteAnimation->GetCurrentClipIndex());
+            ImGui::Text("Current Frame: %d", spriteAnimation->GetCurrentFrameIndex());
+            ImGui::Text("Frame Timer: %.3f", spriteAnimation->GetFrameTimer());
+
+            if (spriteAnimation->IsPlaying()) {
+                if (ImGui::Button("Stop")) {
+                    spriteAnimation->Stop();
+                }
+            }
+            else {
+                int playClipIndex = spriteAnimation->GetCurrentClipIndex();
+                if (playClipIndex < 0 && !spriteAnimation->GetClips().empty()) {
+                    playClipIndex = 0;
+                }
+                ImGui::InputInt("Play Clip Index", &playClipIndex);
+                if (ImGui::Button("Play")) {
+                    spriteAnimation->PlayClip(playClipIndex);
+                }
+            }
+
+            ImGui::Separator();
+
+            auto& clips = spriteAnimation->GetClips();
+            for (int clipIndex = 0; clipIndex < static_cast<int>(clips.size()); ++clipIndex) {
+                ImGui::PushID(clipIndex);
+                std::string clipLabel = "Clip " + std::to_string(clipIndex);
+                if (!clips[clipIndex].name.empty()) {
+                    clipLabel += " : " + clips[clipIndex].name;
+                }
+
+                if (ImGui::TreeNode(clipLabel.c_str())) {
+                    InputTextFromString("Name", clips[clipIndex].name);
+                    ImGui::DragFloat("Speed", &clips[clipIndex].speed, 0.01f, 0.0f);
+                    ImGui::Checkbox("Loop", &clips[clipIndex].loop);
+
+                    if (ImGui::Button("Play This Clip")) {
+                        spriteAnimation->PlayClip(clipIndex);
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Remove Clip")) {
+                        clips.erase(clips.begin() + clipIndex);
+                        ImGui::TreePop();
+                        ImGui::PopID();
+                        break;
+                    }
+
+                    ImGui::Separator();
+                    ImGui::Text("Frames: %zu", clips[clipIndex].frames.size());
+                    for (int frameIndex = 0; frameIndex < static_cast<int>(clips[clipIndex].frames.size()); ++frameIndex) {
+                        ImGui::PushID(frameIndex);
+                        auto& frame = clips[clipIndex].frames[frameIndex];
+                        std::string frameLabel = "Frame " + std::to_string(frameIndex);
+
+                        if (ImGui::TreeNode(frameLabel.c_str())) {
+                            InputTextureResource("Texture", frame.textureResource);
+                            ImGui::DragFloat4("UV Rect", &frame.uvRect.x, 0.01f);
+                            ImGui::ColorEdit4("Color", &frame.color.x);
+                            ImGui::DragFloat("Duration", &frame.duration, 0.01f, 0.0f);
+
+                            if (ImGui::Button("Remove Frame")) {
+                                clips[clipIndex].frames.erase(clips[clipIndex].frames.begin() + frameIndex);
+                                ImGui::TreePop();
+                                ImGui::PopID();
+                                break;
+                            }
+
+                            ImGui::TreePop();
+                        }
+                        ImGui::PopID();
+                    }
+
+                    if (ImGui::Button("Add Frame")) {
+                        clips[clipIndex].frames.push_back(SpriteAnimationComponent::Frame{});
+                    }
+
+                    ImGui::TreePop();
+                }
+                ImGui::PopID();
+            }
+
+            if (ImGui::Button("Add Clip")) {
+                SpriteAnimationComponent::Clip clip;
+                clip.name = "New Clip";
+                clips.push_back(clip);
             }
         }
 
