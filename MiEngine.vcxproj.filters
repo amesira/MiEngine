@@ -244,6 +244,9 @@
     <ClCompile Include="Source\Game\Behavior\camera_control_behavior.cpp">
       <Filter>Sources\Game\Behavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\transform_constraint_behavior.cpp">
+      <Filter>Sources\Game\Behavior</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
@@ -523,6 +526,9 @@
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\camera_control_behavior.h">
+      <Filter>Sources\Game\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\transform_constraint_behavior.h">
       <Filter>Sources\Game\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h">

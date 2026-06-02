@@ -62,6 +62,7 @@ void GameScene::Initialize()
     // テスト：ParticleSystem
     RenderEffectFactory::CreateParticleEffect(this, { -2.0f, 3.0f, 0.0f }, L"asset\\Texture\\particle.png");
 
+    RenderEffectFactory::CreateRunDustParticle(this, "Player", L"asset\\Texture\\white.bmp");
 
 }
 

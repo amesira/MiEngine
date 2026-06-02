@@ -157,6 +157,7 @@
     <ClCompile Include="Source\Engine\Device\audio.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\behavior_processor.cpp" />
     <ClCompile Include="Source\Game\Behavior\camera_control_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\transform_constraint_behavior.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h" />
     <ClInclude Include="Source\Engine\Framework\Component\camera_component.h" />
     <ClInclude Include="Source\Game\Behavior\camera_control_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\transform_constraint_behavior.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h" />
     <ClInclude Include="Source\Engine\Framework\Component\collider_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.h" />
