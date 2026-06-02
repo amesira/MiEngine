@@ -7,6 +7,7 @@
 #ifndef CAMERA_COMPONENT_H
 #define CAMERA_COMPONENT_H
 #include "Engine/Core/component.h"
+#include "Engine/Core/game_object_layer.h"
 
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -27,6 +28,10 @@ private:
     XMMATRIX    m_projection;   // プロジェクション行列
     XMFLOAT3    m_eyePosition = { 0.0f, 0.0f, -5.0f }; // カメラの位置
 
+    // === 描画処理の有効・無効 ===
+    RenderLayerMask cullingMask = RENDER_LAYER_MASK_ALL;
+    RenderLayerMask maskCullingMask = RenderLayerToMask(RenderLayer::Player);
+
 public:
     // カメラの位置、注視点、上方ベクトルの設定・取得
     void    SetAtPosition(XMFLOAT3 atPosition) { m_atPosition = atPosition; }
@@ -44,6 +49,12 @@ public:
     void    SetFarClip(float farClip) { m_farClip = farClip; }
     float   GetNearClip() const { return m_nearClip; }
     float   GetFarClip() const { return m_farClip; }
+
+    // 描画処理の有効・無効設定・取得
+    void    SetCullingMask(RenderLayerMask mask) { cullingMask = mask; }
+    RenderLayerMask GetCullingMask() const { return cullingMask; }
+    void    SetMaskCullingMask(RenderLayerMask mask) { maskCullingMask = mask; }
+    RenderLayerMask GetMaskCullingMask() const { return maskCullingMask; }
 
     // ビュー行列の取得
     XMMATRIX    GetViewMatrix() const { return m_view; }
@@ -75,11 +86,6 @@ private:
     void    SetProjectionMatrix(XMMATRIX projection) { m_projection = projection; }
     void    SetEyePosition(XMFLOAT3 eyePosition) { m_eyePosition = eyePosition; }
 
-    ID3D11ShaderResourceView* m_snapshot = nullptr; // スナップショット用テクスチャSRV
-    void    SetSnapshot(ID3D11ShaderResourceView* snapshot) { m_snapshot = snapshot; }
-
-public:
-    ID3D11ShaderResourceView* GetSnapshot() const { return m_snapshot; }
 };
 
 #endif // CAMERA_COMPONENT_H

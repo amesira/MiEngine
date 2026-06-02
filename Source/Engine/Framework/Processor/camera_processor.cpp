@@ -104,6 +104,9 @@ void CameraProcessor::SetRenderViews(std::vector<RenderView>& outViews)
             view.enablePostEffect = true;
             view.enableShadowMap = true;
             view.enableDebugDraw = false;
+
+            view.cullingMask = camera->GetCullingMask();
+            view.maskCullingMask = camera->GetMaskCullingMask();
             break;
         }
     }

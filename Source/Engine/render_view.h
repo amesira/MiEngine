@@ -28,7 +28,7 @@ struct RenderView {
     bool enableUI;            // UI描画の有効・無効
 
     RenderLayerMask cullingMask;
-    RenderLayerMask monoMaskCullingMask;
+    RenderLayerMask maskCullingMask;
 
     // カラーバッファ
     ComPtr<ID3D11Texture2D>             colorBufferTexture;
@@ -39,15 +39,16 @@ struct RenderView {
     ComPtr<ID3D11DepthStencilView>      depthBufferDSV;
     ComPtr<ID3D11ShaderResourceView>    depthBufferSRV;
 
+    // マスク用カラーバッファ
+    ComPtr<ID3D11Texture2D>             maskColorBufferTexture;
+    ComPtr<ID3D11RenderTargetView>      maskColorBufferRTV;
+    ComPtr<ID3D11ShaderResourceView>    maskColorBufferSRV;
+
     // ポストエフェクト用一時バッファ
     ComPtr<ID3D11Texture2D>             postEffectTexture;
     ComPtr<ID3D11RenderTargetView>      postEffectRTV;
     ComPtr<ID3D11ShaderResourceView>    postEffectSRV;
 
-    // スナップショット用のフラグ・SRV
-    // bool afterPostEffectSnapshotRequested;
-    // ・どのタイミングでスナップショットを取るか？のトリガーなどを作っておくと良いのかも
-    // ・enumでも良い気もするが
 
     RenderView() :
         viewMatrix(XMMatrixIdentity()),
@@ -61,12 +62,13 @@ struct RenderView {
         enableUI(true),
         enableDebugDraw(true),
         cullingMask(RENDER_LAYER_MASK_ALL),
-        monoMaskCullingMask(0) {
+        maskCullingMask(0) {
     }
 
     void Initialize() {
         Direct3D_CreateColorBuffer(colorBufferTexture.GetAddressOf(), colorBufferRTV.GetAddressOf(), colorBufferSRV.GetAddressOf());
         Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
+        Direct3D_CreateColorBuffer(maskColorBufferTexture.GetAddressOf(), maskColorBufferRTV.GetAddressOf(), maskColorBufferSRV.GetAddressOf());
         Direct3D_CreateColorBuffer(postEffectTexture.GetAddressOf(), postEffectRTV.GetAddressOf(), postEffectSRV.GetAddressOf());
     }
 };
