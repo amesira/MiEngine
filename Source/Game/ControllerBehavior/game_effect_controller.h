@@ -73,9 +73,6 @@ public:
     // カメラシェイク再生
     void PlayCameraShake(float duration, float magnitude);
 
-    //// ポストエフェクトの再生
-    //void PlayPostEffect(const std::string& effectName, float duration);
-
     //// フラッシュエフェクトの再生
     //void PlayFlashEffect(const XMFLOAT4& color, float duration);
 

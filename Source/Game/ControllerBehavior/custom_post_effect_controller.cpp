@@ -8,6 +8,9 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
+#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+
 #include "Engine/Settings/scene_settings.h"
 
 #include <algorithm>
@@ -82,7 +85,65 @@ void CustomPostEffectController::Update()
 
 void CustomPostEffectController::DrawComponentInspector()
 {
+    if (InspectorViewWindow::BeginComponentSection(this, "Custom Post Effect Controller")) {
+        if (ImGui::TreeNode("Radial Blur")) {
+            ImGui::DragInt("Sample Count", &m_state.radialBlur.sampleCount, 1.0f, 1, 64);
+            ImGui::DragFloat("Strength", &m_state.radialBlur.strength, 0.01f, 0.0f, 1.0f);
 
+            static float radialIntensity = 0.25f;
+            static float radialDuration = 0.2f;
+            static float radialHold = 0.1f;
+
+            ImGui::DragFloat("Play Intensity", &radialIntensity, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Play Duration", &radialDuration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &radialHold, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Play Radial Blur")) {
+                PlayEffect(CustomPostEffectType::RadialBlur, radialIntensity, radialDuration, radialHold);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset Radial Blur")) {
+                m_state.radialBlur.strength = 0.0f;
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Mono Mask")) {
+            ImGui::ColorEdit4("Mono Color", &m_state.monoMask.monoColor.x);
+            ImGui::DragFloat("Strength", &m_state.monoMask.strength, 0.01f, 0.0f, 1.0f);
+            ImGui::Text("Mask Texture: %s", m_state.monoMaskTextureSRV ? "Set" : "None");
+
+            static float monoIntensity = 1.0f;
+            static float monoDuration = 0.2f;
+            static float monoHold = 0.1f;
+
+            ImGui::DragFloat("Play Intensity", &monoIntensity, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Play Duration", &monoDuration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &monoHold, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Play Mono Mask")) {
+                PlayEffect(CustomPostEffectType::MonoMask, monoIntensity, monoDuration, monoHold);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset Mono Mask")) {
+                m_state.monoMask.strength = 0.0f;
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::Button("Reset All Custom Effects")) {
+            m_state.Reset();
+            m_state.radialBlur.sampleCount = 4;
+        }
+    }
+
+    InspectorViewWindow::EndComponentSection();
 }
 
 // ポストエフェクトの再生

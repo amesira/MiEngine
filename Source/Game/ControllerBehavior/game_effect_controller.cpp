@@ -9,6 +9,9 @@
 #include "Engine/Device/mi_fps.h"
 #include "game_controller_locator.h"
 
+#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+
 #include "Utility/mi_math.h"
 
 #include "Utility/debug_ostream.h"
@@ -66,7 +69,107 @@ void GameEffectController::Update()
 
 void GameEffectController::DrawComponentInspector()
 {
+    if (InspectorViewWindow::BeginComponentSection(this, "Game Effect Controller")) {
+        if (ImGui::TreeNode("Time Scale")) {
+            static float timeScale = 0.2f;
+            static float duration = 0.15f;
+            static float holdDuration = 0.2f;
 
+            ImGui::DragFloat("Target Time Scale", &timeScale, 0.01f, 0.0f, 2.0f);
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Change Time Scale")) {
+                ChangeTimeScale(timeScale, duration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Temporary")) {
+                ChangeTimeScaleTemporary(timeScale, duration, holdDuration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset")) {
+                ResetTimeScale(duration);
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Camera FOV")) {
+            static float fov = 60.0f;
+            static float duration = 0.2f;
+            static float holdDuration = 0.2f;
+
+            ImGui::DragFloat("FOV", &fov, 1.0f, 1.0f, 179.0f);
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Change FOV")) {
+                ChangeFOV(fov, duration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Temporary")) {
+                ChangeFOVTemporary(fov, duration, holdDuration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset")) {
+                ResetFOV(duration);
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Camera Distance")) {
+            static float distance = 10.0f;
+            static float duration = 0.2f;
+            static float holdDuration = 0.2f;
+
+            ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f, 100.0f);
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Change Distance")) {
+                ChangeCameraDistance(distance, duration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Temporary")) {
+                ChangeCameraDistanceTemporary(distance, duration, holdDuration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset")) {
+                ResetCameraDistance(duration);
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Camera Shake")) {
+            static float duration = 0.2f;
+            static float magnitude = 0.2f;
+
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Magnitude", &magnitude, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Play Camera Shake")) {
+                PlayCameraShake(duration, magnitude);
+            }
+
+            ImGui::TreePop();
+        }
+    }
+
+    InspectorViewWindow::EndComponentSection();
 }
 
 //------------------------------- private
