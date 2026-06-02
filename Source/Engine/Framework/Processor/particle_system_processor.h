@@ -6,8 +6,9 @@
 //---------------------------------------------------
 #ifndef PARTICLE_SYSTEM_PROCESSOR_H
 #define PARTICLE_SYSTEM_PROCESSOR_H
-
 #include "Engine/Core/processor.h"
+#include "Engine/Device/direct3d.h"
+using namespace DirectX;
 
 class ParticleSystemProcessor : public Processor {
 public:

@@ -2,6 +2,10 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
+#include <algorithm>
+#include <cmath>
+#include <random>
+
 namespace MiMath
 {
     // 加算
@@ -258,5 +262,31 @@ namespace MiMath
 
         currentVelocity = (currentVelocity - temp * omega) * exp;
         return result;
+    }
+
+    // === ランダム関連の関数 ===
+    // 乱数生成器の取得
+    inline std::mt19937& GetRandomEngine()
+    {
+        static std::mt19937 engine{ std::random_device{}() };
+        return engine;
+    }
+    // minValue以上maxValue未満の範囲でランダムなfloat値を生成する
+    inline float RandomRange(float minValue, float maxValue)
+    {
+        std::uniform_real_distribution<float> dist(minValue, maxValue);
+        return dist(GetRandomEngine());
+    }
+    // ランダムな単位ベクトルを生成する
+    inline XMFLOAT3 RandomUnitVector()
+    {
+        const float z = RandomRange(-1.0f, 1.0f);
+        const float angle = RandomRange(0.0f, XM_2PI);
+        const float radius = std::sqrt((1.0f - z * z) > 0.0f ? (1.0f - z * z) : 0.0f);
+        return {
+            radius * std::cos(angle),
+            radius * std::sin(angle),
+            z
+        };
     }
 }

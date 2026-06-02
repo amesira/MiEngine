@@ -95,6 +95,7 @@ void RenderProcessor::Process(IScene* pScene)
 
         // 透明物体
         Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+        m_transparentRenderPass.SetViewProjection(m_renderView->viewMatrix, m_renderView->projectionMatrix);
         m_transparentRenderPass.Process(pScene);
 
         //-----------------

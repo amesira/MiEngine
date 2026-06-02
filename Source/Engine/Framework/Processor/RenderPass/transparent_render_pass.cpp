@@ -60,6 +60,7 @@ void TransparentRenderPass::Process(IScene* pScene)
     // 透明オブジェクトの描画設定
     SetBlendState(BLENDSTATE_ALFA);
     SetDepthState(DEPTHSTATE_ENABLE);
+    //SetRasterizerState(RASTERIZERSTATE_CULL_NONE);
 
     // パーティクル描画のためのシェーダーをバインド
     EngineServiceLocator::BindShader(ShaderBase::Particle);
@@ -71,7 +72,7 @@ void TransparentRenderPass::Process(IScene* pScene)
         if (!particleSystem.GetOwner()->GetActive()) continue;
         if (!particleSystem.GetEnable() || !transform->GetEnable()) continue;
 
-        // 頂点バッファの設定
+        // === 頂点バッファの設定 ===
         D3D11_MAPPED_SUBRESOURCE msr = {};
         m_pContext->Map(m_pParticleVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
         ParticleVertex* vertices = static_cast<ParticleVertex*>(msr.pData);
@@ -88,37 +89,61 @@ void TransparentRenderPass::Process(IScene* pScene)
         }
         m_pContext->Unmap(m_pParticleVertexBuffer, 0);
 
-        // パーティクルのインスタンスデータを更新
+        // === パーティクルのインスタンスデータを更新 ===
         msr = {};
         m_pContext->Map(m_pParticleInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
         ParticleInstanceData* instanceData = static_cast<ParticleInstanceData*>(msr.pData);
+
+        // ビルボード行列の計算
+        XMMATRIX billboardRotation = XMMatrixIdentity();
+        switch (particleSystem.Renderer().billboardMode) {
+        case ParticleSystemComponent::BillboardMode::View:{
+            XMMATRIX billboard = XMMatrixInverse(nullptr, m_view);
+            billboard.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+            billboardRotation = XMMatrixRotationY(XM_PI) * billboard;
+            break;
+        }
+        case ParticleSystemComponent::BillboardMode::Horizontal:{
+            const XMMATRIX invView = XMMatrixInverse(nullptr, m_view);
+
+            XMFLOAT3 cameraForward = {};
+            XMStoreFloat3(&cameraForward, invView.r[2]);
+            cameraForward.y = 0.0f;
+
+            const float lengthSq = cameraForward.x * cameraForward.x + cameraForward.z * cameraForward.z;
+            if (lengthSq <= 0.0001f) {
+                billboardRotation = XMMatrixIdentity();
+                break;
+            }
+
+            const float yaw = atan2f(cameraForward.x, cameraForward.z);
+            billboardRotation = XMMatrixRotationY(XM_PI) * XMMatrixRotationY(yaw);
+            break;
+        }
+        }
 
         int instanceCount = 0;
 
         const auto& particles = particleSystem.Particles();
         for (const auto& particle : particles) {
             if (!particle.alive) continue;
+            if (instanceCount >= ParticleSystemComponent::MAX_PARTICLES) break;
 
             // ワールド行列の作成
             XMMATRIX world = XMMatrixIdentity();
             {
-                XMMATRIX translate = XMMatrixTranslation(particle.position.x, particle.position.y, particle.position.z);
+                XMMATRIX translate = XMMatrixTranslation(
+                    particle.position.x,
+                    particle.position.y,
+                    particle.position.z);
                 XMMATRIX scale = XMMatrixScaling(particle.size, particle.size, particle.size);
-                world = scale * translate;
+                world = scale * billboardRotation * translate;
             }
 
             // インスタンスデータの設定
-            instanceData[instanceCount].worldRow0 = XMFLOAT4(world.r[0].m128_f32[0], world.r[0].m128_f32[1], 
-                world.r[0].m128_f32[2], world.r[0].m128_f32[3]);
-            instanceData[instanceCount].worldRow1 = XMFLOAT4(world.r[1].m128_f32[0], world.r[1].m128_f32[1], 
-                world.r[1].m128_f32[2], world.r[1].m128_f32[3]);
-            instanceData[instanceCount].worldRow2 = XMFLOAT4(world.r[2].m128_f32[0], world.r[2].m128_f32[1], 
-                world.r[2].m128_f32[2], world.r[2].m128_f32[3]);
-            instanceData[instanceCount].worldRow3 = XMFLOAT4(world.r[3].m128_f32[0], world.r[3].m128_f32[1], 
-                world.r[3].m128_f32[2], world.r[3].m128_f32[3]);
-
+            instanceData[instanceCount].world = world;
             instanceData[instanceCount].color = particle.color;
-            instanceData[instanceCount].uvRect = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f); // 仮
+            instanceData[instanceCount].uvRect = particleSystem.Renderer().uvRect;
 
             instanceCount++;
         }
@@ -145,4 +170,5 @@ void TransparentRenderPass::Process(IScene* pScene)
 
     // 加算発光の描画設定
     //SetBlendState(BLENDSTATE_ADD);
+   // SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
 }

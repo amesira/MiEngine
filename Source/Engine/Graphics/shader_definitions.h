@@ -61,10 +61,7 @@ namespace ShaderDefinitions {
     };
 
     struct ParticleInstanceData {
-        XMFLOAT4 worldRow0;
-        XMFLOAT4 worldRow1;
-        XMFLOAT4 worldRow2;
-        XMFLOAT4 worldRow3;
+        XMMATRIX world;
         XMFLOAT4 color;
         XMFLOAT4 uvRect;
     };
