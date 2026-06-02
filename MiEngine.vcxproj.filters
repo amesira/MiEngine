@@ -254,6 +254,7 @@
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
@@ -544,6 +545,7 @@
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />

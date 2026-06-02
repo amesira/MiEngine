@@ -12,6 +12,7 @@
 using namespace DirectX;
 
 #include "Engine/Graphics/texture_resource.h"
+#include "Engine/Graphics/material_resource.h"
 
 class SpriteRendererComponent : public Component {
 public:

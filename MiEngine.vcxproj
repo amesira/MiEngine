@@ -151,6 +151,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
     <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
     <ClInclude Include="Source\Game\Factory\actor_factory.h" />
