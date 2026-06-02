@@ -50,8 +50,9 @@ void OpaqueRenderPass::Finalize()
 }
 
 // OpaqueRenderPassの処理内容
-void OpaqueRenderPass::Process(IScene* pScene)
+void OpaqueRenderPass::Process(IScene* pScene, const RenderView& view)
 {
+    (void)view;
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);
 

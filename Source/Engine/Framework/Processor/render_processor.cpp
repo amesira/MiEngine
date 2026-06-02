@@ -49,7 +49,7 @@ void RenderProcessor::Process(IScene* pScene)
 
     //----------------------------------- 描画前の準備
     // 1.ライト設定パス
-    m_lightingPass.Process(pScene);
+    m_lightingPass.Process(pScene, *m_renderView);
 
     // 2.シャドウマップパス
     m_shadowMapPass.UnbindShadowTexture();
@@ -58,10 +58,9 @@ void RenderProcessor::Process(IScene* pScene)
 
     m_lightingPass.BindLightCB(false);
 
-    m_shadowMapPass.SetEyePosition(m_renderView->eyePosition);
     m_shadowMapPass.SetLightDirection(m_lightingPass.GetDirectionalLightDirection()); // ライトの方向は適当
 
-    m_shadowMapPass.Process(pScene);
+    m_shadowMapPass.Process(pScene, *m_renderView);
 
     //----------------------------------- Scene描画開始
     Direct3D_ClearSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
@@ -71,8 +70,7 @@ void RenderProcessor::Process(IScene* pScene)
         Bind3DCameraCB(m_renderView);
 
         // 3.スカイボックスパス
-        m_skyboxPass.SetEyePosition(m_renderView->eyePosition);
-        m_skyboxPass.Process(pScene);
+        m_skyboxPass.Process(pScene, *m_renderView);
 
         //----------------------------------- 3Dオブジェクト描画
         m_lightingPass.BindLightCB(m_renderView->enableLighting);
@@ -81,22 +79,20 @@ void RenderProcessor::Process(IScene* pScene)
         m_shadowMapPass.BindShadowTexture();
 
         // 不透明物体
-        m_opaqueRenderPass.Process(pScene);
+        m_opaqueRenderPass.Process(pScene, *m_renderView);
 
         // Overlay物体（デカール、ライン、トレイルなど）
         {
             Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), nullptr);
 
-            m_decalRenderPass.SetDepthTexture(m_renderView->depthBufferSRV.Get());
-            m_decalRenderPass.Process(pScene);
+            m_decalRenderPass.Process(pScene, *m_renderView);
 
             m_decalRenderPass.UnbindDepthTexture();
         }
 
         // 透明物体
         Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
-        m_transparentRenderPass.SetViewProjection(m_renderView->viewMatrix, m_renderView->projectionMatrix);
-        m_transparentRenderPass.Process(pScene);
+        m_transparentRenderPass.Process(pScene, *m_renderView);
 
         //-----------------
         if (m_renderView->enableDebugDraw) {
@@ -114,9 +110,7 @@ void RenderProcessor::Process(IScene* pScene)
     // 5.PostEffect描画
     if (m_renderView->enablePostEffect) {
         Direct3D_ClearSceneTarget(m_renderView->postEffectRTV.Get(), nullptr);
-        m_postEffectPass.SetInputSRV(m_renderView->colorBufferSRV.Get());
-        m_postEffectPass.SetOutputRTV(m_renderView->postEffectRTV.Get());
-        m_postEffectPass.Process(pScene);
+        m_postEffectPass.Process(pScene, *m_renderView);
 
         Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
         EngineServiceLocator::BindShader(ShaderBase::FullScreen);
@@ -129,7 +123,7 @@ void RenderProcessor::Process(IScene* pScene)
 
     // 6.2DScreen描画
     if (m_renderView->enableUI) {
-        m_uiRenderPass.Process(pScene);
+        m_uiRenderPass.Process(pScene, *m_renderView);
     }
 }
 

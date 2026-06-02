@@ -47,8 +47,9 @@ void UIRenderPass::Finalize()
 }
 
 // UiRenderPassの処理
-void UIRenderPass::Process(IScene* pScene)
+void UIRenderPass::Process(IScene* pScene, const RenderView& view)
 {
+    (void)view;
     //----------------------------------------------------
     // UI描画のセットアップ
 	//----------------------------------------------------

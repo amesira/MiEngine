@@ -29,7 +29,7 @@ private:
 public:
     void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void    Finalize() override;
-    void    Process(IScene* pScene) override;
+    void    Process(IScene* pScene, const RenderView& view) override;
 
 private:
     // Meshリストの描画

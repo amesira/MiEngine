@@ -22,9 +22,6 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
-    XMMATRIX m_view;
-    XMMATRIX m_projection;
-
     // デフォルトテクスチャ
     TextureResource* m_defaultTexture = nullptr;
 
@@ -35,16 +32,11 @@ private:
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void Finalize() override;
-    void Process(IScene* pScene) override;
-
-    void SetViewProjection(const XMMATRIX& view, const XMMATRIX& projection) {
-        m_view = view;
-        m_projection = projection;
-    }
+    void Process(IScene* pScene, const RenderView& view) override;
 
 private:
     // パーティクルシステムの描画
-    void DrawParticleSystem(ParticleSystemComponent& particleSystem);
+    void DrawParticleSystem(ParticleSystemComponent& particleSystem, const RenderView& view);
 
 };
 

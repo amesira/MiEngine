@@ -124,7 +124,7 @@ public:
     // 終了処理
     void Finalize() override;
     // 実行
-    void Process(IScene* pScene) override;
+    void Process(IScene* pScene, const RenderView& view) override;
 
     // ライトをセット
     void BindLightCB(bool enable);

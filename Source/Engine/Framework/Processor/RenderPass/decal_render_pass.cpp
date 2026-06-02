@@ -7,6 +7,7 @@
 #include "decal_render_pass.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
+#include "Engine/render_view.h"
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/decal_component.h"
@@ -41,7 +42,7 @@ void DecalRenderPass::Finalize()
 }
 
 // DecalRenderPassの処理
-void DecalRenderPass::Process(IScene* pScene)
+void DecalRenderPass::Process(IScene* pScene, const RenderView& view)
 {
     // コンポーネントプール取得
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
@@ -54,8 +55,9 @@ void DecalRenderPass::Process(IScene* pScene)
 
     // シェーダーの初期セット
     EngineServiceLocator::BindShader(m_decalShader);
-    if (m_depthSRV) {
-        m_pContext->PSSetShaderResources(5, 1, &m_depthSRV);
+    ID3D11ShaderResourceView* depthSRV = view.depthBufferSRV.Get();
+    if (depthSRV) {
+        m_pContext->PSSetShaderResources(5, 1, &depthSRV);
     }
 
     // デカール描画
@@ -165,16 +167,10 @@ void DecalRenderPass::CollectDebugDraw(IScene* pScene)
 // -------------------------------- bind
 
 // 深度テクスチャのセット
-void DecalRenderPass::SetDepthTexture(ID3D11ShaderResourceView* depthSRV)
-{
-    m_depthSRV = depthSRV;
-}
-
 // 深度テクスチャのアンバインド
 void DecalRenderPass::UnbindDepthTexture()
 {
     ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
     m_pContext->PSSetShaderResources(5, 1, nullSRV);
 
-    m_depthSRV = nullptr;
 }

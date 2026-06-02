@@ -12,6 +12,7 @@
 #define PASS_H
 
 class IScene;
+struct RenderView;
 
 class Pass {
 public:
@@ -20,7 +21,8 @@ public:
     virtual void    Initialize() {};
     virtual void    Finalize() = 0;
 
-    virtual void    Process(IScene* pScene) = 0;
+    virtual void    Process(IScene* pScene) {}
+    virtual void    Process(IScene* pScene, const RenderView& view) { Process(pScene); }
 
 };
 

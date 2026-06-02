@@ -20,19 +20,13 @@ private:
     // SkyBox用のリソース
     ModelResource* m_pSkyboxModel;
 
-    // 視点位置
-    XMFLOAT3 m_eyePosition;
-
 public:
     // 初期化
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     // 終了処理
     void Finalize() override;
     // 描画処理
-    void Process(IScene* pScene) override;
-
-    // 視点位置のセット
-    void SetEyePosition(const XMFLOAT3& eyePos) { m_eyePosition = eyePos; }
+    void Process(IScene* pScene, const RenderView& view) override;
 
 };
 

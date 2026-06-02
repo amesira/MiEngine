@@ -39,8 +39,6 @@ private:
     // スプライトをシャドウマップへ書き込むための頂点バッファ
     ComPtr<ID3D11Buffer> m_spriteVertexBuffer;
 
-    // 視点位置（シャドウマップの中心位置として使用）
-    XMFLOAT3 m_eyePosition;
     // ライト方向（シャドウマップの視野方向として使用）
     XMFLOAT3 m_lightDirection;
 
@@ -48,13 +46,12 @@ public:
     ~ShadowMapPass() override = default;
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void Finalize() override;
-    void Process(IScene* pScene) override;
+    void Process(IScene* pScene, const RenderView& view) override;
 
     // DepthStencilViewの取得
     ID3D11DepthStencilView* GetDepthStencilView() const { return depthBufferDSV.Get(); }
 
     // 視点位置のセット
-    void SetEyePosition(const XMFLOAT3& eyePos) { m_eyePosition = eyePos; }
     // ライト方向のセット
     void SetLightDirection(const XMFLOAT3& lightDir) { m_lightDirection = lightDir; }
 

@@ -6,6 +6,7 @@
 //===================================================
 #include "skybox_pass.h"
 #include "Engine/engine_service_locator.h"
+#include "Engine/render_view.h"
 
 void SkyboxPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -23,8 +24,9 @@ void SkyboxPass::Finalize()
 
 }
 
-void SkyboxPass::Process(IScene* pScene)
+void SkyboxPass::Process(IScene* pScene, const RenderView& view)
 {
+    (void)pScene;
     return;
     // 描画ステートのセット
     SetBlendState(BLENDSTATE_NONE);
@@ -34,7 +36,7 @@ void SkyboxPass::Process(IScene* pScene)
     XMMATRIX worldMatrix = XMMatrixIdentity();
     {
         XMMATRIX scaling = XMMatrixScaling(100.0f, 100.0f, 100.0f);
-        XMMATRIX translation = XMMatrixTranslation(m_eyePosition.x, m_eyePosition.y, m_eyePosition.z);
+        XMMATRIX translation = XMMatrixTranslation(view.eyePosition.x, view.eyePosition.y, view.eyePosition.z);
         worldMatrix = scaling * translation;
     }
 

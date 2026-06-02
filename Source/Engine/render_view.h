@@ -1,6 +1,7 @@
 // render_view.h
 #pragma once
 #include "Engine/Device/direct3d.h"
+#include "Engine/Core/game_object_layer.h"
 using namespace DirectX;
 
 #include "Windows.h"
@@ -25,6 +26,9 @@ struct RenderView {
     bool enablePostEffect;    // ポストエフェクトの有効・無効
     bool enableDebugDraw;     // デバッグ描画の有効・無効
     bool enableUI;            // UI描画の有効・無効
+
+    RenderLayerMask cullingMask;
+    RenderLayerMask monoMaskCullingMask;
 
     // カラーバッファ
     ComPtr<ID3D11Texture2D>             colorBufferTexture;
@@ -55,7 +59,9 @@ struct RenderView {
         enableShadowMap(true),
         enablePostEffect(true),
         enableUI(true),
-        enableDebugDraw(true) {
+        enableDebugDraw(true),
+        cullingMask(RENDER_LAYER_MASK_ALL),
+        monoMaskCullingMask(0) {
     }
 
     void Initialize() {

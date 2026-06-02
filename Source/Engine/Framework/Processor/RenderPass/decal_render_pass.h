@@ -25,9 +25,6 @@ private:
     // デカール描画用のモデルリソース
     ModelResource* m_decalCubeResource = nullptr;
 
-    // デプステクスチャのSRV
-    ID3D11ShaderResourceView* m_depthSRV = nullptr;
-
     // デカール描画用のシェーダープログラムリソース
     ShaderProgramResource* m_decalShader = nullptr;
 
@@ -35,12 +32,12 @@ public:
     ~DecalRenderPass() override = default;
     void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void    Finalize() override;
-    void    Process(IScene* pScene) override;
+    void    Process(IScene* pScene, const RenderView& view) override;
+
     // デカール範囲のデバッグ描画
     void    CollectDebugDraw(IScene* pScene);
 
     // 深度情報のバインド
-    void    SetDepthTexture(ID3D11ShaderResourceView* depthSRV);
     void    UnbindDepthTexture();
 
 };

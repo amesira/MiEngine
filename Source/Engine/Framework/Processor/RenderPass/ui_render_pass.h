@@ -32,7 +32,7 @@ private:
 public:
     void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void    Finalize() override;
-    void    Process(IScene* pScene) override;
+    void    Process(IScene* pScene, const RenderView& view) override;
 
     void    AddDrawBatch(const DrawBatch2D& batch) { m_batches.push_back(batch); }
 

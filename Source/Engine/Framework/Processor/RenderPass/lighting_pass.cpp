@@ -44,8 +44,9 @@ void LightingPass::Finalize()
 
 }
 
-void LightingPass::Process(IScene* pScene)
+void LightingPass::Process(IScene* pScene, const RenderView& view)
 {
+    (void)view;
     // Componentからライトの情報を転送
     auto* lightCompPool = pScene->GetComponentPool<LightComponent>();
     auto* transformCompPool = pScene->GetComponentPool<TransformComponent>();

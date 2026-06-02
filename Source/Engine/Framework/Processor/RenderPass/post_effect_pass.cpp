@@ -7,6 +7,7 @@
 #include "post_effect_pass.h"
 
 #include "Engine/Core/scene_interface.h"
+#include "Engine/render_view.h"
 
 // ポストエフェクト初期化
 void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -40,11 +41,11 @@ void PostEffectPass::Finalize()
 }
 
 // ポストエフェクト処理
-void PostEffectPass::Process(IScene* pScene)
+void PostEffectPass::Process(IScene* pScene, const RenderView& view)
 {
     // PostProcess
-    m_postProcess.Process(m_inputSRV, m_tempRTV[0].Get());
+    m_postProcess.Process(view.colorBufferSRV.Get(), m_tempRTV[0].Get());
 
     // CustomPostEffect
-    m_customPostEffect.Process(pScene, m_tempSRV[0].Get(), m_outputRTV);
+    m_customPostEffect.Process(pScene, m_tempSRV[0].Get(), view.postEffectRTV.Get());
 }

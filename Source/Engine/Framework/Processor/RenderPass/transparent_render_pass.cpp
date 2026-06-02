@@ -8,6 +8,7 @@
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
+#include "Engine/render_view.h"
 
 #include "Engine/Framework/Component/particle_system_component.h"
 #include "Engine/Framework/Component/transform_component.h"
@@ -49,7 +50,7 @@ void TransparentRenderPass::Finalize()
 {
 }
 
-void TransparentRenderPass::Process(IScene* pScene)
+void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
 {
     if (!pScene) return;
 
@@ -72,7 +73,7 @@ void TransparentRenderPass::Process(IScene* pScene)
         // αブレンドのみで描画
         if (particleSystem.Renderer().blendMode != ParticleSystemComponent::BlendMode::AlphaBlend) continue;
 
-        DrawParticleSystem(particleSystem);
+        DrawParticleSystem(particleSystem, view);
     }
 
     // 加算発光の描画設定
@@ -85,7 +86,7 @@ void TransparentRenderPass::Process(IScene* pScene)
         // 加算合成で描画
         if (particleSystem.Renderer().blendMode != ParticleSystemComponent::BlendMode::Additive) continue;
 
-        DrawParticleSystem(particleSystem);
+        DrawParticleSystem(particleSystem, view);
     }
 
 
@@ -93,7 +94,7 @@ void TransparentRenderPass::Process(IScene* pScene)
 }
 
 // パーティクルシステムの描画
-void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particleSystem)
+void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particleSystem, const RenderView& view)
 {
     // === 頂点バッファの設定 ===
     D3D11_MAPPED_SUBRESOURCE msr = {};
@@ -121,13 +122,13 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
     XMMATRIX billboardRotation = XMMatrixIdentity();
     switch (particleSystem.Renderer().billboardMode) {
     case ParticleSystemComponent::BillboardMode::View: {
-        XMMATRIX billboard = XMMatrixInverse(nullptr, m_view);
+        XMMATRIX billboard = XMMatrixInverse(nullptr, view.viewMatrix);
         billboard.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
         billboardRotation = XMMatrixRotationY(XM_PI) * billboard;
         break;
     }
     case ParticleSystemComponent::BillboardMode::Horizontal: {
-        const XMMATRIX invView = XMMatrixInverse(nullptr, m_view);
+        const XMMATRIX invView = XMMatrixInverse(nullptr, view.viewMatrix);
 
         XMFLOAT3 cameraForward = {};
         XMStoreFloat3(&cameraForward, invView.r[2]);

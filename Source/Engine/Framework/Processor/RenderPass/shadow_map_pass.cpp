@@ -13,6 +13,7 @@
 
 #include "Engine/Framework/Processor/RenderPass/RenderUtility/model_render_utility.h"
 #include "Engine/Framework/Processor/RenderPass/RenderUtility/sprite_render_utility.h"
+#include "Engine/render_view.h"
 
 #include "Engine/Graphics/shader_definitions.h"
 
@@ -60,7 +61,7 @@ void ShadowMapPass::Finalize()
 
 }
 
-void ShadowMapPass::Process(IScene* pScene)
+void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
 {
     // シャドウマップのレンダリング設定
     SetBlendState(BLENDSTATE_NONE);
@@ -73,7 +74,7 @@ void ShadowMapPass::Process(IScene* pScene)
         float height = 50.0f;
 
         XMFLOAT3 dir = MiMath::Normalize(m_lightDirection);
-        XMFLOAT3 eye = MiMath::Subtract(m_eyePosition, MiMath::Multiply(dir, 30.0f));
+        XMFLOAT3 eye = MiMath::Subtract(view.eyePosition, MiMath::Multiply(dir, 30.0f));
 
         XMMATRIX viewMatrix = XMMatrixLookToLH(
             XMLoadFloat3(&eye),
