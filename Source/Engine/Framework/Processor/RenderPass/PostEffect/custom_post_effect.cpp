@@ -105,13 +105,15 @@ void CustomPostEffect::RadialBlur(ID3D11ShaderResourceView* inputSRV, ID3D11Rend
     m_postProcessBufferData.radialBlur.strength = radialBlur.strength;
     UpdateConstantBuffer();
 
+    // RTVのセットとクリア
+    Direct3D_ResetViewport();
+    Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
+    Direct3D_SetSceneTarget(outputRTV, nullptr);
+
     // 入力テクスチャをセット
     m_pContext->PSSetShaderResources(0, 1, &inputSRV);
 
     // 描画
-    Direct3D_ResetViewport();
-    Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
-    Direct3D_SetSceneTarget(outputRTV, nullptr);
     m_pContext->Draw(3, 0);
 }
 
@@ -130,13 +132,15 @@ void CustomPostEffect::MonoMask(ID3D11ShaderResourceView* inputSRV, ID3D11Render
     m_postProcessBufferData.monoMask.strength = monoMask.strength;
     UpdateConstantBuffer();
 
+    // RTVのセットとクリア
+    Direct3D_ResetViewport();
+    Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
+    Direct3D_SetSceneTarget(outputRTV, nullptr);
+
     // 入力テクスチャをセット
     m_pContext->PSSetShaderResources(0, 1, &inputSRV);
     m_pContext->PSSetShaderResources(1, 1, &monoMaskSRV);
 
     // 描画
-    Direct3D_ResetViewport();
-    Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
-    Direct3D_SetSceneTarget(outputRTV, nullptr);
     m_pContext->Draw(3, 0);
 }

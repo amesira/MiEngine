@@ -142,5 +142,4 @@ void SettingsViewWindow::DrawLightingSettings()
 void SettingsViewWindow::DrawPostProcessingSettings()
 {
     ImGui::Text("Post Processing Settings");
-
 }
