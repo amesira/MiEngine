@@ -30,6 +30,10 @@ struct PostProcessBuffer {
             float threshold; // 輝度抽出の閾値
             float padding[3]; // パディング
         } brightnessExtract;
+        struct Downsample4Tap {
+            XMFLOAT2 texelSize;
+            XMFLOAT2 padding;
+        } downsample4Tap;
         struct GaussianBlur {
             XMFLOAT2 texelSize; // テクセルサイズ（1.0 / テクスチャサイズ）
             XMFLOAT2 direction; // ブラーの方向（水平: (1, 0), 垂直: (0, 1)）
@@ -59,8 +63,9 @@ private:
     ShaderProgramResource* m_brightnessExtractShader;
     // ガウスブラー用のシェーダー
     ShaderProgramResource* m_gaussianBlurShader;
+    ShaderProgramResource* m_downsample4TapShader;
     // 4tap平均化用のシェーダー
-    ShaderProgramResource* m_downsampleShader;
+    ShaderProgramResource* m_bloomCombineShader;
     // トゥーンマッピング用のシェーダー
     ShaderProgramResource* m_toneMappingShader;
 
@@ -100,6 +105,7 @@ private:
 
     // CBの更新
     void UpdateConstantBuffer();
+    void UnbindShaderResources(UINT startSlot, UINT count);
 };
 
 #endif // POST_PROCESS_H
