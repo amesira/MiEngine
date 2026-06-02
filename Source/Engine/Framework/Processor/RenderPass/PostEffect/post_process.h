@@ -31,8 +31,8 @@ struct PostProcessBuffer {
             float padding[3]; // パディング
         } brightnessExtract;
         struct Downsample4Tap {
-            XMFLOAT2 texelSize;
-            XMFLOAT2 padding;
+            XMFLOAT2 texelSize; // 入力テクスチャのテクセルサイズ（1.0 / テクスチャサイズ）
+            XMFLOAT2 padding; // パディング
         } downsample4Tap;
         struct GaussianBlur {
             XMFLOAT2 texelSize; // テクセルサイズ（1.0 / テクスチャサイズ）
@@ -63,10 +63,11 @@ private:
     ShaderProgramResource* m_brightnessExtractShader;
     // ガウスブラー用のシェーダー
     ShaderProgramResource* m_gaussianBlurShader;
+    // 4tapダウンサンプル用のシェーダー
     ShaderProgramResource* m_downsample4TapShader;
-    // 4tap平均化用のシェーダー
+    // Bloomの各縮小レベルを合成するシェーダー
     ShaderProgramResource* m_bloomCombineShader;
-    // トゥーンマッピング用のシェーダー
+    // トーンマッピング用のシェーダー
     ShaderProgramResource* m_toneMappingShader;
 
     // 定数バッファ
@@ -105,6 +106,7 @@ private:
 
     // CBの更新
     void UpdateConstantBuffer();
+    // SRVとRTVの同時バインドを避けるため、使用後のSRVを解除する
     void UnbindShaderResources(UINT startSlot, UINT count);
 };
 
