@@ -31,17 +31,20 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
         diffuseLight += CalcDiffuse_DirectionalLights(normal) * (1.0f - g_Material.metallic);
         diffuseLight += CalcDiffuse_PointLights(normal, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
         diffuseLight += CalcDiffuse_SpotLights(normal, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
+        
+        // 反転法線でもライティングを計算して、両面描画に対応
+        diffuseLight += CalcDiffuse_DirectionalLights(-normal) * (1.0f - g_Material.metallic);
+        diffuseLight += CalcDiffuse_PointLights(-normal, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
+        diffuseLight += CalcDiffuse_SpotLights(-normal, ps_in.posW.xyz) * (1.0f - g_Material.metallic);
 
         float3 specularLight = float3(0.0f, 0.0f, 0.0f);
         float shininess = lerp(256.0f, 2.0f, g_Material.roughness);
         specularLight += CalcSpecular_DirectionalLights(normal, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
         specularLight += CalcSpecular_PointLights(normal, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
         specularLight += CalcSpecular_SpotLights(normal, ps_in.posW.xyz, g_EyePosition.xyz, shininess) * g_Material.metallic;
-
+        
         col.rgb *= diffuseLight;
         col.rgb += specularLight;
-        //col.rgb += CalcRimLight(normal, ps_in.posW.xyz, g_EyePosition.xyz);
-        col.rgb += CalcHemiLight(normal);
 
         float4 lightSpacePos = WorldToLightSpace(ps_in.posW);
         float2 shadowUV = CalcShadowUV(lightSpacePos);

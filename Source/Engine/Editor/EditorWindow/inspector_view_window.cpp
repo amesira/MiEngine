@@ -35,7 +35,6 @@
 #include "Engine/Framework/Component/sprite_animation_component.h"
 
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
-#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 namespace
@@ -114,24 +113,29 @@ namespace
         return true;
     }
 
-    void DrawMaterialInstanceInspector(MaterialInstance& materialInstance)
+    std::string GetDisplayMaterialName(MaterialResource* materialResource)
     {
-        std::string materialName = materialInstance.materialResource ? materialInstance.materialResource->name : "";
-        if (InputTextFromString("Material", materialName)) {
-            MaterialResource* newMaterial = MATERIAL_REPOSITORY->GetMaterial(materialName);
-            if (newMaterial) {
-                materialInstance.materialResource = newMaterial;
-            }
-        }
+        std::string materialName = materialResource ? materialResource->name : "None";
+        auto split = MiString::Split(materialName, '%');
+        return split.size() > 2 ? split[2] : materialName;
+    }
 
-        bool overrideAlbedoTexture = materialInstance.isOverrideAlbedoTexture;
-        if (ImGui::Checkbox("Override Albedo Texture", &overrideAlbedoTexture)) {
-            materialInstance.isOverrideAlbedoTexture = overrideAlbedoTexture;
-        }
-        if (materialInstance.isOverrideAlbedoTexture) {
-            InputTextureResource("Albedo Texture", materialInstance.overrideAlbedoTexture);
-        }
+    // シェーダープログラムリソースを引き渡し、シェーダープログラムリソースのUIを表示
+    bool InputShaderProgramResource(const char* label, ShaderProgramResource*& shaderProgram)
+    {
+        std::string shaderName = shaderProgram ? shaderProgram->name : "";
+        if (!InputTextFromString(label, shaderName)) return false;
 
+        ShaderProgramResource* newShaderResource = SHADER_REPOSITORY->GetShaderProgramResource(shaderName);
+        if (!newShaderResource) return false;
+
+        shaderProgram = newShaderResource;
+        return true;
+    }
+
+    // MaterialInstanceを引き渡し、オーバーライド設定のUIを表示
+    void DrawMaterialInstanceOverrides(MaterialInstance& materialInstance)
+    {
         bool overrideBaseColor = materialInstance.isOverrideBaseColor;
         if (ImGui::Checkbox("Override Base Color", &overrideBaseColor)) {
             materialInstance.isOverrideBaseColor = overrideBaseColor;
@@ -141,13 +145,72 @@ namespace
         }
 
         bool overrideEmissive = materialInstance.isOverrideEmissive;
-        if (ImGui::Checkbox("Override Emissive", &overrideEmissive)) {
+        if (ImGui::Checkbox("Override Emissive Color", &overrideEmissive)) {
             materialInstance.isOverrideEmissive = overrideEmissive;
         }
         if (materialInstance.isOverrideEmissive) {
             ImGui::ColorEdit3("Emissive Color", &materialInstance.overrideEmissiveColor.x);
             ImGui::DragFloat("Emissive Intensity", &materialInstance.overrideEmissiveIntensity, 0.1f, 0.0f, 10.0f);
         }
+
+        bool overrideAlbedoTexture = materialInstance.isOverrideAlbedoTexture;
+        if (ImGui::Checkbox("Override Albedo Texture", &overrideAlbedoTexture)) {
+            materialInstance.isOverrideAlbedoTexture = overrideAlbedoTexture;
+        }
+        if (materialInstance.isOverrideAlbedoTexture) {
+            InputTextureResource("Albedo Texture", materialInstance.overrideAlbedoTexture);
+        }
+    }
+
+    // MaterialResourceを引き渡し、マテリアルリソースの情報を表示
+    void DrawMaterialResourceInspector(MaterialResource& materialResource)
+    {
+        ImGui::Text("Material Resource:");
+        ImGui::Text("  %s", materialResource.name.c_str());
+
+        ImGui::Text("Shader Program:");
+        InputShaderProgramResource("Shader Program", materialResource.shaderProgram);
+
+        ImGui::Text("Textures:");
+        InputTextureResource("Albedo Texture", materialResource.albedoTexture);
+        InputTextureResource("Normal Texture", materialResource.normalTexture);
+        InputTextureResource("Emissive Texture", materialResource.emissiveTexture);
+        InputTextureResource("AO Texture", materialResource.aoTexture);
+
+        ImGui::Text("Params:");
+        ImGui::ColorEdit4("Base Color", &materialResource.baseColor.x);
+        ImGui::DragFloat2("UV Tiling", &materialResource.uvTiling.x, 0.1f);
+        ImGui::DragFloat2("UV Offset", &materialResource.uvOffset.x, 0.1f);
+        ImGui::DragFloat("Metallic", &materialResource.metallic, 0.01f, 0.0f, 1.0f);
+        ImGui::DragFloat("Roughness", &materialResource.roughness, 0.01f, 0.0f, 1.0f);
+        ImGui::ColorEdit3("Emissive Color", &materialResource.emissiveColor.x);
+        ImGui::DragFloat("Emissive Intensity", &materialResource.emissiveIntensity, 0.1f, 0.0f, 10.0f);
+    }
+
+    // MaterialInstanceを引き渡し、オーバーライド設定とマテリアルリソースの情報を表示
+    void DrawMaterialSlotInspector(int slotIndex, MaterialInstance& materialInstance)
+    {
+        ImGui::PushID(slotIndex);
+
+        if (ImGui::TreeNode(("Slot " + std::to_string(slotIndex)).c_str())) {
+            ImGui::BeginChild("MaterialSlot", ImVec2(0, 300), true);
+
+            ImGui::Text("Material:");
+            ImGui::Text("  %s", GetDisplayMaterialName(materialInstance.materialResource).c_str());
+
+            DrawMaterialInstanceOverrides(materialInstance);
+
+            ImGui::Separator();
+
+            if (materialInstance.materialResource) {
+                DrawMaterialResourceInspector(*materialInstance.materialResource);
+            }
+
+            ImGui::EndChild();
+            ImGui::TreePop();
+        }
+
+        ImGui::PopID();
     }
 }
 
@@ -464,7 +527,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             ImGui::Text("Model Resource:");
             ImGui::Text("  %s", modelName.c_str());
             
-            unsigned int materialCount = model->GetMaterialSlots().size();
+            int materialCount = static_cast<int>(model->GetMaterialSlots().size());
             ImGui::Text("Material Slots: %d", materialCount);
 
             for (int i = 0; i < materialCount; i++) {
@@ -513,28 +576,13 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         materialInstance.isOverrideAlbedoTexture = overrideAlbedoTexture;
                     }
                     if (materialInstance.isOverrideAlbedoTexture) {
-                        char buffer[256];
-
-                        std::string newTexName;
-                        TextureResource* newTexRes = nullptr;
-
-                        std::wstring albedoTex = materialInstance.overrideAlbedoTexture ? materialInstance.overrideAlbedoTexture->name : L"None";
-                        strncpy(buffer, (char*)MiString::ToUTF8(albedoTex).c_str(), sizeof(buffer));
-                        if (ImGui::InputText("Albedo Texture", buffer, sizeof(buffer))) {
-                            newTexName = buffer;
-                            albedoTex = MiString::ToWString(newTexName);
-                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(albedoTex);
-                            if (newTexRes) {
-                                materialInstance.overrideAlbedoTexture = newTexRes;
-                            }
-                        }
+                        InputTextureResource("Albedo Texture", materialInstance.overrideAlbedoTexture);
                     }
 
                     ImGui::Separator();
 
                     MaterialResource* matRes = materialInstance.materialResource;
                     if (matRes) {
-                        char buffer[256];
 
                         // マテリアルリソースの名前を表示
                         std::string matResName = matRes->name;
@@ -542,64 +590,14 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         ImGui::Text("  %s", matResName.c_str());
 
                         ImGui::Text("Shader Program:");
-                        std::string shaderName = matRes->shaderProgram ? matRes->shaderProgram->name : "None";
-                        strcpy(buffer, shaderName.c_str());
-                        if (ImGui::InputText("Shader Program", buffer, sizeof(buffer))) {
-                            shaderName = buffer;
-                            ShaderProgramResource* newShaderRes = SHADER_REPOSITORY->GetShaderProgramResource(shaderName);
-                            if (newShaderRes) {
-                                matRes->shaderProgram = newShaderRes;
-                            }
-                        }
+                        InputShaderProgramResource("Shader Program", matRes->shaderProgram);
 
                         // マテリアルリソースのテクスチャ
                         ImGui::Text("Textures:");
-                        std::string newTexName;
-                        TextureResource* newTexRes = nullptr;
-
-                        std::wstring albedoTex = matRes->albedoTexture ? matRes->albedoTexture->name : L"None";
-                        strncpy(buffer, (char*)MiString::ToUTF8(albedoTex).c_str(), sizeof(buffer));
-                        if (ImGui::InputText("Albedo Texture", buffer, sizeof(buffer))) {
-                            newTexName = buffer;
-                            albedoTex = MiString::ToWString(newTexName);
-                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(albedoTex);
-                            if (newTexRes) {
-                                matRes->albedoTexture = newTexRes;
-                            }
-                        }
-
-                        std::wstring normalTex = matRes->normalTexture ? matRes->normalTexture->name : L"None";
-                        strncpy(buffer, (char*)MiString::ToUTF8(normalTex).c_str(), sizeof(buffer));
-                        if (ImGui::InputText("Normal Texture", buffer, sizeof(buffer))) {
-                            newTexName = buffer;
-                            normalTex = MiString::ToWString(newTexName);
-                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(normalTex);
-                            if (newTexRes) {
-                                matRes->normalTexture = newTexRes;
-                            }
-                        }
-
-                        std::wstring emissiveTex = matRes->emissiveTexture ? matRes->emissiveTexture->name : L"None";
-                        strncpy(buffer, (char*)MiString::ToUTF8(emissiveTex).c_str(), sizeof(buffer));
-                        if (ImGui::InputText("Emissive Texture", buffer, sizeof(buffer))) {
-                            newTexName = buffer;
-                            emissiveTex = MiString::ToWString(newTexName);
-                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(emissiveTex);
-                            if (newTexRes) {
-                                matRes->emissiveTexture = newTexRes;
-                            }
-                        }
-
-                        std::wstring aoTex = matRes->aoTexture ? matRes->aoTexture->name : L"None";
-                        strncpy(buffer, (char*)MiString::ToUTF8(aoTex).c_str(), sizeof(buffer));
-                        if (ImGui::InputText("AO Texture", buffer, sizeof(buffer))) {
-                            newTexName = buffer;
-                            aoTex = MiString::ToWString(newTexName);
-                            newTexRes = TEXTURE_REPOSITORY->GetTextureResource(aoTex);
-                            if (newTexRes) {
-                                matRes->aoTexture = newTexRes;
-                            }
-                        }
+                        InputTextureResource("Albedo Texture", matRes->albedoTexture);
+                        InputTextureResource("Normal Texture", matRes->normalTexture);
+                        InputTextureResource("Emissive Texture", matRes->emissiveTexture);
+                        InputTextureResource("AO Texture", matRes->aoTexture);
 
                         // マテリアルリソースのプロパティ
                         ImGui::Text("Params:");
@@ -649,11 +647,8 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
     auto* spriteRenderer = gameObject->GetComponent<SpriteRendererComponent>();
     if (spriteRenderer) {
         if (BeginComponentSection(spriteRenderer, "Sprite Renderer")) {
-            auto& materialInstance = spriteRenderer->GetMaterial();
-            if (ImGui::TreeNode("Material")) {
-                DrawMaterialInstanceInspector(materialInstance);
-                ImGui::TreePop();
-            }
+            ImGui::Text("Material Slots: %d", 1);
+            DrawMaterialSlotInspector(0, spriteRenderer->GetMaterial());
 
             ImGui::Separator();
 
