@@ -6,35 +6,37 @@
 //---------------------------------------------------
 #ifndef CUSTOM_POST_EFFECT_H
 #define CUSTOM_POST_EFFECT_H
-
+// direct3d
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
+// comptr
+#include <wrl/client.h>
+using Microsoft::WRL::ComPtr;
 
 class ShaderProgramResource;
+class ConstantBufferResource;
 
-// カスタムポストエフェクトの状態を保持する構造体
-struct CustomPostEffectState {
-    // RadialBlur
-    struct RadialBlur {
-        int sampleCount = 0;
-        float strength = 0.0f;
-    };
-    RadialBlur radialBlur;
-    // MonoMask
-    struct MonoMask {
-        XMFLOAT4 monoColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-        float strength = 0.0f;
-    };
-    MonoMask monoMask;
-    ID3D11ShaderResourceView* monoMaskTextureSRV = nullptr;
+class IScene;
 
-    // 状態のリセット
+// カスタムポストエフェクト用の定数バッファ構造体
+struct CustomPostEffectBuffer {
+    union {
+        XMFLOAT4 data[8];
+        struct RadialBlur {
+            int sampleCount;   // サンプル数
+            float strength;    // ブラーの強さ
+            float padding[2];  // パディング
+        } radialBlur;
+        struct MonoMask {
+            XMFLOAT4 monoColor; // モノクロ化する色
+            float strength;     // モノクロ化の強さ
+            float padding[3];   // パディング
+        } monoMask;
+    };
     void Reset() {
-        radialBlur.sampleCount = 0;
-        radialBlur.strength = 0.0f;
-        monoMask.monoColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-        monoMask.strength = 0.0f;
-        monoMaskTextureSRV = nullptr;
+        for (int i = 0; i < 8; i++) {
+            data[i] = XMFLOAT4(0, 0, 0, 0);
+        }
     }
 };
 
@@ -43,26 +45,36 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
-    // エフェクトの状態
-    CustomPostEffectState m_state;
+    // ポストプロセス用の定数バッファデータ
+    CustomPostEffectBuffer m_postProcessBufferData;
 
-    // シェーダー
-    ShaderProgramResource* m_radialBlurShader;
-    ShaderProgramResource* m_monoMaskShader;
+    // === シェーダーリソース ===
+    ShaderProgramResource* m_radialBlurShader;  // ラジアルブラー用のシェーダー
+    ShaderProgramResource* m_monoMaskShader;    // モノクロマスク用のシェーダー
+
+    ConstantBufferResource* m_postProcessCB;    // ポストプロセス用の定数バッファ
+
+    // 一時バッファ用のテクスチャ
+    ComPtr<ID3D11Texture2D> m_tempTexture[2];
+    ComPtr<ID3D11RenderTargetView> m_tempRTV[2];
+    ComPtr<ID3D11ShaderResourceView> m_tempSRV[2];
 
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void Finalize();
-    void Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV);
-
-    // エフェクトの状態の設定・取得
-    void SetState(const CustomPostEffectState& state) { m_state = state; }
-    CustomPostEffectState& GetState() { return m_state; }
-    const CustomPostEffectState& GetState() const { return m_state; }
+    void Process(IScene* scene, ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV);
 
 private:
-    void CopyInputToOutput(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV);
-    void UnbindShaderResources();
+    // 定数バッファの更新
+    void UpdateConstantBuffer();
+
+    // RadialBlurの処理
+    void RadialBlur(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV, 
+        CustomPostEffectBuffer::RadialBlur radialBlur);
+    // MonoMaskの処理
+    void MonoMask(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV,
+        CustomPostEffectBuffer::MonoMask monoMask, ID3D11ShaderResourceView* monoMaskSRV);
+
 };
 
 #endif // CUSTOM_POST_EFFECT_H

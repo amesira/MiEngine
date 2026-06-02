@@ -13,6 +13,8 @@
 //---------------------------------------------------
 #ifndef POST_PROCESS_SETTINGS_H
 #define POST_PROCESS_SETTINGS_H
+#include "Engine/Device/direct3d.h"
+using namespace DirectX;
 
 #pragma region SubSettings
 // ToneMapping設定構造体
@@ -54,11 +56,39 @@ struct SSAOSettings {
     float   bias = 0.025f;               // SSAOのバイアス
     int     sampleCount = 16;             // SSAOのサンプル数
 };
+
 #pragma endregion
+
+
+// カスタムポストエフェクトの状態を保持する構造体
+struct CustomPostEffectState {
+    // RadialBlur
+    struct RadialBlur {
+        int sampleCount = 4;
+        float strength = 0.0f;
+    };
+    RadialBlur radialBlur;
+    // MonoMask
+    struct MonoMask {
+        XMFLOAT4 monoColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float strength = 0.0f;
+    };
+    MonoMask monoMask;
+    ID3D11ShaderResourceView* monoMaskTextureSRV = nullptr;
+
+    // 状態のリセット
+    void Reset() {
+        radialBlur.sampleCount = 0;
+        radialBlur.strength = 0.0f;
+        monoMask.monoColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        monoMask.strength = 0.0f;
+        monoMaskTextureSRV = nullptr;
+    }
+};
 
 // PostProcessの設定クラス
 class PostProcessSettings {
-private:
+public:
     ToneMappingSettings m_toneMappingSettings;   // トーンマッピング設定
     BloomSettings m_bloomSettings;               // ブルーム設定
     ColorGradingSettings m_colorGradingSettings; // カラーグレーディング設定
@@ -66,8 +96,7 @@ private:
     FXAASettings m_fxaaSettings;                 // FXAA設定
     SSAOSettings m_ssaoSettings;               // SSAO設定
 
-public:
-
+    CustomPostEffectState m_customPostEffectState; // カスタムポストエフェクトの状態
 
 };
 

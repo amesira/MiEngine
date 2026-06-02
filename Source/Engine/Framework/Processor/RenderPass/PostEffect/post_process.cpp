@@ -102,6 +102,7 @@ void PostProcess::Finalize()
 void PostProcess::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV)
 {
     Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
+
     // 現状はBloomのみを適用する
     Bloom(inputSRV, outputRTV);
 }

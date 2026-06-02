@@ -25,15 +25,15 @@ cbuffer MonoMaskBuffer : register(b0) {
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
     float4 color = g_Texture.Sample(g_SamplerState, ps_in.texcoord);
-    float4 mask = g_MaskTexture.Sample(g_SamplerState, ps_in.texcoord);
+    //float4 mask = g_MaskTexture.Sample(g_SamplerState, ps_in.texcoord);
     
-    // グレースケールに変換
-    float gray = dot(color.rgb, float3(0.299f, 0.587f, 0.114f));
+    //// グレースケールに変換
+    //float gray = dot(color.rgb, float3(0.299f, 0.587f, 0.114f));
     
-    if (mask.a < 0.5f) {
-        // マスク範囲外はモノクロにする
-        color.rgb = lerp(color.rgb, gray * g_MonoColor.rgb, g_Strength);
-    }
+    //if (mask.a < 0.5f) {
+    //    // マスク範囲外はモノクロにする
+    //    color.rgb = lerp(color.rgb, gray * g_MonoColor.rgb, g_Strength);
+    //}
     
     return color;
 }

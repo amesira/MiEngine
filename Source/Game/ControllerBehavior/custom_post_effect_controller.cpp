@@ -5,6 +5,10 @@
 // Date  : 2026/06/02
 //===================================================
 #include "custom_post_effect_controller.h"
+#include "Engine/Core/scene_interface.h"
+#include "Engine/Core/game_object.h"
+
+#include "Engine/Settings/scene_settings.h"
 
 #include <algorithm>
 
@@ -26,6 +30,8 @@ CustomPostEffectController::CustomPostEffectController()
     }
 
     m_state.Reset();
+    m_state.radialBlur.sampleCount = 4; // デフォルトのサンプル数を設定
+    m_state.monoMask.monoColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f); // デフォルトのモノクロ色を設定
 }
 
 CustomPostEffectController::~CustomPostEffectController()
@@ -64,6 +70,13 @@ void CustomPostEffectController::Update()
             default: break;
             }
         }
+    }
+
+    // カスタムポストエフェクト状態の更新
+    IScene* scene = GetOwner()->GetScene();
+    if (scene) {
+        SceneSettings& sceneSettings = scene->GetSceneSettings();
+        sceneSettings.GetPostProcessSettings().m_customPostEffectState = m_state;
     }
 }
 

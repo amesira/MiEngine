@@ -20,7 +20,7 @@ private:
 
 public:
     // カメラ設定の取得・設定
-    const SceneCameraSettings& GetCameraSettings() const { return m_cameraSettings; }
+    SceneCameraSettings& GetCameraSettings()  { return m_cameraSettings; }
     void SetCameraSettings(const SceneCameraSettings& settings) { m_cameraSettings = settings; }
     // カメラ設定の更新
     void UpdateCameraSettings() {
@@ -29,11 +29,11 @@ public:
     }
 
     // ライティング設定の取得・設定
-    const LightingSettings& GetLightingSettings() const { return m_lightingSettings; }
+    LightingSettings& GetLightingSettings()  { return m_lightingSettings; }
     void SetLightingSettings(const LightingSettings& settings) { m_lightingSettings = settings; }
 
     // ポストプロセス設定の取得・設定
-    const PostProcessSettings& GetPostProcessSettings() const { return m_postProcessSettings; }
+    PostProcessSettings& GetPostProcessSettings() { return m_postProcessSettings; }
     void SetPostProcessSettings(const PostProcessSettings& settings) { m_postProcessSettings = settings; }
 
 };
