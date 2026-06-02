@@ -7,6 +7,7 @@
 #include "custom_post_effect.h"
 
 #include "Engine/engine_service_locator.h"
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
 void CustomPostEffect::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -15,6 +16,22 @@ void CustomPostEffect::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
     // 状態を初期化
     m_state.Reset();
+
+    ShaderProgramResource* fullScreenShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::FullScreen);
+
+    // シェーダーの読み込み
+    ShaderProgramResource radialBlurShaderResource;
+    radialBlurShaderResource.name = "RadialBlur";
+    radialBlurShaderResource.baseShader = fullScreenShader;
+    radialBlurShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("radial_blur_ps.cso");
+    m_radialBlurShader = SHADER_REPOSITORY->GenerateShaderProgramResource(radialBlurShaderResource);
+
+    ShaderProgramResource monoMaskShader;
+    monoMaskShader.name = "MonoMask";
+    monoMaskShader.baseShader = fullScreenShader;
+    monoMaskShader.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("mono_mask_ps.cso");
+    m_monoMaskShader = SHADER_REPOSITORY->GenerateShaderProgramResource(monoMaskShader);
+
 }
 
 void CustomPostEffect::Finalize()

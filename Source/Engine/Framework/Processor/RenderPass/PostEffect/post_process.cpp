@@ -126,10 +126,11 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     SetDepthState(DEPTHSTATE_DISABLE);
     m_context->PSSetShaderResources(0, 1, &inputSRV);
 
+    // 輝度抽出パラメータ設定
     m_postProcessBufferData.Reset();
     {
         auto& be = m_postProcessBufferData.brightnessExtract;
-        be.threshold = 2.0f; // 輝度抽出の閾値
+        be.threshold = 2.0f;
     }
     UpdateConstantBuffer();
     
@@ -140,6 +141,7 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
 
+    // ガウスブラーパラメータ設定
     m_postProcessBufferData.Reset();
     {
         auto& gb = m_postProcessBufferData.gaussianBlur;
@@ -152,6 +154,7 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
         gb.offsets = XMFLOAT4(0, 1, 2, 3); // サンプルオフセット
     }
 
+    // === ブラーをかける ===
     for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
         auto& gb = m_postProcessBufferData.gaussianBlur;
         gb.texelSize = XMFLOAT2(1.0f / m_downsampledWidth[i], 1.0f / m_downsampledHeight[i]);
@@ -193,6 +196,7 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
 
+    // 合成するテクスチャ群をセット
     for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
         m_context->PSSetShaderResources(i, 1, m_downsampledSRV[i * 2 + 1].GetAddressOf());
     }
@@ -203,21 +207,17 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     Direct3D_SetSceneTarget(outputRTV, nullptr);
     EngineServiceLocator::BindShader(m_fullScreenShader);
 
+    // 元シーン
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
     m_context->PSSetShaderResources(0, 1, &inputSRV);
-    m_context->Draw(3, 0); // フルスクリーン三角形を描画
+    m_context->Draw(3, 0);
     
+    // 加算合成する結果シーン
     SetBlendState(BLENDSTATE_ADD);
     SetDepthState(DEPTHSTATE_DISABLE);
     m_context->PSSetShaderResources(0, 1, m_tempSRV[1].GetAddressOf());
-    m_context->Draw(3, 0); // フルスクリーン三角形を描画
-
-    // テクスチャアンバインド処理
-    m_context->PSSetShaderResources(0, 1, nullptr);
-    m_context->PSSetShaderResources(1, 1, nullptr);
-    m_context->PSSetShaderResources(2, 1, nullptr);
-    m_context->PSSetShaderResources(3, 1, nullptr);
+    m_context->Draw(3, 0);
 }
 
 // CBの更新

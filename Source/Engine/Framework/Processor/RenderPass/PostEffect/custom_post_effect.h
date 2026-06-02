@@ -10,6 +10,8 @@
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
+class ShaderProgramResource;
+
 // カスタムポストエフェクトの状態を保持する構造体
 struct CustomPostEffectState {
     // RadialBlur
@@ -43,6 +45,10 @@ private:
 
     // エフェクトの状態
     CustomPostEffectState m_state;
+
+    // シェーダー
+    ShaderProgramResource* m_radialBlurShader;
+    ShaderProgramResource* m_monoMaskShader;
 
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
