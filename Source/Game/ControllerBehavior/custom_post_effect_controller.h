@@ -11,6 +11,8 @@
 
 #include "Engine/Core/GamePlay/tween_task.h"
 
+#include "Engine/Settings/post_process_settings.h"
+
 // カスタムポストエフェクトの種類
 enum class CustomPostEffectType {
     RadialBlur,

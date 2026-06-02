@@ -20,19 +20,23 @@ class IScene;
 
 // カスタムポストエフェクト用の定数バッファ構造体
 struct CustomPostEffectBuffer {
+    struct RadialBlur {
+        int sampleCount;   // サンプル数
+        float strength;    // ブラーの強さ
+        float padding[2];  // パディング
+    };
+    struct MonoMask {
+        XMFLOAT4 monoColor; // モノクロ化する色
+        float strength;     // モノクロ化の強さ
+        float padding[3];   // パディング
+    };
+
     union {
         XMFLOAT4 data[8];
-        struct RadialBlur {
-            int sampleCount;   // サンプル数
-            float strength;    // ブラーの強さ
-            float padding[2];  // パディング
-        } radialBlur;
-        struct MonoMask {
-            XMFLOAT4 monoColor; // モノクロ化する色
-            float strength;     // モノクロ化の強さ
-            float padding[3];   // パディング
-        } monoMask;
+        RadialBlur radialBlur;
+        MonoMask monoMask;
     };
+
     void Reset() {
         for (int i = 0; i < 8; i++) {
             data[i] = XMFLOAT4(0, 0, 0, 0);
