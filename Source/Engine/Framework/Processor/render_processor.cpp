@@ -26,6 +26,7 @@ void RenderProcessor::Initialize()
     m_uiRenderPass.Initialize(m_pDevice, m_pContext);
     m_decalRenderPass.Initialize(m_pDevice, m_pContext);
     m_transparentRenderPass.Initialize(m_pDevice, m_pContext);
+    m_maskRenderPass.Initialize(m_pDevice, m_pContext);
     m_postEffectPass.Initialize(m_pDevice, m_pContext);
 }
 
@@ -37,6 +38,7 @@ void RenderProcessor::Finalize()
     m_uiRenderPass.Finalize();
     m_decalRenderPass.Finalize();
     m_transparentRenderPass.Finalize();
+    m_maskRenderPass.Finalize();
     m_shadowMapPass.Finalize();
     m_skyboxPass.Finalize();
     m_postEffectPass.Finalize();
@@ -104,6 +106,8 @@ void RenderProcessor::Process(IScene* pScene)
     }
 
     //----------------------------------- 2Dオブジェクト描画
+    m_maskRenderPass.Process(pScene, *m_renderView);
+
     Bind2DCameraCB(m_renderView);
     m_lightingPass.BindLightCB(false);
 

@@ -47,5 +47,5 @@ void PostEffectPass::Process(IScene* pScene, const RenderView& view)
     m_postProcess.Process(view.colorBufferSRV.Get(), m_tempRTV[0].Get());
 
     // CustomPostEffect
-    m_customPostEffect.Process(pScene, m_tempSRV[0].Get(), view.postEffectRTV.Get());
+    m_customPostEffect.Process(pScene, m_tempSRV[0].Get(), view.postEffectRTV.Get(), view.maskColorBufferSRV.Get());
 }

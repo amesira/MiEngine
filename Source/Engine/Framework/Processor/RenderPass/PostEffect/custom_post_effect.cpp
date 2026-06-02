@@ -54,7 +54,8 @@ void CustomPostEffect::Finalize()
     
 }
 
-void CustomPostEffect::Process(IScene* scene, ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV)
+void CustomPostEffect::Process(IScene* scene, ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV,
+    ID3D11ShaderResourceView* maskSRV)
 {
     if (!m_pContext || !inputSRV || !outputRTV) return;
 
@@ -66,7 +67,8 @@ void CustomPostEffect::Process(IScene* scene, ID3D11ShaderResourceView* inputSRV
     CustomPostEffectBuffer::MonoMask monoMaskParams = {};
     monoMaskParams.monoColor = customEffectState.monoMask.monoColor;
     monoMaskParams.strength = customEffectState.monoMask.strength;
-    MonoMask(inputSRV, m_tempRTV[0].Get(),monoMaskParams, customEffectState.monoMaskTextureSRV);
+    ID3D11ShaderResourceView* monoMaskSRV = maskSRV ? maskSRV : customEffectState.monoMaskTextureSRV;
+    MonoMask(inputSRV, m_tempRTV[0].Get(), monoMaskParams, monoMaskSRV);
 
     // RadialBlurの処理
     CustomPostEffectBuffer::RadialBlur radialBlurParams = {};

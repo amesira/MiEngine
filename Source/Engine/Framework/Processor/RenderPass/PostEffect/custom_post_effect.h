@@ -66,7 +66,8 @@ private:
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void Finalize();
-    void Process(IScene* scene, ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV);
+    void Process(IScene* scene, ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV,
+        ID3D11ShaderResourceView* maskSRV);
 
 private:
     // 定数バッファの更新

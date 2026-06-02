@@ -254,6 +254,9 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Engine\Framework\Component\collider_component.cpp">
       <Filter>Sources\Engine\Framework\Component</Filter>
@@ -322,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Component\camera_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h">
       <Filter>Sources\Engine\Framework\Processor</Filter>

@@ -19,6 +19,7 @@
 #include "./RenderPass/ui_render_pass.h"
 #include "./RenderPass/decal_render_pass.h"
 #include "./RenderPass/transparent_render_pass.h"
+#include "./RenderPass/mask_render_pass.h"
 #include "./RenderPass/post_effect_pass.h"
 
 #include "Engine/Device/direct3d.h"
@@ -42,6 +43,7 @@ private:
     OpaqueRenderPass m_opaqueRenderPass;
     DecalRenderPass m_decalRenderPass;
     TransparentRenderPass m_transparentRenderPass;
+    MaskRenderPass m_maskRenderPass;
 
     PostEffectPass m_postEffectPass;
 
