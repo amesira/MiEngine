@@ -30,9 +30,65 @@
 #include "Engine/Framework/Component/joint_group_component.h"
 #include "Engine/Framework/Component/joint_component.h"
 #include "Engine/Framework/Component/decal_component.h"
+#include "Engine/Framework/Component/particle_system_component.h"
 
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+
+namespace
+{
+    void DrawMinMaxFloat(const char* label, ParticleSystemComponent::MinMaxFloat& value)
+    {
+        if (ImGui::TreeNode(label)) {
+            ImGui::Checkbox("Random Between Two Constants", &value.randomBetweenTwoConstants);
+            if (value.randomBetweenTwoConstants) {
+                ImGui::DragFloat("Min", &value.constantMin, 0.01f);
+                ImGui::DragFloat("Max", &value.constantMax, 0.01f);
+            }
+            else {
+                ImGui::DragFloat("Constant", &value.constant, 0.01f);
+            }
+            ImGui::TreePop();
+        }
+    }
+
+    void DrawMinMaxColor(const char* label, ParticleSystemComponent::MinMaxColor& value)
+    {
+        if (ImGui::TreeNode(label)) {
+            ImGui::Checkbox("Random Between Two Colors", &value.randomBetweenTwoColors);
+            if (value.randomBetweenTwoColors) {
+                ImGui::ColorEdit4("Min", &value.colorMin.x);
+                ImGui::ColorEdit4("Max", &value.colorMax.x);
+            }
+            else {
+                ImGui::ColorEdit4("Color", &value.color.x);
+            }
+            ImGui::TreePop();
+        }
+    }
+
+    void DrawFloatCurve(const char* label, ParticleSystemComponent::FloatCurve& curve)
+    {
+        if (ImGui::TreeNode(label)) {
+            for (int i = 0; i < static_cast<int>(curve.keys.size()); ++i) {
+                ImGui::PushID(i);
+                ImGui::DragFloat("Time", &curve.keys[i].time, 0.01f, 0.0f, 1.0f);
+                ImGui::DragFloat("Value", &curve.keys[i].value, 0.01f);
+                if (ImGui::Button("Remove")) {
+                    curve.keys.erase(curve.keys.begin() + i);
+                    ImGui::PopID();
+                    break;
+                }
+                ImGui::Separator();
+                ImGui::PopID();
+            }
+            if (ImGui::Button("Add Key")) {
+                curve.keys.push_back({ 1.0f, 1.0f });
+            }
+            ImGui::TreePop();
+        }
+    }
+}
 
 void InspectorViewWindow::Draw()
 {
@@ -540,6 +596,119 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
         }
 
         ImGui::PopID();
+    }
+
+    auto* particleSystem = gameObject->GetComponent<ParticleSystemComponent>();
+    if (particleSystem) {
+        if (BeginComponentSection(particleSystem, "Particle System")) {
+            ImGui::Text("Particles: %zu / %d",
+                particleSystem->Particles().size(),
+                ParticleSystemComponent::MAX_PARTICLES);
+
+            if (particleSystem->IsPlaying()) {
+                if (ImGui::Button("Stop")) {
+                    particleSystem->Stop();
+                }
+            }
+            else {
+                if (ImGui::Button("Play")) {
+                    particleSystem->Play();
+                }
+            }
+
+            ImGui::Separator();
+
+            auto& main = particleSystem->Main();
+            if (ImGui::TreeNode("Main")) {
+                ImGui::DragFloat("Duration", &main.duration, 0.01f, 0.0f);
+                ImGui::Checkbox("Loop", &main.loop);
+                ImGui::Checkbox("Play On Awake", &main.playOnAwake);
+                DrawMinMaxFloat("Start Lifetime", main.startLifetime);
+                DrawMinMaxFloat("Start Speed", main.startSpeed);
+                DrawMinMaxFloat("Start Size", main.startSize);
+                DrawMinMaxColor("Start Color", main.startColor);
+                ImGui::DragFloat3("Gravity", &main.gravity.x, 0.01f);
+                ImGui::DragFloat("Simulation Speed", &main.simulationSpeed, 0.01f, 0.0f);
+
+                int simulationSpace = static_cast<int>(main.simulationSpace);
+                const char* simulationSpaceItems[] = { "Local", "World" };
+                if (ImGui::Combo("Simulation Space", &simulationSpace, simulationSpaceItems, IM_ARRAYSIZE(simulationSpaceItems))) {
+                    main.simulationSpace = static_cast<ParticleSystemComponent::SimulationSpace>(simulationSpace);
+                }
+                ImGui::TreePop();
+            }
+
+            auto& emission = particleSystem->Emission();
+            if (ImGui::TreeNode("Emission")) {
+                ImGui::Checkbox("Enabled", &emission.enabled);
+                ImGui::DragFloat("Rate Over Time", &emission.rateOverTime, 0.1f, 0.0f);
+                ImGui::DragFloat("Rate Over Distance", &emission.rateOverDistance, 0.1f, 0.0f);
+                ImGui::TreePop();
+            }
+
+            auto& shape = particleSystem->Shape();
+            if (ImGui::TreeNode("Shape")) {
+                ImGui::Checkbox("Enabled", &shape.enabled);
+                int shapeType = static_cast<int>(shape.type);
+                const char* shapeTypeItems[] = { "Sphere", "Cone" };
+                if (ImGui::Combo("Shape Type", &shapeType, shapeTypeItems, IM_ARRAYSIZE(shapeTypeItems))) {
+                    shape.type = static_cast<ParticleSystemComponent::ShapeType>(shapeType);
+                }
+
+                if (shape.type == ParticleSystemComponent::ShapeType::Sphere) {
+                    ImGui::DragFloat("Sphere Radius", &shape.sphere.radius, 0.01f, 0.0f);
+                    ImGui::Checkbox("Emit From Shell", &shape.sphere.emitFromShell);
+                }
+                else if (shape.type == ParticleSystemComponent::ShapeType::Cone) {
+                    float coneAngleDegrees = XMConvertToDegrees(shape.cone.angle);
+                    if (ImGui::DragFloat("Cone Angle", &coneAngleDegrees, 0.1f, 0.0f, 180.0f)) {
+                        shape.cone.angle = XMConvertToRadians(coneAngleDegrees);
+                    }
+                    ImGui::DragFloat("Cone Radius", &shape.cone.radius, 0.01f, 0.0f);
+                    ImGui::DragFloat("Cone Length", &shape.cone.length, 0.01f, 0.0f);
+                    ImGui::Checkbox("Emit From Base", &shape.cone.emitFromBase);
+                }
+
+                ImGui::DragFloat("Random Direction Amount", &shape.randomDirectionAmount, 0.01f, 0.0f, 1.0f);
+                ImGui::TreePop();
+            }
+
+            auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+            if (ImGui::TreeNode("Size Over Lifetime")) {
+                ImGui::Checkbox("Enabled", &sizeOverLifetime.enabled);
+                DrawFloatCurve("Size Curve", sizeOverLifetime.size);
+                ImGui::TreePop();
+            }
+
+            auto& renderer = particleSystem->Renderer();
+            if (ImGui::TreeNode("Renderer")) {
+                if (renderer.textureResource) {
+                    ImGui::Text("Texture: %s", MiString::ToUTF8(renderer.textureResource->name).c_str());
+                }
+                else {
+                    ImGui::Text("Texture: None");
+                }
+
+                ImGui::DragFloat4("UV Rect", &renderer.uvRect.x, 0.01f);
+
+                int billboardMode = static_cast<int>(renderer.billboardMode);
+                const char* billboardModeItems[] = { "View", "Horizontal" };
+                if (ImGui::Combo("Billboard Mode", &billboardMode, billboardModeItems, IM_ARRAYSIZE(billboardModeItems))) {
+                    renderer.billboardMode = static_cast<ParticleSystemComponent::BillboardMode>(billboardMode);
+                }
+
+                int blendMode = static_cast<int>(renderer.blendMode);
+                const char* blendModeItems[] = { "Alpha Blend", "Additive" };
+                if (ImGui::Combo("Blend Mode", &blendMode, blendModeItems, IM_ARRAYSIZE(blendModeItems))) {
+                    renderer.blendMode = static_cast<ParticleSystemComponent::BlendMode>(blendMode);
+                }
+
+                ImGui::Checkbox("Sort By Distance", &renderer.sortByDistance);
+                ImGui::TreePop();
+            }
+        }
+
+        EndComponentSection();
     }
 
 #pragma region UIComponents
