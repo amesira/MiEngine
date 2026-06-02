@@ -51,9 +51,9 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     rigidbody->SetFriction({ 0.8f, 1.0f, 0.8f });
 
     collider->SetScale({
-        playerScaling.x * 1.0f / 0.8f,
-        playerScaling.y * 1.0f / 0.8f,
-        playerScaling.z * 1.0f / 0.8f
+        playerScaling.x,
+        playerScaling.y,
+        playerScaling.z
         });
     collider->SetCenter({ 0.0f, 0.0f, 0.0f });
 

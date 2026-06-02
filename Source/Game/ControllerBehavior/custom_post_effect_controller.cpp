@@ -8,6 +8,8 @@
 
 #include <algorithm>
 
+#include "Engine/Device/mi_fps.h"
+
 #include "game_controller_locator.h"
 #include "Utility/debug_ostream.h"
 
@@ -37,53 +39,63 @@ CustomPostEffectController::~CustomPostEffectController()
 
 void CustomPostEffectController::Start()
 {
+
 }
 
 void CustomPostEffectController::Update()
 {
+    float deltaTime = FPS_GetUnscaledDeltaTime();
+
+    // 各エフェクトのTweeningタスクを更新し、状態に反映させる
+    for (int i = 0; i < static_cast<int>(CustomPostEffectType::MAX); i++) {
+        FloatTweenTask& tweenTask = m_changeIntensityTask[i];
+        bool isRunning = !tweenTask.IsFinished();
+
+        tweenTask.Update(deltaTime);
+
+        if (isRunning) {
+            switch (static_cast<CustomPostEffectType>(i)) {
+            case CustomPostEffectType::RadialBlur:
+                m_state.radialBlur.strength = tweenTask.m_currentValue;
+                break;
+            case CustomPostEffectType::MonoMask:
+                m_state.monoMask.strength = tweenTask.m_currentValue;
+                break;
+            default: break;
+            }
+        }
+    }
 }
 
 void CustomPostEffectController::DrawComponentInspector()
 {
+
 }
 
-void CustomPostEffectController::SetRadialBlurIntensity(float intensity)
+// ポストエフェクトの再生
+void CustomPostEffectController::PlayEffect(
+    CustomPostEffectType effectType, 
+    float intensity, float duration, float holdDuration)
 {
-    m_state.radialBlurIntensity = (std::max)(0.0f, intensity);
-}
+    int effectIndex = static_cast<int>(effectType);
 
-void CustomPostEffectController::SetMonochromeIntensity(float intensity)
-{
-    m_state.monochromeIntensity = (std::max)(0.0f, intensity);
-}
+    FloatTweenTask& tweenTask = m_changeIntensityTask[effectIndex];
+    tweenTask.Reset();
+    tweenTask.m_duration = duration;
+    tweenTask.m_holdDuration = holdDuration;
+    tweenTask.m_targetValue = intensity;
+    tweenTask.m_endValue = 0.0f; // 終了後は強度0に戻す
 
-void CustomPostEffectController::SetMaskIntensity(float intensity)
-{
-    m_state.maskIntensity = (std::max)(0.0f, intensity);
-}
-
-void CustomPostEffectController::SetMaskTexture(ID3D11ShaderResourceView* maskSRV)
-{
-    m_state.maskSRV = maskSRV;
-}
-
-void CustomPostEffectController::ResetPostEffect()
-{
-    m_state.Reset();
-}
-
-CustomPostEffectState CustomPostEffectController::GetActiveState() const
-{
-    if (!m_enabled) {
-        CustomPostEffectState inactiveState;
-        inactiveState.Reset();
-        return inactiveState;
+    // 開始値は現在のエフェクトの強度にする
+    switch (effectType) {
+        case CustomPostEffectType::RadialBlur:
+            tweenTask.m_startValue = m_state.radialBlur.strength;
+            break;
+        case CustomPostEffectType::MonoMask:
+            tweenTask.m_startValue = m_state.monoMask.strength;
+            break;
+        default: break;
     }
 
-    return m_state;
-}
-
-bool CustomPostEffectController::IsActive() const
-{
-    return m_enabled && m_state.IsActive();
+    tweenTask.Start();
 }

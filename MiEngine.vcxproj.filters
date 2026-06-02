@@ -160,7 +160,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.cpp">
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp">
@@ -415,7 +415,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.h">
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h">

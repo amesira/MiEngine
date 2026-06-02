@@ -144,7 +144,6 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
@@ -184,7 +183,7 @@
     <ClCompile Include="Source\Engine\Graphics\model_repository.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp" />
@@ -233,7 +232,6 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
@@ -294,7 +292,7 @@
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\custom_post_effect_pass.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h" />
@@ -393,6 +391,34 @@
     <FxCompile Include="Shader\Common\lighting.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomPostEffect\mono_mask_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomPostEffect\radial_blur_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\CustomUnlitShader\hologram_unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

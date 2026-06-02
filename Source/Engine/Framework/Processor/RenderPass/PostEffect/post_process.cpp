@@ -210,9 +210,14 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     
     SetBlendState(BLENDSTATE_ADD);
     SetDepthState(DEPTHSTATE_DISABLE);
-   // m_context->PSSetShaderResources(0, 1, m_downsampledSRV[static_cast<int>(DownsampleLevel::Level1) * 2 + 0].GetAddressOf());
     m_context->PSSetShaderResources(0, 1, m_tempSRV[1].GetAddressOf());
     m_context->Draw(3, 0); // フルスクリーン三角形を描画
+
+    // テクスチャアンバインド処理
+    m_context->PSSetShaderResources(0, 1, nullptr);
+    m_context->PSSetShaderResources(1, 1, nullptr);
+    m_context->PSSetShaderResources(2, 1, nullptr);
+    m_context->PSSetShaderResources(3, 1, nullptr);
 }
 
 // CBの更新
