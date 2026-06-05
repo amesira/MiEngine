@@ -11,9 +11,9 @@
 
 class PlayerStateMachineBehavior : public BehaviorComponent {
 private:
-
-
     bool    m_isEnterState = true;  // 状態に入ったばかりかどうかのフラグ
+    bool    m_debugEntered = false; // デバッグ用：状態に入ったばかりかどうかのフラグ
+    PlayerState m_debugState = PlayerState::Idle; // デバッグ用：現在の状態
 
 public:
     PlayerStateMachineBehavior() = default;

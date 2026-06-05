@@ -18,6 +18,19 @@
 #include "./PlayerState/player_attack_behavior.h"
 #include "./PlayerState/player_dodge_behavior.h"
 
+namespace {
+    const char* ToStateName(PlayerState state)
+    {
+        switch (state) {
+        case PlayerState::Idle: return "Idle";
+        case PlayerState::Move: return "Move";
+        case PlayerState::Dodge: return "Dodge";
+        case PlayerState::Stunned: return "Stunned";
+        default: return "Unknown";
+        }
+    }
+}
+
 void PlayerStateMachineBehavior::Start()
 {
 
@@ -30,7 +43,12 @@ void PlayerStateMachineBehavior::Update()
 
 void PlayerStateMachineBehavior::DrawComponentInspector()
 {
+    if (InspectorViewWindow::BeginComponentSection(this, "Player State Machine")) {
+        ImGui::Text("Combat State: %s", ToStateName(m_debugState));
+        ImGui::Text("Entered This Frame: %s", m_debugEntered ? "true" : "false");
+    }
 
+    InspectorViewWindow::EndComponentSection();
 }
 
 //------------------------------- private
@@ -41,6 +59,7 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
     // 状態に入ったばかりかどうかのフラグを取得してリセット
     bool entered = m_isEnterState;
     m_isEnterState = false;
+    m_debugEntered = entered;
 
     // 状態ごとの処理
     switch (context.state) {
@@ -61,23 +80,9 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
         if (context.input.triggerDashCommand) {
             ChangeState(context, PlayerState::Dodge);
         }
-        else if (context.input.triggerAimCommand) {
-            ChangeState(context, PlayerState::Attack);
-        }
 
         break;
     }
-
-    case PlayerState::Attack: {
-
-        // 攻撃終了条件
-        if (context.input.releaseAimCommand) {
-            ChangeState(context, PlayerState::Idle);
-        }
-
-        break;
-    }
-
     case PlayerState::Dodge: {
         // 回避開始処理
         if (entered) {
@@ -101,6 +106,8 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
 
     default: break;
     }
+
+    m_debugState = context.state;
 }
 
 // 状態切り替え

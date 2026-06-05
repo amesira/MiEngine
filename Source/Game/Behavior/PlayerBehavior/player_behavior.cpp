@@ -113,18 +113,6 @@ void PlayerBehavior::DrawComponentInspector()
         ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
         ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
 
-        // 状態の表示
-        ImGui::Text("State: %s", [this]() {
-            switch (m_context.state) {
-            case PlayerState::Idle: return "Idle";
-            case PlayerState::Move: return "Move";
-            case PlayerState::Attack: return "Attack";
-            case PlayerState::Dodge: return "Dodge";
-            case PlayerState::Stunned: return "Stunned";
-            default: return "Unknown";
-            }
-            }());
-
         // 入力状態の表示
         ImGui::Text("MoveInputCameraLocal: (%.2f, %.2f, %.2f)", m_context.input.moveInputCameraLocal.x, m_context.input.moveInputCameraLocal.y, m_context.input.moveInputCameraLocal.z);
 
@@ -223,10 +211,10 @@ void PlayerBehavior::UpdateAnimation(PlayerState state, PlayerCombatState combat
     //if (combatState == PlayerCombatState::Aim) {
     //    clipName = "Aim";
     //}
-    //else if (combatState == PlayerCombatState::Charge) {
+    //else if (combatState == PlayerCombatState::Aim) {
     //    clipName = "Charge";
     //}
-    //else if (combatState == PlayerCombatState::Attack) {
+    //else if (combatState == PlayerCombatState::SingleAttack || combatState == PlayerCombatState::ChargeAttack) {
     //    clipName = "Attack";
     //}
 

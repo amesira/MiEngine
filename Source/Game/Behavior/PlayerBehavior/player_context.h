@@ -11,15 +11,15 @@ class PlayerDodgeBehavior;
 enum class PlayerState {
     Idle,
     Move,
-    Attack,
     Dodge,
     Stunned,
 };
 enum class PlayerCombatState {
     None,
+    HoldBuffer,
     Aim,
-    Charge,
-    Attack,
+    SingleAttack,
+    ChargeAttack,
 };
 
 // プレイヤー入力構造体
@@ -44,7 +44,7 @@ struct PlayerInput {
     bool    holdAttackCommand;
     bool    releaseAttackCommand;
 
-    PlayerInput() : 
+    PlayerInput() :
         horizontal(0.0f), 
         vertical(0.0f), 
         moveInputCameraLocal(0.0f, 0.0f, 0.0f),
@@ -65,8 +65,8 @@ struct PlayerContext {
     PlayerInput input;
 
     // プレイヤーの状態
-    PlayerState state;
-    PlayerCombatState combatState;
+    PlayerState state = PlayerState::Idle;
+    PlayerCombatState combatState = PlayerCombatState::None;
 
     // StateMachineから利用するプレイヤー機能
     PlayerMoveBehavior* moveBehavior = nullptr;

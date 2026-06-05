@@ -10,8 +10,6 @@
 #include "Game/Behavior/PlayerBehavior/player_context.h"
 
 class PlayerAttackBehavior : public BehaviorComponent {
-private:
-
 public:
     PlayerAttackBehavior() {}
     ~PlayerAttackBehavior() {}
@@ -20,6 +18,15 @@ public:
     void Update() override;
 
     void DrawComponentInspector() override;
+
+    void StartAttackHoldBuffer(PlayerContext& context);
+    void UpdateAttackHoldBuffer(PlayerContext& context, float deltaTime);
+
+    void StartAim(PlayerContext& context);
+    void UpdateAim(PlayerContext& context, float deltaTime);
+
+    void SingleAttack(PlayerContext& context);
+    void ChargeAttack(PlayerContext& context);
 
 };
 

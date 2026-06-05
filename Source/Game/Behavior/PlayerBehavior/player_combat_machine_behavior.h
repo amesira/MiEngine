@@ -11,7 +11,9 @@
 
 class PlayerCombatMachineBehavior : public BehaviorComponent {
 private:
-
+    bool    m_isEnterCombatState = true;
+    bool    m_debugEntered = false;
+    PlayerCombatState m_debugCombatState = PlayerCombatState::None;
 
 public:
     PlayerCombatMachineBehavior() = default;
@@ -24,6 +26,7 @@ public:
     void UpdateCombatMachine(PlayerContext& context, float deltaTime);
 
 private:
+    void ChangeCombatState(PlayerContext& context, PlayerCombatState newState);
 
 };
 
