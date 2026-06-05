@@ -8,6 +8,10 @@ using namespace DirectX;
 
 namespace MiMath
 {
+    inline float Infinity(){
+        return std::numeric_limits<float>::infinity();
+    }
+
     // 加算
     inline XMVECTOR Add(const XMVECTOR& va, const XMVECTOR& vb) {
         return XMVectorAdd(va, vb);

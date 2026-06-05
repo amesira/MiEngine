@@ -13,6 +13,8 @@
 
 #include "./PlayerState/player_attack_behavior.h"
 
+#include "Utility/debug_ostream.h"
+
 namespace {
 const char* ToCombatStateName(PlayerCombatState state)
 {
@@ -50,56 +52,67 @@ void PlayerCombatMachineBehavior::DrawComponentInspector()
 //------------------------------- public
 
 // プレイヤーの戦闘状態更新処理
-void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, float deltaTime)
+void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, float deltaTime, float unscaledDeltaTime)
 {
+    // 攻撃ビヘイビアが存在しない場合は戦闘状態をNoneにする
+    if (!context.attackBehavior) {
+        ChangeCombatState(context, PlayerCombatState::None);
+        hal::dout << "警告: PlayerCombatMachineBehaviorが攻撃ビヘイビアを参照できません。戦闘状態をNoneに設定します。" << std::endl;
+        return;
+    }
+
     bool entered = m_isEnterCombatState;
     m_isEnterCombatState = false;
     m_debugEntered = entered;
 
     switch (context.combatState) {
     case PlayerCombatState::None: {
-        if (context.input.triggerAttackCommand) {
+        if (context.input.triggerAimCommand) {
             ChangeCombatState(context, PlayerCombatState::HoldBuffer);
         }
-        else if (context.input.holdAimCommand || context.input.triggerAimCommand) {
-            ChangeCombatState(context, PlayerCombatState::Aim);
-        }
         break;
     }
-
-    case PlayerCombatState::HoldBuffer: {
-        if (context.attackBehavior) {
-            if (entered) {
-                context.attackBehavior->StartAttackHoldBuffer(context);
-            }
-
-            context.attackBehavior->UpdateAttackHoldBuffer(context, deltaTime);
+    case PlayerCombatState::HoldBuffer: { // === エイムに移行するまでの待機状態 ===
+        // 開始処理
+        if (entered) {
+            context.attackBehavior->StartAttackHoldBuffer(context);
         }
 
-        if (context.input.releaseAttackCommand || !context.input.holdAttackCommand) {
+        // 更新処理
+        context.attackBehavior->UpdateAttackHoldBuffer(context, deltaTime, unscaledDeltaTime);
+
+        // キーを放したら通常攻撃、ホールドバッファが終了していたらエイムに移行
+        if (context.input.triggerAttackCommand || !context.input.holdAttackCommand) {
             ChangeCombatState(context, PlayerCombatState::SingleAttack);
         }
-        else {
+        else if (context.attackBehavior->IsFinishedHoldBuffer()){
             ChangeCombatState(context, PlayerCombatState::Aim);
-        }
-        break;
-    }
-
-    case PlayerCombatState::Aim: {
-        if (context.attackBehavior) {
-            if (entered) {
-                context.attackBehavior->StartAim(context);
-            }
-
-            context.attackBehavior->UpdateAim(context, deltaTime);
-        }
-
-        if (context.input.releaseAttackCommand) {
-            ChangeCombatState(context, PlayerCombatState::ChargeAttack);
         }
         else if (context.input.releaseAimCommand || (!context.input.holdAimCommand && !context.input.holdAttackCommand)) {
             ChangeCombatState(context, PlayerCombatState::None);
         }
+        break;
+    }
+
+    case PlayerCombatState::Aim: { // === エイム状態 ===
+        // 開始処理
+        if (entered) {
+            context.attackBehavior->StartAim(context);
+        }
+
+        // 更新処理
+        context.attackBehavior->UpdateAim(context, deltaTime, unscaledDeltaTime);
+
+        // 攻撃キーを放したら通常攻撃、ホールドが続いているならチャージ攻撃、エイムキーを放したらエイム終了
+        if (context.input.triggerAttackCommand || context.input.holdAttackCommand) {
+            context.attackBehavior->EndAim(context);
+            ChangeCombatState(context, PlayerCombatState::ChargeAttack);
+        }
+        else if (context.input.releaseAimCommand || (!context.input.holdAimCommand && !context.input.holdAttackCommand)) {
+            context.attackBehavior->EndAim(context);
+            ChangeCombatState(context, PlayerCombatState::None);
+        }
+
         break;
     }
 

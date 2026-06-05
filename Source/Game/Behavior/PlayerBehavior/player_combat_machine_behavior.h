@@ -23,7 +23,7 @@ public:
     void DrawComponentInspector() override;
 
     // プレイヤーの戦闘状態更新処理
-    void UpdateCombatMachine(PlayerContext& context, float deltaTime);
+    void UpdateCombatMachine(PlayerContext& context, float deltaTime, float unscaledDeltaTime);
 
 private:
     void ChangeCombatState(PlayerContext& context, PlayerCombatState newState);

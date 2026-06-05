@@ -43,6 +43,8 @@ public:
     void    Update() override;
     void    DrawComponentInspector() override;
 
+    void PlayPlayerEffect(PlayerEffectType type);
+
 private:
     // プレイヤーの入力処理
     PlayerInput UpdateInput();

@@ -6,6 +6,7 @@ using namespace DirectX;
 class PlayerMoveBehavior;
 class PlayerAttackBehavior;
 class PlayerDodgeBehavior;
+class PlayerBehavior;
 
 // プレイヤーの状態型
 enum class PlayerState {
@@ -20,6 +21,20 @@ enum class PlayerCombatState {
     Aim,
     SingleAttack,
     ChargeAttack,
+};
+
+enum class PlayerEffectType {
+    AttackHoldStart,
+
+    AimStart,
+    AimEnd,
+
+    SingleAttack,
+    ChargeAttack,
+    SingleHit,
+    ChargeHit,
+
+    AttackEnd,
 };
 
 // プレイヤー入力構造体
@@ -72,6 +87,7 @@ struct PlayerContext {
     PlayerMoveBehavior* moveBehavior = nullptr;
     PlayerAttackBehavior* attackBehavior = nullptr;
     PlayerDodgeBehavior* dodgeBehavior = nullptr;
+    PlayerBehavior* playerBehavior = nullptr;
 
     // CombatMachineから利用する機能
 

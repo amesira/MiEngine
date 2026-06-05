@@ -10,6 +10,15 @@
 #include "Game/Behavior/PlayerBehavior/player_context.h"
 
 class PlayerAttackBehavior : public BehaviorComponent {
+private:
+    // ホールドバッファ関連
+    float m_holdBufferTimer = 0.0f; // ホールドバッファの経過時間
+    float m_maxHoldBufferTime = 0.2f; // ホールドバッファの最大時間
+
+    // 攻撃のチャージ時間
+    float m_chargeTimer = 0.0f;
+    float m_maxChargeTime = 2.0f; // 最大チャージ時間
+
 public:
     PlayerAttackBehavior() {}
     ~PlayerAttackBehavior() {}
@@ -18,12 +27,21 @@ public:
     void Update() override;
 
     void DrawComponentInspector() override;
-
+    
+    // ホールドバッファ開始処理
     void StartAttackHoldBuffer(PlayerContext& context);
-    void UpdateAttackHoldBuffer(PlayerContext& context, float deltaTime);
+    // ホールドバッファ更新処理
+    void UpdateAttackHoldBuffer(PlayerContext& context, float deltaTime, float unscaledDeltaTime);
 
+    // ホールドバッファ終了
+    bool IsFinishedHoldBuffer() const { return m_holdBufferTimer > m_maxHoldBufferTime; }
+
+    // エイム開始処理
     void StartAim(PlayerContext& context);
-    void UpdateAim(PlayerContext& context, float deltaTime);
+    // エイム更新処理
+    void UpdateAim(PlayerContext& context, float deltaTime, float unscaledDeltaTime);
+    // エイム終了処理
+    void EndAim(PlayerContext& context);
 
     void SingleAttack(PlayerContext& context);
     void ChargeAttack(PlayerContext& context);

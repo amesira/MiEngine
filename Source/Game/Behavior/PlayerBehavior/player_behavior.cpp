@@ -35,7 +35,9 @@
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_effect_controller.h"
+#include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #define GAME_EFFECT GameControllerLocator::GetGameEffectController()
+#define CUSTOM_POST_EFFECT GameControllerLocator::GetCustomPostEffectController()
 
 void PlayerBehavior::Start()
 {
@@ -51,6 +53,7 @@ void PlayerBehavior::Start()
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
     m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
     m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
+    m_context.playerBehavior = this;
 
     IScene* scene = owner->GetScene();
 
@@ -67,6 +70,7 @@ void PlayerBehavior::Start()
 void PlayerBehavior::Update()
 {
     float deltaTime = FPS_GetDeltaTime();
+    float unscaledDeltaTime = FPS_GetUnscaledDeltaTime();
 
     // 入力の更新
     m_context.input = UpdateInput();
@@ -78,19 +82,7 @@ void PlayerBehavior::Update()
 
     // 戦闘マシーンの更新
     if (m_combatMachine) {
-        m_combatMachine->UpdateCombatMachine(m_context, deltaTime);
-    }
-
-    // テスト：GameEffectControllerのタイムスケール変更タスクをスペースキーで開始
-    if (Keyboard_IsKeyDownTrigger(KK_SPACE)) {
-        if (GAME_EFFECT) {
-            GAME_EFFECT->ChangeTimeScaleTemporary(0.5f, 0.5f, 1.0f); // タイムスケールを0.5にして、0.5秒かけて元に戻す
-            GAME_EFFECT->ChangeFOVTemporary(90.0f, 0.5f, 1.0f); // FOVを90にして、0.5秒かけて元に戻す
-            GAME_EFFECT->ChangeCameraDistanceTemporary(5.0f, 0.5f, 1.0f); // カメラ距離を5にして、0.5秒かけて元に戻す
-            GAME_EFFECT->ChangeCameraOffsetTemporary(XMFLOAT3(0.0f, -1.0f, 0.0f), 0.5f, 1.0f); // カメラオフセットを(0,-1,0)にして、0.5秒かけて元に戻す
-
-            GAME_EFFECT->PlayCameraShake(0.5f, 1.0f); // 0.5秒間、強さ0.3のカメラシェイクを再生
-        }
+        m_combatMachine->UpdateCombatMachine(m_context, deltaTime, unscaledDeltaTime);
     }
 
     // アニメーション制御
@@ -119,6 +111,63 @@ void PlayerBehavior::DrawComponentInspector()
     }
 
     InspectorViewWindow::EndComponentSection();
+}
+
+void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
+{
+    if (!GAME_EFFECT) return;
+
+    switch (type) {
+    case PlayerEffectType::AttackHoldStart:
+        GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.35f, 0.05f, 0.0f), 0.08f, 0.08f);
+        break;
+        
+        // === Aim ===
+    case PlayerEffectType::AimStart:
+        GAME_EFFECT->ChangeFOV(65.0f, 0.2f);
+        GAME_EFFECT->ChangeCameraOffset(XMFLOAT3(0.0f, -0.5f, 0.0f), 0.1f);
+        GAME_EFFECT->ChangeCameraLocalOffset(XMFLOAT3(2.5f, 0.0f, 0.0f), 0.1f);
+        GAME_EFFECT->ChangeCameraDistance(5.0f, 0.1f);
+        CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::MonoMask, 0.8f, 0.2f, MiMath::Infinity());
+        break;
+
+    case PlayerEffectType::AimEnd:
+        GAME_EFFECT->ResetFOV(0.1f);
+        GAME_EFFECT->ResetCameraOffset(0.1f);
+        GAME_EFFECT->ResetCameraLocalOffset(0.1f);
+        GAME_EFFECT->ResetCameraDistance(0.1f);
+        CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::MonoMask, 0.0f, 0.1f, 0.0f);
+        break;
+
+    case PlayerEffectType::SingleAttack:
+        GAME_EFFECT->ChangeFOVTemporary(72.0f, 0.08f, 0.04f);
+        GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.45f, 0.0f, 0.10f), 0.06f, 0.04f);
+        GAME_EFFECT->PlayCameraShake(0.10f, 0.15f);
+        break;
+
+    case PlayerEffectType::ChargeAttack:
+        GAME_EFFECT->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
+        GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
+        GAME_EFFECT->PlayCameraShake(0.16f, 0.30f);
+        break;
+
+    case PlayerEffectType::SingleHit:
+        GAME_EFFECT->PlayCameraShake(0.08f, 0.20f);
+        break;
+
+    case PlayerEffectType::ChargeHit:
+        GAME_EFFECT->ChangeFOVTemporary(82.0f, 0.06f, 0.04f);
+        GAME_EFFECT->PlayCameraShake(0.14f, 0.40f);
+        break;
+
+    case PlayerEffectType::AttackEnd:
+        GAME_EFFECT->ResetFOV(0.12f);
+        GAME_EFFECT->ResetCameraLocalOffset(0.12f);
+        break;
+
+    default:
+        break;
+    }
 }
 
 // -------------------------------------------------- private
