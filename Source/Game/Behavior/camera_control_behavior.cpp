@@ -44,7 +44,7 @@ void CameraControlBehavior::Start()
 
     // デフォルト値の保存
     m_defaultLookAtOffset = m_lookAtOffset;
-    m_defaultLookAtOffset = m_lookAtOffset;
+    m_defaultLookAtLocalOffset = m_lookAtLocalOffset;
     m_defaultFollowDistance = m_followDistance;
     if (m_camera) {
         m_defaultFov = m_camera->GetFov();
@@ -54,13 +54,16 @@ void CameraControlBehavior::Start()
     // タスクのリセット
     m_cameraDistanceTask.m_currentValue = m_followDistance;
     m_cameraOffsetTask.m_currentValue = m_lookAtOffset;
+    m_cameraLocalOffsetTask.m_currentValue = m_lookAtLocalOffset;
     m_fovTask.m_endValue = m_defaultFov;
     m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;
     m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;
+    m_cameraLocalOffsetTask.m_endValue = m_defaultLookAtLocalOffset;
 
     m_fovTask.Reset();
     m_cameraDistanceTask.Reset();
     m_cameraOffsetTask.Reset();
+    m_cameraLocalOffsetTask.Reset();
 }
 
 void CameraControlBehavior::Update()
@@ -219,6 +222,35 @@ void CameraControlBehavior::ResetCameraOffset(float duration)
     ChangeCameraOffset(m_defaultLookAtOffset, duration);
 }
 
+void CameraControlBehavior::ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration)
+{
+    m_cameraLocalOffsetTask.Reset();
+
+    m_cameraLocalOffsetTask.m_startValue = m_lookAtLocalOffset;
+    m_cameraLocalOffsetTask.m_targetValue = offset;
+    m_cameraLocalOffsetTask.m_endValue = offset;
+    m_cameraLocalOffsetTask.m_duration = duration;
+    m_cameraLocalOffsetTask.m_holdDuration = 0.0f;
+    m_cameraLocalOffsetTask.Start();
+}
+
+void CameraControlBehavior::ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
+{
+    m_cameraLocalOffsetTask.Reset();
+
+    m_cameraLocalOffsetTask.m_startValue = m_lookAtLocalOffset;
+    m_cameraLocalOffsetTask.m_targetValue = offset;
+    m_cameraLocalOffsetTask.m_endValue = m_defaultLookAtLocalOffset;
+    m_cameraLocalOffsetTask.m_duration = duration;
+    m_cameraLocalOffsetTask.m_holdDuration = holdDuration;
+    m_cameraLocalOffsetTask.Start();
+}
+
+void CameraControlBehavior::ResetCameraLocalOffset(float duration)
+{
+    ChangeCameraLocalOffset(m_defaultLookAtLocalOffset, duration);
+}
+
 void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
 {
     m_cameraShakeTask.Reset();
@@ -236,12 +268,14 @@ void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
     bool fovTaskRunning = !m_fovTask.IsFinished();
     bool distanceTaskRunning = !m_cameraDistanceTask.IsFinished();
     bool offsetTaskRunning = !m_cameraOffsetTask.IsFinished();
+    bool localOffsetTaskRunning = !m_cameraLocalOffsetTask.IsFinished();
     bool cameraShakeTaskRunning = !m_cameraShakeTask.IsFinished();
 
     // タスクの更新
     m_fovTask.Update(deltaTime);
     m_cameraDistanceTask.Update(deltaTime);
     m_cameraOffsetTask.Update(deltaTime);
+    m_cameraLocalOffsetTask.Update(deltaTime);
     m_cameraShakeTask.Update(deltaTime);
 
     // タスクの更新後に値を適用
@@ -253,6 +287,9 @@ void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
     }
     if (offsetTaskRunning) {
         m_lookAtOffset = m_cameraOffsetTask.m_currentValue;
+    }
+    if (localOffsetTaskRunning) {
+        m_lookAtLocalOffset = m_cameraLocalOffsetTask.m_currentValue;
     }
     if (cameraShakeTaskRunning) {
         m_isShaking = true;
@@ -281,7 +318,18 @@ XMFLOAT3 CameraControlBehavior::CalculateTargetAtPosition()
         XMFLOAT3 focusPosition = m_focusTarget->GetPosition();
         targetPosition = MiMath::Lerp(targetPosition, focusPosition, m_focusWeight);
     }
+
+    XMFLOAT3 cameraForward, cameraRight;
+    BuildCameraBasis(cameraForward, cameraRight);
+
+    const XMFLOAT3 worldUp = { 0.0f, 1.0f, 0.0f };
+    XMFLOAT3 localOffset = { 0.0f, 0.0f, 0.0f };
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraRight, m_lookAtLocalOffset.x));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(worldUp, m_lookAtLocalOffset.y));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraForward, m_lookAtLocalOffset.z));
+
     targetPosition = MiMath::Add(targetPosition, m_lookAtOffset);
+    targetPosition = MiMath::Add(targetPosition, localOffset);
     targetPosition.y += m_lookAtHeight;
 
     return targetPosition;

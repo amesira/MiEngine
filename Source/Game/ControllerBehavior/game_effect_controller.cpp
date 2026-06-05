@@ -154,6 +154,34 @@ void GameEffectController::DrawComponentInspector()
             ImGui::TreePop();
         }
 
+        if (ImGui::TreeNode("Camera Local Offset")) {
+            static XMFLOAT3 offset = { 0.8f, 0.2f, 0.0f };
+            static float duration = 0.2f;
+            static float holdDuration = 0.2f;
+
+            ImGui::DragFloat3("Local Offset", &offset.x, 0.05f, -10.0f, 10.0f);
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Change Local Offset")) {
+                ChangeCameraLocalOffset(offset, duration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Temporary")) {
+                ChangeCameraLocalOffsetTemporary(offset, duration, holdDuration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset")) {
+                ResetCameraLocalOffset(duration);
+            }
+
+            ImGui::TreePop();
+        }
+
         if (ImGui::TreeNode("Camera Shake")) {
             static float duration = 0.2f;
             static float magnitude = 0.2f;
@@ -317,6 +345,26 @@ void GameEffectController::ResetCameraOffset(float duration)
 {
     if (m_cameraControl) {
         m_cameraControl->ResetCameraOffset(duration);
+    }
+}
+
+// カメラローカルオフセット変更
+void GameEffectController::ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeCameraLocalOffset(offset, duration);
+    }
+}
+void GameEffectController::ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ChangeCameraLocalOffsetTemporary(offset, duration, holdDuration);
+    }
+}
+void GameEffectController::ResetCameraLocalOffset(float duration)
+{
+    if (m_cameraControl) {
+        m_cameraControl->ResetCameraLocalOffset(duration);
     }
 }
 

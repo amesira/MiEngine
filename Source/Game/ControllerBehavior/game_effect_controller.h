@@ -70,6 +70,10 @@ public:
     // カメラオフセットを元に戻す
     void ResetCameraOffset(float duration);
 
+    void ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration);
+    void ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
+    void ResetCameraLocalOffset(float duration);
+
     // カメラシェイク再生
     void PlayCameraShake(float duration, float magnitude);
 

@@ -29,6 +29,7 @@ private:
 
     // 注視点のオフセット
     XMFLOAT3 m_lookAtOffset = { 0.0f, 0.0f, 0.0f };
+    XMFLOAT3 m_lookAtLocalOffset = { 0.0f, 0.0f, 0.0f };
     float m_lookAtHeight = 1.5f; // 注視点の高さ
     float m_followDistance = 10.0f; // カメラと注視点の距離
 
@@ -66,6 +67,7 @@ private:
 
     // === デフォルト値（リセット用）===
     XMFLOAT3 m_defaultLookAtOffset = { 0.0f, 0.0f, 0.0f };
+    XMFLOAT3 m_defaultLookAtLocalOffset = { 0.0f, 0.0f, 0.0f };
     float m_defaultFollowDistance = 10.0f;
     float m_defaultFov = 80.0f;
 
@@ -75,6 +77,7 @@ private:
     FloatTweenTask m_cameraDistanceTask;
     // カメラオフセット変更タスク
     Vector3TweenTask m_cameraOffsetTask;
+    Vector3TweenTask m_cameraLocalOffsetTask;
 
     // カメラシェイクタスク
     class CameraShakeTask : public SequenceTask {
@@ -110,6 +113,10 @@ public:
     void ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
     // カメラオフセットを元に戻す
     void ResetCameraOffset(float duration);
+
+    void ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration);
+    void ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
+    void ResetCameraLocalOffset(float duration);
 
     // カメラシェイク再生
     void PlayCameraShake(float duration, float magnitude);
