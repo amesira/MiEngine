@@ -111,6 +111,9 @@ void PlayerBehavior::Update()
     if (!m_lockMovement) {
         UpdateAnimation(m_context.state, m_context.combatState);
     }
+
+    // === プレイヤーエフェクトの更新 ===
+    m_chargeLightTweenTask.Update(unscaledDeltaTime);
 }
 
 // PlayerBehaviorのインスペクタ表示

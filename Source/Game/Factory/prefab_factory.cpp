@@ -16,7 +16,7 @@
 
 #include "actor_factory.h"
 #include "render_effect_factory.h"
-
+#include "environment_factory.h"
 
 namespace PrefabFactory
 {
@@ -52,6 +52,10 @@ namespace PrefabFactory
             ParticleSystemComponent* particleSystem = prefab.chargeEffectParticle->GetComponent<ParticleSystemComponent>();
             particleSystem->Main().playOnAwake = false; // 最初は再生しない
             playerBehavior->SetupChargeEffect(particleSystem);
+        }
+        prefab.chargeLight = EnvironmentFactory::CreatePointLight(scene, { 1.0f, 0.5f, 0.0f, 1.0f }, 3.0f);
+        {
+            SetupTransformConstraint(prefab.chargeLight, playerTransform, { 1.0f, -0.3f, -0.5f }, true, false);
         }
 
         return prefab;

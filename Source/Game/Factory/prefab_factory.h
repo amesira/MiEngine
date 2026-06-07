@@ -12,6 +12,7 @@ namespace PrefabFactory
         GameObject* player;
         GameObject* runDustParticle;
         GameObject* chargeEffectParticle;
+        GameObject* chargeLight;
     };
     PlayerPrefab CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position);
 }

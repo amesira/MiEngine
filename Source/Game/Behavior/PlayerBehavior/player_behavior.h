@@ -23,6 +23,9 @@ class TransformComponent;
 class CameraComponent;
 
 class ParticleSystemComponent;
+class LightComponent;
+
+#include "Engine/Core/GamePlay/tween_task.h"
 
 class HitStopBehavior;
 
@@ -48,6 +51,8 @@ private:
 
     HitStopBehavior* m_hitStopBehavior = nullptr;
     ParticleSystemComponent* m_chargeEffect = nullptr;
+    LightComponent* m_chargeLight = nullptr;
+    FloatTweenTask m_chargeLightTweenTask;
 
 public:
     ~PlayerBehavior() = default;
@@ -59,6 +64,8 @@ public:
 
     // チャージエフェクトセットアップ
     void SetupChargeEffect(ParticleSystemComponent* chargeEffect) { m_chargeEffect = chargeEffect; }
+    // チャージライトセットアップ
+    void SetupChargeLight(LightComponent* chargeLight) { m_chargeLight = chargeLight; }
 
 private:
     // プレイヤーの入力処理

@@ -91,10 +91,5 @@ GameObject* EnvironmentFactory::CreatePointLight(SceneBase* scene, const XMFLOAT
     lightComp->SetIntensity(2.0f);
     lightComp->SetRange(range);
 
-
-    SphereColliderComponent* collider = obj->AddComponent<SphereColliderComponent>();
-    collider->SetRadius(0.1f);
-    collider->SetCreateCorrection(false);
-
     return obj;
 }
