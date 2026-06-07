@@ -90,7 +90,6 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
     renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
     renderer.sortByDistance = true;
 
-    particleSystem->Play();
     return particleEffect;
 }
 
@@ -127,7 +126,7 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
     auto& emission = particleSystem->Emission();
     emission.enabled = true;
     emission.rateOverTime = 0.0f;
-    emission.rateOverDistance = 8.0f;
+    emission.rateOverDistance = 4.0f;
 
     auto& shape = particleSystem->Shape();
     shape.enabled = true;
@@ -151,7 +150,6 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
     renderer.blendMode = ParticleSystemComponent::BlendMode::AlphaBlend;
     renderer.sortByDistance = true;
 
-    particleSystem->Play();
     return dustEffect;
 }
 
@@ -184,7 +182,7 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
 
     auto& emission = particleSystem->Emission();
     emission.enabled = true;
-    emission.rateOverTime = 50.0f;
+    emission.rateOverTime = 90.0f;
     emission.rateOverDistance = 0.0f;
 
     auto& shape = particleSystem->Shape();
@@ -210,6 +208,5 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
     renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
     renderer.sortByDistance = true;
 
-    particleSystem->Play();
     return chargeEffect;
 }

@@ -26,6 +26,8 @@
 #include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
 #include "Game/Behavior/PlayerBehavior/PlayerState/player_dodge_behavior.h"
 
+#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+
 #include "Engine/engine_service_locator.h"
 
 // プレイヤー生成
@@ -102,6 +104,8 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     player->AddComponent<PlayerMoveBehavior>();
     player->AddComponent<PlayerAttackBehavior>();
     player->AddComponent<PlayerDodgeBehavior>();
+
+    player->AddComponent<HitStopBehavior>();
 
     return player;
 }

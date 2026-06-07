@@ -11,6 +11,7 @@
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
 
+class RigidbodyComponent;
 class SpriteRendererComponent;
 class SpriteAnimationComponent;
 
@@ -21,8 +22,13 @@ class PlayerCombatMachineBehavior;
 class TransformComponent;
 class CameraComponent;
 
+class ParticleSystemComponent;
+
+class HitStopBehavior;
+
 class PlayerBehavior : public BehaviorComponent {
 private:
+    RigidbodyComponent* m_rigidbody = nullptr;
     SpriteRendererComponent* m_spriteRenderer = nullptr;
     SpriteAnimationComponent* m_spriteAnimation = nullptr;
 
@@ -37,6 +43,12 @@ private:
     TransformComponent* m_mainCameraTransform = nullptr;
     CameraComponent* m_mainCamera = nullptr;
 
+    // === プレイヤーエフェクト ===
+    bool m_lockMovement = false; // プレイヤーの移動をロックするかどうか
+
+    HitStopBehavior* m_hitStopBehavior = nullptr;
+    ParticleSystemComponent* m_chargeEffect = nullptr;
+
 public:
     ~PlayerBehavior() = default;
     void    Start() override;
@@ -44,6 +56,9 @@ public:
     void    DrawComponentInspector() override;
 
     void PlayPlayerEffect(PlayerEffectType type);
+
+    // チャージエフェクトセットアップ
+    void SetupChargeEffect(ParticleSystemComponent* chargeEffect) { m_chargeEffect = chargeEffect; }
 
 private:
     // プレイヤーの入力処理

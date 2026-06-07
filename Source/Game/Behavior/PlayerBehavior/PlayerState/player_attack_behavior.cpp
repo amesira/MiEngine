@@ -100,6 +100,9 @@ void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
 void PlayerAttackBehavior::StartCharge(PlayerContext& context)
 {
     m_chargeTimer = 0.0f;
+    if (context.playerBehavior) {
+        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeStart);
+    }
 }
 
 // チャージ更新処理

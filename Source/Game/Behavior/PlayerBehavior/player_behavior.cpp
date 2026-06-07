@@ -16,6 +16,8 @@
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
+#include "Engine/Core/GamePlay/tween_task.h"
+
 // コンポーネント
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
@@ -25,6 +27,8 @@
 #include "Engine/Framework/Component/sprite_animation_component.h"
 #include "Engine/Framework/Component/sprite_renderer_component.h"
 
+#include "Engine/Framework/Component/particle_system_component.h"
+
 // プレイヤーを構成する各種ビヘイビアのヘッダ
 #include "player_state_machine_behavior.h"
 #include "player_combat_machine_behavior.h"
@@ -32,6 +36,8 @@
 #include "./PlayerState/player_move_behavior.h"
 #include "./PlayerState/player_attack_behavior.h"
 #include "./PlayerState/player_dodge_behavior.h"
+
+#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_effect_controller.h"
@@ -44,11 +50,15 @@ void PlayerBehavior::Start()
     GameObject* owner = this->GetOwner();
     if (!owner) return;
 
+    m_rigidbody = owner->GetComponent<RigidbodyComponent>();
+
     m_spriteRenderer = owner->GetComponent<SpriteRendererComponent>();
     m_spriteAnimation = owner->GetComponent<SpriteAnimationComponent>();
     
     m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
     m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
+
+    m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
 
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
     m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
@@ -89,20 +99,18 @@ void PlayerBehavior::Update()
 
     // 移動・回転の更新
     if (m_context.moveBehavior) {
+        if (m_lockMovement) { // 強制的に移動をロックする場合
+            moveRequest.canMove = false; // 移動をロック
+            moveRequest.canRotate = false; // 回転もロック
+        }
         m_context.moveBehavior->UpdateMove(m_context, moveRequest, deltaTime);
         m_context.moveBehavior->UpdateRotation(m_context, moveRequest, deltaTime);
     }
 
     // アニメーション制御
-    UpdateAnimation(m_context.state, m_context.combatState);
-
-    //// Flip
-    //if (m_context.input.horizontal > 0.01f) {
-    //    m_spriteRenderer->SetFlipX(true);
-    //}
-    //else if (m_context.input.horizontal < -0.01f) {
-    //    m_spriteRenderer->SetFlipX(false);
-    //}
+    if (!m_lockMovement) {
+        UpdateAnimation(m_context.state, m_context.combatState);
+    }
 }
 
 // PlayerBehaviorのインスペクタ表示
@@ -114,8 +122,11 @@ void PlayerBehavior::DrawComponentInspector()
         ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
 
         // 入力状態の表示
-        ImGui::Text("MoveInputCameraLocal: (%.2f, %.2f, %.2f)", m_context.input.moveInputCameraLocal.x, m_context.input.moveInputCameraLocal.y, m_context.input.moveInputCameraLocal.z);
-
+        ImGui::Text(
+            "MoveInputCameraLocal: (%.2f, %.2f, %.2f)", 
+            m_context.input.moveInputCameraLocal.x,
+            m_context.input.moveInputCameraLocal.y,
+            m_context.input.moveInputCameraLocal.z);
     }
 
     InspectorViewWindow::EndComponentSection();
@@ -148,20 +159,54 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
         CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::MonoMask, 0.0f, 0.1f, 0.0f);
         break;
 
+        // === Single Attack ===
     case PlayerEffectType::SingleAttack:
         GAME_EFFECT->ChangeFOVTemporary(72.0f, 0.08f, 0.04f);
         GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.45f, 0.0f, 0.10f), 0.06f, 0.04f);
         GAME_EFFECT->PlayCameraShake(0.10f, 0.15f);
-        break;
-
-    case PlayerEffectType::ChargeAttack:
-        GAME_EFFECT->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
-        GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
-        GAME_EFFECT->PlayCameraShake(0.16f, 0.30f);
-        break;
+        break; 
 
     case PlayerEffectType::SingleHit:
         GAME_EFFECT->PlayCameraShake(0.08f, 0.20f);
+        break;
+
+        // === Charge Attack ===
+    case PlayerEffectType::ChargeStart:
+        GAME_EFFECT->ChangeFOV(60.0f, 0.2f);
+        GAME_EFFECT->PlayCameraShake(0.08f, 0.10f);
+        m_chargeEffect->Play();
+        m_chargeEffect->Emission().enabled = true;
+        break;
+
+    case PlayerEffectType::ChargeAttack:
+        // ヒットストップの開始
+        if (m_hitStopBehavior) {
+            m_hitStopBehavior->StartHitStop(
+            0.2f, 
+                [this]() { // ヒットストップ開始時の処理
+                    GAME_EFFECT->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
+                    GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
+                    GAME_EFFECT->PlayCameraShake(0.16f, 0.30f);
+                    m_chargeEffect->Stop();
+                    m_chargeEffect->Emission().enabled = false;
+
+                    m_lockMovement = true; // プレイヤーの移動をロック
+                    m_spriteAnimation->Stop();
+                    
+                    m_rigidbody->SetIsKinematic(true); // プレイヤーの物理挙動をキネマティックにして完全に停止させる
+                    },
+                nullptr,
+                nullptr,
+                [this]() { // ヒットストップ終了時の処理
+                    m_chargeEffect->Play();
+                    m_chargeEffect->Emission().enabled = false;
+
+                    m_lockMovement = false; // プレイヤーの移動をアンロック
+
+                    m_rigidbody->SetIsKinematic(false); // プレイヤーの物理挙動を通常に戻す
+                }
+            );
+        }
         break;
 
     case PlayerEffectType::ChargeHit:
@@ -169,9 +214,11 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
         GAME_EFFECT->PlayCameraShake(0.14f, 0.40f);
         break;
 
+        // === Attack End ===
     case PlayerEffectType::AttackEnd:
         GAME_EFFECT->ResetFOV(0.12f);
         GAME_EFFECT->ResetCameraLocalOffset(0.12f);
+        m_chargeEffect->Stop();
         break;
 
     default:

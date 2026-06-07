@@ -97,7 +97,7 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
         // エイム中の移動リクエスト設定
         moveRequest.canMove = true;
         moveRequest.canRotate = true;
-        moveRequest.speedMultiplier *= 0.4f;
+        moveRequest.speedMultiplier = 0.6f;
         moveRequest.rotationMode = PlayerRotationMode::AimForward;
 
         if (entered) {
@@ -121,7 +121,7 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
         // エイム中と同様の移動リクエスト設定
         moveRequest.canMove = true;
         moveRequest.canRotate = true;
-        moveRequest.speedMultiplier *= 0.4f;
+        moveRequest.speedMultiplier = 0.6f;
         moveRequest.rotationMode = PlayerRotationMode::AimForward;
 
         if (entered) {
@@ -158,8 +158,9 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
 
     case PlayerCombatState::ChargeAttack: // === チャージ攻撃の状態 ===
         // チャージ攻撃中の移動リクエスト設定
-        moveRequest.canMove = false;
+        moveRequest.canMove = true;
         moveRequest.canRotate = true;
+        moveRequest.speedMultiplier = 0.4f;
         moveRequest.rotationMode = PlayerRotationMode::AimForward;
 
         if (entered) {

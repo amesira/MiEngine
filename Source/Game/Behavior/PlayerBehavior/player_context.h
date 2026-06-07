@@ -33,8 +33,10 @@ enum class PlayerEffectType {
     AimEnd,
 
     SingleAttack,
-    ChargeAttack,
     SingleHit,
+
+    ChargeStart,
+    ChargeAttack,
     ChargeHit,
 
     AttackEnd,

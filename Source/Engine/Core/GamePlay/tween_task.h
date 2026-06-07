@@ -14,6 +14,31 @@ using namespace DirectX;
 
 #include "Utility/mi_math.h"
 #include <algorithm>
+#include <functional>
+
+// 一定時間後にコールバックを呼び出すタスク
+class WaitAndCallbackTask : public SequenceTask {
+public:
+    using CallbackFunc = std::function<void()>;
+
+    float m_waitDuration = 0.0f; // 待機時間
+    CallbackFunc m_callback;      // 待機完了後に呼び出すコールバック関数
+
+    void Start() override {
+        SequenceTask::Start();
+    }
+    void Update(float deltaTime) override {
+        if (IsFinished()) return;
+        SequenceTask::Update(deltaTime);
+
+        if (Wait(m_waitDuration)) {
+            if (m_callback) {
+                m_callback(); // コールバック呼び出し
+            }
+            Finish(); // タスク完了
+        }
+    }
+};
 
 // float値を補間する演出タスク
 class FloatTweenTask : public SequenceTask {
