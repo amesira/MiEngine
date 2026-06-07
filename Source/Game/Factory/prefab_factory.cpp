@@ -8,9 +8,11 @@
 #include "Engine/Framework/Component/decal_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
 #include "Engine/Framework/Component/light_component.h"
+#include "Engine/Framework/Component/rect_transform_component.h"
 
 #include "Game/Behavior/transform_constraint_behavior.h"
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
+#include "Game/Behavior/BaseBehavior/health_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
@@ -18,6 +20,7 @@
 #include "actor_factory.h"
 #include "render_effect_factory.h"
 #include "environment_factory.h"
+#include "ui_factory.h"
 
 namespace PrefabFactory
 {
@@ -61,6 +64,15 @@ namespace PrefabFactory
             lightComp->SetEnable(false); // 最初はライトをオフにする
             playerBehavior->SetupChargeLight(lightComp);
         }
+
+        return prefab;
+    }
+
+    EnemyPrefab PrefabFactory::CreateEnemyPrefab(SceneBase* scene, const XMFLOAT3& position)
+    {
+        EnemyPrefab prefab;
+        prefab.enemy = ActorFactory::CreateSimpleEnemy(scene, position);
+        prefab.healthBar = nullptr;
 
         return prefab;
     }

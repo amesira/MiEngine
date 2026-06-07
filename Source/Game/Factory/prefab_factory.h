@@ -15,4 +15,10 @@ namespace PrefabFactory
         GameObject* chargeLight;
     };
     PlayerPrefab CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position);
+
+    struct EnemyPrefab {
+        GameObject* enemy;
+        GameObject* healthBar;
+    };
+    EnemyPrefab CreateEnemyPrefab(SceneBase* scene, const XMFLOAT3& position);
 }

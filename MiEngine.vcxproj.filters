@@ -218,6 +218,9 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_bar_follow_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp">
       <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
     </ClCompile>
@@ -525,6 +528,9 @@
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_bar_follow_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h">

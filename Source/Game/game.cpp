@@ -67,7 +67,7 @@ void GameScene::Initialize()
 
     // 敵生成
     for (int i = 0; i < 5; i++) {
-        ActorFactory::CreateSimpleEnemy(this, { -5.0f + i * 2.5f, 0.0f, -5.0f });
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 2.5f, 0.0f, 0.0f });
     }
 
     // テスト：ParticleSystem

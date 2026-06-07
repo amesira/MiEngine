@@ -24,6 +24,13 @@ public:
 
 public:
     virtual void TakeDamage(float damage);
+    void SetMaxHealth(float maxHealth, bool fillHealth = true);
+    void SetHealth(float health);
+
+    float GetHealth() const { return m_health; }
+    float GetMaxHealth() const { return m_maxHealth; }
+    float GetHealthRate() const;
+    bool IsDead() const { return m_health <= 0.0f; }
 
 };
 
