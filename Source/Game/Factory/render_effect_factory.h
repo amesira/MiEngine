@@ -17,7 +17,8 @@ namespace RenderEffectFactory {
     // デカールエフェクト生成
     GameObject* CreateDecalEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
     GameObject* CreateParticleEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
-    GameObject* CreateRunDustParticle(SceneBase* scene, std::string targetName, const std::wstring& texturePath = L"asset\\Texture\\particle.png");
+    GameObject* CreateRunDustParticle(SceneBase* scene, std::string targetName, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
+    GameObject* CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
 
 };
 

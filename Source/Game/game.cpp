@@ -11,6 +11,7 @@
 #include "Game/Factory/environment_factory.h"
 #include "Game/Factory/ui_factory.h"
 #include "Game/Factory/render_effect_factory.h"
+#include "Game/Factory/prefab_factory.h"
 
 #include "Engine/Device/keyboard.h"
 #include "Engine/Device/mi_fps.h"
@@ -54,10 +55,10 @@ void GameScene::Initialize()
 
     // Field
     GameObject* field = this->CreateGameObject();
-    Factory::CreateField(field, { 0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.5f, 0.5f, 0.5f, 1.0f });
+    Factory::CreateField(field, { 0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
 
-    // player
-    GameObject* player = ActorFactory::CreatePlayer(this, { 0.0f,3.0f,10.0f });
+    // プレイヤープレハブ生成
+    PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
 
     // テスト：JointGroup
     GameObject* jointGroup = this->CreateGameObject();
@@ -65,8 +66,6 @@ void GameScene::Initialize()
 
     // テスト：ParticleSystem
     RenderEffectFactory::CreateParticleEffect(this, { -2.0f, 3.0f, 0.0f }, L"asset\\Texture\\particle.png");
-
-    RenderEffectFactory::CreateRunDustParticle(this, "Player", L"asset\\Texture\\white.bmp");
 
 }
 

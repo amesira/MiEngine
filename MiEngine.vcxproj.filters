@@ -87,6 +87,11 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\mono_mask_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\radial_blur_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -282,7 +287,6 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
@@ -309,6 +313,7 @@
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
+    <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -601,7 +606,6 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\screen_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
@@ -639,6 +643,9 @@
     <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\particle_system_processor.h" />
+    <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
+    <ClInclude Include="Utility\mi_signal.h" />
+    <ClInclude Include="Source\Game\Factory\prefab_factory.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

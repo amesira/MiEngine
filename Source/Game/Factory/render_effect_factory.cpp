@@ -109,20 +109,6 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
 
     TransformComponent* transform = dustEffect->AddComponent<TransformComponent>();
     ParticleSystemComponent* particleSystem = dustEffect->AddComponent<ParticleSystemComponent>();
-    TransformConstraintBehavior* constraint = dustEffect->AddComponent<TransformConstraintBehavior>();
-
-    const XMFLOAT3 footOffset = { 0.0f, -1.0f, 0.0f };
-    const XMFLOAT3 playerPosition = targetTransform->GetPosition();
-    transform->SetPosition({
-        playerPosition.x + footOffset.x,
-        playerPosition.y + footOffset.y,
-        playerPosition.z + footOffset.z,
-    });
-
-    constraint->SetTarget(targetTransform);
-    constraint->SetOffset(footOffset);
-    constraint->SetConsiderRotation(false);
-    constraint->SetConsiderScaling(false);
 
     auto& main = particleSystem->Main();
     main.duration = 1.0f;
@@ -167,4 +153,63 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
 
     particleSystem->Play();
     return dustEffect;
+}
+
+GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath)
+{
+    if (!scene) return nullptr;
+
+    GameObject* chargeEffect = scene->CreateGameObject();
+    chargeEffect->SetName("ChargeAbsorbParticle");
+    chargeEffect->SetRenderLayer(RenderLayer::Particle);
+
+    TransformComponent* transform = chargeEffect->AddComponent<TransformComponent>();
+    ParticleSystemComponent* particleSystem = chargeEffect->AddComponent<ParticleSystemComponent>();
+
+    transform->SetPosition(position);
+
+    auto& main = particleSystem->Main();
+    main.duration = 1.0f;
+    main.loop = true;
+    main.playOnAwake = true;
+    main.startLifetime = { true, 0.55f, 0.35f, 0.8f };
+    main.startSpeed = { true, -4.5f, -6.5f, -2.8f };
+    main.startSize = { true, 0.22f, 0.08f, 0.32f };
+    main.startColor.randomBetweenTwoColors = true;
+    main.startColor.colorMin = { 0.25f, 0.75f, 1.0f, 0.85f };
+    main.startColor.colorMax = { 0.95f, 0.35f, 1.0f, 0.55f };
+    main.gravity = { 0.0f, 0.0f, 0.0f };
+    main.simulationSpeed = 1.0f;
+    main.simulationSpace = ParticleSystemComponent::SimulationSpace::Local;
+
+    auto& emission = particleSystem->Emission();
+    emission.enabled = true;
+    emission.rateOverTime = 50.0f;
+    emission.rateOverDistance = 0.0f;
+
+    auto& shape = particleSystem->Shape();
+    shape.enabled = true;
+    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.sphere.radius = 1.5f;
+    shape.sphere.emitFromShell = true;
+    shape.randomDirectionAmount = 0.08f;
+
+    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    sizeOverLifetime.enabled = true;
+    sizeOverLifetime.size.keys = {
+        { 0.0f, 0.0f },
+        { 0.12f, 1.0f },
+        { 0.75f, 0.75f },
+        { 1.0f, 0.0f },
+    };
+
+    auto& renderer = particleSystem->Renderer();
+    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
+    renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
+    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.sortByDistance = true;
+
+    particleSystem->Play();
+    return chargeEffect;
 }
