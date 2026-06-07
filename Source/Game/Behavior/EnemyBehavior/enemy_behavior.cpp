@@ -11,6 +11,9 @@
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
+
+#include "Engine/Framework/Component/camera_component.h"
+
 #include "Utility/mi_math.h"
 
 #include "enemy_state_machine_behavior.h"
@@ -59,6 +62,11 @@ void EnemyBehavior::Start()
         if (m_context.targetObject) {
             m_context.targetTransform = m_context.targetObject->GetComponent<TransformComponent>();
         }
+
+        GameObject* mainCameraObj = scene->GetGameObjectByName("MainCamera");
+        if (mainCameraObj) {
+            m_mainCamera = mainCameraObj->GetComponent<CameraComponent>();
+        }
     }
 }
 
@@ -72,6 +80,18 @@ void EnemyBehavior::Update()
     if (m_context.stateMachine) {
         m_context.stateMachine->UpdateStateMachine(m_context, deltaTime);
     }
+
+    // 回転処理
+    XMFLOAT3 forward = m_mainCamera->GetForward();
+
+    // 正面方向からY軸回転の角度を計算
+    const float billboardAngleY = atan2f(forward.x, forward.z);
+    XMFLOAT4 targetRotation = MiMath::QuaternionFromEuler({ 0.0f, billboardAngleY, 0.0f });
+    XMFLOAT4 currentRotation = m_context.transform->GetRotation();
+    currentRotation = MiMath::Slerp(currentRotation, targetRotation, 20.0f * deltaTime);
+
+    m_context.transform->SetRotation(currentRotation);
+    m_currentAngleY = m_context.transform->GetEulerAngle().y;
 }
 
 void EnemyBehavior::DrawComponentInspector()

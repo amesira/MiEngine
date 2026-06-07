@@ -65,6 +65,11 @@ void GameScene::Initialize()
     GameObject* jointGroup = this->CreateGameObject();
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
 
+    // 敵生成
+    for (int i = 0; i < 5; i++) {
+        ActorFactory::CreateSimpleEnemy(this, { -5.0f + i * 2.5f, 0.0f, -5.0f });
+    }
+
     // テスト：ParticleSystem
     //RenderEffectFactory::CreateParticleEffect(this, { 0.0f, 0.0f, 0.0f }, L"asset\\Texture\\particle.png");
 

@@ -10,9 +10,16 @@
 #include "Engine/Framework/Component/behavior_component.h"
 #include "enemy_context.h"
 
+class CameraComponent;
+
 class EnemyBehavior : public BehaviorComponent {
 private:
     EnemyContext m_context;
+
+    // カメラ参照
+    CameraComponent* m_mainCamera = nullptr;
+
+    float m_currentAngleY = 0.0f;
 
 public:
     EnemyBehavior() = default;

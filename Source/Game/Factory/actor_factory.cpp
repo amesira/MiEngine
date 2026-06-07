@@ -29,6 +29,9 @@
 #include "Game/Behavior/BaseBehavior/afterimage_generator_behavior.h"
 
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+#include "Game/Behavior/EnemyBehavior/enemy_behavior.h"
+#include "Game/Behavior/EnemyBehavior/enemy_state_machine_behavior.h"
+#include "Game/Behavior/EnemyBehavior/base_enemy_attack_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -118,4 +121,74 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     }
 
     return player;
+}
+
+// シンプルな敵生成
+GameObject* ActorFactory::CreateSimpleEnemy(SceneBase* scene, const XMFLOAT3& position)
+{
+    GameObject* enemy = scene->CreateGameObject();
+    enemy->SetName("Enemy");
+    enemy->SetCollisionLayer(CollisionLayer::Enemy);
+    enemy->SetRenderLayer(RenderLayer::Enemy);
+
+    TransformComponent* transform = enemy->AddComponent<TransformComponent>();
+    BoxColliderComponent* collider = enemy->AddComponent<BoxColliderComponent>();
+    RigidbodyComponent* rigidbody = enemy->AddComponent<RigidbodyComponent>();
+    SpriteRendererComponent* spriteRenderer = enemy->AddComponent<SpriteRendererComponent>();
+    SpriteAnimationComponent* spriteAnimation = enemy->AddComponent<SpriteAnimationComponent>();
+
+    const XMFLOAT3& enemyScaling = { 2.0f, 2.0f, 2.0f };
+
+    transform->SetPosition(position);
+    transform->SetScaling(enemyScaling);
+
+    rigidbody->SetMass(3.0f);
+    rigidbody->SetFriction({ 0.8f, 1.0f, 0.8f });
+
+    collider->SetScale({
+        enemyScaling.x,
+        enemyScaling.y * 2.0f,
+        enemyScaling.z
+        });
+    collider->SetCenter({ 0.0f, 0.0f, 0.0f });
+
+    MaterialResource mat = {};
+    mat.name = "EnemyMaterial";
+    spriteRenderer->SetMaterialResource(EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(mat));
+
+    TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\enemy_sheet.png");
+    spriteRenderer->SetTextureResource(texture);
+    spriteRenderer->SetColor({ 1.0f, 0.85f, 0.85f, 1.0f });
+    spriteRenderer->SetUvRect({ 0.0f, 0.0f, 0.5f, 1.0f });
+
+    SpriteAnimationComponent::Clip idleClip;
+    {
+        idleClip.name = "Idle";
+        idleClip.frames = {
+            { texture, {0.0f, 0.0f, 0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
+            { texture, {0.5f, 0.0f, 0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
+        };
+        idleClip.speed = 1.0f;
+        idleClip.loop = true;
+    }
+    spriteAnimation->AddClip(idleClip);
+
+    SpriteAnimationComponent::Clip runClip;
+    {
+        runClip.name = "Run";
+        runClip.frames = {
+            { texture, {0.0f, 0.0f, 0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
+            { texture, {0.5f, 0.0f, 0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
+        };
+        runClip.speed = 1.0f;
+        runClip.loop = true;
+    }
+    spriteAnimation->AddClip(runClip);
+    spriteAnimation->Play("Idle");
+
+    enemy->AddComponent<EnemyBehavior>();
+    enemy->AddComponent<EnemyStateMachineBehavior>();
+    enemy->AddComponent<BaseEnemyAttackBehavior>();
+
+    return enemy;
 }

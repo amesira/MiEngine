@@ -7,11 +7,16 @@
 #include "enemy_state_machine_behavior.h"
 
 #include "base_enemy_attack_behavior.h"
+#include "Engine/Framework/Component/rigidbody_component.h"
+#include "Engine/Framework/Component/transform_component.h"
+#include "Utility/mi_math.h"
 
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
 namespace {
+    constexpr float ENEMY_CHASE_SPEED = 4.0f;
+
     // デバッグ用：EnemyStateを文字列に変換
     const char* ToEnemyStateName(EnemyState state)
     {
@@ -23,6 +28,34 @@ namespace {
         case EnemyState::Dead: return "Dead";
         default: return "Unknown";
         }
+    }
+
+    void StopHorizontalVelocity(EnemyContext& context)
+    {
+        if (!context.rigidbody) return;
+
+        XMFLOAT3 velocity = context.rigidbody->GetVelocity();
+        velocity.x = 0.0f;
+        velocity.z = 0.0f;
+        context.rigidbody->SetVelocity(velocity);
+    }
+
+    void ChaseTarget(EnemyContext& context)
+    {
+        if (!context.transform || !context.targetTransform || !context.rigidbody) return;
+
+        const XMFLOAT3 enemyPosition = context.transform->GetPosition();
+        const XMFLOAT3 targetPosition = context.targetTransform->GetPosition();
+        XMFLOAT3 toTarget = MiMath::Subtract(targetPosition, enemyPosition);
+        toTarget.y = 0.0f;
+
+        const float distance = MiMath::Length(toTarget);
+        const XMFLOAT3 direction = MiMath::Normalize(toTarget, distance);
+
+        XMFLOAT3 velocity = context.rigidbody->GetVelocity();
+        velocity.x = direction.x * ENEMY_CHASE_SPEED;
+        velocity.z = direction.z * ENEMY_CHASE_SPEED;
+        context.rigidbody->SetVelocity(velocity);
     }
 }
 
@@ -58,6 +91,8 @@ void EnemyStateMachineBehavior::UpdateStateMachine(EnemyContext& context, float 
 
     switch (context.state) {
     case EnemyState::Idle: // === Idle State ===
+        StopHorizontalVelocity(context);
+
         // ターゲットが見える場合はChase状態に遷移
         if (context.canSeeTarget) {
             ChangeState(context, EnemyState::Chase);
@@ -65,6 +100,8 @@ void EnemyStateMachineBehavior::UpdateStateMachine(EnemyContext& context, float 
         break;
 
     case EnemyState::Chase: // === Chase State ===
+        ChaseTarget(context);
+
         // ターゲットが見えなくなった場合はIdle状態に遷移
         if (!context.canSeeTarget) {
             ChangeState(context, EnemyState::Idle);
@@ -76,6 +113,8 @@ void EnemyStateMachineBehavior::UpdateStateMachine(EnemyContext& context, float 
         break;
 
     case EnemyState::Attack: // === Attack State ===
+        StopHorizontalVelocity(context);
+
         if (entered && context.attackBehavior) {
             context.attackBehavior->StartAttack(context);
         }
@@ -91,10 +130,12 @@ void EnemyStateMachineBehavior::UpdateStateMachine(EnemyContext& context, float 
         break;
 
     case EnemyState::Stunned: // === Stunned State ===
+        StopHorizontalVelocity(context);
 
         break;
 
     case EnemyState::Dead: // === Dead State ===
+        StopHorizontalVelocity(context);
 
         break;
 

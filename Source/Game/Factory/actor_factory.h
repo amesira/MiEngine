@@ -16,6 +16,7 @@ namespace ActorFactory {
     /// @brief プレイヤー生成
     /// @param position 位置
     GameObject* CreatePlayer(SceneBase* scene, const XMFLOAT3& position);
+    GameObject* CreateSimpleEnemy(SceneBase* scene, const XMFLOAT3& position);
 
 };
 
