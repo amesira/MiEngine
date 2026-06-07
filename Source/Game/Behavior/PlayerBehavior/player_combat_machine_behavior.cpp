@@ -19,7 +19,7 @@ namespace {
     {
         switch (state) {
         case PlayerCombatState::None: return "None";
-        case PlayerCombatState::HoldBuffer: return "HoldBuffer";
+        case PlayerCombatState::AimHoldBuffer: return "AimHoldBuffer";
         case PlayerCombatState::Aim: return "Aim";
         case PlayerCombatState::SingleAttack: return "SingleAttack";
         case PlayerCombatState::ChargeAttack: return "ChargeAttack";
@@ -72,23 +72,19 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
     switch (context.combatState) {
     case PlayerCombatState::None: // === 通常状態 ===
         if (context.input.triggerAimCommand) {
-            ChangeCombatState(context, PlayerCombatState::HoldBuffer);
+            ChangeCombatState(context, PlayerCombatState::AimHoldBuffer);
         }
         break;
 
-    case PlayerCombatState::HoldBuffer: // === エイムに移行するまでの待機状態 ===
+    case PlayerCombatState::AimHoldBuffer: // === エイムに移行するまでの待機状態 ===
         if (entered) {
-            context.attackBehavior->StartAttackHoldBuffer(context);
+            context.attackBehavior->StartAimHoldBuffer(context);
         }
 
-        context.attackBehavior->UpdateAttackHoldBuffer(context, deltaTime, unscaledDeltaTime);
+        context.attackBehavior->UpdateAimHoldBuffer(context, deltaTime, unscaledDeltaTime);
 
-        // 単押し攻撃
-        if (context.input.triggerAttackCommand || context.input.holdAttackCommand) {
-            ChangeCombatState(context, PlayerCombatState::SingleAttack);
-        }
         // ホールドバッファ完了でエイム状態へ
-        else if (context.attackBehavior->IsFinishedHoldBuffer()) {
+        if (context.attackBehavior->IsFinishedAimHoldBuffer()) {
             ChangeCombatState(context, PlayerCombatState::Aim);
         }
         // エイムコマンドを離す、またはエイム・攻撃コマンドを両方ともホールドしていない場合は通常状態へ
@@ -112,12 +108,38 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
 
         // チャージ攻撃
         if (context.input.triggerAttackCommand || context.input.holdAttackCommand) {
-            ChangeCombatState(context, PlayerCombatState::ChargeAttack);
+            ChangeCombatState(context, PlayerCombatState::AttackHoldBuffer);
         }
         // 通常状態へ戻る
         else if (context.input.releaseAimCommand || !context.input.holdAimCommand) {
             context.attackBehavior->EndAim(context);
             ChangeCombatState(context, PlayerCombatState::None);
+        }
+        break;
+
+    case PlayerCombatState::AttackHoldBuffer: // === 攻撃に移行するまでの待機状態 ===
+        // エイム中と同様の移動リクエスト設定
+        moveRequest.canMove = true;
+        moveRequest.canRotate = true;
+        moveRequest.speedMultiplier *= 0.4f;
+        moveRequest.rotationMode = PlayerRotationMode::AimForward;
+
+        if (entered) {
+            context.attackBehavior->StartAttackHoldBuffer(context);
+        }
+
+        context.attackBehavior->UpdateAttackHoldBuffer(context, deltaTime, unscaledDeltaTime);
+
+        if (context.attackBehavior->IsSingleAttackBuffer()) {
+            // 攻撃コマンドを離したとき
+            if (context.input.releaseAttackCommand || !context.input.holdAttackCommand) {
+                // 単発攻撃へ
+                ChangeCombatState(context, PlayerCombatState::SingleAttack);
+            }
+        }
+        else {
+            // チャージ攻撃へ
+            ChangeCombatState(context, PlayerCombatState::ChargeAttack);
         }
         break;
 
@@ -127,18 +149,11 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
         moveRequest.canRotate = true;
         moveRequest.rotationMode = PlayerRotationMode::AimForward;
 
-        if (entered) {
-            context.attackBehavior->SingleAttack(context);
-        }
+        // 単発攻撃の実行
+        context.attackBehavior->SingleAttack(context);
 
-        // エイムコマンドをホールドしている場合はエイム状態へ
-        if (context.input.holdAimCommand) {
-            ChangeCombatState(context, PlayerCombatState::Aim);
-        }
-        // どちらもホールドしていない場合は通常状態へ
-        else {
-            ChangeCombatState(context, PlayerCombatState::None);
-        }
+        // エイム状態へ戻る
+        ChangeCombatState(context, PlayerCombatState::Aim);
         break;
 
     case PlayerCombatState::ChargeAttack: // === チャージ攻撃の状態 ===
@@ -148,14 +163,16 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
         moveRequest.rotationMode = PlayerRotationMode::AimForward;
 
         if (entered) {
-            context.attackBehavior->ChargeAttack(context);
+            context.attackBehavior->StartCharge(context);
         }
 
-        if (context.input.holdAimCommand) {
+        context.attackBehavior->UpdateCharge(context, deltaTime, unscaledDeltaTime);
+
+        if (context.input.releaseAttackCommand || !context.input.holdAttackCommand) {
+            // チャージ攻撃の実行
+            context.attackBehavior->ChargeAttack(context);
+            // エイム状態へ戻る
             ChangeCombatState(context, PlayerCombatState::Aim);
-        }
-        else {
-            ChangeCombatState(context, PlayerCombatState::None);
         }
         break;
 

@@ -17,15 +17,17 @@ enum class PlayerState {
 };
 enum class PlayerCombatState {
     None,
-    HoldBuffer,
+    AimHoldBuffer,
     Aim,
+
+    AttackHoldBuffer,
     SingleAttack,
     ChargeAttack,
 };
 
 // プレイヤーエフェクトの種類
 enum class PlayerEffectType {
-    AttackHoldStart,
+    AimHoldStart,
 
     AimStart,
     AimEnd,

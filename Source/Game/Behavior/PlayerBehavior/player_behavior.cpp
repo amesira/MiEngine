@@ -126,7 +126,7 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
     if (!GAME_EFFECT || !CUSTOM_POST_EFFECT) return;
 
     switch (type) {
-    case PlayerEffectType::AttackHoldStart:
+    case PlayerEffectType::AimHoldStart:
         GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.35f, 0.05f, 0.0f), 0.08f, 0.08f);
         break;
         
