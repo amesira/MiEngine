@@ -106,6 +106,20 @@ void PlayerAttackBehavior::UpdateAttackHoldBuffer(PlayerContext& context, float 
 // 単発攻撃処理
 void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
 {
+    // === 弾を生成 ===
+    ProjectileFactory::BulletCreateDesc bulletDesc;
+    bulletDesc.position = m_transform->GetPosition();
+    bulletDesc.position = MiMath::Add(bulletDesc.position, MiMath::Multiply(m_transform->GetRight(), 0.5f));
+    bulletDesc.radius = 0.25f;
+
+    // 画面中心からワールド空間へのレイを計算して、弾の飛ぶ方向を決定する
+    XMFLOAT3 bulletEnd = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
+    bulletEnd.y = bulletDesc.position.y;
+    XMFLOAT3 bulletDir = MiMath::Normalize(MiMath::Subtract(bulletEnd, bulletDesc.position));
+    bulletDesc.velocity = MiMath::Multiply(bulletDir, 20.0f);
+
+    ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
+
     if (context.playerBehavior) {
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::SingleAttack);
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AttackEnd);
