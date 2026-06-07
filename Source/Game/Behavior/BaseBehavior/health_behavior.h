@@ -8,10 +8,15 @@
 #define HEALTH_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
 
+#include <functional>
+
 class HealthBehavior : public BehaviorComponent {
 private:
+    using DamageCallback = std::function<void(float currentHealth, float damage)>;
+
     float m_health = 100.0f;
     float m_maxHealth = 100.0f;
+    DamageCallback m_onTakeDamage;
 
 public:
     HealthBehavior() {}
@@ -31,6 +36,11 @@ public:
     float GetMaxHealth() const { return m_maxHealth; }
     float GetHealthRate() const;
     bool IsDead() const { return m_health <= 0.0f; }
+
+    // ダメージコールバックの設定
+    void SetOnTakeDamageCallback(DamageCallback callback) {
+        m_onTakeDamage = callback;
+    }
 
 };
 

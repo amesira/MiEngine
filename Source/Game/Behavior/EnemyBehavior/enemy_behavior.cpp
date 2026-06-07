@@ -14,6 +14,9 @@
 
 #include "Engine/Framework/Component/camera_component.h"
 
+#include "Game/Behavior/BaseBehavior/health_behavior.h"
+#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+
 #include "Utility/mi_math.h"
 
 #include "enemy_state_machine_behavior.h"
@@ -54,6 +57,45 @@ void EnemyBehavior::Start()
     if (m_context.attackBehavior) {
         m_context.attackType = m_context.attackBehavior->GetAttackType();
     }
+
+    m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
+    m_healthBehavior = owner->GetComponent<HealthBehavior>();
+
+    // ダメージコールバックの設定
+    m_healthBehavior->SetOnTakeDamageCallback([this](float currentHealth, float damage) {
+        if (currentHealth <= 0.0f) {
+            m_context.state = EnemyState::Dead; // 仮
+            if (m_hitStopBehavior) {
+                m_hitStopBehavior->StartHitStop(
+                    0.5f,
+                    [this]() {
+
+                    },
+                    nullptr,
+                    nullptr,
+                    [this]() {
+                        if (GetOwner()) {
+                            GetOwner()->SetActive(false); // ヒットストップ終了後にオブジェクトを非アクティブ化
+                        }
+                    }); // 死亡時に長めのヒットストップを開始
+            }
+        }
+        else {
+            m_context.state = EnemyState::Stunned; // 仮
+            if (m_hitStopBehavior) {
+                m_hitStopBehavior->StartHitStop(
+                    0.1f,
+                    [this]() {
+                        m_context.state = EnemyState::Stunned;
+                    },
+                    nullptr,
+                    nullptr,
+                    [this]() {
+
+                    }); // ダメージを受けたときに短いヒットストップを開始
+            }
+        }
+    });
 
     IScene* scene = owner->GetScene();
     if (scene) {

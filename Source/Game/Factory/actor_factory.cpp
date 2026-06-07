@@ -33,6 +33,8 @@
 #include "Game/Behavior/EnemyBehavior/enemy_state_machine_behavior.h"
 #include "Game/Behavior/EnemyBehavior/base_enemy_attack_behavior.h"
 
+#include "Game/Behavior/BaseBehavior/health_behavior.h"
+
 #include "Engine/engine_service_locator.h"
 
 // プレイヤー生成
@@ -189,6 +191,9 @@ GameObject* ActorFactory::CreateSimpleEnemy(SceneBase* scene, const XMFLOAT3& po
     enemy->AddComponent<EnemyBehavior>();
     enemy->AddComponent<EnemyStateMachineBehavior>();
     enemy->AddComponent<BaseEnemyAttackBehavior>();
+
+    enemy->AddComponent<HitStopBehavior>();
+    enemy->AddComponent<HealthBehavior>();
 
     return enemy;
 }

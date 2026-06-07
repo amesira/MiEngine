@@ -12,14 +12,23 @@
 
 class CameraComponent;
 
+class HealthBehavior;
+class HitStopBehavior;
+
+class SpriteRendererComponent;
+
 class EnemyBehavior : public BehaviorComponent {
 private:
+    SpriteRendererComponent* m_spriteRenderer = nullptr;
     EnemyContext m_context;
 
     // カメラ参照
     CameraComponent* m_mainCamera = nullptr;
 
     float m_currentAngleY = 0.0f;
+
+    HealthBehavior* m_healthBehavior = nullptr;
+    HitStopBehavior* m_hitStopBehavior = nullptr;
 
 public:
     EnemyBehavior() = default;

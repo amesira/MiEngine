@@ -12,6 +12,7 @@
 #include <functional>
 
 class TransformComponent;
+class HitStopBehavior;
 
 class BulletBehavior : public BehaviorComponent {
 public:
@@ -32,6 +33,9 @@ private:
     bool m_hasHit = false;          // 何かにヒットしたかどうか
     RaycastHit m_lastHit = {};      // 最後にヒットした情報
     HitCallback m_onHit = nullptr;  // ヒットコールバック関数
+
+    // ヒットストップ
+    HitStopBehavior* m_hitStopBehavior = nullptr;
 
 public:
     BulletBehavior() = default;
@@ -69,7 +73,7 @@ public:
     const RaycastHit& GetLastHit() const { return m_lastHit; }
 
     // 弾の寿命切れ処理
-    void Finalize();
+    void Finalize(bool isHitStop = false);
 };
 
 #endif // BULLET_BEHAVIOR_H

@@ -30,6 +30,8 @@ void HealthBehavior::DrawComponentInspector()
 void HealthBehavior::TakeDamage(float damage)
 {
     m_health -= damage;
+    m_onTakeDamage(m_health, damage);
+
     if (m_health < 0.0f) {
         m_health = 0.0f;
     }

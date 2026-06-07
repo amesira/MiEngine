@@ -14,6 +14,7 @@
 #include "Engine/Framework/Component/transform_component.h"
 
 #include "Game/Behavior/BaseBehavior/bullet_behavior.h"
+#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
 
 #include "Engine/Graphics/material_repository.h"
 #include "Engine/Graphics/model_repository.h"
@@ -155,10 +156,12 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     ModelComponent* modelComponent = bullet->AddComponent<ModelComponent>();
     ParticleSystemComponent* particleSystem = bullet->AddComponent<ParticleSystemComponent>();
     BulletBehavior* bulletBehavior = bullet->AddComponent<BulletBehavior>();
+    HitStopBehavior* hitStopBehavior = bullet->AddComponent<HitStopBehavior>();
 
     transform->SetPosition(desc.position);
     transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
 
+    // 弾の進行方向に合わせて回転を設定
     XMFLOAT3 forward = MiMath::Multiply(desc.velocity, -1.0f);
     MiMath::Normalize(forward);
     XMFLOAT4 rotation = MiMath::QuaternionFromDirection(forward, { 0.0f, 1.0f, 0.0f });

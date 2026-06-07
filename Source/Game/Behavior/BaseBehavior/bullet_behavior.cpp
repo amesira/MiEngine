@@ -9,7 +9,12 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Framework/Component/model_component.h"
+
 #include "Engine/Framework/Processor/PhysicsPass/Collision/collision_query.h"
+
+#include "health_behavior.h"
+#include "hit_stop_behavior.h"
 
 #include "External/ImGui/imgui.h"
 
@@ -21,6 +26,10 @@ void BulletBehavior::Start()
     m_transform = GetOwner()->GetComponent<TransformComponent>();
     if (!m_transform) {
         m_transform = GetOwner()->AddComponent<TransformComponent>();
+    }
+    m_hitStopBehavior = GetOwner()->GetComponent<HitStopBehavior>();
+    if (!m_hitStopBehavior) {
+        m_hitStopBehavior = GetOwner()->AddComponent<HitStopBehavior>();
     }
     SetRadius(m_radius);
 }
@@ -63,6 +72,17 @@ void BulletBehavior::Update()
             m_lastHit = hit;
             m_hasHit = true;
 
+            bool isHitStop = false;
+            if (hit.hitObject->GetName() == "Enemy") {
+                XMFLOAT3 scale = m_transform->GetScaling();
+                HealthBehavior* health = hit.hitObject->GetComponent<HealthBehavior>();
+                health->TakeDamage(scale.x * 10.0f);
+
+                if (health->IsDead()) {
+                    isHitStop = true;
+                }
+            }
+
             // ヒットポイントに弾を移動させる
             m_transform->SetPosition(hit.hitPoint);
 
@@ -72,7 +92,7 @@ void BulletBehavior::Update()
             }
 
             // 終了処理
-            Finalize();
+            Finalize(isHitStop);
             return;
         }
     }
@@ -125,13 +145,28 @@ void BulletBehavior::SetRadius(float radius)
 }
 
 // 弾の終了処理
-void BulletBehavior::Finalize()
+void BulletBehavior::Finalize(bool isHitStop)
 {
     if (m_isExpired) return;
-
     m_isExpired = true;
 
-    if (GetOwner()) {
-        GetOwner()->Destroy();
+    if (isHitStop) {
+        m_hitStopBehavior->StartHitStop(
+            0.1f,
+            [this]() {
+
+            },
+            nullptr,
+            nullptr,
+            [this]() {
+                if (GetOwner()) {
+                    GetOwner()->Destroy();
+                }
+            });
+    }
+    else {
+        if (GetOwner()) {
+            GetOwner()->Destroy();
+        }
     }
 }

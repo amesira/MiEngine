@@ -5,11 +5,16 @@
 // Date  ：2026/06/06
 //===================================================
 #include "enemy_state_machine_behavior.h"
+#include "Engine/Core/game_object.h"
+#include "Engine/Core/scene_interface.h"
 
 #include "base_enemy_attack_behavior.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
 #include "Engine/Framework/Component/transform_component.h"
 #include "Utility/mi_math.h"
+
+#include "Game/Behavior/BaseBehavior/health_behavior.h"
+#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
 
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
@@ -61,7 +66,7 @@ namespace {
 
 void EnemyStateMachineBehavior::Start()
 {
-
+    
 }
 
 void EnemyStateMachineBehavior::Update()
