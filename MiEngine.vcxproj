@@ -163,6 +163,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.cpp" />
     <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
+    <ClCompile Include="Source\Game\Factory\projectile_factory.cpp" />
     <ClCompile Include="Utility\debug_ostream.cpp" />
     <ClCompile Include="Utility\debug_renderer.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\debug_view_window.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="Source\Engine\Core\component_pool_interface.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.h" />
     <ClInclude Include="Source\Game\Factory\prefab_factory.h" />
+    <ClInclude Include="Source\Game\Factory\projectile_factory.h" />
     <ClInclude Include="Utility\debug_renderer.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Framework\Component\decal_component.h" />

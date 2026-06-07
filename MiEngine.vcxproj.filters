@@ -250,6 +250,9 @@
     <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp">
       <Filter>Sources\Game\Factory</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Factory\projectile_factory.cpp">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.cpp">
       <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
     </ClCompile>
@@ -566,6 +569,9 @@
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Factory\render_effect_factory.h">
+      <Filter>Sources\Game\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Factory\projectile_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h">
