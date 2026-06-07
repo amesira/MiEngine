@@ -27,6 +27,7 @@ void BlinkerBehavior::Start()
     m_spriteRenderer = GetOwner()->GetComponent<SpriteRendererComponent>();
 
     RefreshTargets();
+    RestoreDefaultStates();
 }
 
 void BlinkerBehavior::Update()
@@ -51,10 +52,6 @@ void BlinkerBehavior::Update()
     }
 
     if (wasRunning && m_emissionRateTask.IsFinished()) {
-        if (m_mode == BlinkMode::FlashTemporary || m_mode == BlinkMode::Reset) {
-            RestoreDefaultStates();
-        }
-
         m_mode = BlinkMode::None;
     }
 }
@@ -112,7 +109,6 @@ void BlinkerBehavior::FlashTemporary(const XMFLOAT3& color, float intensity, flo
     m_flashIntensity = intensity;
 
     if (duration <= 0.0f && holdDuration <= 0.0f) {
-        RestoreDefaultStates();
         m_mode = BlinkMode::None;
         return;
     }
@@ -134,7 +130,6 @@ void BlinkerBehavior::Reset(float duration)
     m_mode = BlinkMode::Reset;
 
     if (duration <= 0.0f) {
-        RestoreDefaultStates();
         m_mode = BlinkMode::None;
         return;
     }

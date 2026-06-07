@@ -91,16 +91,16 @@ void EnemyBehavior::Start()
             m_context.state = EnemyState::Stunned; // 仮
             if (m_hitStopBehavior) {
                 m_hitStopBehavior->StartHitStop(
-                    0.2f,
+                    0.3f,
                     [this]() {
-                        m_blinkerBehavior->Flash({ 1.0f, 0.5f, 0.5f }, 1.0f, 0.2f); // ダメージを受けたときに短く赤くフラッシュ
-                        m_shakeObjectBehavior->Shake(0.2f, 0.5f); // ダメージを受けたときに短く揺らす
+                        m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.3f); // ダメージを受けたときに短く赤くフラッシュ
+                        m_shakeObjectBehavior->Shake(0.3f, 1.0f); // ダメージを受けたときに短く揺らす
                     },
                     nullptr,
                     nullptr,
                     [this]() {
-                        m_blinkerBehavior->Reset(0.2f); // ヒットストップ終了後にフラッシュをリセット
-                        m_shakeObjectBehavior->Reset(0.2f); // ヒットストップ終了後に揺れをリセット
+                        m_blinkerBehavior->Reset(0.3f); // ヒットストップ終了後にフラッシュをリセット
+                        m_shakeObjectBehavior->Reset(0.3f); // ヒットストップ終了後に揺れをリセット
 
                         m_context.state = EnemyState::Chase; // ヒットストップ終了後にChase状態に戻す（仮）
                     }); // ダメージを受けたときに短いヒットストップを開始

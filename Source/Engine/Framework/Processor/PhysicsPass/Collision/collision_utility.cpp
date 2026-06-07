@@ -19,10 +19,10 @@ using namespace DirectX;
 
 constexpr bool COLLISION_MATRIX[(int)CollisionLayer::MAX][(int)CollisionLayer::MAX] = {
     //                 Default    Field      Player     Bullet        Enemy
-    /*Default   */   { true,      true,      true,      true,       true},
+    /*Default   */   { true,      true,      true,      false,       true},
     /*Field     */   { true,      false,     true,      true,      true},
     /*Player    */   { true,      true,      true,      false,       true},
-    /*Bullet      */   { true,      true,    false,     true,       true},
+    /*Bullet      */   { false,    false,    false,     true,       true},
     /*Enemy     */   { true,      true,      true,      true,       true},
 
 };

@@ -159,16 +159,14 @@ void BulletBehavior::Finalize(bool isHitStop)
 
     if (isHitStop) {
         m_hitStopBehavior->StartHitStop(
-            0.1f,
+            0.5f,
             [this]() {
-                m_blinkerBehavior->Flash({ 1.0f, 0.5f, 0.5f }, 1.0f, 0.1f);
-                m_shakeObjectBehavior->Shake(0.1f, 0.5f);
+                m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.5f);
+                m_shakeObjectBehavior->Shake(0.5f, 1.0f);
             },
             nullptr,
             nullptr,
             [this]() {
-                m_blinkerBehavior->Reset(0.1f);
-                m_shakeObjectBehavior->Reset(0.1f);
                 if (GetOwner()) {
                     GetOwner()->Destroy();
                 }
