@@ -5,6 +5,7 @@
 // Author：Miu Kitamura
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 #include "../Common/camera.hlsl"
+#include "../Common/material.hlsl"
 
 Texture2D g_Texture : register(t6);
 SamplerState g_SamplerState : register(s0);
@@ -48,6 +49,8 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     // エッジ部分を強調
     col.rgb *= edge * edge;
+    col.rgb *= g_Material.baseColor.rgb; // マテリアルのベースカラーを乗算
+    
     if (col.a <= 0.01f) {
         float2 screenUV = ps_in.posH.xy / ps_in.posH.w * 0.5 + 0.5; // スクリーンUVを計算
         float ditherValue = g_DitherTexture.Sample(g_SamplerState, screenUV).r; // ディザーテクスチャから値を取得

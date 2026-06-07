@@ -10,8 +10,17 @@
 #include "Engine/Framework/Component/behavior_component.h"
 #include "Game/Behavior/PlayerBehavior/player_context.h"
 
+class TransformComponent;
+class CameraComponent;
+
 class PlayerAttackBehavior : public BehaviorComponent {
 private:
+    TransformComponent* m_transform = nullptr;
+
+    // メインカメラの参照
+    TransformComponent* m_mainCameraTransform = nullptr;
+    CameraComponent* m_mainCamera = nullptr;
+
     // エイム移行前の入力猶予時間
     float m_aimHoldBufferTimer = 0.0f;
     float m_maxAimHoldBufferTime = 0.05f;

@@ -380,7 +380,12 @@ void ModelRepository::SetModelVertexInfo(ModelVertex* vertices, const aiMesh* me
     for (unsigned int v = 0; v < mesh->mNumVertices; v++)
     {
         vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
+        if (mesh->mTextureCoords[0] != nullptr) {
         vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
+        }
+        else {
+            vertices[v].texCoord = XMFLOAT2(0.0f, 0.0f);
+        }
         vertices[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
 
         vertices[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);

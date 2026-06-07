@@ -301,4 +301,22 @@ namespace MiMath
             z
         };
     }
+
+    // ベクトル方向のクォータニオンを生成する
+    inline XMFLOAT4 QuaternionFromDirection(const XMFLOAT3& direction, const XMFLOAT3& up = XMFLOAT3(0.0f, 1.0f, 0.0f))
+    {
+        XMVECTOR forward = XMVector3Normalize(XMLoadFloat3(&direction));
+        XMVECTOR upVec = XMVector3Normalize(XMLoadFloat3(&up));
+        XMVECTOR right = XMVector3Normalize(XMVector3Cross(upVec, forward));
+        upVec = XMVector3Cross(forward, right);
+        XMMATRIX rotationMatrix = {
+            right,
+            upVec,
+            forward,
+            XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)
+        };
+        XMFLOAT4 quaternion;
+        XMStoreFloat4(&quaternion, XMQuaternionRotationMatrix(rotationMatrix));
+        return quaternion;
+    }
 }

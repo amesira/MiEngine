@@ -7,7 +7,7 @@
 #include "projectile_factory.h"
 
 #include "Engine/Core/game_object.h"
-#include "Engine/Core/scene_base.h"
+#include "Engine/Core/scene_interface.h"
 
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
@@ -54,9 +54,18 @@ namespace
     MaterialResource* CreateBulletMaterial(const ProjectileFactory::BulletCreateDesc& desc)
     {
         if (!MATERIAL_REPOSITORY) return nullptr;
+        static bool generated = false;
+
+        if (generated) {
+            MaterialResource* existingMaterial = MATERIAL_REPOSITORY->GetMaterial(desc.materialName);
+            if (existingMaterial) {
+                return existingMaterial;
+            }
+        }
+        generated = true;
         
         XMFLOAT4 hologramColor = { 0.35f, 0.85f, 1.0f, 0.75f };
-        float hologramIntensity = 2.5f;
+        float hologramIntensity = 7.0f;
 
         MaterialResource material = {};
         material.name = desc.materialName;
@@ -84,8 +93,6 @@ namespace
 
         ModelResource* modelResource = MODEL_REPOSITORY->GetModel(desc.modelPath);
         if (!modelResource) return;
-
-        // モデルリソースの設定
         modelComponent->SetModelResource(modelResource);
 
         // ホログラムマテリアルの生成と適用
@@ -98,6 +105,7 @@ namespace
         }
     }
 
+    // パーティクルコンポーネントのセットアップ
     void SetupBulletParticle(ParticleSystemComponent* particleSystem, const ProjectileFactory::BulletCreateDesc& desc)
     {
         if (!particleSystem) return;
@@ -135,12 +143,13 @@ namespace
 }
 
 // 弾の生成
-GameObject* ProjectileFactory::CreateBullet(SceneBase* scene, const BulletCreateDesc& desc)
+GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDesc& desc)
 {
     if (!scene) return nullptr;
 
     GameObject* bullet = scene->CreateGameObject();
     bullet->SetName("Bullet");
+    bullet->SetRenderLayer(RenderLayer::Bullet);
 
     TransformComponent* transform = bullet->AddComponent<TransformComponent>();
     ModelComponent* modelComponent = bullet->AddComponent<ModelComponent>();
@@ -149,6 +158,11 @@ GameObject* ProjectileFactory::CreateBullet(SceneBase* scene, const BulletCreate
 
     transform->SetPosition(desc.position);
     transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
+
+    XMFLOAT3 forward = MiMath::Multiply(desc.velocity, -1.0f);
+    MiMath::Normalize(forward);
+    XMFLOAT4 rotation = MiMath::QuaternionFromDirection(forward, { 0.0f, 1.0f, 0.0f });
+    transform->SetRotation(rotation);
 
     SetupBulletModel(modelComponent, desc);
     SetupBulletParticle(particleSystem, desc);

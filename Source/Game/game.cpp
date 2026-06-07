@@ -12,6 +12,7 @@
 #include "Game/Factory/ui_factory.h"
 #include "Game/Factory/render_effect_factory.h"
 #include "Game/Factory/prefab_factory.h"
+#include "Game/Factory/projectile_factory.h"
 
 #include "Engine/Device/keyboard.h"
 #include "Engine/Device/mi_fps.h"
@@ -66,6 +67,15 @@ void GameScene::Initialize()
 
     // テスト：ParticleSystem
     RenderEffectFactory::CreateParticleEffect(this, { -2.0f, 3.0f, 0.0f }, L"asset\\Texture\\particle.png");
+
+    // テスト：Bullet
+    ProjectileFactory::BulletCreateDesc bulletDesc = {};
+    bulletDesc.position = { 2.0f, 3.0f, 0.0f };
+    bulletDesc.velocity = { 0.0f, 0.0f, 0.0f };
+    bulletDesc.radius = 0.25f;
+    bulletDesc.lifeTime = MiMath::Infinity();
+    bulletDesc.layerMask = -1;
+    ProjectileFactory::CreateBullet(this, bulletDesc);
 
 }
 

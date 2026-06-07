@@ -30,7 +30,8 @@ private:
 
     // === 描画処理の有効・無効 ===
     RenderLayerMask cullingMask = RENDER_LAYER_MASK_ALL;
-    RenderLayerMask maskCullingMask = RenderLayerToMask(RenderLayer::Player) | RenderLayerToMask(RenderLayer::Particle);
+    RenderLayerMask maskCullingMask = RenderLayerToMask(RenderLayer::Player) | RenderLayerToMask(RenderLayer::Particle)
+        | RenderLayerToMask(RenderLayer::Bullet) | RenderLayerToMask(RenderLayer::Enemy);
 
 public:
     // カメラの位置、注視点、上方ベクトルの設定・取得

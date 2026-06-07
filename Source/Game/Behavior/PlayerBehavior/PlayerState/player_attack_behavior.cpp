@@ -1,16 +1,33 @@
 //===================================================
 // player_attack_behavior.cpp
 // 
-// Author・Miu Kitamura
-// Date  ・・026/03/25
+// Author：Miu Kitamura
+// Date  ：2026/03/25
 //===================================================
 #include "player_attack_behavior.h"
+#include "Engine/Core/game_object.h"
+
+#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Framework/Component/camera_component.h"
 
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
 
+#include "Utility/mi_math.h"
+
+#include "Game/Factory/projectile_factory.h"
+
 void PlayerAttackBehavior::Start()
 {
+    m_transform = GetOwner()->GetComponent<TransformComponent>();
 
+    IScene* scene = GetOwner()->GetScene();
+    if (scene) {
+        GameObject* mainCameraObj = scene->GetGameObjectByName("MainCamera");
+        if (mainCameraObj) {
+            m_mainCameraTransform = mainCameraObj->GetComponent<TransformComponent>();
+            m_mainCamera = mainCameraObj->GetComponent<CameraComponent>();
+        }
+    }
 }
 
 void PlayerAttackBehavior::Update()
@@ -117,6 +134,20 @@ void PlayerAttackBehavior::UpdateCharge(PlayerContext& context, float deltaTime,
 // チャージ攻撃処理
 void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
 {
+    // === 弾を生成 ===
+    ProjectileFactory::BulletCreateDesc bulletDesc;
+    bulletDesc.position = m_transform->GetPosition();
+    bulletDesc.position = MiMath::Add(bulletDesc.position, MiMath::Multiply(m_transform->GetRight(), 0.5f));
+    bulletDesc.radius = 0.25f + (m_chargeTimer / m_maxChargeTime) * 0.75f; // チャージ時間に応じて弾のサイズを変化させる
+
+    // 画面中心からワールド空間へのレイを計算して、弾の飛ぶ方向を決定する
+    XMFLOAT3 bulletEnd = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
+    bulletEnd.y = bulletDesc.position.y;
+    XMFLOAT3 bulletDir = MiMath::Normalize(MiMath::Subtract(bulletEnd, bulletDesc.position));
+    bulletDesc.velocity = MiMath::Multiply(bulletDir, 20.0f);
+    
+    ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
+
     if (context.playerBehavior) {
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeAttack);
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AttackEnd);

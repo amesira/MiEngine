@@ -10,6 +10,7 @@ enum class RenderLayer {
     Default = 0,
     Player,
     Enemy,
+    Bullet,
     Particle,
 
     MAX,
