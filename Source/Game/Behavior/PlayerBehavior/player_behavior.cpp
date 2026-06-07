@@ -87,6 +87,7 @@ void PlayerBehavior::Update()
         m_combatMachine->UpdateCombatMachine(m_context, moveRequest, deltaTime, unscaledDeltaTime);
     }
 
+    // 移動・回転の更新
     if (m_context.moveBehavior) {
         m_context.moveBehavior->UpdateMove(m_context, moveRequest, deltaTime);
         m_context.moveBehavior->UpdateRotation(m_context, moveRequest, deltaTime);
@@ -95,13 +96,13 @@ void PlayerBehavior::Update()
     // アニメーション制御
     UpdateAnimation(m_context.state, m_context.combatState);
 
-    // Flip
-    if (m_context.input.horizontal > 0.01f) {
-        m_spriteRenderer->SetFlipX(true);
-    }
-    else if (m_context.input.horizontal < -0.01f) {
-        m_spriteRenderer->SetFlipX(false);
-    }
+    //// Flip
+    //if (m_context.input.horizontal > 0.01f) {
+    //    m_spriteRenderer->SetFlipX(true);
+    //}
+    //else if (m_context.input.horizontal < -0.01f) {
+    //    m_spriteRenderer->SetFlipX(false);
+    //}
 }
 
 // PlayerBehaviorのインスペクタ表示

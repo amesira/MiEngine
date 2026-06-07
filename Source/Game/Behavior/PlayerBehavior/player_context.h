@@ -43,7 +43,6 @@ enum class PlayerEffectType {
 // プレイヤーの回転モード
 enum class PlayerRotationMode {
     CameraForward,
-    MoveDirection,
     AimForward,
     Locked,
 };

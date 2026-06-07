@@ -11,6 +11,7 @@
 
 class TransformComponent;
 class RigidbodyComponent;
+class SpriteRendererComponent;
 
 class CameraComponent;
 
@@ -18,7 +19,9 @@ class PlayerMoveBehavior : public BehaviorComponent {
 private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
+    SpriteRendererComponent* m_spriteRenderer = nullptr;
 
+    float   m_acceleration = 20.0f;
     float   m_moveSpeed = 10.0f;
     float   m_jumpForce = 10.0f;
 
