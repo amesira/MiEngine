@@ -12,16 +12,18 @@
 
 #include "Utility/mi_math.h"
 
+#include <algorithm>
+#include <cmath>
+
 using namespace DirectX;
 
 constexpr bool COLLISION_MATRIX[(int)CollisionLayer::MAX][(int)CollisionLayer::MAX] = {
-    //                 Default    Field      Player     PlayerOnBall    Ball        Enemy
-    /*Default   */   { true,      true,      true,      true,           true,       true},
-    /*Field     */   { true,      false,     true,      true,           true,      true},
-    /*Player    */   { true,      true,      true,      false,          true,       true},
-    /*PlayerOnBall*/{ true,      true,      false,     false,          false,       true},
-    /*Ball      */   { true,      true,     true,      false,           true,       true},
-    /*Enemy     */   { true,      true,      true,      true,           true,       true},
+    //                 Default    Field      Player     Bullet        Enemy
+    /*Default   */   { true,      true,      true,      true,       true},
+    /*Field     */   { true,      false,     true,      true,      true},
+    /*Player    */   { true,      true,      true,      false,       true},
+    /*Bullet      */   { true,      true,    false,     true,       true},
+    /*Enemy     */   { true,      true,      true,      true,       true},
 
 };
 
@@ -431,11 +433,19 @@ void CollisionUtility::CheckRayOBB(
     };
 
     RaycastHit localHitInfo;
+    CheckRayAABB(
+        /*out*/ localHitInfo,
+        localRayOrigin,
+        localRayDirection,
+        rayLength,
+        bounds
+    );
+
     if (localHitInfo.hit) {
         // 衝突している
         hitInfo.hit = true;
         hitInfo.hitDistance = localHitInfo.hitDistance;
-        hitInfo.hitPoint = MiMath::Add(rayOrigin, MiMath::Multiply(rayDirection, localHitInfo.hitDistance));
+        hitInfo.hitPoint = MiMath::Add(rayOrigin, MiMath::Multiply(MiMath::Normalize(rayDirection), localHitInfo.hitDistance));
         hitInfo.hitNormal = MiMath::RotateVector(transform->GetRotation(), localHitInfo.hitNormal);
     }
     else {
@@ -504,81 +514,53 @@ void CollisionUtility::CheckRaySphere(
 // RayとAABBの衝突判定
 void CollisionUtility::CheckRayAABB(
     /*out*/ RaycastHit& hitInfo,
-    const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection, float rayLength, 
+    const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection, float rayLength,
     Bounds bounds)
 {
-    XMFLOAT3 dir = MiMath::Normalize(rayDirection);
+    hitInfo = RaycastHit{};
 
-    // AABB平面の法線
-    const XMFLOAT3 normals[6] = {
-        { 1.0f, 0.0f, 0.0f },  // +X面
-        { -1.0f, 0.0f, 0.0f }, // -X面
-        { 0.0f, 1.0f, 0.0f },  // +Y面
-        { 0.0f, -1.0f, 0.0f }, // -Y面
-        { 0.0f, 0.0f, 1.0f },  // +Z面
-        { 0.0f, 0.0f, -1.0f }  // -Z面
-    };
-    // AABB平面上の1頂点
-    const XMFLOAT3 vertices[6] = {
-        { bounds.maxX, 0.0f, 0.0f }, // +X面
-        { bounds.minX, 0.0f, 0.0f }, // -X面
-        { 0.0f, bounds.maxY, 0.0f }, // +Y面
-        { 0.0f, bounds.minY, 0.0f }, // -Y面
-        { 0.0f, 0.0f, bounds.maxZ }, // +Z面
-        { 0.0f, 0.0f, bounds.minZ }  // -Z面
-    };
+    const XMFLOAT3 dir = MiMath::Normalize(rayDirection);
+    const float epsilon = 0.000001f;
+    float tMin = 0.0f;
+    float tMax = rayLength;
+    XMFLOAT3 hitNormal = { 0.0f, 0.0f, 0.0f };
 
-    // レイの終点を計算
-    XMFLOAT3 rayEnd = MiMath::Add(rayOrigin, MiMath::Multiply(dir, rayLength));
+    // 各軸のスラブを更新するラムダ関数
+    auto updateSlab = [&](float origin, float direction, float minValue, float maxValue, const XMFLOAT3& minNormal, const XMFLOAT3& maxNormal) -> bool
+        {
+            if (std::fabs(direction) < epsilon) {
+                return origin >= minValue && origin <= maxValue;
+            }
 
-    float minHitDistance = rayLength;
+            float t1 = (minValue - origin) / direction;
+            float t2 = (maxValue - origin) / direction;
+            XMFLOAT3 nearNormal = minNormal;
+            XMFLOAT3 farNormal = maxNormal;
 
-    // 各面との衝突判定
-    for (int i = 0; i < 6; i++) {
-        const XMFLOAT3& N = normals[i];
-        const XMFLOAT3& V0 = vertices[i];
+            if (t1 > t2) {
+                std::swap(t1, t2);
+                std::swap(nearNormal, farNormal);
+            }
 
-        // 1. 法線ベクトルとレイの平行チェック
-        XMFLOAT3 cross = MiMath::Cross(dir, N);
-        if (MiMath::Length(cross) < 0.001f) {
-            continue;
-        }
+            if (t1 > tMin) {
+                tMin = t1;
+                hitNormal = nearNormal;
+            }
+            tMax = (std::min)(tMax, t2);
 
-        // 2. 平面までの距離から、内分比を算出し貫通点を求める
-        XMFLOAT3 v1 = MiMath::Subtract(rayOrigin, V0);
-        XMFLOAT3 v2 = MiMath::Subtract(rayEnd, V0);
-        float t = abs(MiMath::Dot(N, v1)) / (abs(MiMath::Dot(N, v1)) + abs(MiMath::Dot(N, v2)));
-        XMFLOAT3 hitPoint = {
-            rayOrigin.x + (rayEnd.x - rayOrigin.x) * t,
-            rayOrigin.y + (rayEnd.y - rayOrigin.y) * t,
-            rayOrigin.z + (rayEnd.z - rayOrigin.z) * t
+            return tMin <= tMax;
         };
 
-        // 3. 貫通点がAABBの範囲内にあるかチェック
-        const float epsilon = 0.001f;
-        if (hitPoint.x < bounds.minX - epsilon || hitPoint.x > bounds.maxX + epsilon ||
-            hitPoint.y < bounds.minY - epsilon || hitPoint.y > bounds.maxY + epsilon ||
-            hitPoint.z < bounds.minZ - epsilon || hitPoint.z > bounds.maxZ + epsilon) {
-            continue;
-        }
+    if (!updateSlab(rayOrigin.x, dir.x, bounds.minX, bounds.maxX, { -1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f })) return;
+    if (!updateSlab(rayOrigin.y, dir.y, bounds.minY, bounds.maxY, { 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f })) return;
+    if (!updateSlab(rayOrigin.z, dir.z, bounds.minZ, bounds.maxZ, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f })) return;
 
-        // 4. レイの始点から貫通点までの距離がレイの長さ以内かチェック
-        float hitDistance = MiMath::Distance(rayOrigin, hitPoint);
-        if (hitDistance > rayLength) {
-            continue;
-        }
+    const float hitDistance = tMin >= 0.0f ? tMin : tMax;
+    if (hitDistance < 0.0f || hitDistance > rayLength) return;
 
-        // 5. 最も近い貫通点を採用
-        if (hitDistance > minHitDistance) {
-            continue;
-        }
-        minHitDistance = hitDistance;
-
-        // 衝突している
-        hitInfo.hit = true;
-        hitInfo.hitPoint = hitPoint;
-        hitInfo.hitNormal = N;
-        hitInfo.hitDistance = hitDistance;
-    }
+    hitInfo.hit = true;
+    hitInfo.hitDistance = hitDistance;
+    hitInfo.hitPoint = MiMath::Add(rayOrigin, MiMath::Multiply(dir, hitDistance));
+    hitInfo.hitNormal = hitNormal;
 }
 #pragma endregion

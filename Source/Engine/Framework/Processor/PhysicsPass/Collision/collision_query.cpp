@@ -54,6 +54,7 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
 
             // 最も近いヒットを記録
             if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                tempHit.hitObject = boxCollider.GetOwner();
                 closestHitDistance = tempHit.hitDistance;
                 raycastHit = tempHit;
             }
@@ -80,6 +81,7 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
 
             // 最も近いヒットを記録
             if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                tempHit.hitObject = sphereCollider.GetOwner();
                 closestHitDistance = tempHit.hitDistance;
                 raycastHit = tempHit;
             }
@@ -129,6 +131,7 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 
             // 最も近いヒットを記録
             if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                tempHit.hitObject = boxCollider.GetOwner();
                 closestHitDistance = tempHit.hitDistance;
                 raycastHit = tempHit;
             }
@@ -159,6 +162,7 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 
             // 最も近いヒットを記録
             if (tempHit.hit && tempHit.hitDistance < closestHitDistance) {
+                tempHit.hitObject = sphereCollider.GetOwner();
                 closestHitDistance = tempHit.hitDistance;
                 raycastHit = tempHit;
             }

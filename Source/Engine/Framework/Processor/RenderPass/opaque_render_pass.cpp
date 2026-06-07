@@ -6,6 +6,7 @@
 //===================================================
 #include "opaque_render_pass.h"
 #include "Engine/Core/scene_interface.h"
+#include "Engine/Core/game_object.h"
 
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
@@ -61,6 +62,8 @@ void OpaqueRenderPass::Process(IScene* pScene, const RenderView& view)
         pScene,
         [this](ModelComponent& m, TransformComponent& t, ModelResource& model)
         {
+            if (m.GetOwner()->GetActive() == false) return;
+
             // ワールド行列の計算
             XMMATRIX worldMatrix = ModelRenderUtility::CreateWorldMatrix(t);
             EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
@@ -80,6 +83,8 @@ void OpaqueRenderPass::Process(IScene* pScene, const RenderView& view)
         pScene,
         [this](SpriteRendererComponent& s, TransformComponent& t)
         {
+            if (s.GetOwner()->GetActive() == false) return;
+
             if (s.GetBlendMode() != SpriteRendererComponent::SpriteBlendMode::Opaque) return;
             const MaterialInstance& mat = s.GetMaterial();
             MaterialResource* material = mat.materialResource ? mat.materialResource : MATERIAL_REPOSITORY->GetMaterial("default");

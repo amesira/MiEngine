@@ -30,8 +30,7 @@ enum class CollisionLayer {
     Default = 0,
     Field,
     Player,
-    PlayerOnBall,
-    Ball,
+    Bullet,
     Enemy,
 
     MAX,
