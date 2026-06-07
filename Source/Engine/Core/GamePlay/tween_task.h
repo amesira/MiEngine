@@ -50,7 +50,7 @@ public:
         }
         case 1: {
             if (m_holdDuration > 0.0f) {
-                if (Wait(m_holdDuration, deltaTime)) {
+                if (Wait(m_holdDuration)) {
                     AdvanceStep();
                 }
             }
@@ -109,7 +109,7 @@ public:
         }
         case 1: {
             if (m_holdDuration > 0.0f) {
-                if (Wait(m_holdDuration, deltaTime)) {
+                if (Wait(m_holdDuration)) {
                     AdvanceStep();
                 }
             }

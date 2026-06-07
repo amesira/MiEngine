@@ -128,6 +128,14 @@ namespace MiMath
         XMVECTOR vv = XMLoadFloat3(&v);
         return Normalize(vv);
     }
+    inline XMFLOAT3 Normalize(const XMFLOAT3& v, float length) {
+        if (length == 0.0f) return XMFLOAT3(0.0f, 0.0f, 0.0f);
+        return {
+            v.x / length,
+            v.y / length,
+            v.z / length
+        };
+    }
 
     // ２つのベクトル間の角度を計算する（ラジアン）
     inline float Angle(const XMVECTOR& from, const XMVECTOR& to) {

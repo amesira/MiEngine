@@ -23,6 +23,7 @@ enum class PlayerCombatState {
     ChargeAttack,
 };
 
+// プレイヤーエフェクトの種類
 enum class PlayerEffectType {
     AttackHoldStart,
 
@@ -37,6 +38,7 @@ enum class PlayerEffectType {
     AttackEnd,
 };
 
+// プレイヤーの回転モード
 enum class PlayerRotationMode {
     CameraForward,
     MoveDirection,
@@ -44,6 +46,7 @@ enum class PlayerRotationMode {
     Locked,
 };
 
+// プレイヤーの移動リクエスト構造体
 struct PlayerMoveRequest {
     bool canMove = true;
     bool canRotate = true;

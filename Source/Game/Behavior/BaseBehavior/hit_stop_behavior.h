@@ -1,8 +1,8 @@
 //---------------------------------------------------
 // hit_stop_behavior.h
 // 
-// Author・哺iu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //---------------------------------------------------
 #ifndef HIT_STOP_BEHAVIOR_H
 #define HIT_STOP_BEHAVIOR_H
@@ -14,9 +14,11 @@
 
 class HitStopBehavior : public BehaviorComponent {
 public:
+    // ヒットストップのコールバックの型定義
     using HitStopCallback = std::function<void()>;
 
 private:
+    // ヒットストップ処理を管理するタスククラス
     class HitStopTask : public SequenceTask {
     public:
         float m_duration = 0.0f;
@@ -41,6 +43,7 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
+    // ヒットストップの開始
     void StartHitStop(
         float duration,
         HitStopCallback onEnter = nullptr,
@@ -48,6 +51,7 @@ public:
         HitStopCallback onUpdate = nullptr,
         HitStopCallback onExit = nullptr);
 
+    // ヒットストップ中かどうかの判定
     bool IsHitStopping() const;
 };
 

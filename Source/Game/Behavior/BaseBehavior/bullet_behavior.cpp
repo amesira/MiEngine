@@ -1,8 +1,8 @@
 //===================================================
 // bullet_behavior.cpp
 // 
-// Author・Miu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //===================================================
 #include "bullet_behavior.h"
 
@@ -13,115 +13,71 @@
 
 #include "External/ImGui/imgui.h"
 
-#include <algorithm>
-#include <cmath>
-
-namespace {
-    float Length(const DirectX::XMFLOAT3& value)
-    {
-        return std::sqrt(
-            value.x * value.x +
-            value.y * value.y +
-            value.z * value.z);
-    }
-
-    DirectX::XMFLOAT3 Add(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
-    {
-        return {
-            lhs.x + rhs.x,
-            lhs.y + rhs.y,
-            lhs.z + rhs.z
-        };
-    }
-
-    DirectX::XMFLOAT3 Subtract(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
-    {
-        return {
-            lhs.x - rhs.x,
-            lhs.y - rhs.y,
-            lhs.z - rhs.z
-        };
-    }
-
-    DirectX::XMFLOAT3 Multiply(const DirectX::XMFLOAT3& value, float scalar)
-    {
-        return {
-            value.x * scalar,
-            value.y * scalar,
-            value.z * scalar
-        };
-    }
-
-    DirectX::XMFLOAT3 Normalize(const DirectX::XMFLOAT3& value, float length)
-    {
-        if (length <= 0.0f) {
-            return { 0.0f, 0.0f, 0.0f };
-        }
-
-        const float invLength = 1.0f / length;
-        return Multiply(value, invLength);
-    }
-}
+#include "Utility/mi_math.h"
+using namespace DirectX;
 
 void BulletBehavior::Start()
 {
     m_transform = GetOwner()->GetComponent<TransformComponent>();
+    if (!m_transform) {
+        m_transform = GetOwner()->AddComponent<TransformComponent>();
+    }
     SetRadius(m_radius);
 }
 
 void BulletBehavior::Update()
 {
-    if (m_isExpired) return;
-
-    if (!m_transform) {
-        m_transform = GetOwner()->GetComponent<TransformComponent>();
-    }
-    if (!m_transform) {
-        Expire();
-        return;
-    }
+    if (m_isExpired) return; // すでに寿命切れの場合は処理しない
 
     const float deltaTime = FPS_GetDeltaTime();
 
-    if (m_lifeTime >= 0.0f) {
-        m_lifeTimer += deltaTime;
-        if (m_lifeTimer >= m_lifeTime) {
-            Expire();
-            return;
-        }
+    // ライフタイマーの更新と寿命切れの判定
+    m_lifeTimer += deltaTime;
+    if (m_lifeTimer >= m_lifeTime) {
+        Finalize();
+        return;
     }
 
-    const DirectX::XMFLOAT3 previousPosition = m_transform->GetPosition();
-    const DirectX::XMFLOAT3 nextPosition = Add(previousPosition, Multiply(m_velocity, deltaTime));
-    const DirectX::XMFLOAT3 displacement = Subtract(nextPosition, previousPosition);
-    const float moveDistance = Length(displacement);
+    // === 移動と衝突判定 ===
+    const XMFLOAT3 previousPosition = m_transform->GetPosition();
+    const XMFLOAT3 nextPosition = MiMath::Add(previousPosition, MiMath::Multiply(m_velocity, deltaTime));
+    const XMFLOAT3 displacement = MiMath::Subtract(nextPosition, previousPosition);
+    const float moveDistance = MiMath::Length(displacement);
 
     constexpr float minCastDistance = 0.0001f;
     if (moveDistance > minCastDistance && GetOwner()->GetScene()) {
         RaycastHit hit;
-        const DirectX::XMFLOAT3 direction = Normalize(displacement, moveDistance);
+        const DirectX::XMFLOAT3 direction = MiMath::Normalize(displacement, moveDistance);
 
+        // SphereCastで衝突判定を行う
         if (CollisionQuery::SphereCast(
             GetOwner()->GetScene(),
             /*out*/ hit,
-            previousPosition,
-            direction,
-            m_radius,
-            moveDistance,
-            m_layerMask)) {
+            previousPosition,   // 開始位置
+            direction,          // 方向
+            m_radius,           // 半径
+            moveDistance,       // 最大距離
+            m_layerMask))
+        {
+            // ヒットした場合
             m_lastHit = hit;
             m_hasHit = true;
+
+            // ヒットポイントに弾を移動させる
             m_transform->SetPosition(hit.hitPoint);
 
+            // ヒットコールバックの呼び出し
             if (m_onHit) {
                 m_onHit(m_lastHit);
             }
 
-            Expire();
+            // 終了処理
+            Finalize();
             return;
         }
     }
 
+    // 衝突しなかった場合は通常通り移動
     m_transform->SetPosition(nextPosition);
 }
 
@@ -138,6 +94,9 @@ void BulletBehavior::DrawComponentInspector()
     ImGui::Text("Hit: %s", m_hasHit ? "true" : "false");
 }
 
+// ----------------------------------------------- public
+
+// 弾の初期化
 void BulletBehavior::Initialize(const DirectX::XMFLOAT3& velocity, float radius, float lifeTime, int layerMask)
 {
     m_velocity = velocity;
@@ -150,6 +109,7 @@ void BulletBehavior::Initialize(const DirectX::XMFLOAT3& velocity, float radius,
     m_lastHit = {};
 }
 
+// 弾の半径の設定
 void BulletBehavior::SetRadius(float radius)
 {
     m_radius = radius < 0.0f ? 0.0f : radius;
@@ -164,7 +124,8 @@ void BulletBehavior::SetRadius(float radius)
     }
 }
 
-void BulletBehavior::Expire()
+// 弾の終了処理
+void BulletBehavior::Finalize()
 {
     if (m_isExpired) return;
 

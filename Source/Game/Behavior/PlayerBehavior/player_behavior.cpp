@@ -120,9 +120,10 @@ void PlayerBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
+// プレイヤーエフェクトの再生
 void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
 {
-    if (!GAME_EFFECT) return;
+    if (!GAME_EFFECT || !CUSTOM_POST_EFFECT) return;
 
     switch (type) {
     case PlayerEffectType::AttackHoldStart:

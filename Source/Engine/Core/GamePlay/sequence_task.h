@@ -50,7 +50,7 @@ public:
     }
 
     // n秒間待機する
-    bool Wait(float seconds, float deltaTime) {
+    bool Wait(float seconds) {
         if (m_taskTimer >= seconds) {
             return true; // 待機完了
         }

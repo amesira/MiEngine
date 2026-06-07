@@ -1,8 +1,8 @@
 //===================================================
 // hit_stop_behavior.cpp
 // 
-// Author・哺iu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //===================================================
 #include "hit_stop_behavior.h"
 
@@ -29,6 +29,9 @@ void HitStopBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
+// ----------------------------------------------- public
+
+// ヒットストップの開始
 void HitStopBehavior::StartHitStop(
     float duration,
     HitStopCallback onEnter,
@@ -47,15 +50,19 @@ void HitStopBehavior::StartHitStop(
     m_hitStopTask.Start();
 }
 
+// ヒットストップ中かどうかの判定
 bool HitStopBehavior::IsHitStopping() const
 {
     return m_hitStopTask.IsRunning();
 }
 
+// ----------------------------------------------- HitStopTask
+
 void HitStopBehavior::HitStopTask::Start()
 {
     SequenceTask::Start();
 
+    // ヒットストップ開始時のコールバックを呼び出す
     if (m_onEnter) {
         m_onEnter();
     }
@@ -80,11 +87,14 @@ void HitStopBehavior::HitStopTask::Update(float deltaTime)
         break;
 
     case 2:
+        // ヒットストップ中の更新処理
         if (m_onUpdate) {
             m_onUpdate();
         }
 
-        if (m_taskTimer >= m_duration) {
+        // ヒットストップの待機処理
+        if (Wait(m_duration)) {
+            // ヒットストップ終了時のコールバックを呼び出す
             if (m_onExit) {
                 m_onExit();
             }

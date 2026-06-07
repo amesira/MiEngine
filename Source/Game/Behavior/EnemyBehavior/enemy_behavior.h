@@ -1,8 +1,8 @@
 //---------------------------------------------------
 // enemy_behavior.h
 // 
-// Author・Miu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //---------------------------------------------------
 #ifndef ENEMY_BEHAVIOR_H
 #define ENEMY_BEHAVIOR_H
@@ -22,6 +22,7 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
+    // コンテキストの取得
     EnemyContext& GetContext() { return m_context; }
     const EnemyContext& GetContext() const { return m_context; }
 

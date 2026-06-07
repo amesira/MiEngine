@@ -1,8 +1,8 @@
 //---------------------------------------------------
 // enemy_state_machine_behavior.h
 // 
-// Author・Miu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //---------------------------------------------------
 #ifndef ENEMY_STATE_MACHINE_BEHAVIOR_H
 #define ENEMY_STATE_MACHINE_BEHAVIOR_H
@@ -27,6 +27,7 @@ public:
     void UpdateStateMachine(EnemyContext& context, float deltaTime);
 
 private:
+    // 状態遷移処理
     void ChangeState(EnemyContext& context, EnemyState newState);
 };
 

@@ -226,7 +226,7 @@ void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
         case 1: {
             if (m_holdDuration > 0.0f) {
                 // 一定時間保持
-                if (Wait(m_holdDuration, deltaTime)) {
+                if (Wait(m_holdDuration)) {
                     AdvanceStep();
                 }
             }

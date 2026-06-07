@@ -1,8 +1,8 @@
 //===================================================
 // base_enemy_attack_behavior.cpp
 // 
-// Author・Miu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //===================================================
 #include "base_enemy_attack_behavior.h"
 
@@ -10,15 +10,16 @@
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
 namespace {
-const char* ToEnemyAttackTypeName(EnemyAttackType attackType)
-{
-    switch (attackType) {
-    case EnemyAttackType::Melee: return "Melee";
-    case EnemyAttackType::Shooter: return "Shooter";
-    case EnemyAttackType::Area: return "Area";
-    default: return "Unknown";
+    // デバッグ用：EnemyAttackTypeを文字列に変換
+    const char* ToEnemyAttackTypeName(EnemyAttackType attackType)
+    {
+        switch (attackType) {
+        case EnemyAttackType::Melee: return "Melee";
+        case EnemyAttackType::Shooter: return "Shooter";
+        case EnemyAttackType::Area: return "Area";
+        default: return "Unknown";
+        }
     }
-}
 }
 
 void BaseEnemyAttackBehavior::Start()
@@ -50,17 +51,22 @@ void BaseEnemyAttackBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
+// ----------------------------------------------- public
+
+// 攻撃可能かどうかの判定
 bool BaseEnemyAttackBehavior::CanAttack(const EnemyContext& context) const
 {
     return context.canSeeTarget && context.distanceToTarget <= m_attackRange;
 }
 
+// 攻撃開始処理
 void BaseEnemyAttackBehavior::StartAttack(EnemyContext&)
 {
     m_attackTimer = 0.0f;
     m_isAttacking = true;
 }
 
+// 攻撃更新処理
 void BaseEnemyAttackBehavior::UpdateAttack(EnemyContext&, float deltaTime)
 {
     if (!m_isAttacking) return;
@@ -71,6 +77,7 @@ void BaseEnemyAttackBehavior::UpdateAttack(EnemyContext&, float deltaTime)
     }
 }
 
+// 攻撃が終了したかどうかの判定
 bool BaseEnemyAttackBehavior::IsAttackFinished() const
 {
     return !m_isAttacking;

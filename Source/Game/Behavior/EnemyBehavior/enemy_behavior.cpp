@@ -1,8 +1,8 @@
 //===================================================
 // enemy_behavior.cpp
 // 
-// Author・Miu Kitamura
-// Date  ・・026/06/06
+// Author：Miu Kitamura
+// Date  ：2026/06/06
 //===================================================
 #include "enemy_behavior.h"
 
@@ -19,18 +19,21 @@
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
+using namespace DirectX;
+
 namespace {
-const char* ToEnemyStateName(EnemyState state)
-{
-    switch (state) {
-    case EnemyState::Idle: return "Idle";
-    case EnemyState::Chase: return "Chase";
-    case EnemyState::Attack: return "Attack";
-    case EnemyState::Stunned: return "Stunned";
-    case EnemyState::Dead: return "Dead";
-    default: return "Unknown";
+    // デバッグ用：EnemyStateを文字列に変換
+    const char* ToEnemyStateName(EnemyState state)
+    {
+        switch (state) {
+        case EnemyState::Idle: return "Idle";
+        case EnemyState::Chase: return "Chase";
+        case EnemyState::Attack: return "Attack";
+        case EnemyState::Stunned: return "Stunned";
+        case EnemyState::Dead: return "Dead";
+        default: return "Unknown";
+        }
     }
-}
 }
 
 void EnemyBehavior::Start()
@@ -38,6 +41,7 @@ void EnemyBehavior::Start()
     GameObject* owner = GetOwner();
     if (!owner) return;
 
+    // コンテキストの初期化
     m_context.enemyBehavior = this;
     m_context.transform = owner->GetComponent<TransformComponent>();
     m_context.rigidbody = owner->GetComponent<RigidbodyComponent>();
@@ -50,6 +54,7 @@ void EnemyBehavior::Start()
 
     IScene* scene = owner->GetScene();
     if (scene) {
+        // ターゲットオブジェクト（プレイヤー）をシーンから取得
         m_context.targetObject = scene->GetGameObjectByName("Player");
         if (m_context.targetObject) {
             m_context.targetTransform = m_context.targetObject->GetComponent<TransformComponent>();
@@ -59,8 +64,10 @@ void EnemyBehavior::Start()
 
 void EnemyBehavior::Update()
 {
+    // ターゲットとの距離や視認状態を毎フレーム更新
     UpdateTargetInformation();
 
+    // 状態マシンの更新
     const float deltaTime = FPS_GetDeltaTime();
     if (m_context.stateMachine) {
         m_context.stateMachine->UpdateStateMachine(m_context, deltaTime);
@@ -79,6 +86,9 @@ void EnemyBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
+// ------------------------------------------------ private
+
+// ターゲットとの距離や視認状態を更新する処理
 void EnemyBehavior::UpdateTargetInformation()
 {
     m_context.distanceToTarget = 0.0f;
@@ -86,10 +96,11 @@ void EnemyBehavior::UpdateTargetInformation()
 
     if (!m_context.transform || !m_context.targetTransform) return;
 
-    const DirectX::XMFLOAT3 enemyPosition = m_context.transform->GetPosition();
-    const DirectX::XMFLOAT3 targetPosition = m_context.targetTransform->GetPosition();
-    const DirectX::XMFLOAT3 toTarget = MiMath::Subtract(targetPosition, enemyPosition);
+    // 敵とターゲットの位置から距離を計算
+    const XMFLOAT3 enemyPosition = m_context.transform->GetPosition();
+    const XMFLOAT3 targetPosition = m_context.targetTransform->GetPosition();
+    const XMFLOAT3 toTarget = MiMath::Subtract(targetPosition, enemyPosition);
 
     m_context.distanceToTarget = MiMath::Length(toTarget);
-    m_context.canSeeTarget = true;
+    m_context.canSeeTarget = true; // 仮：常に視認できるとする。実際にはレイキャストなどで障害物を考慮して判定する。
 }
