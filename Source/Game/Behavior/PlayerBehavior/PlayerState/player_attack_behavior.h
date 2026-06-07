@@ -13,7 +13,7 @@ class PlayerAttackBehavior : public BehaviorComponent {
 private:
     // ホールドバッファ関連
     float m_holdBufferTimer = 0.0f; // ホールドバッファの経過時間
-    float m_maxHoldBufferTime = 0.2f; // ホールドバッファの最大時間
+    float m_maxHoldBufferTime = 0.05f; // ホールドバッファの最大時間
 
     // 攻撃のチャージ時間
     float m_chargeTimer = 0.0f;

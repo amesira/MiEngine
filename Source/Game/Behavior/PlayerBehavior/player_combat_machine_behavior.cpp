@@ -112,7 +112,6 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(
 
         // チャージ攻撃
         if (context.input.triggerAttackCommand || context.input.holdAttackCommand) {
-            context.attackBehavior->EndAim(context);
             ChangeCombatState(context, PlayerCombatState::ChargeAttack);
         }
         // 通常状態へ戻る
