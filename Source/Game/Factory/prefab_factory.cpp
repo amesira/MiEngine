@@ -7,6 +7,7 @@
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/decal_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
+#include "Engine/Framework/Component/light_component.h"
 
 #include "Game/Behavior/transform_constraint_behavior.h"
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
@@ -56,6 +57,9 @@ namespace PrefabFactory
         prefab.chargeLight = EnvironmentFactory::CreatePointLight(scene, { 1.0f, 0.5f, 0.0f, 1.0f }, 3.0f);
         {
             SetupTransformConstraint(prefab.chargeLight, playerTransform, { 1.0f, -0.3f, -0.5f }, true, false);
+            LightComponent* lightComp = prefab.chargeLight->GetComponent<LightComponent>();
+            lightComp->SetEnable(false); // 最初はライトをオフにする
+            playerBehavior->SetupChargeLight(lightComp);
         }
 
         return prefab;

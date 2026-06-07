@@ -16,7 +16,7 @@
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
-#include "Engine/Core/GamePlay/tween_task.h"
+#include <algorithm>
 
 // コンポーネント
 #include "Engine/Framework/Component/transform_component.h"
@@ -26,6 +26,7 @@
 #include "Engine/Framework/Component/camera_component.h"
 #include "Engine/Framework/Component/sprite_animation_component.h"
 #include "Engine/Framework/Component/sprite_renderer_component.h"
+#include "Engine/Framework/Component/light_component.h"
 
 #include "Engine/Framework/Component/particle_system_component.h"
 
@@ -113,7 +114,7 @@ void PlayerBehavior::Update()
     }
 
     // === プレイヤーエフェクトの更新 ===
-    m_chargeLightTweenTask.Update(unscaledDeltaTime);
+    m_changeChargeLightTask.Update(unscaledDeltaTime);
 }
 
 // PlayerBehaviorのインスペクタ表示
@@ -136,6 +137,17 @@ void PlayerBehavior::DrawComponentInspector()
 }
 
 // プレイヤーエフェクトの再生
+void PlayerBehavior::SetupChargeLight(LightComponent* chargeLight)
+{
+    m_chargeLight = chargeLight;
+    m_changeChargeLightTask.m_chargeLight = chargeLight;
+
+    if (!m_chargeLight) return;
+
+    m_changeChargeLightTask.m_defaultColor = m_chargeLight->GetDiffuse();
+    m_changeChargeLightTask.m_defaultIntensity = m_chargeLight->GetIntensity();
+}
+
 void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
 {
     if (!GAME_EFFECT || !CUSTOM_POST_EFFECT) return;
@@ -144,8 +156,7 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
     case PlayerEffectType::AimHoldStart:
         GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.35f, 0.05f, 0.0f), 0.08f, 0.08f);
         break;
-        
-        // === Aim ===
+
     case PlayerEffectType::AimStart:
         GAME_EFFECT->ChangeFOV(65.0f, 0.2f);
         GAME_EFFECT->ChangeCameraOffset(XMFLOAT3(0.0f, -0.5f, 0.0f), 0.1f);
@@ -162,51 +173,67 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
         CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::MonoMask, 0.0f, 0.1f, 0.0f);
         break;
 
-        // === Single Attack ===
     case PlayerEffectType::SingleAttack:
         GAME_EFFECT->ChangeFOVTemporary(72.0f, 0.08f, 0.04f);
         GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.45f, 0.0f, 0.10f), 0.06f, 0.04f);
         GAME_EFFECT->PlayCameraShake(0.10f, 0.15f);
-        break; 
+        break;
 
     case PlayerEffectType::SingleHit:
         GAME_EFFECT->PlayCameraShake(0.08f, 0.20f);
         break;
 
-        // === Charge Attack ===
     case PlayerEffectType::ChargeStart:
         GAME_EFFECT->ChangeFOV(60.0f, 0.2f);
         GAME_EFFECT->PlayCameraShake(0.08f, 0.10f);
-        m_chargeEffect->Play();
-        m_chargeEffect->Emission().enabled = true;
+        ChangeChargeLight(XMFLOAT4(0.35f, 0.75f, 1.0f, 1.0f), 8.0f, 1.0f);
+
+        if (m_chargeEffect) {
+            m_chargeEffect->Play();
+            m_chargeEffect->Emission().enabled = true;
+        }
         break;
 
     case PlayerEffectType::ChargeAttack:
-        // ヒットストップの開始
         if (m_hitStopBehavior) {
             m_hitStopBehavior->StartHitStop(
-            0.2f, 
-                [this]() { // ヒットストップ開始時の処理
+                0.2f,
+                [this]() {
                     GAME_EFFECT->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
                     GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
                     GAME_EFFECT->PlayCameraShake(0.16f, 0.30f);
-                    m_chargeEffect->Stop();
-                    m_chargeEffect->Emission().enabled = false;
 
-                    m_lockMovement = true; // プレイヤーの移動をロック
-                    m_spriteAnimation->Stop();
-                    
-                    m_rigidbody->SetIsKinematic(true); // プレイヤーの物理挙動をキネマティックにして完全に停止させる
-                    },
+                    // チャージライトを瞬間的に強くフラッシュ
+                    m_chargeLight->SetEnable(true);
+                    m_chargeLight->SetIntensity(20.0f);
+
+                    if (m_chargeEffect) {
+                        m_chargeEffect->Stop();
+                        m_chargeEffect->Emission().enabled = false;
+                    }
+
+                    m_lockMovement = true;
+                    if (m_spriteAnimation) {
+                        m_spriteAnimation->Stop();
+                    }
+                    if (m_rigidbody) {
+                        m_rigidbody->SetIsKinematic(true);
+                    }
+                },
                 nullptr,
                 nullptr,
-                [this]() { // ヒットストップ終了時の処理
-                    m_chargeEffect->Play();
-                    m_chargeEffect->Emission().enabled = false;
+                [this]() {
+                    ResetChargeLight(0.5f);
 
-                    m_lockMovement = false; // プレイヤーの移動をアンロック
+                    if (m_chargeEffect) {
+                        m_chargeEffect->Play();
+                        m_chargeEffect->Emission().enabled = false;
+                    }
 
-                    m_rigidbody->SetIsKinematic(false); // プレイヤーの物理挙動を通常に戻す
+                    m_lockMovement = false;
+                    if (m_rigidbody) {
+                        m_rigidbody->SetIsKinematic(false);
+                    }
                 }
             );
         }
@@ -217,11 +244,12 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
         GAME_EFFECT->PlayCameraShake(0.14f, 0.40f);
         break;
 
-        // === Attack End ===
     case PlayerEffectType::AttackEnd:
         GAME_EFFECT->ResetFOV(0.12f);
         GAME_EFFECT->ResetCameraLocalOffset(0.12f);
-        m_chargeEffect->Stop();
+        if (m_chargeEffect) {
+            m_chargeEffect->Stop();
+        }
         break;
 
     default:
@@ -330,4 +358,127 @@ void PlayerBehavior::UpdateAnimation(PlayerState state, PlayerCombatState combat
     if (m_spriteAnimation->GetClip(clipName) == m_spriteAnimation->GetCurrentClip()) return;
 
     m_spriteAnimation->Play(clipName);
+}
+
+// --------------------------------- チャージライトの変化管理
+
+void PlayerBehavior::ChangeChargeLight(const XMFLOAT4& color, float intensity, float duration)
+{
+    if (!m_chargeLight) return;
+
+    m_changeChargeLightTask.Reset();
+    m_changeChargeLightTask.m_chargeLight = m_chargeLight;
+    m_changeChargeLightTask.m_startColor = m_chargeLight->GetDiffuse();
+    m_changeChargeLightTask.m_targetColor = color;
+    m_changeChargeLightTask.m_endColor = color;
+    m_changeChargeLightTask.m_startIntensity = m_chargeLight->GetIntensity();
+    m_changeChargeLightTask.m_targetIntensity = intensity;
+    m_changeChargeLightTask.m_endIntensity = intensity;
+    m_changeChargeLightTask.m_duration = duration;
+    m_changeChargeLightTask.m_holdDuration = 0.0f;
+    m_changeChargeLightTask.Start();
+}
+
+void PlayerBehavior::ChangeChargeLightTemporary(const XMFLOAT4& color, float intensity, float duration, float holdDuration)
+{
+    if (!m_chargeLight) return;
+
+    m_changeChargeLightTask.Reset();
+    m_changeChargeLightTask.m_chargeLight = m_chargeLight;
+    m_changeChargeLightTask.m_startColor = m_chargeLight->GetDiffuse();
+    m_changeChargeLightTask.m_targetColor = color;
+    m_changeChargeLightTask.m_endColor = m_changeChargeLightTask.m_defaultColor;
+    m_changeChargeLightTask.m_startIntensity = m_chargeLight->GetIntensity();
+    m_changeChargeLightTask.m_targetIntensity = intensity;
+    m_changeChargeLightTask.m_endIntensity = m_changeChargeLightTask.m_defaultIntensity;
+    m_changeChargeLightTask.m_duration = duration;
+    m_changeChargeLightTask.m_holdDuration = holdDuration;
+    m_changeChargeLightTask.Start();
+}
+
+void PlayerBehavior::ResetChargeLight(float duration)
+{
+    ChangeChargeLight(m_changeChargeLightTask.m_defaultColor, m_changeChargeLightTask.m_defaultIntensity, duration);
+}
+
+
+// ------------------------------------------------ PlayerBehavior::ChangeChargeLightTask
+
+void PlayerBehavior::ChangeChargeLightTask::Start()
+{
+    SequenceTask::Start();
+
+    if (m_chargeLight) {
+        m_chargeLight->SetEnable(true); // ライトを有効化
+        m_chargeLight->SetDiffuse(m_startColor);
+        m_chargeLight->SetIntensity(m_startIntensity);
+    }
+}
+
+void PlayerBehavior::ChangeChargeLightTask::Update(float deltaTime)
+{
+    if (IsFinished()) return;
+
+    SequenceTask::Update(deltaTime);
+
+    if (!m_chargeLight) {
+        Finish();
+        return;
+    }
+
+    switch (m_taskStep) {
+    case 0: {
+        float t = 1.0f;
+        if (m_duration > 0.0f) {
+            t = (std::min)(m_taskTimer / m_duration, 1.0f);
+        }
+
+        m_chargeLight->SetDiffuse(MiMath::Lerp(m_startColor, m_targetColor, t));
+        m_chargeLight->SetIntensity(MiMath::Lerp(m_startIntensity, m_targetIntensity, t));
+
+        if (t >= 1.0f) {
+            if (m_holdDuration > 0.0f) {
+                AdvanceStep();
+            }
+            else {
+                // 目標値が0以下の場合はライトを無効化
+                if (m_targetIntensity <= 0.0f) {
+                    m_chargeLight->SetEnable(false);
+                }
+                Finish();
+            }
+        }
+        break;
+    }
+    case 1:
+        if (Wait(m_holdDuration)) {
+            AdvanceStep();
+        }
+        break;
+
+    case 2: {
+        float t = 1.0f;
+        if (m_duration > 0.0f) {
+            t = (std::min)(m_taskTimer / m_duration, 1.0f);
+        }
+
+        m_chargeLight->SetDiffuse(MiMath::Lerp(m_targetColor, m_endColor, t));
+        m_chargeLight->SetIntensity(MiMath::Lerp(m_targetIntensity, m_endIntensity, t));
+
+        if (t >= 1.0f) {
+            m_chargeLight->SetDiffuse(m_endColor);
+            m_chargeLight->SetIntensity(m_endIntensity);
+
+            // 終了値が0以下の場合はライトを無効化
+            if (m_endIntensity <= 0.0f) {
+                m_chargeLight->SetEnable(false);
+            }
+            Finish();
+        }
+        break;
+    }
+    default:
+        Finish();
+        break;
+    }
 }

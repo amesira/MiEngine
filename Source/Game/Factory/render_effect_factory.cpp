@@ -170,8 +170,8 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
     main.duration = 1.0f;
     main.loop = true;
     main.playOnAwake = true;
-    main.startLifetime = { true, 0.55f, 0.35f, 0.8f };
-    main.startSpeed = { true, -4.5f, -6.5f, -2.8f };
+    main.startLifetime = { true, 0.15f, 0.05f, 0.35f };
+    main.startSpeed = { true, -10.5f, -12.5f, -7.8f };
     main.startSize = { true, 0.22f, 0.08f, 0.32f };
     main.startColor.randomBetweenTwoColors = true;
     main.startColor.colorMin = { 0.25f, 0.75f, 1.0f, 0.85f };

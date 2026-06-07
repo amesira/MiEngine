@@ -25,7 +25,7 @@ class CameraComponent;
 class ParticleSystemComponent;
 class LightComponent;
 
-#include "Engine/Core/GamePlay/tween_task.h"
+#include "Engine/Core/GamePlay/sequence_task.h"
 
 class HitStopBehavior;
 
@@ -52,7 +52,30 @@ private:
     HitStopBehavior* m_hitStopBehavior = nullptr;
     ParticleSystemComponent* m_chargeEffect = nullptr;
     LightComponent* m_chargeLight = nullptr;
-    FloatTweenTask m_chargeLightTweenTask;
+
+    // チャージライトの変化を管理するタスク
+    class ChangeChargeLightTask : public SequenceTask {
+    public:
+        LightComponent* m_chargeLight = nullptr;
+
+        XMFLOAT4 m_defaultColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 m_startColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 m_targetColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 m_endColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+        float m_defaultIntensity = 0.0f;
+        float m_startIntensity = 0.0f;
+        float m_targetIntensity = 0.0f;
+        float m_endIntensity = 0.0f;
+
+        float m_duration = 0.0f;
+        float m_holdDuration = 0.0f;
+
+        void Start() override;
+        void Update(float deltaTime) override;
+    };
+
+    ChangeChargeLightTask m_changeChargeLightTask;
 
 public:
     ~PlayerBehavior() = default;
@@ -65,13 +88,17 @@ public:
     // チャージエフェクトセットアップ
     void SetupChargeEffect(ParticleSystemComponent* chargeEffect) { m_chargeEffect = chargeEffect; }
     // チャージライトセットアップ
-    void SetupChargeLight(LightComponent* chargeLight) { m_chargeLight = chargeLight; }
+    void SetupChargeLight(LightComponent* chargeLight);
 
 private:
     // プレイヤーの入力処理
     PlayerInput UpdateInput();
     // プレイヤーのアニメーション制御
     void UpdateAnimation(PlayerState state, PlayerCombatState combatState);
+
+    void ChangeChargeLight(const XMFLOAT4& color, float intensity, float duration);
+    void ChangeChargeLightTemporary(const XMFLOAT4& color, float intensity, float duration, float holdDuration);
+    void ResetChargeLight(float duration);
 
 };
 
