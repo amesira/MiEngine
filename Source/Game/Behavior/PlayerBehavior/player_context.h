@@ -37,6 +37,22 @@ enum class PlayerEffectType {
     AttackEnd,
 };
 
+enum class PlayerRotationMode {
+    CameraForward,
+    MoveDirection,
+    AimForward,
+    Locked,
+};
+
+struct PlayerMoveRequest {
+    bool canMove = true;
+    bool canRotate = true;
+
+    float speedMultiplier = 1.0f;
+
+    PlayerRotationMode rotationMode = PlayerRotationMode::CameraForward;
+};
+
 // プレイヤー入力構造体
 struct PlayerInput {
     float horizontal;   // 水平方向の入力

@@ -168,7 +168,12 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Device\direct3d.cpp" />
     <ClCompile Include="Source\Game\Factory\environment_factory.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.cpp" />
     <ClCompile Include="External\ImGui\imgui.cpp" />
     <ClCompile Include="External\ImGui\imgui_demo.cpp" />
@@ -275,7 +280,13 @@
     <ClInclude Include="Source\Engine\Editor\editor_context.h" />
     <ClInclude Include="Source\Engine\engine_service_locator.h" />
     <ClInclude Include="Source\Game\Factory\environment_factory.h" />
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_context.h" />
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.h" />
     <ClInclude Include="External\ImGui\imconfig.h" />
     <ClInclude Include="External\ImGui\imgui.h" />

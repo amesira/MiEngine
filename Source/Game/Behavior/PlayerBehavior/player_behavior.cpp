@@ -75,14 +75,21 @@ void PlayerBehavior::Update()
     // 入力の更新
     m_context.input = UpdateInput();
 
+    PlayerMoveRequest moveRequest;
+
     // 状態マシーンの更新
     if (m_stateMachine) {
-        m_stateMachine->UpdateStateMachine(m_context, deltaTime);
+        m_stateMachine->UpdateStateMachine(m_context, moveRequest, deltaTime);
     }
 
     // 戦闘マシーンの更新
     if (m_combatMachine) {
-        m_combatMachine->UpdateCombatMachine(m_context, deltaTime, unscaledDeltaTime);
+        m_combatMachine->UpdateCombatMachine(m_context, moveRequest, deltaTime, unscaledDeltaTime);
+    }
+
+    if (m_context.moveBehavior) {
+        m_context.moveBehavior->UpdateMove(m_context, moveRequest, deltaTime);
+        m_context.moveBehavior->UpdateRotation(m_context, moveRequest, deltaTime);
     }
 
     // アニメーション制御

@@ -23,7 +23,7 @@ public:
     void DrawComponentInspector() override;
 
     // プレイヤーの状態更新処理
-    void UpdateStateMachine(PlayerContext& context, float deltaTime);
+    void UpdateStateMachine(PlayerContext& context, PlayerMoveRequest& moveRequest, float deltaTime);
 
 private:
     // 状態切り替え

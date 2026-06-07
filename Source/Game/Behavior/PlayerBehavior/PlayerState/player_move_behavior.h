@@ -36,9 +36,9 @@ public:
     void DrawComponentInspector() override;
 
     // 移動更新処理
-    void UpdateMove(const PlayerContext& context, float deltaTime, float speedMultipler = 1.0f);
+    void UpdateMove(const PlayerContext& context, const PlayerMoveRequest& moveRequest, float deltaTime);
     // 回転更新処理
-    void UpdateRotation(const PlayerContext& context, float deltaTime);
+    void UpdateRotation(const PlayerContext& context, const PlayerMoveRequest& moveRequest, float deltaTime);
 
 };
 

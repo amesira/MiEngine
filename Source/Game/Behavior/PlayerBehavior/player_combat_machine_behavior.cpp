@@ -1,12 +1,10 @@
 //===================================================
 // player_combat_machine_behavior.cpp
 // 
-// Author：Miu Kitamura
-// Date  ：2026/04/23
+// Author・Miu Kitamura
+// Date  ・・026/04/23
 //===================================================
 #include "player_combat_machine_behavior.h"
-
-#include <windows.h>
 
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
@@ -49,61 +47,59 @@ void PlayerCombatMachineBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
-//------------------------------- public
-
-// プレイヤーの戦闘状態更新処理
-void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, float deltaTime, float unscaledDeltaTime)
+void PlayerCombatMachineBehavior::UpdateCombatMachine(
+    PlayerContext& context,
+    PlayerMoveRequest& moveRequest,
+    float deltaTime,
+    float unscaledDeltaTime)
 {
-    // 攻撃ビヘイビアが存在しない場合は戦闘状態をNoneにする
     if (!context.attackBehavior) {
         ChangeCombatState(context, PlayerCombatState::None);
-        hal::dout << "警告: PlayerCombatMachineBehaviorが攻撃ビヘイビアを参照できません。戦闘状態をNoneに設定します。" << std::endl;
+        hal::dout << "Warning: PlayerCombatMachineBehavior could not find PlayerAttackBehavior. CombatState is set to None." << std::endl;
         return;
     }
 
-    bool entered = m_isEnterCombatState;
+    const bool entered = m_isEnterCombatState;
     m_isEnterCombatState = false;
     m_debugEntered = entered;
 
     switch (context.combatState) {
-    case PlayerCombatState::None: {
+    case PlayerCombatState::None:
         if (context.input.triggerAimCommand) {
             ChangeCombatState(context, PlayerCombatState::HoldBuffer);
         }
         break;
-    }
-    case PlayerCombatState::HoldBuffer: { // === エイムに移行するまでの待機状態 ===
-        // 開始処理
+
+    case PlayerCombatState::HoldBuffer:
         if (entered) {
             context.attackBehavior->StartAttackHoldBuffer(context);
         }
 
-        // 更新処理
         context.attackBehavior->UpdateAttackHoldBuffer(context, deltaTime, unscaledDeltaTime);
 
-        // キーを放したら通常攻撃、ホールドバッファが終了していたらエイムに移行
         if (context.input.triggerAttackCommand || !context.input.holdAttackCommand) {
             ChangeCombatState(context, PlayerCombatState::SingleAttack);
         }
-        else if (context.attackBehavior->IsFinishedHoldBuffer()){
+        else if (context.attackBehavior->IsFinishedHoldBuffer()) {
             ChangeCombatState(context, PlayerCombatState::Aim);
         }
         else if (context.input.releaseAimCommand || (!context.input.holdAimCommand && !context.input.holdAttackCommand)) {
             ChangeCombatState(context, PlayerCombatState::None);
         }
         break;
-    }
 
-    case PlayerCombatState::Aim: { // === エイム状態 ===
-        // 開始処理
+    case PlayerCombatState::Aim:
+        moveRequest.canMove = true;
+        moveRequest.canRotate = true;
+        moveRequest.speedMultiplier *= 0.4f;
+        moveRequest.rotationMode = PlayerRotationMode::AimForward;
+
         if (entered) {
             context.attackBehavior->StartAim(context);
         }
 
-        // 更新処理
         context.attackBehavior->UpdateAim(context, deltaTime, unscaledDeltaTime);
 
-        // 攻撃キーを放したら通常攻撃、ホールドが続いているならチャージ攻撃、エイムキーを放したらエイム終了
         if (context.input.triggerAttackCommand || context.input.holdAttackCommand) {
             context.attackBehavior->EndAim(context);
             ChangeCombatState(context, PlayerCombatState::ChargeAttack);
@@ -112,12 +108,14 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, fl
             context.attackBehavior->EndAim(context);
             ChangeCombatState(context, PlayerCombatState::None);
         }
-
         break;
-    }
 
-    case PlayerCombatState::SingleAttack: {
-        if (entered && context.attackBehavior) {
+    case PlayerCombatState::SingleAttack:
+        moveRequest.canMove = false;
+        moveRequest.canRotate = true;
+        moveRequest.rotationMode = PlayerRotationMode::AimForward;
+
+        if (entered) {
             context.attackBehavior->SingleAttack(context);
         }
 
@@ -128,10 +126,13 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, fl
             ChangeCombatState(context, PlayerCombatState::None);
         }
         break;
-    }
 
-    case PlayerCombatState::ChargeAttack: {
-        if (entered && context.attackBehavior) {
+    case PlayerCombatState::ChargeAttack:
+        moveRequest.canMove = false;
+        moveRequest.canRotate = true;
+        moveRequest.rotationMode = PlayerRotationMode::AimForward;
+
+        if (entered) {
             context.attackBehavior->ChargeAttack(context);
         }
 
@@ -142,7 +143,6 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, fl
             ChangeCombatState(context, PlayerCombatState::None);
         }
         break;
-    }
 
     default:
         ChangeCombatState(context, PlayerCombatState::None);
@@ -152,7 +152,6 @@ void PlayerCombatMachineBehavior::UpdateCombatMachine(PlayerContext& context, fl
     m_debugCombatState = context.combatState;
 }
 
-// CombatStateの変更処理
 void PlayerCombatMachineBehavior::ChangeCombatState(PlayerContext& context, PlayerCombatState newState)
 {
     if (context.combatState == newState) return;

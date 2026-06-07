@@ -203,6 +203,21 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.cpp">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
@@ -488,6 +503,24 @@
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_context.h">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.h">
+      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_resource.h">
       <Filter>Sources\Engine\Graphics\GraphicsResource</Filter>
     </ClInclude>
@@ -670,6 +703,9 @@
     </Filter>
     <Filter Include="Sources\Game\Behavior\BaseBehavior">
       <UniqueIdentifier>{21317434-64d7-48b9-8676-91420017e91f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Behavior\EnemyBehavior">
+      <UniqueIdentifier>{ef3101d5-6a3f-46bd-8c10-41eb8a635e79}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Engine\Graphics\GraphicsResource">
       <UniqueIdentifier>{b2d9e375-8123-4c2d-b1e6-f7a883b59809}</UniqueIdentifier>

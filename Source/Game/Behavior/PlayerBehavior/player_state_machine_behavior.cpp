@@ -54,7 +54,7 @@ void PlayerStateMachineBehavior::DrawComponentInspector()
 //------------------------------- private
 
 // プレイヤーの状態更新処理
-void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, float deltaTime)
+void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, PlayerMoveRequest& moveRequest, float deltaTime)
 {
     // 状態に入ったばかりかどうかのフラグを取得してリセット
     bool entered = m_isEnterState;
@@ -73,8 +73,10 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
         }
 
         // 移動と回転の更新
-        context.moveBehavior->UpdateMove(context, deltaTime);
-        context.moveBehavior->UpdateRotation(context, deltaTime);
+        moveRequest.canMove = true;
+        moveRequest.canRotate = true;
+        moveRequest.speedMultiplier = 1.0f;
+        moveRequest.rotationMode = PlayerRotationMode::CameraForward;
 
         // 入力による状態切り替え
         if (context.input.triggerDashCommand) {
@@ -90,8 +92,10 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
         }
 
         // 移動と回転の更新（回避中は移動速度を上げる）
-        context.moveBehavior->UpdateMove(context, deltaTime, 1.5f);
-        context.moveBehavior->UpdateRotation(context, deltaTime);
+        moveRequest.canMove = true;
+        moveRequest.canRotate = true;
+        moveRequest.speedMultiplier = 1.5f;
+        moveRequest.rotationMode = PlayerRotationMode::CameraForward;
 
         // 回避の更新
         context.dodgeBehavior->UpdateDodge(context, deltaTime);
@@ -101,6 +105,13 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, floa
             ChangeState(context, PlayerState::Idle);
         }
 
+        break;
+    }
+
+    case PlayerState::Stunned: {
+        moveRequest.canMove = false;
+        moveRequest.canRotate = false;
+        moveRequest.rotationMode = PlayerRotationMode::Locked;
         break;
     }
 
