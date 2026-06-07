@@ -15,6 +15,8 @@
 
 #include "Game/Behavior/BaseBehavior/bullet_behavior.h"
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
+#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
 
 #include "Engine/Graphics/material_repository.h"
 #include "Engine/Graphics/model_repository.h"
@@ -155,8 +157,12 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     TransformComponent* transform = bullet->AddComponent<TransformComponent>();
     ModelComponent* modelComponent = bullet->AddComponent<ModelComponent>();
     ParticleSystemComponent* particleSystem = bullet->AddComponent<ParticleSystemComponent>();
+
     BulletBehavior* bulletBehavior = bullet->AddComponent<BulletBehavior>();
-    HitStopBehavior* hitStopBehavior = bullet->AddComponent<HitStopBehavior>();
+    
+    bullet->AddComponent<HitStopBehavior>();
+    bullet->AddComponent<ShakeObjectBehavior>();
+    bullet->AddComponent<BlinkerBehavior>();
 
     transform->SetPosition(desc.position);
     transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });

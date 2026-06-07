@@ -13,6 +13,8 @@
 
 class TransformComponent;
 class HitStopBehavior;
+class BlinkerBehavior;
+class ShakeObjectBehavior;
 
 class BulletBehavior : public BehaviorComponent {
 public:
@@ -34,8 +36,10 @@ private:
     RaycastHit m_lastHit = {};      // 最後にヒットした情報
     HitCallback m_onHit = nullptr;  // ヒットコールバック関数
 
-    // ヒットストップ
+    // === 演出関連 ===
     HitStopBehavior* m_hitStopBehavior = nullptr;
+    BlinkerBehavior* m_blinkerBehavior = nullptr;
+    ShakeObjectBehavior* m_shakeObjectBehavior = nullptr;
 
 public:
     BulletBehavior() = default;

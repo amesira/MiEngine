@@ -34,6 +34,8 @@
 #include "Game/Behavior/EnemyBehavior/base_enemy_attack_behavior.h"
 
 #include "Game/Behavior/BaseBehavior/health_behavior.h"
+#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
+#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -194,6 +196,8 @@ GameObject* ActorFactory::CreateSimpleEnemy(SceneBase* scene, const XMFLOAT3& po
 
     enemy->AddComponent<HitStopBehavior>();
     enemy->AddComponent<HealthBehavior>();
+    enemy->AddComponent<BlinkerBehavior>();
+    enemy->AddComponent<ShakeObjectBehavior>();
 
     return enemy;
 }

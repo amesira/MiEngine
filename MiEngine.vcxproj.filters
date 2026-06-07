@@ -218,6 +218,9 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_bar_follow_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
@@ -231,6 +234,9 @@
       <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\shake_object_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp">
@@ -530,6 +536,9 @@
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_bar_follow_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
@@ -546,6 +555,9 @@
       <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\shake_object_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_resource.h">

@@ -16,6 +16,8 @@
 
 #include "Game/Behavior/BaseBehavior/health_behavior.h"
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
+#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
 
 #include "Utility/mi_math.h"
 
@@ -60,6 +62,10 @@ void EnemyBehavior::Start()
 
     m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
     m_healthBehavior = owner->GetComponent<HealthBehavior>();
+    m_healthBehavior->SetMaxHealth(30.0f, true);
+
+    m_blinkerBehavior = owner->GetComponent<BlinkerBehavior>();
+    m_shakeObjectBehavior = owner->GetComponent<ShakeObjectBehavior>();
 
     // ダメージコールバックの設定
     m_healthBehavior->SetOnTakeDamageCallback([this](float currentHealth, float damage) {
@@ -69,13 +75,14 @@ void EnemyBehavior::Start()
                 m_hitStopBehavior->StartHitStop(
                     0.5f,
                     [this]() {
-
+                        m_blinkerBehavior->Flash({ 1.0f, 0.0f, 0.0f }, 1.0f, 0.5f); // 死亡時に赤くフラッシュ
+                        m_shakeObjectBehavior->ShakeTemporary(0.5f, 1.0f); // 死亡時に揺らす（オフセットリセットあり）
                     },
                     nullptr,
                     nullptr,
                     [this]() {
                         if (GetOwner()) {
-                            GetOwner()->SetActive(false); // ヒットストップ終了後にオブジェクトを非アクティブ化
+                            GetOwner()->Destroy(); // ヒットストップ終了後にオブジェクトを破棄
                         }
                     }); // 死亡時に長めのヒットストップを開始
             }
@@ -84,14 +91,18 @@ void EnemyBehavior::Start()
             m_context.state = EnemyState::Stunned; // 仮
             if (m_hitStopBehavior) {
                 m_hitStopBehavior->StartHitStop(
-                    0.1f,
+                    0.2f,
                     [this]() {
-                        m_context.state = EnemyState::Stunned;
+                        m_blinkerBehavior->Flash({ 1.0f, 0.5f, 0.5f }, 1.0f, 0.2f); // ダメージを受けたときに短く赤くフラッシュ
+                        m_shakeObjectBehavior->Shake(0.2f, 0.5f); // ダメージを受けたときに短く揺らす
                     },
                     nullptr,
                     nullptr,
                     [this]() {
+                        m_blinkerBehavior->Reset(0.2f); // ヒットストップ終了後にフラッシュをリセット
+                        m_shakeObjectBehavior->Reset(0.2f); // ヒットストップ終了後に揺れをリセット
 
+                        m_context.state = EnemyState::Chase; // ヒットストップ終了後にChase状態に戻す（仮）
                     }); // ダメージを受けたときに短いヒットストップを開始
             }
         }

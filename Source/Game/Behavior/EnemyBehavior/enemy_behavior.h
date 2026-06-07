@@ -14,6 +14,8 @@ class CameraComponent;
 
 class HealthBehavior;
 class HitStopBehavior;
+class BlinkerBehavior;
+class ShakeObjectBehavior;
 
 class SpriteRendererComponent;
 
@@ -28,7 +30,11 @@ private:
     float m_currentAngleY = 0.0f;
 
     HealthBehavior* m_healthBehavior = nullptr;
+
+    // === 演出関連 ===
     HitStopBehavior* m_hitStopBehavior = nullptr;
+    BlinkerBehavior* m_blinkerBehavior = nullptr;
+    ShakeObjectBehavior* m_shakeObjectBehavior = nullptr;
 
 public:
     EnemyBehavior() = default;

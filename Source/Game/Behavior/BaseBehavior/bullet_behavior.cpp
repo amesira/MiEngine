@@ -8,6 +8,7 @@
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
+
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/model_component.h"
 
@@ -15,6 +16,8 @@
 
 #include "health_behavior.h"
 #include "hit_stop_behavior.h"
+#include "blinker_behavior.h"
+#include "shake_object_behavior.h"
 
 #include "External/ImGui/imgui.h"
 
@@ -31,6 +34,10 @@ void BulletBehavior::Start()
     if (!m_hitStopBehavior) {
         m_hitStopBehavior = GetOwner()->AddComponent<HitStopBehavior>();
     }
+    m_blinkerBehavior = GetOwner()->GetComponent<BlinkerBehavior>();
+    m_shakeObjectBehavior = GetOwner()->GetComponent<ShakeObjectBehavior>();
+
+    // 半径に応じてスケーリングを設定
     SetRadius(m_radius);
 }
 
@@ -154,11 +161,14 @@ void BulletBehavior::Finalize(bool isHitStop)
         m_hitStopBehavior->StartHitStop(
             0.1f,
             [this]() {
-
+                m_blinkerBehavior->Flash({ 1.0f, 0.5f, 0.5f }, 1.0f, 0.1f);
+                m_shakeObjectBehavior->Shake(0.1f, 0.5f);
             },
             nullptr,
             nullptr,
             [this]() {
+                m_blinkerBehavior->Reset(0.1f);
+                m_shakeObjectBehavior->Reset(0.1f);
                 if (GetOwner()) {
                     GetOwner()->Destroy();
                 }
