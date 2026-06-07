@@ -28,6 +28,7 @@ class LightComponent;
 #include "Engine/Core/GamePlay/sequence_task.h"
 
 class HitStopBehavior;
+class AfterimageGeneratorBehavior;
 
 class PlayerBehavior : public BehaviorComponent {
 private:
@@ -50,6 +51,8 @@ private:
     bool m_lockMovement = false; // プレイヤーの移動をロックするかどうか
 
     HitStopBehavior* m_hitStopBehavior = nullptr;
+    AfterimageGeneratorBehavior* m_afterimageGenerator = nullptr;
+
     ParticleSystemComponent* m_chargeEffect = nullptr;
     LightComponent* m_chargeLight = nullptr;
 

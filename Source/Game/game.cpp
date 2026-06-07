@@ -66,16 +66,7 @@ void GameScene::Initialize()
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
 
     // テスト：ParticleSystem
-    RenderEffectFactory::CreateParticleEffect(this, { -2.0f, 3.0f, 0.0f }, L"asset\\Texture\\particle.png");
-
-    // テスト：Bullet
-    ProjectileFactory::BulletCreateDesc bulletDesc = {};
-    bulletDesc.position = { 2.0f, 3.0f, 0.0f };
-    bulletDesc.velocity = { 0.0f, 0.0f, 0.0f };
-    bulletDesc.radius = 0.25f;
-    bulletDesc.lifeTime = MiMath::Infinity();
-    bulletDesc.layerMask = -1;
-    ProjectileFactory::CreateBullet(this, bulletDesc);
+    //RenderEffectFactory::CreateParticleEffect(this, { 0.0f, 0.0f, 0.0f }, L"asset\\Texture\\particle.png");
 
 }
 

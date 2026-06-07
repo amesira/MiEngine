@@ -39,6 +39,7 @@
 #include "./PlayerState/player_dodge_behavior.h"
 
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+#include "Game/Behavior/BaseBehavior/afterimage_generator_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_effect_controller.h"
@@ -59,6 +60,7 @@ void PlayerBehavior::Start()
     m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
     m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
 
+    m_afterimageGenerator = owner->GetComponent<AfterimageGeneratorBehavior>();
     m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
 
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
@@ -153,6 +155,16 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
     if (!GAME_EFFECT || !CUSTOM_POST_EFFECT) return;
 
     switch (type) {
+        // === Dodge ===
+    case PlayerEffectType::DodgeStart:
+        GAME_EFFECT->ChangeFOVTemporary(70.0f, 0.08f, 0.04f);
+        m_afterimageGenerator->StartEmission();
+        break;
+    case PlayerEffectType::DodgeEnd:
+        GAME_EFFECT->ResetFOV(0.1f);
+        m_afterimageGenerator->StopEmission();
+        break;
+        // === Aim ===
     case PlayerEffectType::AimHoldStart:
         GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.35f, 0.05f, 0.0f), 0.08f, 0.08f);
         break;
@@ -172,7 +184,7 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
         GAME_EFFECT->ResetCameraDistance(0.1f);
         CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::MonoMask, 0.0f, 0.1f, 0.0f);
         break;
-
+        // === Single Attack ===
     case PlayerEffectType::SingleAttack:
         GAME_EFFECT->ChangeFOVTemporary(72.0f, 0.08f, 0.04f);
         GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.45f, 0.0f, 0.10f), 0.06f, 0.04f);
@@ -182,7 +194,7 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
     case PlayerEffectType::SingleHit:
         GAME_EFFECT->PlayCameraShake(0.08f, 0.20f);
         break;
-
+        // === Charge Attack ===
     case PlayerEffectType::ChargeStart:
         GAME_EFFECT->ChangeFOV(60.0f, 0.2f);
         GAME_EFFECT->PlayCameraShake(0.08f, 0.10f);

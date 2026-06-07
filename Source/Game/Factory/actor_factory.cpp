@@ -26,6 +26,8 @@
 #include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
 #include "Game/Behavior/PlayerBehavior/PlayerState/player_dodge_behavior.h"
 
+#include "Game/Behavior/BaseBehavior/afterimage_generator_behavior.h"
+
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
 
 #include "Engine/engine_service_locator.h"
@@ -106,6 +108,14 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     player->AddComponent<PlayerDodgeBehavior>();
 
     player->AddComponent<HitStopBehavior>();
+    AfterimageGeneratorBehavior* afterimage = player->AddComponent<AfterimageGeneratorBehavior>();
+    {
+        afterimage->SetSource(transform, spriteRenderer);
+        afterimage->SetEmitInterval(0.1f);
+        afterimage->SetAfterimageLifeTime(0.25f);
+        afterimage->SetAlphaRange(0.15f, 0.0f);
+        afterimage->StopEmission();
+    }
 
     return player;
 }

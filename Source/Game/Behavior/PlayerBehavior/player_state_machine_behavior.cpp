@@ -14,6 +14,8 @@
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
+#include "player_behavior.h"
+
 #include "./PlayerState/player_move_behavior.h"
 #include "./PlayerState/player_attack_behavior.h"
 #include "./PlayerState/player_dodge_behavior.h"
@@ -89,6 +91,7 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, Play
         // 回避開始処理
         if (entered) {
             context.dodgeBehavior->StartDodge(context);
+            context.playerBehavior->PlayPlayerEffect(PlayerEffectType::DodgeStart);
         }
 
         // 移動と回転の更新（回避中は移動速度を上げる）
@@ -103,6 +106,7 @@ void PlayerStateMachineBehavior::UpdateStateMachine(PlayerContext& context, Play
         // 回避終了条件
         if (context.dodgeBehavior->IsDodgeFinished()) {
             ChangeState(context, PlayerState::Idle);
+            context.playerBehavior->PlayPlayerEffect(PlayerEffectType::DodgeEnd);
         }
 
         break;

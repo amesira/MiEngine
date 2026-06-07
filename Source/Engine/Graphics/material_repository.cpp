@@ -35,6 +35,7 @@ void MaterialRepository::Initialize()
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_materialCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Unlit)], m_materialCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_materialCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteUnlit)], m_materialCB);
 
     m_customPropertyCB = SHADER_REPOSITORY->GenerateConstantBufferResource(
         "CustomPropertyBuffer",
@@ -47,6 +48,7 @@ void MaterialRepository::Initialize()
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_customPropertyCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::Unlit)], m_customPropertyCB);
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_customPropertyCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteUnlit)], m_customPropertyCB);
 
     // デフォルトテクスチャの作成
     m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
@@ -77,7 +79,7 @@ MaterialResource* MaterialRepository::GenerateMaterial(const MaterialResource& m
     auto it = m_materialCache.find(material.name);
     if (it != m_materialCache.end())
     {
-        it->second = std::make_unique<MaterialResource>(material);
+        *it->second = material;
         return it->second.get();
     }
 

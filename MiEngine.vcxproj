@@ -170,6 +170,8 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Device\direct3d.cpp" />
     <ClCompile Include="Source\Game\Factory\environment_factory.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp" />
@@ -284,6 +286,8 @@
     <ClInclude Include="Source\Engine\Editor\editor_context.h" />
     <ClInclude Include="Source\Engine\engine_service_locator.h" />
     <ClInclude Include="Source\Game\Factory\environment_factory.h" />
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h" />
@@ -442,6 +446,20 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\CustomUnlitShader\hologram_unlit_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomUnlitShader\afterimage_unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

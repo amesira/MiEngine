@@ -71,7 +71,7 @@ public:
 
     // === Custom ===
     static constexpr int CUSTOM_PROPERTY_COUNT = 8;
-    XMFLOAT4 customProperties[CUSTOM_PROPERTY_COUNT]; // カスタムプロパティ（シェーダーで自由に使用可能）
+    XMFLOAT4 customProperties[CUSTOM_PROPERTY_COUNT] = { {0,0,0,0} }; // カスタムプロパティ（シェーダーで自由に使用可能）
     static constexpr int CUSTOM_TEXTURE_COUNT = 4;
     TextureResource* customTextures[CUSTOM_TEXTURE_COUNT] = { nullptr }; // カスタムテクスチャ（シェーダーで自由に使用可能）
 

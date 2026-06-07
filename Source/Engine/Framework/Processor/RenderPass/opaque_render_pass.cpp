@@ -106,6 +106,13 @@ void OpaqueRenderPass::Process(IScene* pScene, const RenderView& view)
             materialBufferData.emissiveIntensity = spriteMaterial.isOverrideEmissive ? spriteMaterial.overrideEmissiveIntensity : materialBufferData.emissiveIntensity;
             MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);
             MATERIAL_REPOSITORY->BindMaterialTexture(spriteMaterial);
+            XMFLOAT4 customProperties[MaterialResource::CUSTOM_PROPERTY_COUNT];
+            material->GetCustomProperties(customProperties);
+            MATERIAL_REPOSITORY->BindCustomProperties(customProperties);
+
+            TextureResource* customTextures[MaterialResource::CUSTOM_TEXTURE_COUNT];
+            material->GetCustomTextures(customTextures);
+            MATERIAL_REPOSITORY->BindCustomTextures(customTextures);
 
             // UV矩形にフリップを適用
             XMFLOAT4 uvRect = SpriteRenderUtility::ApplyFlipToUvRect(s.GetUvRect(), s.GetFlipX(), s.GetFlipY());

@@ -27,6 +27,9 @@ enum class PlayerCombatState {
 
 // プレイヤーエフェクトの種類
 enum class PlayerEffectType {
+    DodgeStart,
+    DodgeEnd,
+
     AimHoldStart,
 
     AimStart,

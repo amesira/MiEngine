@@ -60,6 +60,7 @@
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
     <FxCompile Include="Shader\CustomUnlitShader\hologram_unlit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUnlitShader\afterimage_unlit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
@@ -209,6 +210,12 @@
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp">
@@ -512,6 +519,12 @@
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h">
