@@ -149,6 +149,7 @@ public:
     static constexpr int MAX_PARTICLES = 1000; // 最大パーティクル数
 
 private:
+
     MainModule m_main = {};
     EmissionModule m_emission = {};
     ShapeModule m_shape = {};

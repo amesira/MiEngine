@@ -11,6 +11,7 @@ using namespace DirectX;
 #include <string>
 
 class GameObject;
+class IScene;
 class SceneBase;
 
 namespace RenderEffectFactory {
@@ -19,6 +20,8 @@ namespace RenderEffectFactory {
     GameObject* CreateParticleEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
     GameObject* CreateRunDustParticle(SceneBase* scene, std::string targetName, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
     GameObject* CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
+    GameObject* CreateHitEffect(IScene* scene, const XMFLOAT3& position);
+    GameObject* CreateExplosionEffect(IScene* scene, const XMFLOAT3& position);
 
 };
 

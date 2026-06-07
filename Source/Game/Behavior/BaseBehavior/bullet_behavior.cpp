@@ -21,6 +21,8 @@
 
 #include "External/ImGui/imgui.h"
 
+#include "Game/Factory/render_effect_factory.h"
+
 #include "Utility/mi_math.h"
 using namespace DirectX;
 
@@ -89,7 +91,7 @@ void BulletBehavior::Update()
                     isHitStop = true;
                 }
             }
-
+            
             // ヒットポイントに弾を移動させる
             m_transform->SetPosition(hit.hitPoint);
 
@@ -167,12 +169,14 @@ void BulletBehavior::Finalize(bool isHitStop)
             nullptr,
             nullptr,
             [this]() {
+                RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
                 if (GetOwner()) {
                     GetOwner()->Destroy();
                 }
             });
     }
     else {
+        RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
         if (GetOwner()) {
             GetOwner()->Destroy();
         }

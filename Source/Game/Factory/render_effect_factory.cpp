@@ -7,6 +7,7 @@
 #include "render_effect_factory.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_base.h"
+#include "Engine/Core/scene_interface.h"
 
 // component
 #include "Engine/Framework/Component/transform_component.h"
@@ -209,4 +210,119 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
     renderer.sortByDistance = true;
 
     return chargeEffect;
+}
+
+GameObject* RenderEffectFactory::CreateHitEffect(IScene* scene, const XMFLOAT3& position)
+{
+    if (!scene) return nullptr;
+
+    GameObject* hitEffect = scene->CreateGameObject();
+    hitEffect->SetName("HitEffect");
+    hitEffect->SetRenderLayer(RenderLayer::Particle);
+
+    TransformComponent* transform = hitEffect->AddComponent<TransformComponent>();
+    ParticleSystemComponent* particleSystem = hitEffect->AddComponent<ParticleSystemComponent>();
+
+    transform->SetPosition(position);
+
+    auto& main = particleSystem->Main();
+    main.duration = 0.12f;
+    main.loop = false;
+    main.playOnAwake = true;
+    main.startLifetime = { true, 0.22f, 0.12f, 0.34f };
+    main.startSpeed = { true, 5.5f, 3.2f, 8.0f };
+    main.startSize = { true, 0.18f, 0.08f, 0.28f };
+    main.startColor.randomBetweenTwoColors = true;
+    main.startColor.colorMin = { 0.45f, 0.85f, 1.0f, 0.95f };
+    main.startColor.colorMax = { 1.0f, 0.95f, 0.35f, 0.75f };
+    main.gravity = { 0.0f, -0.2f, 0.0f };
+    main.simulationSpeed = 1.0f;
+    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+
+    auto& emission = particleSystem->Emission();
+    emission.enabled = true;
+    emission.rateOverTime = 320.0f;
+    emission.rateOverDistance = 0.0f;
+
+    auto& shape = particleSystem->Shape();
+    shape.enabled = true;
+    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.sphere.radius = 0.12f;
+    shape.sphere.emitFromShell = false;
+    shape.randomDirectionAmount = 0.9f;
+
+    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    sizeOverLifetime.enabled = true;
+    sizeOverLifetime.size.keys = {
+        { 0.0f, 0.25f },
+        { 0.18f, 1.0f },
+        { 1.0f, 0.0f },
+    };
+
+    auto& renderer = particleSystem->Renderer();
+    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp");
+    renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
+    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.sortByDistance = true;
+
+    return hitEffect;
+}
+
+GameObject* RenderEffectFactory::CreateExplosionEffect(IScene* scene, const XMFLOAT3& position)
+{
+    if (!scene) return nullptr;
+
+    GameObject* explosionEffect = scene->CreateGameObject();
+    explosionEffect->SetName("ExplosionEffect");
+    explosionEffect->SetRenderLayer(RenderLayer::Particle);
+
+    TransformComponent* transform = explosionEffect->AddComponent<TransformComponent>();
+    ParticleSystemComponent* particleSystem = explosionEffect->AddComponent<ParticleSystemComponent>();
+
+    transform->SetPosition(position);
+
+    auto& main = particleSystem->Main();
+    main.duration = 0.22f;
+    main.loop = false;
+    main.playOnAwake = true;
+    main.startLifetime = { true, 0.45f, 0.25f, 0.75f };
+    main.startSpeed = { true, 7.5f, 4.5f, 12.0f };
+    main.startSize = { true, 0.34f, 0.16f, 0.62f };
+    main.startColor.randomBetweenTwoColors = true;
+    main.startColor.colorMin = { 0.2f, 0.7f, 1.0f, 0.95f };
+    main.startColor.colorMax = { 1.0f, 0.35f, 0.9f, 0.7f };
+    main.gravity = { 0.0f, -0.35f, 0.0f };
+    main.simulationSpeed = 1.0f;
+    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+
+    auto& emission = particleSystem->Emission();
+    emission.enabled = true;
+    emission.rateOverTime = 820.0f;
+    emission.rateOverDistance = 0.0f;
+
+    auto& shape = particleSystem->Shape();
+    shape.enabled = true;
+    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.sphere.radius = 0.45f;
+    shape.sphere.emitFromShell = false;
+    shape.randomDirectionAmount = 1.0f;
+
+    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    sizeOverLifetime.enabled = true;
+    sizeOverLifetime.size.keys = {
+        { 0.0f, 0.15f },
+        { 0.12f, 1.25f },
+        { 0.45f, 0.85f },
+        { 1.0f, 0.0f },
+    };
+
+    auto& renderer = particleSystem->Renderer();
+    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp");
+    renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
+    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.sortByDistance = true;
+
+    return explosionEffect;
 }

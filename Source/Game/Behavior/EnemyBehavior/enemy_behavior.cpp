@@ -27,6 +27,8 @@
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
+#include "Game/Factory/render_effect_factory.h"
+
 using namespace DirectX;
 
 namespace {
@@ -81,6 +83,8 @@ void EnemyBehavior::Start()
                     nullptr,
                     nullptr,
                     [this]() {
+                        // 爆発エフェクトを生成
+                        RenderEffectFactory::CreateExplosionEffect(GetOwner()->GetScene(), m_context.transform->GetPosition());
                         if (GetOwner()) {
                             GetOwner()->Destroy(); // ヒットストップ終了後にオブジェクトを破棄
                         }

@@ -220,7 +220,8 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             }
             else {
                 currentTime = main.duration;
-                particleSystem.Stop();
+
+                particleSystem.Emission().enabled = false; // エミッションを停止
             }
         }
 
