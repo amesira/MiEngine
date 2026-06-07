@@ -49,6 +49,7 @@ public:
     void BindMaterialTexture(const MaterialInstance& materialInstance);
     // カスタムプロパティのバインド
     void BindCustomProperties(XMFLOAT4* customPropaties);
+    void BindCustomTextures(TextureResource** customTextures);
 
 private:
     // マテリアルの読み込み

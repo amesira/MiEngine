@@ -72,6 +72,8 @@ public:
     // === Custom ===
     static constexpr int CUSTOM_PROPERTY_COUNT = 8;
     XMFLOAT4 customProperties[CUSTOM_PROPERTY_COUNT]; // カスタムプロパティ（シェーダーで自由に使用可能）
+    static constexpr int CUSTOM_TEXTURE_COUNT = 4;
+    TextureResource* customTextures[CUSTOM_TEXTURE_COUNT] = { nullptr }; // カスタムテクスチャ（シェーダーで自由に使用可能）
 
     // マテリアルバッファ生成
     MaterialBufferData CreateBufferData() const {
@@ -84,6 +86,18 @@ public:
         data.uvTiling = uvTiling;
         data.uvOffset = uvOffset;
         return data;
+    }
+
+    // カスタムプロパティの取得
+    void GetCustomProperties(XMFLOAT4* outProperties) const {
+        for (int i = 0; i < CUSTOM_PROPERTY_COUNT; i++) {
+            outProperties[i] = customProperties[i];
+        }
+    }
+    void GetCustomTextures(TextureResource** outTextures) const {
+        for (int i = 0; i < CUSTOM_TEXTURE_COUNT; i++) {
+            outTextures[i] = customTextures[i];
+        }
     }
 };
 

@@ -149,6 +149,16 @@ void OpaqueRenderPass::DrawMeshList(const std::vector<ModelMesh>& meshes, const 
         MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);
         MATERIAL_REPOSITORY->BindMaterialTexture(mat);
 
+        // カスタムプロパティのバインド
+        XMFLOAT4 customProperties[MaterialResource::CUSTOM_PROPERTY_COUNT];
+        mat.materialResource->GetCustomProperties(customProperties);
+        MATERIAL_REPOSITORY->BindCustomProperties(customProperties);
+
+        TextureResource* customTextures[MaterialResource::CUSTOM_TEXTURE_COUNT];
+        mat.materialResource->GetCustomTextures(customTextures);
+        MATERIAL_REPOSITORY->BindCustomTextures(customTextures);
+
+        // ジオメトリの描画
         ModelRenderUtility::DrawMeshGeometry(m_pContext, mesh);
     }
 }

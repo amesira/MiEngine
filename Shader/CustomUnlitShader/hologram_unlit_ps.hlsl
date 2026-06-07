@@ -6,8 +6,10 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 #include "../Common/camera.hlsl"
 
-Texture2D g_Texture : register(t5);
+Texture2D g_Texture : register(t6);
 SamplerState g_SamplerState : register(s0);
+
+Texture2D g_DitherTexture : register(t7); // ディザーテクスチャ
 
 cbuffer HologramParams : register(b9) // CustomPropertyで設定した定数バッファ
 {
@@ -46,31 +48,13 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     // エッジ部分を強調
     col.rgb *= edge * edge;
-    if (col.a <= 0.01f) discard;
+    if (col.a <= 0.01f) {
+        float2 screenUV = ps_in.posH.xy / ps_in.posH.w * 0.5 + 0.5; // スクリーンUVを計算
+        float ditherValue = g_DitherTexture.Sample(g_SamplerState, screenUV).r; // ディザーテクスチャから値を取得
+        if (col.a < ditherValue) {
+            discard; // ディザリングでピクセルを破棄
+        }
+    }
     
     return col;
 }
-/*
-    float posY = i.posW.y;
-    float2 worldUV = float2(0.5, posY * 3.0) + float2(0, _Time.y * 0.5); // UVをY軸に沿ってスクロールさせる
-
-    // sample the texture
-    fixed4 col = tex2D(_MainTex, worldUV) * _Color;
-    if (col.a < 0.01) discard; // 透明な部分は描画しない
-                
-    fixed3 emission = _EmissionColor.rgb;
-    col = fixed4(col.rgb + emission, col.a);
-
-    // オブジェクトの端に行くほど明るくする
-    // （法線と視野ベクトルから考える）
-    float3 viewDir = normalize(_WorldSpaceCameraPos - i.posW);
-    float3 normal = normalize(i.normalW);
-    float edge = 1.0 - saturate(abs(dot(viewDir, normal)));
-
-    // エッジ部分を強調
-    col.rgb *= edge * edge;
-
-    // apply fog
-    UNITY_APPLY_FOG(i.fogCoord, col);
-    return col;
-*/

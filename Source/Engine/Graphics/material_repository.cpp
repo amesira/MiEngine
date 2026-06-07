@@ -144,6 +144,7 @@ void MaterialRepository::BindMaterialTexture(const MaterialInstance& materialIns
     BindMaterialTexture(material);
 }
 
+// カスタムプロパティのバインド
 void MaterialRepository::BindCustomProperties(XMFLOAT4* customPropaties)
 {
     // カスタムプロパティをGPUに転送
@@ -155,6 +156,22 @@ void MaterialRepository::BindCustomProperties(XMFLOAT4* customPropaties)
         cbData[i] = customPropaties[i];
     }
     m_pContext->Unmap(m_customPropertyCB->buffer.Get(), 0);
+}
+
+// カスタムテクスチャのバインド
+void MaterialRepository::BindCustomTextures(TextureResource** customTextures)
+{
+    for (int i = 0; i < MaterialResource::CUSTOM_TEXTURE_COUNT; i++)
+    {
+        // t6～t9にカスタムテクスチャをセット
+        if (customTextures[i]) {
+            m_pContext->PSSetShaderResources(6 + i, 1, customTextures[i]->texture.GetAddressOf());
+        }
+        else {
+            ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+            m_pContext->PSSetShaderResources(6 + i, 1, nullSRV);
+        }
+    }
 }
 
 //-------------------------------------
