@@ -68,7 +68,7 @@ GameObject* EnvironmentFactory::CreateDirectionalLight(SceneBase* scene, const X
     lightComp->SetDiffuse(diffuse);
     lightComp->SetAmbient(ambient);
 
-    lightComp->SetIntensity(0.6f);
+    lightComp->SetIntensity(1.0f);
 
     return obj;
 }

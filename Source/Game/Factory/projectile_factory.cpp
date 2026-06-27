@@ -43,6 +43,7 @@ namespace
             return shader;
         }
 
+        // シェーダーリソースの生成
         ShaderProgramResource shaderResource = {};
         shaderResource.name = hologramShaderName;
         shaderResource.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Unlit);

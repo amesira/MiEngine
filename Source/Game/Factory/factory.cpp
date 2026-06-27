@@ -71,6 +71,28 @@ void Factory::CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 posit
     modelComp->SetModelResource(modelResource);
 }
 
+void Factory::CreateAnimationModel(GameObject* obj, const char* modelPath, XMFLOAT3 position, XMFLOAT3 scaling, const char* animationPath, float animationSpeed)
+{
+    obj->SetName("AnimationModel");
+
+    TransformComponent* transform = obj->AddComponent<TransformComponent>();
+    ModelComponent* modelComp = obj->AddComponent<ModelComponent>();
+    AnimationComponent* animationComp = obj->AddComponent<AnimationComponent>();
+
+    transform->SetPosition(position);
+    transform->SetScaling(scaling);
+
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel(modelPath);
+    modelComp->SetModelResource(modelResource);
+
+    const char* clipPath = animationPath != nullptr ? animationPath : modelPath;
+    if (modelResource != nullptr && modelResource->animationClips.empty()) {
+        MODEL_REPOSITORY->LoadAnimation(modelResource, clipPath);
+    }
+
+    animationComp->SetAnimationState(0, animationSpeed);
+}
+
 void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, XMFLOAT3 endPosition, float interval)
 {
     jointGroup->SetName("JointGroup");

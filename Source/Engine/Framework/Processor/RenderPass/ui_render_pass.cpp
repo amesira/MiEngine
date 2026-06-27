@@ -30,7 +30,7 @@ void UIRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     {
 	    D3D11_BUFFER_DESC bd = {};
 	    bd.Usage = D3D11_USAGE_DYNAMIC;
-	    bd.ByteWidth = sizeof(SpriteVertex) * 4;
+	    bd.ByteWidth = sizeof(UiVertex) * 4;
 	    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	    m_pDevice->CreateBuffer(&bd, NULL, &m_pVertexBuffer);
@@ -49,7 +49,6 @@ void UIRenderPass::Finalize()
 // UiRenderPassの処理
 void UIRenderPass::Process(IScene* pScene, const RenderView& view)
 {
-    (void)view;
     //----------------------------------------------------
     // UI描画のセットアップ
 	//----------------------------------------------------
@@ -101,7 +100,7 @@ void UIRenderPass::Process(IScene* pScene, const RenderView& view)
             {
                 D3D11_MAPPED_SUBRESOURCE msr;
                 m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-                SpriteVertex* v = (SpriteVertex*)msr.pData;
+                UiVertex* v = (UiVertex*)msr.pData;
 
                 v[0].position = XMFLOAT3(-0.5f, -0.5f, 0.0f);
                 v[0].texCoord = XMFLOAT2(instance.uvRect.x, instance.uvRect.y);
@@ -122,7 +121,7 @@ void UIRenderPass::Process(IScene* pScene, const RenderView& view)
             }
 
             // 頂点バッファの設定
-            UINT stride = sizeof(SpriteVertex);
+            UINT stride = sizeof(UiVertex);
             UINT offset = 0;
             m_pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 

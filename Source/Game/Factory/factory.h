@@ -17,6 +17,7 @@ namespace Factory {
     void CreateBox          (GameObject* cube, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color);
     // Model型のGameObjectを生成する関数
     void CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 position, XMFLOAT3 scaling);
+    void CreateAnimationModel(GameObject* obj, const char* modelPath, XMFLOAT3 position, XMFLOAT3 scaling, const char* animationPath = nullptr, float animationSpeed = 1.0f);
     // JointGroup型のGameObjectを生成する関数
     void CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, XMFLOAT3 endPosition, float interval);
 

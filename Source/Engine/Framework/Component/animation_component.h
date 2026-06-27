@@ -40,7 +40,7 @@ public:
     // アニメーション状態の設定・取得
     void SetAnimationState(int clipIndex, float speed) {
         if (m_currentState.clipIndex == clipIndex) return; // すでに同じクリップが再生中なら何もしない
-        m_currentState.clipName = "aa";
+        m_currentState.clipName = "CLIP";
         m_currentState.clipIndex = clipIndex;
         m_currentState.timer = 0.0f;
         m_currentState.speed = speed;

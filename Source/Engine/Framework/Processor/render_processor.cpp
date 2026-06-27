@@ -127,6 +127,8 @@ void RenderProcessor::Process(IScene* pScene)
 
     // 6.2DScreen描画
     if (m_renderView->enableUI) {
+        SetBlendState(BLENDSTATE_NONE);
+        SetDepthState(DEPTHSTATE_DISABLE);
         m_uiRenderPass.Process(pScene, *m_renderView);
     }
 }

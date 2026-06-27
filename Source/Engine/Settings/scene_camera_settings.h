@@ -12,9 +12,9 @@ using namespace DirectX;
 // シーン全体のカメラ設定を保持するクラス
 class SceneCameraSettings {
 private:
-    XMFLOAT3    m_position = { 0.0f, 0.0f, -5.0f }; // カメラの位置
+    XMFLOAT3    m_position = { 0.0f, 13.0f, -13.0f }; // カメラの位置
     XMFLOAT3    m_atPosition = { 0.0f, 0.0f, 0.0f };// 注視点
-    XMFLOAT3 m_upVector = { 0.0f, 1.0f, 0.0f };  // 上方ベクトル
+    XMFLOAT3    m_upVector = { 0.0f, 1.0f, 0.0f };  // 上方ベクトル
 
     float       m_fov = 60.0f;              // 視野角（画角）
     float       m_aspect = 16.0f / 9.0f;    // 画面のアスペクト比

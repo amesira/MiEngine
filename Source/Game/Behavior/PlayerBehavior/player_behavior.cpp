@@ -215,7 +215,7 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
                     GAME_EFFECT->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
                     GAME_EFFECT->PlayCameraShake(0.16f, 0.30f);
 
-                    CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::RadialBlur, 0.3f, 0.12f, MiMath::Infinity());
+                    CUSTOM_POST_EFFECT->PlayEffect(CustomPostEffectType::RadialBlur, 0.6f, 0.2f, MiMath::Infinity());
 
                     // チャージライトを瞬間的に強くフラッシュ
                     m_chargeLight->SetEnable(true);

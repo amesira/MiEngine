@@ -143,6 +143,8 @@ XMFLOAT4 AnimationProcessor::SamplingKeyframes(const std::vector<AnimationClip::
     XMFLOAT4 result = keyframes[0].keyValue; // 最初のキーフレームの値を初期値とする
 
     // 前後のキーフレームを見つける
+    if (keyframes.size() == 1) return keyframes[0].keyValue;
+
     size_t prevIndex = 0;
     size_t nextIndex = 0;
 
@@ -155,6 +157,10 @@ XMFLOAT4 AnimationProcessor::SamplingKeyframes(const std::vector<AnimationClip::
         prevIndex = i;
     }
     if (nextIndex == 0) nextIndex = keyframes.size() - 1; // 最後のキーフレームをループ
+
+    if (prevIndex == nextIndex || keyframes[nextIndex].time == keyframes[prevIndex].time) {
+        return keyframes[prevIndex].keyValue;
+    }
 
     float t = (time - keyframes[prevIndex].time) / (keyframes[nextIndex].time - keyframes[prevIndex].time);
     t = MiMath::Clamp(t, 0.0f, 1.0f); // tを0～1の範囲にクランプ

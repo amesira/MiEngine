@@ -56,7 +56,13 @@ void GameScene::Initialize()
 
     // Field
     GameObject* field = this->CreateGameObject();
-    Factory::CreateField(field, { 0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
+    Factory::CreateField(field, { 0.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
+    {
+        GameObject* field2 = this->CreateGameObject();
+        Factory::CreateField(field2, { -10.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 3.0f, 6.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
+        GameObject* field3 = this->CreateGameObject();
+        Factory::CreateField(field3, { -10.0f, -1.4f, 8.6f }, { XMConvertToRadians(18.0f), 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
+    }
 
     // プレイヤープレハブ生成
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
@@ -66,12 +72,25 @@ void GameScene::Initialize()
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
 
     // 敵生成
-    for (int i = 0; i < 5; i++) {
+   /* for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 2.5f, 0.0f, 0.0f });
-    }
+    }*/
 
     // テスト：ParticleSystem
     //RenderEffectFactory::CreateParticleEffect(this, { 0.0f, 0.0f, 0.0f }, L"asset\\Texture\\particle.png");
+
+    // モデルを５つ生成
+    for (int i = 0; i < 5; i++) {
+        GameObject* modelObj = this->CreateGameObject();
+        Factory::CreateModel(modelObj, "asset\\Model\\bullet.fbx", { -5.0f + i * 2.5f, 0.0f, 5.0f } ,{2.0f, 2.0f, 2.0f});
+    }
+
+    GameObject* playerModel3 = this->CreateGameObject();
+    Factory::CreateAnimationModel(playerModel3, "asset\\Model\\player_model_type3.fbx", { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+
+    // UI生成
+    GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");
+    UiFactory::SetupUiTransform(uiText, { 960.0f, 300.0f }, {1.0f, 1.0f});
 
 }
 
