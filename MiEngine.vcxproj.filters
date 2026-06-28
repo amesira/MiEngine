@@ -99,6 +99,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -729,6 +732,9 @@
     <ClInclude Include="External\nlohmann\ordered_map.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
+    <ClInclude Include="Utility\mi_curve.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

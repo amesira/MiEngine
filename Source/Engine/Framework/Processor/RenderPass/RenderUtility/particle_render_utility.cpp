@@ -37,18 +37,18 @@ namespace ParticleRenderUtility {
     }
 
     DirectX::XMMATRIX CreateBillboardRotation(
-        ParticleSystemComponent::BillboardMode billboardMode,
+        ParticleSystemData::BillboardMode billboardMode,
         const RenderView& view)
     {
         using namespace DirectX;
 
         switch (billboardMode) {
-        case ParticleSystemComponent::BillboardMode::View: {
+        case ParticleSystemData::BillboardMode::View: {
             XMMATRIX billboard = XMMatrixInverse(nullptr, view.viewMatrix);
             billboard.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
             return XMMatrixRotationY(XM_PI) * billboard;
         }
-        case ParticleSystemComponent::BillboardMode::Horizontal: {
+        case ParticleSystemData::BillboardMode::Horizontal: {
             const XMMATRIX invView = XMMatrixInverse(nullptr, view.viewMatrix);
 
             XMFLOAT3 cameraForward = {};
@@ -85,6 +85,8 @@ namespace ParticleRenderUtility {
 
         int instanceCount = 0;
         const auto& particles = particleSystem.Particles();
+        const auto& renderer = particleSystem.GetDesc().rendererModule;
+
         for (const auto& particle : particles) {
             if (!particle.alive) continue;
             if (instanceCount >= ParticleSystemComponent::MAX_PARTICLES) break;
@@ -100,7 +102,7 @@ namespace ParticleRenderUtility {
 
             instanceData[instanceCount].world = scale * billboardRotation * translate;
             instanceData[instanceCount].color = particle.color;
-            instanceData[instanceCount].uvRect = particleSystem.Renderer().uvRect;
+            instanceData[instanceCount].uvRect = renderer.uvRect;
 
             instanceCount++;
         }

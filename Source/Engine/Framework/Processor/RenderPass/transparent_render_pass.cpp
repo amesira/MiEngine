@@ -67,7 +67,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     for (ParticleSystemComponent& particleSystem : particleSystems) {
         if (!particleSystem.GetOwner()->GetActive()) continue;
         if (!particleSystem.GetEnable()) continue;
-        if (particleSystem.Renderer().blendMode != ParticleSystemComponent::BlendMode::AlphaBlend) continue;
+        if (particleSystem.GetDesc().rendererModule.blendMode != ParticleSystemData::BlendMode::AlphaBlend) continue;
 
         DrawParticleSystem(particleSystem, view);
     }
@@ -78,7 +78,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     for (ParticleSystemComponent& particleSystem : particleSystems) {
         if (!particleSystem.GetOwner()->GetActive()) continue;
         if (!particleSystem.GetEnable()) continue;
-        if (particleSystem.Renderer().blendMode != ParticleSystemComponent::BlendMode::Additive) continue;
+        if (particleSystem.GetDesc().rendererModule.blendMode != ParticleSystemData::BlendMode::Additive) continue;
 
         DrawParticleSystem(particleSystem, view);
     }
@@ -93,8 +93,9 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
     if (!ParticleRenderUtility::UpdateParticleQuadVertexBuffer(m_pContext, m_pParticleVertexBuffer.Get())) return;
 
     // ビルボード行列の計算
+    auto& renderer = particleSystem.GetDesc().rendererModule;
     XMMATRIX billboardRotation = ParticleRenderUtility::CreateBillboardRotation(
-        particleSystem.Renderer().billboardMode,
+        renderer.billboardMode,
         view);
 
     // インスタンスバッファの更新
@@ -106,8 +107,7 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
     if (instanceCount <= 0) return;
 
     // テクスチャの設定
-    TextureResource* texture = particleSystem.Renderer().textureResource ?
-        particleSystem.Renderer().textureResource : m_defaultTexture;
+    TextureResource* texture = particleSystem.GetTextureResource() ? particleSystem.GetTextureResource() : m_defaultTexture;
     if (texture) {
         m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
     }

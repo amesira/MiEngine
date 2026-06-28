@@ -280,6 +280,8 @@
     <ClInclude Include="External\nlohmann\ordered_map.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Source\Engine\Core\game_object_layer.h" />
@@ -362,6 +364,7 @@
     <ClInclude Include="Source\Engine\Graphics\material_resource.h" />
     <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\imgui_window_interface.h" />
+    <ClInclude Include="Utility\mi_curve.h" />
     <ClInclude Include="Utility\mi_signal.h" />
     <ClInclude Include="Utility\mi_string.h" />
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />

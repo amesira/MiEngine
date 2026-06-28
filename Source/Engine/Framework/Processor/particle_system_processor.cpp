@@ -11,6 +11,7 @@
 #include "Engine/Device/mi_fps.h"
 
 #include "Utility/mi_math.h"
+#include "Utility/mi_curve.h"
 using namespace MiMath;
 
 #include <algorithm>
@@ -23,13 +24,13 @@ using namespace MiMath;
 namespace {
     // ------------------------------------ Evaluate
     // MinMaxFloatからランダムな値を生成
-    float Evaluate(const ParticleSystemComponent::MinMaxFloat& value)
+    float Evaluate(const ParticleSystemData::MinMaxFloat& value)
     {
         if (!value.randomBetweenTwoConstants) return value.constant;
         return RandomRange(value.constantMin, value.constantMax);
     }
     // MinMaxColorからランダムな色を生成
-    XMFLOAT4 Evaluate(const ParticleSystemComponent::MinMaxColor& value)
+    XMFLOAT4 Evaluate(const ParticleSystemData::MinMaxColor& value)
     {
         if (!value.randomBetweenTwoColors) return value.color;
 
@@ -41,35 +42,11 @@ namespace {
             value.colorMin.w + (value.colorMax.w - value.colorMin.w) * t,
         };
     }
-    // FloatCurveを評価して値を返す
-    float EvaluateCurve(const ParticleSystemComponent::FloatCurve& curve, float normalizedTime)
-    {
-        if (curve.keys.empty()) return 1.0f;
-        if (curve.keys.size() == 1) return curve.keys.front().value;
-
-        normalizedTime = std::clamp(normalizedTime, 0.0f, 1.0f);
-        const auto& keys = curve.keys;
-
-        if (normalizedTime <= keys.front().time) return keys.front().value;
-        if (normalizedTime >= keys.back().time) return keys.back().value;
-
-        for (size_t i = 1; i < keys.size(); ++i) {
-            if (normalizedTime > keys[i].time) continue;
-
-            const auto& prev = keys[i - 1];
-            const auto& next = keys[i];
-            const float range = (next.time - prev.time) > 0.0001f ? (next.time - prev.time) : 0.0001f;
-            const float t = (normalizedTime - prev.time) / range;
-            return prev.value + (next.value - prev.value) * t;
-        }
-
-        return keys.back().value;
-    }
 
     // ------------------------------------ EmitParticles
     // 発生形状に基づいて発生位置と発生方向を生成
     void CreateSpawnTransform(
-        const ParticleSystemComponent::ShapeModule& shape,
+        const ParticleSystemData::ShapeModule& shape,
         XMFLOAT3& outPosition,
         XMFLOAT3& outDirection)
     {
@@ -79,7 +56,7 @@ namespace {
         if (!shape.enabled) return;
 
         // Sphere形状の発生
-        if (shape.type == ParticleSystemComponent::ShapeType::Sphere) {
+        if (shape.type == ParticleSystemData::ShapeType::Sphere) {
             DirectX::XMFLOAT3 direction = RandomUnitVector();
             const float radius = shape.sphere.emitFromShell
                 ? shape.sphere.radius
@@ -89,7 +66,7 @@ namespace {
             outDirection = direction;
         }
         // Cone形状の発生
-        else if (shape.type == ParticleSystemComponent::ShapeType::Cone) {
+        else if (shape.type == ParticleSystemData::ShapeType::Cone) {
             const float baseAngle = RandomRange(0.0f, DirectX::XM_2PI);
             const float baseRadius = shape.cone.radius * std::sqrt(RandomRange(0.0f, 1.0f));
 
@@ -132,8 +109,9 @@ namespace {
         if (count <= 0) return;
 
         auto& particles = particleSystem.Particles();
-        auto& main = particleSystem.Main();
-        const auto& shape = particleSystem.Shape();
+        auto& desc = particleSystem.GetDesc();
+        auto& main = desc.mainModule;
+        const auto& shape = desc.shapeModule;
 
         for (int i = 0; i < count; i++) {
             if (static_cast<int>(particles.size()) >= ParticleSystemComponent::MAX_PARTICLES) break;
@@ -188,8 +166,9 @@ void ParticleSystemProcessor::Process(IScene* pScene)
         if (!particleSystem.GetOwner()->GetActive()) continue;
         if (!particleSystem.GetEnable()) continue;
 
-        auto& main = particleSystem.Main();
-        auto& emission = particleSystem.Emission();
+        auto& desc = particleSystem.GetDesc();
+        auto& main = desc.mainModule;
+        auto& emission = desc.emissionModule;
         auto& particles = particleSystem.Particles();
 
         // playOnAwakeが有効で、まだ再生されていない場合は再生する
@@ -221,7 +200,7 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             else {
                 currentTime = main.duration;
 
-                particleSystem.Emission().enabled = false; // エミッションを停止
+                emission.enabled = false; // エミッションを停止
             }
         }
 
@@ -242,14 +221,15 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             // 速度と位置の更新
             particle.velocity = Add(particle.velocity, Multiply(main.gravity, scaledDeltaTime));
             particle.position = Add(particle.position, Multiply(particle.velocity, scaledDeltaTime));
-            if (main.simulationSpace == ParticleSystemComponent::SimulationSpace::Local) {
+            if (main.simulationSpace == ParticleSystemData::SimulationSpace::Local) {
                 particle.position = Add(particle.position, Subtract(currentPosition, previousPosition));
             }
 
             // サイズの更新 --- SizeOverLifeTime ---
-            if (particleSystem.SizeOverLifetime().enabled) {
+            auto& sizeOverLifetime = desc.sizeOverLifetimeModule;
+            if (sizeOverLifetime.enabled) {
                 const float normalizedAge = particle.elapsedTime / particle.lifetime;
-                particle.size = particle.startSize * EvaluateCurve(particleSystem.SizeOverLifetime().size, normalizedAge);
+                particle.size = particle.startSize * MiCurve::Evaluate(sizeOverLifetime.size, normalizedAge);
             }
         }
 

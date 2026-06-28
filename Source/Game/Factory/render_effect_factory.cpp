@@ -48,7 +48,8 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
 
     transform->SetPosition(position);
 
-    auto& main = particleSystem->Main();
+    auto& desc = particleSystem->GetDesc();
+    auto& main = desc.mainModule;
     main.duration = 3.0f;
     main.loop = true;
     main.playOnAwake = true;
@@ -60,23 +61,22 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
     main.startColor.colorMax = { 1.0f, 0.95f, 0.35f, 0.45f };
     main.gravity = { 0.0f, -0.25f, 0.0f };
     main.simulationSpeed = 1.0f;
-    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+    main.simulationSpace = ParticleSystemData::SimulationSpace::World;
 
-    auto& emission = particleSystem->Emission();
+    auto& emission = desc.emissionModule;
     emission.enabled = true;
     emission.rateOverTime = 24.0f;
     emission.rateOverDistance = 0.0f;
 
-    auto& shape = particleSystem->Shape();
+    auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemComponent::ShapeType::Cone;
+    shape.type = ParticleSystemData::ShapeType::Cone;
     shape.cone.angle = XM_PIDIV4;
     shape.cone.radius = 0.35f;
-    shape.cone.length = 2.0f;
     shape.cone.emitFromBase = true;
     shape.randomDirectionAmount = 0.2f;
 
-    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    auto& sizeOverLifetime = desc.sizeOverLifetimeModule;
     sizeOverLifetime.enabled = true;
     sizeOverLifetime.size.keys = {
         { 0.0f, 0.35f },
@@ -84,11 +84,11 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
         { 1.0f, 0.0f },
     };
 
-    auto& renderer = particleSystem->Renderer();
-    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
+    auto& renderer = desc.rendererModule;
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(texturePath));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
-    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.billboardMode = ParticleSystemData::BillboardMode::View;
+    renderer.blendMode = ParticleSystemData::BlendMode::Additive;
     renderer.sortByDistance = true;
 
     return particleEffect;
@@ -110,7 +110,8 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
     TransformComponent* transform = dustEffect->AddComponent<TransformComponent>();
     ParticleSystemComponent* particleSystem = dustEffect->AddComponent<ParticleSystemComponent>();
 
-    auto& main = particleSystem->Main();
+    auto& desc = particleSystem->GetDesc();
+    auto& main = desc.mainModule;
     main.duration = 1.0f;
     main.loop = true;
     main.playOnAwake = true;
@@ -122,21 +123,21 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
     main.startColor.colorMax = { 1.00f, 1.00f, 1.00f, 0.95f };
     main.gravity = { 0.0f, -0.25f, 0.0f };
     main.simulationSpeed = 1.0f;
-    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+    main.simulationSpace = ParticleSystemData::SimulationSpace::World;
 
-    auto& emission = particleSystem->Emission();
+    auto& emission = desc.emissionModule;
     emission.enabled = true;
     emission.rateOverTime = 0.0f;
     emission.rateOverDistance = 4.0f;
 
-    auto& shape = particleSystem->Shape();
+    auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.type = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 0.18f;
     shape.sphere.emitFromShell = false;
     shape.randomDirectionAmount = 0.65f;
 
-    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    auto& sizeOverLifetime = desc.sizeOverLifetimeModule;
     sizeOverLifetime.enabled = true;
     sizeOverLifetime.size.keys = {
         { 0.0f, 0.25f },
@@ -144,11 +145,11 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
         { 1.0f, 0.15f },
     };
 
-    auto& renderer = particleSystem->Renderer();
-    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
+    auto& renderer = desc.rendererModule;
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(texturePath));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
-    renderer.blendMode = ParticleSystemComponent::BlendMode::AlphaBlend;
+    renderer.billboardMode = ParticleSystemData::BillboardMode::View;
+    renderer.blendMode = ParticleSystemData::BlendMode::AlphaBlend;
     renderer.sortByDistance = true;
 
     return dustEffect;
@@ -167,7 +168,8 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
 
     transform->SetPosition(position);
 
-    auto& main = particleSystem->Main();
+    auto& desc = particleSystem->GetDesc();
+    auto& main = desc.mainModule;
     main.duration = 1.0f;
     main.loop = true;
     main.playOnAwake = true;
@@ -179,21 +181,21 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
     main.startColor.colorMax = { 0.95f, 0.35f, 1.0f, 0.55f };
     main.gravity = { 0.0f, 0.0f, 0.0f };
     main.simulationSpeed = 1.0f;
-    main.simulationSpace = ParticleSystemComponent::SimulationSpace::Local;
+    main.simulationSpace = ParticleSystemData::SimulationSpace::Local;
 
-    auto& emission = particleSystem->Emission();
+    auto& emission = desc.emissionModule;
     emission.enabled = true;
     emission.rateOverTime = 90.0f;
     emission.rateOverDistance = 0.0f;
 
-    auto& shape = particleSystem->Shape();
+    auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.type = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 1.5f;
     shape.sphere.emitFromShell = true;
     shape.randomDirectionAmount = 0.08f;
 
-    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    auto& sizeOverLifetime = desc.sizeOverLifetimeModule;
     sizeOverLifetime.enabled = true;
     sizeOverLifetime.size.keys = {
         { 0.0f, 0.0f },
@@ -202,11 +204,11 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
         { 1.0f, 0.0f },
     };
 
-    auto& renderer = particleSystem->Renderer();
-    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
+    auto& renderer = desc.rendererModule;
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(texturePath));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
-    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.billboardMode = ParticleSystemData::BillboardMode::View;
+    renderer.blendMode = ParticleSystemData::BlendMode::Additive;
     renderer.sortByDistance = true;
 
     return chargeEffect;
@@ -225,7 +227,8 @@ GameObject* RenderEffectFactory::CreateHitEffect(IScene* scene, const XMFLOAT3& 
 
     transform->SetPosition(position);
 
-    auto& main = particleSystem->Main();
+    auto& desc = particleSystem->GetDesc();
+    auto& main = desc.mainModule;
     main.duration = 0.12f;
     main.loop = false;
     main.playOnAwake = true;
@@ -237,21 +240,21 @@ GameObject* RenderEffectFactory::CreateHitEffect(IScene* scene, const XMFLOAT3& 
     main.startColor.colorMax = { 1.0f, 0.95f, 0.35f, 0.75f };
     main.gravity = { 0.0f, -0.2f, 0.0f };
     main.simulationSpeed = 1.0f;
-    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+    main.simulationSpace = ParticleSystemData::SimulationSpace::World;
 
-    auto& emission = particleSystem->Emission();
+    auto& emission = desc.emissionModule;
     emission.enabled = true;
     emission.rateOverTime = 320.0f;
     emission.rateOverDistance = 0.0f;
 
-    auto& shape = particleSystem->Shape();
+    auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.type = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 0.12f;
     shape.sphere.emitFromShell = false;
     shape.randomDirectionAmount = 0.9f;
 
-    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    auto& sizeOverLifetime = desc.sizeOverLifetimeModule;
     sizeOverLifetime.enabled = true;
     sizeOverLifetime.size.keys = {
         { 0.0f, 0.25f },
@@ -259,11 +262,11 @@ GameObject* RenderEffectFactory::CreateHitEffect(IScene* scene, const XMFLOAT3& 
         { 1.0f, 0.0f },
     };
 
-    auto& renderer = particleSystem->Renderer();
-    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp");
+    auto& renderer = desc.rendererModule;
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp"));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
-    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.billboardMode = ParticleSystemData::BillboardMode::View;
+    renderer.blendMode = ParticleSystemData::BlendMode::Additive;
     renderer.sortByDistance = true;
 
     return hitEffect;
@@ -282,7 +285,8 @@ GameObject* RenderEffectFactory::CreateExplosionEffect(IScene* scene, const XMFL
 
     transform->SetPosition(position);
 
-    auto& main = particleSystem->Main();
+    auto& desc = particleSystem->GetDesc();
+    auto& main = desc.mainModule;
     main.duration = 0.22f;
     main.loop = false;
     main.playOnAwake = true;
@@ -294,21 +298,21 @@ GameObject* RenderEffectFactory::CreateExplosionEffect(IScene* scene, const XMFL
     main.startColor.colorMax = { 1.0f, 0.35f, 0.9f, 0.7f };
     main.gravity = { 0.0f, -0.35f, 0.0f };
     main.simulationSpeed = 1.0f;
-    main.simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+    main.simulationSpace = ParticleSystemData::SimulationSpace::World;
 
-    auto& emission = particleSystem->Emission();
+    auto& emission = desc.emissionModule;
     emission.enabled = true;
     emission.rateOverTime = 820.0f;
     emission.rateOverDistance = 0.0f;
 
-    auto& shape = particleSystem->Shape();
+    auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemComponent::ShapeType::Sphere;
+    shape.type = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 0.45f;
     shape.sphere.emitFromShell = false;
     shape.randomDirectionAmount = 1.0f;
 
-    auto& sizeOverLifetime = particleSystem->SizeOverLifetime();
+    auto& sizeOverLifetime = desc.sizeOverLifetimeModule;
     sizeOverLifetime.enabled = true;
     sizeOverLifetime.size.keys = {
         { 0.0f, 0.15f },
@@ -317,11 +321,11 @@ GameObject* RenderEffectFactory::CreateExplosionEffect(IScene* scene, const XMFL
         { 1.0f, 0.0f },
     };
 
-    auto& renderer = particleSystem->Renderer();
-    renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp");
+    auto& renderer = desc.rendererModule;
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp"));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    renderer.billboardMode = ParticleSystemComponent::BillboardMode::View;
-    renderer.blendMode = ParticleSystemComponent::BlendMode::Additive;
+    renderer.billboardMode = ParticleSystemData::BillboardMode::View;
+    renderer.blendMode = ParticleSystemData::BlendMode::Additive;
     renderer.sortByDistance = true;
 
     return explosionEffect;

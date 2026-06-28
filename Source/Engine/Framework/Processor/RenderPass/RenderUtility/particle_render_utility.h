@@ -17,7 +17,7 @@ namespace ParticleRenderUtility {
 
     // ビルボードの回転行列を作成する関数
     DirectX::XMMATRIX CreateBillboardRotation(
-        ParticleSystemComponent::BillboardMode billboardMode,
+        ParticleSystemData::BillboardMode billboardMode,
         const RenderView& view);
 
     // パーティクルのインスタンスバッファを更新する関数
