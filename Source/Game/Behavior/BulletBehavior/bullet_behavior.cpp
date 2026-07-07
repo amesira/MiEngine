@@ -14,10 +14,10 @@
 
 #include "Engine/Framework/Processor/PhysicsPass/Collision/collision_query.h"
 
-#include "health_behavior.h"
-#include "hit_stop_behavior.h"
-#include "blinker_behavior.h"
-#include "shake_object_behavior.h"
+#include "Game/Behavior/BaseBehavior/health_behavior.h"
+#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
+#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
 
 #include "External/ImGui/imgui.h"
 
@@ -160,6 +160,7 @@ void BulletBehavior::Finalize(bool isHitStop)
     m_isExpired = true;
 
     if (isHitStop) {
+        // ヒットストップ処理
         m_hitStopBehavior->StartHitStop(
             0.5f,
             [this]() {

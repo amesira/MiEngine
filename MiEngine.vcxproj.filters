@@ -218,7 +218,10 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.cpp">
+    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BulletBehavior\missile_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.cpp">
@@ -533,7 +536,10 @@
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.h">
+    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BulletBehavior\missile_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.h">

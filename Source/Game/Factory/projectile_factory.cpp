@@ -13,7 +13,8 @@
 #include "Engine/Framework/Component/particle_system_component.h"
 #include "Engine/Framework/Component/transform_component.h"
 
-#include "Game/Behavior/BaseBehavior/bullet_behavior.h"
+#include "Game/Behavior/BulletBehavior/bullet_behavior.h"
+#include "Game/Behavior/BulletBehavior/missile_behavior.h"
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
 #include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
 #include "Game/Behavior/BaseBehavior/blinker_behavior.h"
@@ -24,6 +25,7 @@
 #include "Engine/Graphics/texture_repository.h"
 
 #include "Engine/engine_service_locator.h"
+#include "Utility/mi_math.h"
 
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
@@ -116,13 +118,15 @@ namespace
 
         particleSystem->Main().loop = true;
         particleSystem->Main().playOnAwake = true;
-        particleSystem->Main().startLifetime = { false, 0.2f, 0.2f, 0.2f };
+        particleSystem->Main().startLifetime = { false, 0.5f, 0.5f, 0.5f };
         particleSystem->Main().startSpeed = { false, 0.0f, 0.0f, 0.0f };
         particleSystem->Main().startSize = { false, desc.radius * 0.8f, desc.radius * 0.8f, desc.radius * 0.8f };
         particleSystem->Main().startColor = { false, {0.6f, 0.2f, 0.3f, 0.5f}, {0.4f, 0.5f, 0.5f, 0.8f}};
 
+        particleSystem->Main().simulationSpace = ParticleSystemComponent::SimulationSpace::World;
+
         particleSystem->Emission().enabled = true;
-        particleSystem->Emission().rateOverTime = 30.0f;
+        particleSystem->Emission().rateOverTime = 60.0f;
         particleSystem->Emission().rateOverDistance = 0.0f;
 
         particleSystem->Shape().enabled = true;
@@ -180,4 +184,56 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     bulletBehavior->Initialize(desc.velocity, desc.radius, desc.lifeTime, desc.layerMask);
 
     return bullet;
+}
+
+// ミサイル弾の生成
+GameObject* ProjectileFactory::CreateMissile(IScene* scene, const MissileCreateDesc& desc)
+{
+    if (!scene) return nullptr;
+
+    GameObject* missile = scene->CreateGameObject();
+    missile->SetName("Missile");
+    missile->SetRenderLayer(RenderLayer::Bullet);
+
+    TransformComponent* transform = missile->AddComponent<TransformComponent>();
+    ModelComponent* modelComponent = missile->AddComponent<ModelComponent>();
+    ParticleSystemComponent* particleSystem = missile->AddComponent<ParticleSystemComponent>();
+    MissileBehavior* missileBehavior = missile->AddComponent<MissileBehavior>();
+
+    missile->AddComponent<HitStopBehavior>();
+    missile->AddComponent<ShakeObjectBehavior>();
+    missile->AddComponent<BlinkerBehavior>();
+
+    transform->SetPosition(desc.startPosition);
+    transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
+
+    XMFLOAT3 initialDirection = MiMath::Subtract(desc.controlPoint1, desc.startPosition);
+    if (MiMath::Length(initialDirection) <= 0.0001f) {
+        initialDirection = MiMath::Subtract(desc.targetPosition, desc.startPosition);
+    }
+    if (MiMath::Length(initialDirection) > 0.0001f) {
+        XMFLOAT3 forward = MiMath::Multiply(MiMath::Normalize(initialDirection), -1.0f);
+        XMFLOAT4 rotation = MiMath::QuaternionFromDirection(forward, { 0.0f, 1.0f, 0.0f });
+        transform->SetRotation(rotation);
+    }
+
+    BulletCreateDesc visualDesc;
+    visualDesc.position = desc.startPosition;
+    visualDesc.radius = desc.radius;
+    visualDesc.modelPath = desc.modelPath;
+    visualDesc.materialName = desc.materialName;
+
+    SetupBulletModel(modelComponent, visualDesc);
+    SetupBulletParticle(particleSystem, visualDesc);
+
+    missileBehavior->Initialize(
+        desc.startPosition,
+        desc.controlPoint1,
+        desc.controlPoint2,
+        desc.targetPosition,
+        desc.duration,
+        desc.radius,
+        desc.layerMask);
+
+    return missile;
 }

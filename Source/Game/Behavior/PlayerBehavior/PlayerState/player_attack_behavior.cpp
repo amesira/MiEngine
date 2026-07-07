@@ -150,21 +150,43 @@ void PlayerAttackBehavior::UpdateCharge(PlayerContext& context, float deltaTime,
 // チャージ攻撃処理
 void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
 {
-    // === 弾を生成 ===
-    ProjectileFactory::BulletCreateDesc bulletDesc;
-    bulletDesc.position = m_transform->GetPosition();
-    bulletDesc.position = MiMath::Add(bulletDesc.position, MiMath::Multiply(m_transform->GetRight(), 0.5f));
-    bulletDesc.radius = 0.25f + (m_chargeTimer / m_maxChargeTime) * 0.75f; // チャージ時間に応じて弾のサイズを変化させる
-    bulletDesc.lifeTime = 5.0f;
-    bulletDesc.layerMask = (int)CollisionLayer::Bullet;
+    // === ミサイル弾を生成 ===
+    ProjectileFactory::MissileCreateDesc missileDesc;
+    missileDesc.startPosition = MiMath::Add(m_transform->GetPosition(), MiMath::Multiply(m_transform->GetRight(), 0.5f));
+    missileDesc.targetPosition = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 40.0f));
+    missileDesc.duration = 1.5f;
+    missileDesc.layerMask = (int)CollisionLayer::Bullet;
 
-    // 画面中心からワールド空間へのレイを計算して、弾の飛ぶ方向を決定する
-    XMFLOAT3 bulletEnd = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
-    bulletEnd.y = bulletDesc.position.y;
-    XMFLOAT3 bulletDir = MiMath::Normalize(MiMath::Subtract(bulletEnd, bulletDesc.position));
-    bulletDesc.velocity = MiMath::Multiply(bulletDir, 20.0f);
-    
-    ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
+    const XMFLOAT2 controlPoint1Offset[5] = {
+        { 0.0f, 0.0f },
+        { 2.0f, 0.0f },
+        { -2.0f, 0.0f },
+        { 1.5f, 0.0f },
+        { -1.5f, 0.0f }
+    };
+
+    const XMFLOAT2 controlPoint2Offset[5] = {
+        { 0.0f, 5.0f },
+        { 1.0f, 4.0f },
+        { -1.0f, 6.0f },
+        { 2.0f, 3.0f },
+        { -2.0f, 7.0f}
+    };
+
+    const float power = 10.0f;
+
+    for (int i = 0; i < 5; i++) {
+        missileDesc.controlPoint1 = MiMath::Add(missileDesc.startPosition, MiMath::Multiply(m_transform->GetForward(), 15.0f));
+        missileDesc.controlPoint1.x += controlPoint1Offset[i].x * power;
+        missileDesc.controlPoint1.z += controlPoint1Offset[i].x * power;
+
+        missileDesc.controlPoint2 = MiMath::Add(missileDesc.targetPosition, MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
+        missileDesc.controlPoint2.x += controlPoint2Offset[i].x * power;
+        missileDesc.controlPoint2.y += controlPoint2Offset[i].y * power;
+        missileDesc.controlPoint2.z += controlPoint2Offset[i].x * power;
+
+        ProjectileFactory::CreateMissile(GetOwner()->GetScene(), missileDesc);
+    }
 
     if (context.playerBehavior) {
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeAttack);

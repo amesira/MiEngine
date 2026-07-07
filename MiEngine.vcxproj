@@ -173,7 +173,8 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BulletBehavior\missile_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.cpp" />
@@ -339,7 +340,8 @@
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\bullet_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\BulletBehavior\missile_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_context.h" />
