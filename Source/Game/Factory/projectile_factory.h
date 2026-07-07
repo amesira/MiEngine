@@ -39,9 +39,18 @@ namespace ProjectileFactory
         const char* materialName = "BulletHologramMaterial";
     };
 
+    struct BezierLinePreviewCreateDesc {
+        const char* name = "BezierLinePreview";
+        float lineWidth = 0.08f;
+        XMFLOAT4 lineColor = { 0.35f, 0.85f, 1.0f, 0.7f };
+        int sampleCount = 24;
+        bool visibleOnCreate = false;
+    };
+
     // 弾の生成
     GameObject* CreateBullet(IScene* scene, const BulletCreateDesc& desc);
 
     // ミサイル弾の生成
     GameObject* CreateMissile(IScene* scene, const MissileCreateDesc& desc);
+    GameObject* CreateBezierLinePreview(IScene* scene, const BezierLinePreviewCreateDesc& desc = {});
 }

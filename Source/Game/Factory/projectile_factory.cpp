@@ -11,9 +11,11 @@
 
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
+#include "Engine/Framework/Component/line_renderer_component.h"
 #include "Engine/Framework/Component/transform_component.h"
 
 #include "Game/Behavior/BulletBehavior/bullet_behavior.h"
+#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
 #include "Game/Behavior/BulletBehavior/missile_behavior.h"
 #include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
 #include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
@@ -236,4 +238,26 @@ GameObject* ProjectileFactory::CreateMissile(IScene* scene, const MissileCreateD
         desc.layerMask);
 
     return missile;
+}
+
+GameObject* ProjectileFactory::CreateBezierLinePreview(IScene* scene, const BezierLinePreviewCreateDesc& desc)
+{
+    if (!scene) return nullptr;
+
+    GameObject* previewLine = scene->CreateGameObject();
+    previewLine->SetName(desc.name ? desc.name : "BezierLinePreview");
+    previewLine->SetRenderLayer(RenderLayer::Particle);
+
+    previewLine->AddComponent<TransformComponent>();
+
+    LineRendererComponent* lineRenderer = previewLine->AddComponent<LineRendererComponent>();
+    lineRenderer->SetLineType(LineRendererComponent::LineType::LineStrip);
+    lineRenderer->SetLineWidth(desc.lineWidth);
+    lineRenderer->SetLineColor(desc.lineColor);
+    lineRenderer->SetEnable(desc.visibleOnCreate);
+
+    BezierLinePreviewBehavior* previewBehavior = previewLine->AddComponent<BezierLinePreviewBehavior>();
+    previewBehavior->SetSampleCount(desc.sampleCount);
+
+    return previewLine;
 }

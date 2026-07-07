@@ -221,6 +221,9 @@
     <ClCompile Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.cpp">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\Behavior\BulletBehavior\missile_behavior.cpp">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClCompile>
@@ -318,6 +321,9 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.cpp">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
@@ -351,6 +357,9 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Component\model_component.h">
+      <Filter>Sources\Engine\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Component\line_renderer_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h">
@@ -539,6 +548,9 @@
     <ClInclude Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.h">
+      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Game\Behavior\BulletBehavior\missile_behavior.h">
       <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
     </ClInclude>
@@ -653,6 +665,9 @@
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h">
+      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.h">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h">

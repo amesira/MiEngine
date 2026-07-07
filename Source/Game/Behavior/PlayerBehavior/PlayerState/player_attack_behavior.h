@@ -10,10 +10,16 @@
 #include "Engine/Framework/Component/behavior_component.h"
 #include "Game/Behavior/PlayerBehavior/player_context.h"
 
+#include <array>
+
 class TransformComponent;
 class CameraComponent;
+class BezierLinePreviewBehavior;
 
 class PlayerAttackBehavior : public BehaviorComponent {
+public:
+    static constexpr int MISSILE_PREVIEW_LINE_COUNT = 5;
+
 private:
     TransformComponent* m_transform = nullptr;
 
@@ -32,6 +38,7 @@ private:
     // チャージ攻撃の蓄積時間
     float m_chargeTimer = 0.0f;
     float m_maxChargeTime = 2.0f;
+    std::array<BezierLinePreviewBehavior*, MISSILE_PREVIEW_LINE_COUNT> m_missilePreviewLines = {};
 
 public:
     PlayerAttackBehavior() = default;
@@ -75,6 +82,13 @@ public:
     void UpdateCharge(PlayerContext& context, float deltaTime, float unscaledDeltaTime);
     // チャージ攻撃処理
     void ChargeAttack(PlayerContext& context);
+
+    // ミサイルコントロールポイントの取得
+    void GetMissilePoints(int index, const XMFLOAT3& startPosition, const XMFLOAT3& targetPosition, XMFLOAT3& controlPoint1, XMFLOAT3& controlPoint2);
+
+    // ミサイルプレビューラインのセットアップ
+    void SetupMissilePreviewLines(
+        const std::array<BezierLinePreviewBehavior*, MISSILE_PREVIEW_LINE_COUNT>& previewLines);
 };
 
 #endif // PLAYER_ATTACK_BEHAVIOR_H

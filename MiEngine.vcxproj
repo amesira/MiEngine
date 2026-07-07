@@ -145,6 +145,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.cpp" />
+    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\BulletBehavior\missile_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp" />
@@ -291,12 +293,14 @@
     <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
+    <ClInclude Include="Source\Engine\Framework\Component\line_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
@@ -341,6 +345,7 @@
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.h" />
+    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\BulletBehavior\missile_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h" />
     <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h" />

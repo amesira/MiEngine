@@ -15,6 +15,7 @@
 using Microsoft::WRL::ComPtr;
 
 class ParticleSystemComponent;
+class LineRendererComponent;
 
 class TransparentRenderPass : public Pass {
 private:
@@ -27,6 +28,8 @@ private:
     // ParticleRenderer用の頂点バッファ
     ComPtr<ID3D11Buffer> m_pParticleVertexBuffer;
     ComPtr<ID3D11Buffer> m_pParticleInstanceBuffer;
+    ComPtr<ID3D11Buffer> m_pLineVertexBuffer;
+    ComPtr<ID3D11Buffer> m_pLineInstanceBuffer;
 
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,6 +39,7 @@ public:
 private:
     // パーティクルシステムの描画
     void DrawParticleSystem(ParticleSystemComponent& particleSystem, const RenderView& view);
+    void DrawLineRenderer(LineRendererComponent& lineRenderer, const RenderView& view);
 
 };
 

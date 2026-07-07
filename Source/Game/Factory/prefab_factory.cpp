@@ -12,6 +12,8 @@
 
 #include "Game/Behavior/transform_constraint_behavior.h"
 #include "Game/Behavior/PlayerBehavior/player_behavior.h"
+#include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
+#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
 #include "Game/Behavior/BaseBehavior/health_behavior.h"
 
 #include "Engine/engine_service_locator.h"
@@ -19,8 +21,11 @@
 
 #include "actor_factory.h"
 #include "render_effect_factory.h"
+#include "projectile_factory.h"
 #include "environment_factory.h"
 #include "ui_factory.h"
+
+#include <array>
 
 namespace PrefabFactory
 {
@@ -45,6 +50,7 @@ namespace PrefabFactory
         prefab.player = ActorFactory::CreatePlayer(scene, position);
         TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
         PlayerBehavior* playerBehavior = prefab.player->GetComponent<PlayerBehavior>();
+        PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
 
         prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(scene, prefab.player->GetName(), L"asset\\Texture\\white.bmp");
         {
@@ -63,6 +69,23 @@ namespace PrefabFactory
             LightComponent* lightComp = prefab.chargeLight->GetComponent<LightComponent>();
             lightComp->SetEnable(false); // 最初はライトをオフにする
             playerBehavior->SetupChargeLight(lightComp);
+        }
+        if (playerAttackBehavior) {
+            std::array<BezierLinePreviewBehavior*, PlayerAttackBehavior::MISSILE_PREVIEW_LINE_COUNT> previewLines = {};
+
+            for (int i = 0; i < PlayerAttackBehavior::MISSILE_PREVIEW_LINE_COUNT; ++i) {
+                ProjectileFactory::BezierLinePreviewCreateDesc lineDesc;
+                lineDesc.name = "MissilePreviewLine";
+                lineDesc.visibleOnCreate = false;
+                lineDesc.lineWidth = 5.0f;
+
+                GameObject* lineObject = ProjectileFactory::CreateBezierLinePreview(scene, lineDesc);
+                if (!lineObject) continue;
+
+                previewLines[i] = lineObject->GetComponent<BezierLinePreviewBehavior>();
+            }
+
+            playerAttackBehavior->SetupMissilePreviewLines(previewLines);
         }
 
         return prefab;
