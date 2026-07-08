@@ -15,6 +15,7 @@ struct ParticleSystemDesc {
     ParticleSystemData::EmissionModule emissionModule;
     ParticleSystemData::ShapeModule shapeModule;
     ParticleSystemData::SizeOverLifetimeModule sizeOverLifetimeModule;
+    ParticleSystemData::TextureSheetAnimation textureSheetAnimation;
     ParticleSystemData::RendererModule rendererModule;
 };
 

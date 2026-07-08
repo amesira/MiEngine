@@ -40,6 +40,12 @@ namespace ParticleSystemData
         Additive,
     };
 
+    // 時間の種類（テクスチャアニメーションなどで使用）
+    enum class TimeMode {
+        Lifetime,
+        Speed,
+    };
+
     // === データ定義 ===
     // ランダムな値を生成するための構造体
     struct MinMaxFloat {
@@ -104,6 +110,21 @@ namespace ParticleSystemData
     struct SizeOverLifetimeModule {
         bool enabled = false;
         MiCurve::FloatCurve size = {};
+    };
+
+    // テクスチャシートアニメーションの設定を行うモジュール
+    struct TextureSheetAnimation {
+        bool enabled = false;
+
+        int tileX = 1;        // テクスチャの横方向の分割数
+        int tileY = 1;        // テクスチャの縦方向の分割数p
+        int startFrame = 0;     // アニメーションの開始フレーム
+        int frameCount = 1;     // アニメーションの総フレーム数
+
+        TimeMode timeMode = TimeMode::Lifetime; // アニメーションの時間の種類
+        float framePerSecond = 30.0f; // 1秒あたりのフレーム数 : TimeMode::Speedの場合に使用
+
+        bool loop = true;   // アニメーションをループさせるかどうか
     };
 
     // パーティクルの描画に関する設定を行うモジュール

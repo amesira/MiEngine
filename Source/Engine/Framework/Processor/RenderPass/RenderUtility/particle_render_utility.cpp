@@ -102,7 +102,14 @@ namespace ParticleRenderUtility {
 
             instanceData[instanceCount].world = scale * billboardRotation * translate;
             instanceData[instanceCount].color = particle.color;
-            instanceData[instanceCount].uvRect = renderer.uvRect;
+
+            // UvRectの計算（掛け合わせる）
+            DirectX::XMFLOAT4 uvRect = renderer.uvRect;
+            uvRect.x += particle.uvRect.x * uvRect.z;
+            uvRect.y += particle.uvRect.y * uvRect.w;
+            uvRect.z *= particle.uvRect.z;
+            uvRect.w *= particle.uvRect.w;
+            instanceData[instanceCount].uvRect = uvRect;
 
             instanceCount++;
         }

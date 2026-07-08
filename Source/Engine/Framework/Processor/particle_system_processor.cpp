@@ -143,10 +143,12 @@ namespace {
 
 void ParticleSystemProcessor::Initialize()
 {
+
 }
 
 void ParticleSystemProcessor::Finalize()
 {
+
 }
 
 void ParticleSystemProcessor::Process(IScene* pScene)
@@ -230,6 +232,49 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             if (sizeOverLifetime.enabled) {
                 const float normalizedAge = particle.elapsedTime / particle.lifetime;
                 particle.size = particle.startSize * MiCurve::Evaluate(sizeOverLifetime.size, normalizedAge);
+            }
+
+            // テクスチャシートアニメーションの更新 --- TextureSheetAnimation ---
+            auto& textureSheetAnimation = desc.textureSheetAnimation;
+            if (textureSheetAnimation.enabled) {
+                
+                switch (textureSheetAnimation.timeMode) {
+                    case ParticleSystemData::TimeMode::Lifetime:{
+                        const float normalizedAge = particle.elapsedTime / particle.lifetime;
+                        particle.frame = static_cast<float>(textureSheetAnimation.frameCount) * normalizedAge;
+                        break;
+                    }
+                    case ParticleSystemData::TimeMode::Speed: {
+                        particle.frame += textureSheetAnimation.framePerSecond * scaledDeltaTime;
+                        break;
+                    }
+                }
+
+                // ループの有無に応じてフレームを調整
+                if (textureSheetAnimation.loop) {
+                    particle.frame = std::fmod(particle.frame, static_cast<float>(textureSheetAnimation.frameCount));
+                }
+                else {
+                    if (particle.frame >= textureSheetAnimation.frameCount) {
+                        particle.frame = static_cast<float>(textureSheetAnimation.frameCount - 1);
+                    }
+                }
+
+                // UVRectの計算
+                const int tileX = textureSheetAnimation.tileX;
+                const int tileY = textureSheetAnimation.tileY;
+                const int totalFrames = textureSheetAnimation.frameCount;
+                const int frameIndex = static_cast<int>(particle.frame) % totalFrames;
+
+                const int frameX = frameIndex % tileX;
+                const int frameY = frameIndex / tileX;
+
+                particle.uvRect = {
+                    static_cast<float>(frameX) / static_cast<float>(tileX),
+                    static_cast<float>(frameY) / static_cast<float>(tileY),
+                    1.0f / static_cast<float>(tileX),
+                    1.0f / static_cast<float>(tileY)
+                };
             }
         }
 
