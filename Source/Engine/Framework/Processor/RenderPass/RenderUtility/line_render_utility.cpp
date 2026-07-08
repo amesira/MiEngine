@@ -9,6 +9,7 @@
 
 namespace
 {
+    // fromベクトルからtoベクトルへの回転行列を計算する
     DirectX::XMMATRIX FromToRotation(const DirectX::XMVECTOR& from, const DirectX::XMVECTOR& to)
     {
         using namespace DirectX;
@@ -27,6 +28,7 @@ namespace
         return XMMatrixRotationAxis(axis, angle);
     }
 
+    // カメラの回転行列を計算する
     DirectX::XMMATRIX LookCameraRotation(
         const DirectX::XMMATRIX& fromToRotation,
         const DirectX::XMVECTOR& lineDirection,
@@ -59,6 +61,7 @@ namespace
         return XMMatrixRotationAxis(lineDirection, angle);
     }
 
+    // lineIndexに対応する線分の両端点を取得する
     bool GetLineSegment(
         const LineRendererComponent& lineRenderer,
         int lineIndex,
@@ -177,7 +180,10 @@ namespace LineRenderUtility {
                 cameraPosition,
                 centerVector);
 
+            const XMMATRIX flip = XMMatrixScaling(1.0f, -1.0f, 1.0f);
+
             instanceData[instanceCount].world = scaling * fromToRotation * lookCameraRotation * translation;
+           // instanceData[instanceCount].world = scaling * fromToRotation * translation;
             instanceData[instanceCount].color = lineRenderer.GetLineColor();
             instanceData[instanceCount].uvRect = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 

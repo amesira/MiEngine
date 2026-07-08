@@ -44,6 +44,9 @@ public:
     void RebuildLine();
     void ClearLine();
 
+    // LineRendererComponentの有効・無効を設定する
+    void SetLineEnable(bool enable);
+
 private:
     DirectX::XMFLOAT3 EvaluateBezier(float t) const;
 };

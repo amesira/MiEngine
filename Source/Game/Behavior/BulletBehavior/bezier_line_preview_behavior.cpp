@@ -107,6 +107,13 @@ void BezierLinePreviewBehavior::ClearLine()
     }
 }
 
+void BezierLinePreviewBehavior::SetLineEnable(bool enable)
+{
+    if (m_lineRenderer) {
+        m_lineRenderer->SetEnable(enable);
+    }
+}
+
 XMFLOAT3 BezierLinePreviewBehavior::EvaluateBezier(float t) const
 {
     t = MiMath::Clamp(t, 0.0f, 1.0f);

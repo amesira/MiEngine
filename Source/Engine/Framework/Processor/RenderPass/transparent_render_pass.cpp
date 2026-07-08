@@ -158,8 +158,10 @@ void TransparentRenderPass::DrawParticleSystem(ParticleSystemComponent& particle
 // ラインの描画
 void TransparentRenderPass::DrawLineRenderer(LineRendererComponent& lineRenderer, const RenderView& view)
 {
+    // 頂点バッファの更新
     if (!LineRenderUtility::UpdateLineQuadVertexBuffer(m_pContext, m_pLineVertexBuffer.Get())) return;
 
+    // インスタンスバッファの更新
     int instanceCount = LineRenderUtility::UpdateLineInstanceBuffer(
         m_pContext,
         m_pLineInstanceBuffer.Get(),

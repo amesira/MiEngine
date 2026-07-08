@@ -77,11 +77,13 @@ namespace PrefabFactory
                 ProjectileFactory::BezierLinePreviewCreateDesc lineDesc;
                 lineDesc.name = "MissilePreviewLine";
                 lineDesc.visibleOnCreate = false;
-                lineDesc.lineWidth = 5.0f;
+                lineDesc.lineWidth = 0.08f;
+                lineDesc.lineColor = { 1.0f, 0.5f, 0.5f, 1.0f };
 
                 GameObject* lineObject = ProjectileFactory::CreateBezierLinePreview(scene, lineDesc);
                 if (!lineObject) continue;
 
+                lineObject->SetRenderLayer(RenderLayer::Player); // プレイヤーのレイヤーに設定
                 previewLines[i] = lineObject->GetComponent<BezierLinePreviewBehavior>();
             }
 

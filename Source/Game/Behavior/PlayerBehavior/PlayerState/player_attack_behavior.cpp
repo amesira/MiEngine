@@ -142,6 +142,7 @@ void PlayerAttackBehavior::StartCharge(PlayerContext& context)
     for (int i = 0; i < MISSILE_PREVIEW_LINE_COUNT; i++) {
         if (m_missilePreviewLines[i]) {
             m_missilePreviewLines[i]->SetEnable(true);
+            m_missilePreviewLines[i]->SetLineEnable(true);
         }
     }
 }
@@ -197,6 +198,7 @@ void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
         if (m_missilePreviewLines[i]) {
             m_missilePreviewLines[i]->ClearLine();
             m_missilePreviewLines[i]->SetEnable(false);
+            m_missilePreviewLines[i]->SetLineEnable(false);
         }
     }
 }
