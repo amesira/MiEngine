@@ -52,11 +52,11 @@ namespace PrefabFactory
         PlayerBehavior* playerBehavior = prefab.player->GetComponent<PlayerBehavior>();
         PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
 
-        prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(scene, prefab.player->GetName(), L"asset\\Texture\\white.bmp");
+        prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(scene, prefab.player->GetName());
         {
             SetupTransformConstraint(prefab.runDustParticle, playerTransform, { 0.0f, -1.0f, 0.0f }, true, false);
         }
-        prefab.chargeEffectParticle = RenderEffectFactory::CreateChargeAbsorbParticle(scene, position, L"asset\\Texture\\white.bmp");
+        prefab.chargeEffectParticle = RenderEffectFactory::CreateChargeAbsorbParticle(scene, position);
         {
             SetupTransformConstraint(prefab.chargeEffectParticle, playerTransform, { 1.0f, -0.3f, 0.0f }, true, false);
             ParticleSystemComponent* particleSystem = prefab.chargeEffectParticle->GetComponent<ParticleSystemComponent>();

@@ -39,7 +39,7 @@ public:
         float startSize = 1.0f;     // パーティクルの初期サイズ
         float size = 1.0f;          // パーティクルのサイズ
 
-        int frame = 0;                  // パーティクルのテクスチャアニメーションのフレーム
+        float frame = 0.0f;             // パーティクルのテクスチャアニメーションのフレーム
 
         XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };   // パーティクルの位置
         XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };   // パーティクルの速度

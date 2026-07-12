@@ -22,6 +22,87 @@ using namespace MiMath;
 #include "Engine/Framework/Component/particle_system_component.h"
 
 namespace {
+    struct TextureSheetRuntimeSettings {
+        int tileX = 1;
+        int tileY = 1;
+        int startFrame = 0;
+        int frameCount = 1;
+        int sheetFrameCount = 1;
+    };
+
+    TextureSheetRuntimeSettings CreateTextureSheetRuntimeSettings(
+        const ParticleSystemData::TextureSheetAnimation& textureSheetAnimation)
+    {
+        TextureSheetRuntimeSettings settings = {};
+        settings.tileX = textureSheetAnimation.tileX > 0 ? textureSheetAnimation.tileX : 1;
+        settings.tileY = textureSheetAnimation.tileY > 0 ? textureSheetAnimation.tileY : 1;
+        settings.sheetFrameCount = settings.tileX * settings.tileY;
+        settings.startFrame = std::clamp(textureSheetAnimation.startFrame, 0, settings.sheetFrameCount - 1);
+
+        const int availableFrameCount = settings.sheetFrameCount - settings.startFrame;
+        settings.frameCount = std::clamp(textureSheetAnimation.frameCount, 1, availableFrameCount);
+        return settings;
+    }
+
+    XMFLOAT4 CalculateTextureSheetUvRect(
+        const TextureSheetRuntimeSettings& settings,
+        int localFrameIndex)
+    {
+        localFrameIndex = std::clamp(localFrameIndex, 0, settings.frameCount - 1);
+
+        const int frameIndex = settings.startFrame + localFrameIndex;
+        const int frameX = frameIndex % settings.tileX;
+        const int frameY = frameIndex / settings.tileX;
+
+        return {
+            static_cast<float>(frameX) / static_cast<float>(settings.tileX),
+            static_cast<float>(frameY) / static_cast<float>(settings.tileY),
+            1.0f / static_cast<float>(settings.tileX),
+            1.0f / static_cast<float>(settings.tileY)
+        };
+    }
+
+    void UpdateTextureSheetAnimation(
+        const ParticleSystemData::TextureSheetAnimation& textureSheetAnimation,
+        ParticleSystemComponent::ParticleData& particle,
+        float scaledDeltaTime)
+    {
+        if (!textureSheetAnimation.enabled) {
+            particle.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+            return;
+        }
+
+        const TextureSheetRuntimeSettings settings =
+            CreateTextureSheetRuntimeSettings(textureSheetAnimation);
+
+        switch (textureSheetAnimation.timeMode) {
+        case ParticleSystemData::TimeMode::Lifetime: {
+            const float normalizedAge = particle.elapsedTime / particle.lifetime;
+            particle.frame = static_cast<float>(settings.frameCount) * normalizedAge;
+            break;
+        }
+        case ParticleSystemData::TimeMode::Speed:
+            particle.frame += textureSheetAnimation.framePerSecond * scaledDeltaTime;
+            break;
+        }
+
+        if (textureSheetAnimation.loop) {
+            particle.frame = std::fmod(particle.frame, static_cast<float>(settings.frameCount));
+            if (particle.frame < 0.0f) {
+                particle.frame += static_cast<float>(settings.frameCount);
+            }
+        }
+        else {
+            particle.frame = std::clamp(
+                particle.frame,
+                0.0f,
+                static_cast<float>(settings.frameCount - 1));
+        }
+
+        const int localFrameIndex = static_cast<int>(particle.frame);
+        particle.uvRect = CalculateTextureSheetUvRect(settings, localFrameIndex);
+    }
+
     // ------------------------------------ Evaluate
     // MinMaxFloatからランダムな値を生成
     float Evaluate(const ParticleSystemData::MinMaxFloat& value)
@@ -134,6 +215,7 @@ namespace {
             particle.position = Add(position, emitterPosition);
             particle.velocity = Multiply(direction, Evaluate(main.startSpeed));
             particle.color = Evaluate(main.startColor);
+            UpdateTextureSheetAnimation(desc.textureSheetAnimation, particle, 0.0f);
 
             // パーティクルを追加
             particles.push_back(particle);
@@ -235,47 +317,7 @@ void ParticleSystemProcessor::Process(IScene* pScene)
             }
 
             // テクスチャシートアニメーションの更新 --- TextureSheetAnimation ---
-            auto& textureSheetAnimation = desc.textureSheetAnimation;
-            if (textureSheetAnimation.enabled) {
-                
-                switch (textureSheetAnimation.timeMode) {
-                    case ParticleSystemData::TimeMode::Lifetime:{
-                        const float normalizedAge = particle.elapsedTime / particle.lifetime;
-                        particle.frame = static_cast<float>(textureSheetAnimation.frameCount) * normalizedAge;
-                        break;
-                    }
-                    case ParticleSystemData::TimeMode::Speed: {
-                        particle.frame += textureSheetAnimation.framePerSecond * scaledDeltaTime;
-                        break;
-                    }
-                }
-
-                // ループの有無に応じてフレームを調整
-                if (textureSheetAnimation.loop) {
-                    particle.frame = std::fmod(particle.frame, static_cast<float>(textureSheetAnimation.frameCount));
-                }
-                else {
-                    if (particle.frame >= textureSheetAnimation.frameCount) {
-                        particle.frame = static_cast<float>(textureSheetAnimation.frameCount - 1);
-                    }
-                }
-
-                // UVRectの計算
-                const int tileX = textureSheetAnimation.tileX;
-                const int tileY = textureSheetAnimation.tileY;
-                const int totalFrames = textureSheetAnimation.frameCount;
-                const int frameIndex = static_cast<int>(particle.frame) % totalFrames;
-
-                const int frameX = frameIndex % tileX;
-                const int frameY = frameIndex / tileX;
-
-                particle.uvRect = {
-                    static_cast<float>(frameX) / static_cast<float>(tileX),
-                    static_cast<float>(frameY) / static_cast<float>(tileY),
-                    1.0f / static_cast<float>(tileX),
-                    1.0f / static_cast<float>(tileY)
-                };
-            }
+            UpdateTextureSheetAnimation(desc.textureSheetAnimation, particle, scaledDeltaTime);
         }
 
         // === エミッション ===

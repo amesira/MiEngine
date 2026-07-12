@@ -85,7 +85,8 @@ namespace ParticleRenderUtility {
 
         int instanceCount = 0;
         const auto& particles = particleSystem.Particles();
-        const auto& renderer = particleSystem.GetDesc().rendererModule;
+        const auto& desc = particleSystem.GetDesc();
+        const auto& renderer = desc.rendererModule;
 
         for (const auto& particle : particles) {
             if (!particle.alive) continue;
@@ -105,10 +106,12 @@ namespace ParticleRenderUtility {
 
             // UvRectの計算（掛け合わせる）
             DirectX::XMFLOAT4 uvRect = renderer.uvRect;
-            uvRect.x += particle.uvRect.x * uvRect.z;
-            uvRect.y += particle.uvRect.y * uvRect.w;
-            uvRect.z *= particle.uvRect.z;
-            uvRect.w *= particle.uvRect.w;
+            if (desc.textureSheetAnimation.enabled) {
+                uvRect.x += particle.uvRect.x * uvRect.z;
+                uvRect.y += particle.uvRect.y * uvRect.w;
+                uvRect.z *= particle.uvRect.z;
+                uvRect.w *= particle.uvRect.w;
+            }
             instanceData[instanceCount].uvRect = uvRect;
 
             instanceCount++;

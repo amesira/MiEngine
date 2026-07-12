@@ -94,7 +94,8 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
     return particleEffect;
 }
 
-GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::string targetName, const std::wstring& texturePath)
+/// @brief 土ぼこりパーティクル生成
+GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::string targetName)
 {
     if (!scene) return nullptr;
 
@@ -117,7 +118,7 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
     main.playOnAwake = true;
     main.startLifetime = { true, 0.45f, 0.25f, 0.65f };
     main.startSpeed = { true, 0.45f, 0.2f, 0.8f };
-    main.startSize = { true, 0.35f, 0.2f, 0.55f };
+    main.startSize = { true, 1.35f, 1.2f, 1.55f };
     main.startColor.randomBetweenTwoColors = true;
     main.startColor.colorMin = { 0.92f, 0.94f, 0.94f, 0.75f };
     main.startColor.colorMax = { 1.00f, 1.00f, 1.00f, 0.95f };
@@ -145,8 +146,16 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
         { 1.0f, 0.15f },
     };
 
+    auto& texSheetAnim = desc.textureSheetAnimation;
+    texSheetAnim.enabled = true;
+    texSheetAnim.tileX = 13;
+    texSheetAnim.tileY = 1;
+    texSheetAnim.startFrame = 0;
+    texSheetAnim.frameCount = 13;
+    texSheetAnim.timeMode = ParticleSystemData::TimeMode::Lifetime;
+
     auto& renderer = desc.rendererModule;
-    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(texturePath));
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\fuwa_effect_sheet.png"));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
     renderer.billboardMode = ParticleSystemData::BillboardMode::View;
     renderer.blendMode = ParticleSystemData::BlendMode::AlphaBlend;
@@ -155,7 +164,7 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
     return dustEffect;
 }
 
-GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath)
+GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position)
 {
     if (!scene) return nullptr;
 
@@ -175,7 +184,7 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
     main.playOnAwake = true;
     main.startLifetime = { true, 0.15f, 0.05f, 0.35f };
     main.startSpeed = { true, -10.5f, -12.5f, -7.8f };
-    main.startSize = { true, 0.22f, 0.08f, 0.32f };
+    main.startSize = { true, 1.22f, 1.08f, 1.32f };
     main.startColor.randomBetweenTwoColors = true;
     main.startColor.colorMin = { 0.25f, 0.75f, 1.0f, 0.85f };
     main.startColor.colorMax = { 0.95f, 0.35f, 1.0f, 0.55f };
@@ -185,7 +194,7 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
 
     auto& emission = desc.emissionModule;
     emission.enabled = true;
-    emission.rateOverTime = 90.0f;
+    emission.rateOverTime = 60.0f;
     emission.rateOverDistance = 0.0f;
 
     auto& shape = desc.shapeModule;
@@ -204,8 +213,16 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
         { 1.0f, 0.0f },
     };
 
+    auto& texSheetAnim = desc.textureSheetAnimation;
+    texSheetAnim.enabled = true;
+    texSheetAnim.tileX = 11;
+    texSheetAnim.tileY = 1;
+    texSheetAnim.startFrame = 0;
+    texSheetAnim.frameCount = 11;
+    texSheetAnim.timeMode = ParticleSystemData::TimeMode::Lifetime;
+
     auto& renderer = desc.rendererModule;
-    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(texturePath));
+    particleSystem->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\pika_effect_sheet.png"));
     renderer.uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
     renderer.billboardMode = ParticleSystemData::BillboardMode::View;
     renderer.blendMode = ParticleSystemData::BlendMode::Additive;
